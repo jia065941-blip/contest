@@ -1,0 +1,147 @@
+import json
+import unittest
+from types import SimpleNamespace
+
+from envengine.common import DamageC, DamageCmd, SimmerCommandType
+from envengine.sdk.base_struct.Basic import Vector3d
+from envengine.sdk.base_struct.Message import Command
+from envengine.simulator.interfaces import ISimulator
+from envengine.simulator.simlulator_impl.CompCruiseMissileHSimulator import (
+    CompCruiseMissileHSimulator,
+)
+from envengine.simulator.simlulator_impl.CompCruiseMissileLSimulator import (
+    CompCruiseMissileLSimulator,
+)
+from envengine.simulator.simlulator_impl.CompCruiseMissileMSimulator import (
+    CompCruiseMissileMSimulator,
+)
+from envengine.simulator.simlulator_impl.cruise_missile_damage import (
+    CruiseMissileDamageMixin,
+)
+from envengine.simulator.simulator_factory import SimulatorFactory
+
+
+def make_simulator_entity(entity_id, name, side, position, health=60.0):
+    entity = SimpleNamespace(
+        id=entity_id,
+        nameChn=name,
+        sideId=side,
+        posEcf=position,
+        survivePoints=health,
+        isVisible=True,
+    )
+    return SimpleNamespace(_entity_ext=SimpleNamespace(entity=entity), entity_ext=SimpleNamespace(entity=entity))
+
+
+class FakeFactory:
+    def __init__(self, simulators):
+        self.simulators = {sim.entity_ext.entity.id: sim for sim in simulators}
+
+    def get_simulator_by_id(self, entity_id):
+        return self.simulators.get(entity_id)
+
+    def get_simulators_by_side(self, side_id):
+        return [
+            sim for sim in self.simulators.values()
+            if sim.entity_ext.entity.sideId == side_id
+        ]
+
+
+class DamageHarness(CruiseMissileDamageMixin):
+    def __init__(self, source, factory):
+        self._entity_ext = source.entity_ext
+        self._simulator_factory = factory
+        self.ret = -1
+        self.damage_point = 20
+        self.commands = []
+        self._reset_damage_chain()
+
+    @property
+    def entity_ext(self):
+        return self._entity_ext
+
+    _is_geometrically_visible = staticmethod(ISimulator._is_geometrically_visible)
+
+    def _get_targets_within_self_range(self, candidates, max_range):
+        return [
+            target for target in candidates
+            if target.entity_ext.entity.isVisible
+            and target.entity_ext.entity.survivePoints > 0
+            and self._is_geometrically_visible(
+                self.entity_ext.entity.posEcf,
+                target.entity_ext.entity.posEcf,
+                max_range,
+            )
+        ]
+
+    def _send_commands(self, commands):
+        self.commands.extend(commands)
+
+
+class DamageChainTest(unittest.TestCase):
+    def test_all_cruise_missiles_share_damage_chain(self):
+        for simulator_class in (
+            CompCruiseMissileHSimulator,
+            CompCruiseMissileMSimulator,
+            CompCruiseMissileLSimulator,
+        ):
+            self.assertTrue(issubclass(simulator_class, CruiseMissileDamageMixin))
+
+    def test_proximity_fuse_uses_commanded_target(self):
+        source = make_simulator_entity(
+            1, "高性能飞行器_1", 0, Vector3d(0.0, 0.0, 0.0), health=1.0
+        )
+        harness = DamageHarness(source, FakeFactory([source]))
+        harness._set_commanded_target({"x": 122.45, "y": 23.16, "z": 0.0})
+        harness.entity_ext.entity.posEcf = Vector3d(
+            harness._commanded_target_ecf.x,
+            harness._commanded_target_ecf.y,
+            harness._commanded_target_ecf.z,
+        )
+
+        self.assertTrue(harness._update_terminal_state_from_proximity())
+        self.assertEqual(harness.ret, 0)
+
+    def test_damage_command_survives_hit_rate_and_schema_parsing(self):
+        source = make_simulator_entity(
+            1, "高性能飞行器_1", 0, Vector3d(0.0, 0.0, 0.0), health=1.0
+        )
+        target = make_simulator_entity(
+            2, "目标_1", 1, Vector3d(500.0, 0.0, 0.0), health=60.0
+        )
+        factory = FakeFactory([source, target])
+        harness = DamageHarness(source, factory)
+        harness.ret = 0
+
+        self.assertTrue(harness._detonate_if_ready())
+        self.assertFalse(source.entity_ext.entity.isVisible)
+        self.assertEqual(len(harness.commands), 2)
+
+        target_damage = next(command for command in harness.commands if command.executorId == 2)
+        adjusted = SimulatorFactory.hit_rate_table(factory, target_damage)
+        payload = json.loads(adjusted.commandAttributes)
+        parsed = DamageC.from_json(adjusted.commandAttributes)
+
+        self.assertIn("cmd", payload)
+        self.assertNotIn("cmd:", payload)
+        self.assertEqual(parsed.cmd.damagePoint, 16.0)
+
+    def test_unmapped_damage_is_not_modified(self):
+        source = make_simulator_entity(
+            1, "未知武器_1", 0, Vector3d(), health=1.0
+        )
+        target = make_simulator_entity(2, "目标_1", 1, Vector3d(), health=60.0)
+        factory = FakeFactory([source, target])
+        command = Command(
+            prevTriggerId=1,
+            executorId=2,
+            commandTypeId=SimmerCommandType.DAMAGE,
+            commandAttributes=DamageC(DamageCmd(damagePoint=7)).to_json(),
+        )
+
+        adjusted = SimulatorFactory.hit_rate_table(factory, command)
+        self.assertEqual(DamageC.from_json(adjusted.commandAttributes).cmd.damagePoint, 7)
+
+
+if __name__ == "__main__":
+    unittest.main()

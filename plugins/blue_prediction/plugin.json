@@ -1,0 +1,9 @@
+{
+  "id": "blue-prediction",
+  "name": "蓝方轨迹预测增强",
+  "version": "1.0.0",
+  "side": "blue",
+  "status": "integration_pending",
+  "entry": "src/trajectory_prediction",
+  "note": "保留预测算法源码，未迁入历史数据集和预测结果。"
+}

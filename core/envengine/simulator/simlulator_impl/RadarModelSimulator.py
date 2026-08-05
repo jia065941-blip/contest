@@ -1,0 +1,113 @@
+# -*-coding:utf-8 -*-
+
+from typing import Callable
+
+from envengine.sdk.Util.UtilsPy import Vector3D
+
+from envengine.common import SimmerCommandType
+from envengine.sdk.Util import UtilsPy
+from envengine.sdk.base_struct.Basic import Vector3d, DetectInfo
+from envengine.sdk.base_struct.Entity import EntityExt
+from envengine.sdk.base_struct.Message import Command
+
+from envengine.simulator.decorator import Simulator
+from envengine.simulator.interfaces import ISimulator
+from envengine.simulator.simulator_factory import SimulatorFactory
+
+
+@Simulator.register("NormalRadarS")
+class RadarModelSimulator(ISimulator):
+    """
+    轨道模型仿真器
+    """
+
+    def __init__(self, entity_ext: EntityExt,
+                 send_commands: Callable[[list[Command]], None],
+                 send_events: Callable[[dict], None],
+                 simulator_factory: SimulatorFactory = None):
+        super().__init__(entity_ext, send_commands, send_events, simulator_factory)
+
+    @property
+    def simulator_sim_step(self) -> float:
+        """
+        仿真器内部步长（毫秒）
+        :return: 内部步长（毫秒）
+        """
+        return 50
+
+    def update(self) -> None:
+        """
+        执行仿真步进
+        """
+
+        # 执行探测
+        self.execute_detection()
+
+        # 发送探测信息
+        self.send_detect_info()
+
+    def set_lla(self, lla: Vector3d) -> None:
+        """
+        初始设置lla
+        """
+        pass
+
+    def set_speed(self, speed: float) -> None:
+        """
+        初始设置速度
+        """
+        pass
+
+    def send_detect_info(self):
+        """
+        发送探测信息
+        """
+        if self.entity_ext.entity.detectInfo:
+            # 获取拦截指控
+            can_communication_simulators: list[ISimulator] = self._simulator_factory.get_simulators_by_type(35000)
+            # 构建探测信息指令
+            command_list: list[Command] = [Command(
+                executorId=i.entity_ext.entity.id,
+                commandTypeId=SimmerCommandType.RADAR_DETECT_STATUS_UPDATE,
+                commandAttributes=self.entity_ext.entity.detectInfo
+            ) for i in can_communication_simulators]
+            # 指令转发
+            self._send_commands(command_list)
+
+    def execute_detection(self):
+        """
+        执行探测
+        :return:
+        """
+        detected_candidate_simulators: list[ISimulator] = self._simulator_factory.get_simulators_by_side(
+            1 if self.entity_ext.entity.sideId == 0 else 0)
+        detected: list[ISimulator] = self._get_targets_within_self_range(detected_candidate_simulators,
+                                                                         max_range=200 * 1000)
+        if not detected:
+            return
+        # print("探测到的目标：", detected)
+        # 组装探测信息
+        detect_info: dict[int, DetectInfo] = {
+            target.entity_ext.entity.id: DetectInfo(
+                detect_from=self.entity_ext.entity.id,
+                time=int(self.sim_time),
+                entity_id=target.entity_ext.entity.id,
+                nameChn=target.entity_ext.entity.nameChn,
+                lla=target.entity_ext.entity.lla,
+                pos_ecf=target.entity_ext.entity.posEcf,
+                vel_ecf=target.entity_ext.entity.velEcf
+            ) for target in detected}
+        # 更新自身探测信息
+        self.handel_detect_info(detect_info)
+
+    def reset(self) -> None:
+        """重置到初始状态"""
+        super().reset()
+        posEcf: Vector3D = UtilsPy.CoordinateHelper.llaToEcef_py(
+            Vector3D(self.entity_ext.entity.lla.x, self.entity_ext.entity.lla.y, self.entity_ext.entity.lla.z))
+
+        self.entity_ext.entity.posEcf = Vector3d(
+            posEcf.x(),
+            posEcf.y(),
+            posEcf.z()
+        )

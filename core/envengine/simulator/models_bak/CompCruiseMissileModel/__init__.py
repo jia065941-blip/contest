@@ -1,0 +1,1 @@
+from .CompCruiseMissilePy import Missile

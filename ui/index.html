@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<title>Competition Platform</title>
+<style>body{font:16px system-ui;max-width:760px;margin:48px auto;color:#18212f}code{background:#f2f4f7;padding:2px 5px}li{margin:10px 0}.pending{color:#9a6700}</style>
+<h1>Competition Platform</h1>
+<p>本地插件控制台。运行任务请使用下方命令；该页面用于确认可用模块和迁移状态。</p>
+<p><code>python run.py run --blue-policy threat_priority --scenario medium/M01 -- --render-mode none</code></p>
+<h2>已注册插件</h2><ul id="plugins"></ul>
+<script>
+fetch('/api/plugins').then(r=>r.json()).then(data=>{document.querySelector('#plugins').innerHTML=data.plugins.map(p=>`<li><b>${p.id}</b> — <span class="${p.status==='ready'?'':'pending'}">${p.status}</span></li>`).join('')})
+</script>
+</html>

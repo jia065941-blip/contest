@@ -1,0 +1,6 @@
+target_capacity: 2
+value_weight: 1.0
+distance_weight: 0.25
+coverage_weight: 0.75
+wave_by_kind: {H: 0, M: 10, L: 20}
+

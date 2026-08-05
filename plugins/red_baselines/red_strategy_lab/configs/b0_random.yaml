@@ -1,0 +1,5 @@
+seed: 20260730
+target_capacity: 2
+min_launch_interval: 1
+wave_by_kind: {H: 0, M: 10, L: 20}
+

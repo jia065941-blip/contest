@@ -1,0 +1,137 @@
+{
+  "scenario_id": "E01",
+  "display_id": "E01",
+  "title": "简单·串联双闸",
+  "difficulty": "easy",
+  "difficulty_name": "简单",
+  "mission_type": "comprehensive",
+  "mission_type_name": "综合任务",
+  "topology_id": "serial_double_gate",
+  "topology_name": "串联双闸",
+  "design_intent": "两座雷达阵地沿同一纬线前后串联，构成宽前闸和窄后闸；一艘无人船前置在北侧前沿，另一艘位于中段，普通目标在末端展开成扇形。",
+  "structural_features": [
+    "前沿—中段—末端层级",
+    "双深度覆盖识别",
+    "末端扇形分流"
+  ],
+  "difficulty_mechanism": "7个计分目标、两部串联雷达和160枚拦截弹；结构是一条明确的水平深度轴。",
+  "objective_ids": [
+    51,
+    52,
+    53,
+    54,
+    106,
+    168,
+    169
+  ],
+  "radar_ranges_km": {
+    "55": 81.6,
+    "107": 62.4
+  },
+  "interceptor_counts": {
+    "54": 55,
+    "106": 55,
+    "168": 25,
+    "169": 25
+  },
+  "roots": [
+    {
+      "id": 51,
+      "kind": "target",
+      "lon": 123.25,
+      "lat": 24.75,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 52,
+      "kind": "target",
+      "lon": 123.6,
+      "lat": 23.0,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 53,
+      "kind": "target",
+      "lon": 123.25,
+      "lat": 21.25,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 54,
+      "kind": "site",
+      "lon": 119.95,
+      "lat": 23.0,
+      "hp": 12.0,
+      "interceptors": 55,
+      "radar_id": 55,
+      "radar_km": 81.6,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 106,
+      "kind": "site",
+      "lon": 121.55,
+      "lat": 23.0,
+      "hp": 12.0,
+      "interceptors": 55,
+      "radar_id": 107,
+      "radar_km": 62.4,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 168,
+      "kind": "ship",
+      "lon": 119.3,
+      "lat": 25.35,
+      "hp": 8.0,
+      "interceptors": 25,
+      "objective": true,
+      "initial_information": "hidden"
+    },
+    {
+      "id": 169,
+      "kind": "ship",
+      "lon": 121.2,
+      "lat": 20.55,
+      "hp": 8.0,
+      "interceptors": 25,
+      "objective": true,
+      "initial_information": "hidden"
+    }
+  ],
+  "scenario_sha256": "9d8fc86d913d52d88d1082cc7bde95a5dc7aa2324e2021193518db71fdbc4534",
+  "entity_total": 229,
+  "blue_entity_total": 169,
+  "blue_root_total": 7,
+  "root_counts": {
+    "ship": 2,
+    "site": 2,
+    "target": 3
+  },
+  "radar_total": 2,
+  "interceptor_total": 160,
+  "objective_total": 7,
+  "public_objective_ids": [
+    51,
+    52,
+    53,
+    54,
+    106
+  ],
+  "hidden_objective_ids": [
+    168,
+    169
+  ],
+  "max_steps": 1200
+}
