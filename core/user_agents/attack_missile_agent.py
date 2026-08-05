@@ -108,8 +108,10 @@ class AttackMissileAgent(BaseAgent):
 
     def get_random_target(self)->dict:
         targets = []
+
+        # 获取所有目标
         for entity_id, entity_info in self.init_observation["entities"].items():
-            if entity_info["nameChn"].startswith("目标"):
+            if entity_info["type"] == 9400:
                 targets.append(entity_info)
 
         if targets:

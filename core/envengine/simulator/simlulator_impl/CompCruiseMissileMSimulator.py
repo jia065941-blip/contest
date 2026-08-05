@@ -186,7 +186,7 @@ class CompCruiseMissileMSimulator(ISimulator):
         for sim in ships:
             if (sim.entity_ext.entity.isVisible
                     and sim.entity_ext.entity.survivePoints > 0
-                    and sim.entity_ext.entity.nameChn.startswith("无人船")):
+                    and sim.entity_ext.entity.entityType == 9500):
                 detected.append(sim)
 
         self.satellite_use_frames -= 1

@@ -11,7 +11,6 @@ from envengine import Profile, TrainingEnv
 from envengine.sdk.log import LogManager
 from envengine.sdk.writer import WriteConfig, init_writer, get_writer, write_immediately
 from user_agents import AttackMissileAgent, DeployAgent
-from user_agents.red_baseline_agent import RedBaselineAgent
 
 
 def parse_args():
@@ -25,7 +24,7 @@ def parse_args():
 
     parser.add_argument('--total-rounds',
                         type=int,
-                        default=1,
+                        default=100,
                         help='Total simulation rounds (default: 1)')
 
     parser.add_argument('--max-steps',
@@ -160,8 +159,7 @@ def main():
         agent_id = i + 1
         # 按类型注册红方飞行器智能体
         if simulator.entity_ext.entity.entityType == 21000 or simulator.entity_ext.entity.entityType == 21001 or simulator.entity_ext.entity.entityType == 21002:
-            agent_cls = RedBaselineAgent if os.getenv('RED_POLICY') else AttackMissileAgent
-            agent = agent_cls(agent_id, entity_id, init_observation_ship)
+            agent = AttackMissileAgent(agent_id, entity_id, init_observation_ship)
             training_env.agent_manager.register_agent(agent)
     logging.info(f"[测试] 已注册 {training_env.agent_manager.get_agent_count()} 个智能体")
 
@@ -191,24 +189,6 @@ def main():
                 logging.info("[测试] 仿真结束")
                 break
         end_time = time.perf_counter()
-
-        entities = obs.get("entities", {})
-        red = [item for item in entities.values() if item.get("side") == 0]
-        blue = [item for item in entities.values() if item.get("side") == 1]
-        blue_commanders = [simulator for simulator in simulators if simulator.entity_ext.entity.entityType == 35000]
-        blue_roots = [item for item in blue if str(item.get("nameChn", "")).startswith(("目标", "拦截阵地", "无人船"))]
-        summary = {
-            "steps": step,
-            "done": done,
-            "wall_time_s": round(end_time - start_time, 6),
-            "red_alive": sum(item.get("health", 0) > 0 for item in red),
-            "red_lost": sum(item.get("health", 0) <= 0 for item in red),
-            "blue_root_alive": sum(item.get("health", 0) > 0 for item in blue_roots),
-            "blue_root_destroyed": sum(item.get("health", 0) <= 0 for item in blue_roots),
-            "red_dispatched": getattr(RedBaselineAgent._commander, "dispatched_count", 0) if os.getenv("RED_POLICY") else 0,
-            "blue_interceptors_launched": sum(len(items) for commander in blue_commanders for items in getattr(commander, "launched_list", {}).values()),
-        }
-        print("FINAL_SUMMARY=" + json.dumps(summary, ensure_ascii=False))
 
         logging.info(f"[测试] 第 {i + 1} 轮结束，本轮仿真总用时: {end_time - start_time:.6f} 秒")
         # 写剩余缓冲区数据

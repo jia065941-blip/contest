@@ -251,7 +251,7 @@ class TrainingEnv:
 
     def _get_init_ship_observation(self) -> dict:
         """获取初始化时，给红方 AI 的蓝方信息
-        仅传递，蓝方高中价值舰船
+        仅传递，蓝方高中价值舰船（即：目标、拦截阵地）
         """
 
         simulators = self.engine.simulator_factory.get_all_simulators()
@@ -263,9 +263,7 @@ class TrainingEnv:
 
         for simulator in simulators:
             entity_data = simulator.entity_ext.entity
-            if entity_data.entityType != 9400:
-                continue
-            if not entity_data.nameChn.startswith(("目标", "拦截阵地", "无人船")):
+            if entity_data.entityType != 9400 and entity_data.entityType != 9600:
                 continue
 
             observation["entities"][entity_data.id] = {

@@ -59,6 +59,20 @@
                 "entityTypeId": [
                     44000001
                 ]
+            },
+            {
+                "dynamicLibraryPath": "./Packages/UnmannedShip/libUnmannedShipS.so",
+                "entityType": 9500,
+                "entityTypeId": [
+                    9500001
+                ]
+            },
+            {
+                "dynamicLibraryPath": "./Packages/InterceptField/libInterceptFieldS.so",
+                "entityType": 9600,
+                "entityTypeId": [
+                    9600001
+                ]
             }
         ],
         "engineId": 1,
@@ -2107,7 +2121,7 @@
                         104,
                         105
                     ],
-                    "entityType": 9400,
+                    "entityType": 9600,
                     "id": 54,
                     "isVisible": true,
                     "lla": {
@@ -6542,7 +6556,7 @@
                         218,
                         219
                     ],
-                    "entityType": 9400,
+                    "entityType": 9500,
                     "id": 168,
                     "isVisible": true,
                     "lla": {
@@ -6550,8 +6564,8 @@
                         "y": 23.996691,
                         "z": 0
                     },
-                    "nameChn": "无人船",
-                    "nameEn": "GeneralShip_9400001006",
+                    "nameChn": "通用无人船_9500001001",
+                    "nameEn": "GeneralUnmannedShip_9500001001",
                     "parentId": -1,
                     "posEcf": {
                         "x": 0,

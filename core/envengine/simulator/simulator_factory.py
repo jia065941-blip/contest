@@ -134,42 +134,49 @@ class SimulatorFactory:
         命中率映射表：后序需要提取成配置文件，新增不同entityType模型不同模型
         :return:
         """
+
+        """
+        21000 高性能飞行器
+        21001 低性能飞行器
+        21002 无人机
+        9400 目标
+        9500 无人船
+        9600 拦截阵地
+        """
         hit_rate_table = {
-            "高性能飞行器": {
-                "目标": 0.8,
-                "阵地": 0.6,
-                "无人船": 0
+            21000: {
+                9400: 0.8,
+                9600: 0.6,
+                9500: 0
             },
-            "巡航弹v2": {
-                "目标": 0.8,
-                "阵地": 0.6,
-                "无人船": 0
+            21002: {
+                9400: 0.8,
+                9600: 0.6,
+                9500: 0
             },
-            "低性能巡航弹": {
-                "目标": 0.05,
-                "阵地": 0.05,
-                "无人船": 0.8
+            21001: {
+                9400: 0.05,
+                9600: 0.05,
+                9500: 0.8
             }
         }
         # 基于prev_trigger_id获取名称
         prev_trigger_id = command.prevTriggerId
         prev_simulator = self.get_simulator_by_id(prev_trigger_id)
 
-        prev_simulator_name = prev_simulator._entity_ext.entity.nameChn
-        prev_simulator_name = prev_simulator_name.split("_")[0]
+        prev_simulator_type = prev_simulator._entity_ext.entity.entityType
         # 基于executor_id获取名称
         executor_id = command.executorId
         executor_simulator = self.get_simulator_by_id(executor_id)
-        executor_simulator_name = executor_simulator._entity_ext.entity.nameChn
-        executor_simulator_name = executor_simulator_name.split("_")[0]
+        executor_simulator_type = executor_simulator._entity_ext.entity.entityType
         # 获取命中率
-        if prev_simulator_name not in hit_rate_table:
+        if prev_simulator_type not in hit_rate_table:
             return command
-        if executor_simulator_name not in hit_rate_table[prev_simulator_name]:
+        if executor_simulator_type not in hit_rate_table[prev_simulator_type]:
             return command
-        hit_rate = hit_rate_table[prev_simulator_name][executor_simulator_name]
+        hit_rate = hit_rate_table[prev_simulator_type][executor_simulator_type]
         damage_point = json.loads(command.commandAttributes)["cmd"]["damagePoint"]
-        command.commandAttributes = json.dumps({"cmd":{"damagePoint": damage_point * hit_rate}})
+        command.commandAttributes = json.dumps({"cmd:": {"damagePoint": damage_point * hit_rate}})
         return command
 
     def process_ai_commands(self, ai_commands: list[Command]):

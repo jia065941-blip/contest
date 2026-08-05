@@ -25,8 +25,10 @@ class Renderer:
         self.MIN_WINDOW_SIZE = 500
         self.LON_MIN, self.LON_MAX = lon_min, lon_max
         self.LAT_MIN, self.LAT_MAX = lat_min, lat_max
-        self.lon_per_pixel = self.lat_per_pixel = 0 # 每像素对应的经度纬度
-        self.MAP_W, self.MAP_H = max(1920, self.MIN_WINDOW_SIZE), max(1080, self.MIN_WINDOW_SIZE)
+        self.lon_per_pixel = self.lat_per_pixel = 0 # 每像素对应的经度纬度（只在初始化时计算一次，后续保持不变）
+        self.MAP_W, self.MAP_H = max(1000, self.MIN_WINDOW_SIZE), max(800, self.MIN_WINDOW_SIZE)
+        # 只在初始化时计算一次每像素对应的经纬度比例，并记录地理中心
+        self._init_lonlat_pixel_ratio()
         self._recalculate_lonlat_boundary()
 
         # ========== 缩放和平移参数 ==========
@@ -62,13 +64,6 @@ class Renderer:
         self.radar_angle = 0  # 雷达角度
 
         self.draw_radius = 8
-        self.frame_dir = os.environ.get("RENDER_FRAME_DIR")
-        self.frame_every = max(1, int(os.environ.get("RENDER_FRAME_EVERY", "6")))
-        self.frame_limit = max(1, int(os.environ.get("RENDER_FRAME_LIMIT", "120")))
-        self._render_count = 0
-        self._saved_frames = 0
-        if self.frame_dir:
-            os.makedirs(self.frame_dir, exist_ok=True)
 
     def start(self):
         """启动渲染线程"""
@@ -97,28 +92,34 @@ class Renderer:
         self.red_area = red_area[0] if red_area else []
         self.red_areaHM = red_areaHM[0] if red_areaHM else []
 
-    def _recalculate_lonlat_boundary(self):
-        """根据屏幕尺寸重新计算对应的经纬度范围，保证宽度和高度界限都不超出屏幕
-        计算方法为：
-        1、根据经度范围和纬度范围分别计算所需的屏幕尺寸
-        2、选择两种计算方向中，可以让宽度高度均放到现有屏幕中的方式
-        3、根据所选方式，计算现有屏幕的分辨率，
+    def _init_lonlat_pixel_ratio(self):
+        """只计算一次：每像素对应的经纬度（正方形像素，保持不变形）
+        根据初始屏幕尺寸与场景经纬度范围确定比例，并记录场景地理中心，
+        后续不再改变该比例。
         """
-        lon_lat_pixel_ratio = 1 # 屏幕上一个像素对应的经度和纬度的比例，lon/lat
+        lon_lat_pixel_ratio = 1  # 屏幕上一个像素对应的经度和纬度的比例，lon/lat
 
-        self.lat_per_pixel = (self.LAT_MAX - self.LAT_MIN)/self.MAP_H
+        self.lat_per_pixel = (self.LAT_MAX - self.LAT_MIN) / self.MAP_H
         self.lon_per_pixel = self.lat_per_pixel * lon_lat_pixel_ratio
-        lon_pixel = (self.LON_MAX - self.LON_MIN)/self.lon_per_pixel
+        lon_pixel = (self.LON_MAX - self.LON_MIN) / self.lon_per_pixel
         if lon_pixel > self.MAP_W:
-            self.lon_per_pixel = (self.LON_MAX - self.LON_MIN)/self.MAP_W
+            self.lon_per_pixel = (self.LON_MAX - self.LON_MIN) / self.MAP_W
             self.lat_per_pixel = self.lon_per_pixel / lon_lat_pixel_ratio
 
-        center_lon = (self.LON_MAX + self.LON_MIN) / 2
-        center_lat = (self.LAT_MAX + self.LAT_MIN) / 2
-        self.LON_MIN = center_lon - self.lon_per_pixel * self.MAP_W/2
-        self.LON_MAX = center_lon + self.lon_per_pixel * self.MAP_W/2
-        self.LAT_MIN = center_lat - self.lat_per_pixel * self.MAP_H/2
-        self.LAT_MAX = center_lat + self.lat_per_pixel * self.MAP_H/2
+        # 记录场景地理中心（恒定，不随窗口缩放变化）
+        self.geo_center_lon = (self.LON_MAX + self.LON_MIN) / 2
+        self.geo_center_lat = (self.LAT_MAX + self.LAT_MIN) / 2
+
+    def _recalculate_lonlat_boundary(self):
+        """根据屏幕尺寸重新计算对应的经纬度范围（仅重新居中，不改变每像素比例）
+        使用初始化时确定的恒定 lon_per_pixel/lat_per_pixel 与地理中心，
+        将场景地理中心对齐到当前窗口中心，保证窗口缩放时坐标轴（位于地理中心）
+        始终居中、不发生偏移。
+        """
+        self.LON_MIN = self.geo_center_lon - self.lon_per_pixel * self.MAP_W / 2
+        self.LON_MAX = self.geo_center_lon + self.lon_per_pixel * self.MAP_W / 2
+        self.LAT_MIN = self.geo_center_lat - self.lat_per_pixel * self.MAP_H / 2
+        self.LAT_MAX = self.geo_center_lat + self.lat_per_pixel * self.MAP_H / 2
 
     # ========== 缩放控制方法 ==========
     def zoom_in(self):
@@ -437,6 +438,10 @@ class Renderer:
                         # 重新设置窗口模式，应用限制后的尺寸
                         screen = pygame.display.set_mode((self.MAP_W, self.MAP_H), pygame.RESIZABLE)
 
+                    # 重新计算经纬度边界，使地理中心重新对齐到新的窗口中心，
+                    # 避免窗口缩放时坐标轴（位于地理中心）相对屏幕中心发生偏移
+                    self._recalculate_lonlat_boundary()
+
             # 获取最新态势
             entities = self.entities_data.copy()
 
@@ -474,6 +479,10 @@ class Renderer:
             for entity_id, data in entities.items():
                 if not data.get("isVisible", False):
                     continue
+
+                if data.get("health", 0) <= 0:
+                    continue
+
                 pos = data.get('position', {})
                 lon = pos.get('lon', 0)
                 lat = pos.get('lat', 0)
@@ -487,34 +496,32 @@ class Renderer:
                 if x < -50 or x > self.MAP_W + 50 or y < -50 or y > self.MAP_H + 50:
                     continue
 
-                if data.get("health", 0) <= 0:
-                    continue
-
                 color = (255, 120, 50) if data.get('side') == 0 else (50, 220, 255)
                 name = data.get('nameChn', str(data.get('id', '')))
                 match entity_type:
                     case 21000:
-                        # 高性能弹
+                        # 高性能飞行器
                         self.draw_missile_h(screen, (x,y))
                     case 21001:
-                        # 中性能弹
+                        # 低性能飞行器
                         self.draw_missile_m(screen, (x,y))
                     case 21002:
-                        # 低性能弹
+                        # 无人机
                         self.draw_missile_l(screen, (x,y))
                     case 9202:
                         # 卫星
                         self.draw_satellite(screen, (x,y))
                     case 9400:
-                        if name.startswith("拦截阵地"):
-                            self.draw_defensive(screen, (x,y))
-                            pygame.draw.circle(screen, (0, 255, 0), (x,y), 500 * self.zoom, 1) # 拦截范围
-                        elif name.startswith("无人船"):
-                            self.draw_autonomous_ship(screen, (x,y))
-                            pygame.draw.circle(screen, (0, 255, 0), (x,y), 300 * self.zoom, 1) # 拦截范围
-                        else:
-                            # 目标
-                            self.draw_target(screen, (x,y))
+                        # 目标
+                        self.draw_target(screen, (x,y))
+                    case 9500:
+                        # 无人船
+                        self.draw_autonomous_ship(screen, (x, y))
+                        pygame.draw.circle(screen, (0, 255, 0), (x, y), 300 * self.zoom, 1)  # 拦截范围
+                    case 9600:
+                        # 拦截阵地
+                        self.draw_defensive(screen, (x,y))
+                        pygame.draw.circle(screen, (0, 255, 0), (x,y), 500 * self.zoom, 1) # 拦截范围
                     case 24000:
                         # 拦截弹
                         self.draw_intercept(screen, (x,y))
@@ -702,11 +709,6 @@ class Renderer:
                 screen.blit(text_surface, (self.MAP_W - bg_width, self.MAP_H - bg_height + i * line_height))
 
             pygame.display.flip()
-            self._render_count += 1
-            if (self.frame_dir and self._saved_frames < self.frame_limit
-                    and self._render_count % self.frame_every == 0):
-                pygame.image.save(screen, os.path.join(self.frame_dir, f"frame_{self._saved_frames:05d}.png"))
-                self._saved_frames += 1
             clock.tick(self.fps)
 
         pygame.quit()
@@ -796,10 +798,10 @@ class Renderer:
         bg_surface.set_alpha(200)
         bg_surface.fill((0, 0, 0))
 
-        line_height = self.draw_single_legend(bg_surface, self.draw_missile_h, shape_center_x, shape_center_y, "高性能弹", text_left, text_color)
+        line_height = self.draw_single_legend(bg_surface, self.draw_missile_h, shape_center_x, shape_center_y, "高性能飞行器", text_left, text_color)
         shape_center_y += line_height / 2 + line_space
 
-        line_height = self.draw_single_legend(bg_surface, self.draw_missile_m, shape_center_x, shape_center_y, "低性能弹", text_left, text_color)
+        line_height = self.draw_single_legend(bg_surface, self.draw_missile_m, shape_center_x, shape_center_y, "低性能飞行器", text_left, text_color)
         shape_center_y += line_height / 2 + line_space
 
         line_height = self.draw_single_legend(bg_surface, self.draw_missile_l, shape_center_x, shape_center_y, "无人机", text_left, text_color)
