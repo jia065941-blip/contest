@@ -4,6 +4,7 @@ import random
 
 import numpy as np
 
+from envengine.sdk.base_struct.Basic import DetectInfo
 from user_agents.base_agent import BaseAgent, AgentType
 
 ACTION_SET_ACC_Z = 0  # 设置Z轴加速度
@@ -16,7 +17,7 @@ class AttackMissileAgent(BaseAgent):
     """
     动作数组格式: np.array([a, b, c, ...], dtype=np.float64)
 
-    横向加速度指令：
+    横向加速度指令：(加速度值的 1 表示 20G)
     [ACTION_SET_ACC_Z, 实体id, 加速度值, 0]
 
     发射指令：
@@ -45,28 +46,7 @@ class AttackMissileAgent(BaseAgent):
         # 这里可以根据observation做出更智能的决策
         num = random.randint(1, 200)
         actions = []  # 存储多个动作
-        # if num == 88 and self.set_acc_z_z == 0:
-        #     self.set_acc_z_z = 1
-        #     # logging.info(f"[进攻弹智能体] 对应实体{self.entity_id}, 触发设置侧向加速度动作20")
-        #     actions.append([ACTION_SET_ACC_Z, self.entity_id, 20 * 9.8, 0, 0, 0, 0])
-        # if self.set_acc_z_z == 1:
-        #     self.start_time += 50
-        # if self.set_acc_z_z == 1 and self.start_time > 5000:
-        #     self.set_acc_z_z = 2
-        #     # logging.info(f"[进攻弹智能体] 对应实体{self.entity_id}, 触发设置侧向加速度动作为从正到0")
-        #     actions.append([ACTION_SET_ACC_Z, self.entity_id, 0, 0, 0, 0, 0])
-        #
-        # if num == 99 and self.set_acc_z_z == 2:
-        #     self.set_acc_z_z = 3
-        #     # logging.info(f"[进攻弹智能体] 对应实体{self.entity_id}, 触发设置侧向加速度动作-20")
-        #     actions.append([ACTION_SET_ACC_Z, self.entity_id, -20 * 9.8, 0, 0, 0, 0])
-        # if self.set_acc_z_z == 3:
-        #     self.f_start_time += 50
-        #
-        # if self.set_acc_z_z == 3 and self.f_start_time > 5000:
-        #     self.set_acc_z_z = 4
-        #     # logging.info(f"[进攻弹智能体] 对应实体{self.entity_id}, 触发设置侧向加速度动作为从负到0")
-        #     actions.append([ACTION_SET_ACC_Z, self.entity_id, 0, 0, 0, 0, 0])
+
         entity_type = observation["self"]["type"]
         step = observation["step"]
 
@@ -74,7 +54,7 @@ class AttackMissileAgent(BaseAgent):
         self._launch(actions, entity_type, step)
 
         # 横向加速度
-        self._set_acc_z(actions, entity_type, step)
+        self._set_acc_z_avoid(actions, observation)
 
         # 使用卫星
         self._use_satellite(actions, step)
@@ -168,6 +148,35 @@ class AttackMissileAgent(BaseAgent):
         if old_status != self.set_acc_z_z:
             self.acc_start_step = 0
             logging.info(f"[进攻弹智能体] 对应实体{self.entity_id}, 横向加速度状态由{old_status}变为{self.set_acc_z_z}")
+
+    def _set_acc_z_avoid(self, actions, observation: dict):
+        """
+        躲避拦截弹机动
+        :param actions:
+        :param observation:
+        :return:
+        """
+
+        # 当探测到拦截弹时，进行机动规避
+        interceptors = [ target for target in observation["self"]["detectInfo"].values() if target.entity_type==24000]
+
+        if not interceptors:
+            return
+
+        self.acc_start_step += 1
+
+        old_status = self.set_acc_z_z
+        if self.set_acc_z_z == 0:
+            # 发射 100 帧后，施加一个加速度
+            actions.append([ACTION_SET_ACC_Z, self.entity_id, 1, 0])
+            self.set_acc_z_z = 1
+        elif self.set_acc_z_z == 1 and self.acc_start_step >= 10:
+            # 加速一定帧数后，停止加速
+            actions.append([ACTION_SET_ACC_Z, self.entity_id, 0, 0])
+            self.set_acc_z_z = 2
+
+        if old_status != self.set_acc_z_z:
+            self.acc_start_step = 0
 
     def _use_satellite(self, actions, step):
         """
