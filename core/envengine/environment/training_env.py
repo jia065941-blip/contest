@@ -133,8 +133,8 @@ class TrainingEnv:
                     self.engine.simulator_factory.modify_simulator_position(action_item["executor_id"],
                                                                             action_item["lla"])
                     # 更改模型初始速度
-                    speed = self.speed_distributor.get_speed(action_item["lla"]["x"])
-                    self.engine.simulator_factory.modify_simulator_speed(action_item["executor_id"], speed)
+                    # speed = self.speed_distributor.get_speed(action_item["lla"]["x"])
+                    # self.engine.simulator_factory.modify_simulator_speed(action_item["executor_id"], speed)
                     # 渲染
                     if self.render_mode == 'human' and self.renderer:
                         # 获取观测
