@@ -175,7 +175,7 @@ class CompCruiseMissileHSimulator(ISimulator):
     def execute_detection(self):
         """
         执行探测，高性能弹可以探测100KM范围内的无人船和拦截弹
-        如果时卫星探测期间，不再判断距离
+        如果是卫星探测期间，不再判断距离
         :return:
         """
         interceptors: list[ISimulator] = self._simulator_factory.get_simulators_by_type(24000)
@@ -198,13 +198,14 @@ class CompCruiseMissileHSimulator(ISimulator):
 
         if not detected:
             return
-        # print("巡航弹探测到的目标：", detected)
+
         # 组装探测信息
         detect_info: dict[int, DetectInfo] = {
             target.entity_ext.entity.id: DetectInfo(
                 detect_from=self.entity_ext.entity.id,
                 time=int(self.sim_time),
                 entity_id=target.entity_ext.entity.id,
+                entity_type=target.entity_ext.entity.entityType,
                 nameChn=target.entity_ext.entity.nameChn,
                 lla=target.entity_ext.entity.lla,
                 pos_ecf=target.entity_ext.entity.posEcf,

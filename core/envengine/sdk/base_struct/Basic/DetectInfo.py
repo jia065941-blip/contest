@@ -17,6 +17,8 @@ class DetectInfo:
     time: int = 0
     # 实体id
     entity_id: int = 0
+    # 实体类型
+    entity_type: int = -1
     # 实体名称
     nameChn: str = ""
     # 实体位置

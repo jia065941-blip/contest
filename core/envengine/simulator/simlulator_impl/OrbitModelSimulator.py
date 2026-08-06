@@ -127,6 +127,7 @@ class OrbitModelSimulator(ISimulator):
                 detect_from=self.entity_ext.entity.id,
                 time=int(self.sim_time),
                 entity_id=target.entity_ext.entity.id,
+                entity_type=target.entity_ext.entity.entityType,
                 nameChn=target.entity_ext.entity.nameChn,
                 lla=target.entity_ext.entity.lla,
                 pos_ecf=target.entity_ext.entity.posEcf,
