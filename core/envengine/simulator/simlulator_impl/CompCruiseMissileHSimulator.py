@@ -179,7 +179,7 @@ class CompCruiseMissileHSimulator(ISimulator):
         :return:
         """
         interceptors: list[ISimulator] = self._simulator_factory.get_simulators_by_type(24000)
-        ships: list[ISimulator] = self._simulator_factory.get_simulators_by_type(9400)
+        ships: list[ISimulator] = self._simulator_factory.get_simulators_by_type(9500)
 
         detected: list[ISimulator] = []
         for sim in interceptors:
@@ -190,7 +190,6 @@ class CompCruiseMissileHSimulator(ISimulator):
         for sim in ships:
             if (sim.entity_ext.entity.isVisible
                     and sim.entity_ext.entity.survivePoints > 0
-                    and sim.entity_ext.entity.entityType == 9500
                     and self._is_geometrically_visible(sim.entity_ext.entity.posEcf, self.entity_ext.entity.posEcf, 100*1000)):
                 detected.append(sim)
 

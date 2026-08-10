@@ -171,13 +171,12 @@ class CompCruiseMissileLSimulator(ISimulator):
         执行探测，低性能弹可以探测30KM范围内的无人船
         :return:
         """
-        ships: list[ISimulator] = self._simulator_factory.get_simulators_by_type(9400)
+        ships: list[ISimulator] = self._simulator_factory.get_simulators_by_type(9500)
 
         detected: list[ISimulator] = []
         for sim in ships:
             if (sim.entity_ext.entity.isVisible
                     and sim.entity_ext.entity.survivePoints > 0
-                    and sim.entity_ext.entity.entityType == 9500
                     and (self.satellite_use_frames > 0 or self._is_geometrically_visible(sim.entity_ext.entity.posEcf, self.entity_ext.entity.posEcf, 100*1000))):
                 detected.append(sim)
 

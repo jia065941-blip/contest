@@ -505,3 +505,9 @@ class ISimulator(ABC):
             self.handel_detect_info(detect_info)
         else:
             logger.warning(f"未知指令：{command}, 系统将忽略该指令！")
+
+    def __str__(self) -> str:
+        if self.entity_ext and self.entity_ext.entity:
+            return f"name={self.entity_ext.entity.nameChn}, type={self.entity_ext.entity.entityType}"
+        else:
+            return "未正确传入 entity_ext"

@@ -180,13 +180,12 @@ class CompCruiseMissileMSimulator(ISimulator):
         if self.satellite_use_frames <= 0:
             return
 
-        ships: list[ISimulator] = self._simulator_factory.get_simulators_by_type(9400)
+        ships: list[ISimulator] = self._simulator_factory.get_simulators_by_type(9500)
 
         detected: list[ISimulator] = []
         for sim in ships:
             if (sim.entity_ext.entity.isVisible
-                    and sim.entity_ext.entity.survivePoints > 0
-                    and sim.entity_ext.entity.entityType == 9500):
+                    and sim.entity_ext.entity.survivePoints > 0):
                 detected.append(sim)
 
         self.satellite_use_frames -= 1
