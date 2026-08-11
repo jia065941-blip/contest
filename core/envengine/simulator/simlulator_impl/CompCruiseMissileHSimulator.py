@@ -28,8 +28,6 @@ class CompCruiseMissileHSimulator(ISimulator):
 
     Attributes:
         launch (int): 是否发射
-        satellite_use_count : 卫星最大使用次数
-        satellite_use_frames : 卫星可用帧数
     """
 
     def __init__(self, entity_ext: EntityExt,
@@ -42,8 +40,6 @@ class CompCruiseMissileHSimulator(ISimulator):
         self.damage_point = 20
         self.model = Missile()
         self.model.Save(False)
-
-        self.satellite_use_frames = 0
 
         missile_lla = UtilsPy.Vector3D(self.entity_ext.entity.lla.x, self.entity_ext.entity.lla.y,
                                        self.entity_ext.entity.lla.z)

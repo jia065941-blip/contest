@@ -27,6 +27,7 @@ class ISimulator(ABC):
 
     Attributes:
         _entity_ext : 保存实体
+        _satellite_use_frames : 卫星可用帧数
     """
 
     def __init__(self,
@@ -43,7 +44,7 @@ class ISimulator(ABC):
         self._simulator_factory = simulator_factory
         self._send_commands = send_commands
         self._send_events = send_events
-
+        self._satellite_use_frames = 0
 
     @property
     def sim_time(self) -> float:

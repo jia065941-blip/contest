@@ -123,13 +123,13 @@ class SimulatorFactory:
             target_sim = self.get_simulator_by_id(command.executorId)
             if target_sim:
                 if command.commandTypeId == SimmerCommandType.DAMAGE:
-                    command = self.hit_rate_table(command)
+                    command = self.process_hit(command)
                 target_sim.command_received(command)
                 # if command.commandTypeId == SimmerCommandType.DAMAGE:
                 #     print(command)
         self._command_queue.clear()
 
-    def hit_rate_table(self, command):
+    def process_hit(self, command):
         """
         命中率映射表：后序需要提取成配置文件，新增不同entityType模型不同模型
         :return:
@@ -144,6 +144,27 @@ class SimulatorFactory:
         9500 无人船
         9600 拦截阵地
         """
+
+        # 红方毁伤数值表
+        damage_point_table = {
+            21000:{
+                9400:20,
+                9600:20,
+                9500:20
+            },
+            21001:{
+                9400:5,
+                9600:5,
+                9500:5
+            },
+            21002:{
+                9400:0,
+                9600:0,
+                9500:1
+            }
+        }
+
+        # 红方命中率表
         hit_rate_table = {
             # 高性能飞行器
             21000: {
@@ -164,22 +185,25 @@ class SimulatorFactory:
                 9500: 0.8
             }
         }
-        # 基于prev_trigger_id获取名称
+
+        # 伤害来源
         prev_trigger_id = command.prevTriggerId
         prev_simulator = self.get_simulator_by_id(prev_trigger_id)
-
         prev_simulator_type = prev_simulator._entity_ext.entity.entityType
-        # 基于executor_id获取名称
+
+        # 被击中的对象
         executor_id = command.executorId
         executor_simulator = self.get_simulator_by_id(executor_id)
         executor_simulator_type = executor_simulator._entity_ext.entity.entityType
+
         # 获取命中率
         if prev_simulator_type not in hit_rate_table:
             return command
         if executor_simulator_type not in hit_rate_table[prev_simulator_type]:
             return command
         hit_rate = hit_rate_table[prev_simulator_type][executor_simulator_type]
-        damage_point = json.loads(command.commandAttributes)["cmd"]["damagePoint"]
+        # damage_point = json.loads(command.commandAttributes)["cmd"]["damagePoint"]
+        damage_point = damage_point_table[prev_simulator_type][executor_simulator_type]
         command.commandAttributes = json.dumps({"cmd:": {"damagePoint": damage_point * hit_rate}})
         return command
 
