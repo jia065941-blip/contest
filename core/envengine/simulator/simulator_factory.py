@@ -204,7 +204,7 @@ class SimulatorFactory:
         hit_rate = hit_rate_table[prev_simulator_type][executor_simulator_type]
         # damage_point = json.loads(command.commandAttributes)["cmd"]["damagePoint"]
         damage_point = damage_point_table[prev_simulator_type][executor_simulator_type]
-        command.commandAttributes = json.dumps({"cmd:": {"damagePoint": damage_point * hit_rate}})
+        command.commandAttributes = json.dumps({"cmd": {"damagePoint": damage_point * hit_rate}})
         return command
 
     def process_ai_commands(self, ai_commands: list[Command]):
