@@ -202,10 +202,8 @@ class CompCruiseMissileMSimulator(ISimulator):
         super().reset()
         self.model = Missile()
         self.model.Save(False)
-        missile_lla = UtilsPy.Vector3D(self.entity_ext.entity.lla.x, self.entity_ext.entity.lla.y,
-                                       self.entity_ext.entity.lla.z)
+        self.set_lla(self.entity_ext.entity.lla)
 
-        self.model.Init(self.simulator_sim_step / 1000, missile_lla, 20)
         self.ret = -1
         self.launch = 0
 
