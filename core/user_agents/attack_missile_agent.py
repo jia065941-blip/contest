@@ -82,10 +82,10 @@ class AttackMissileAgent(BaseAgent):
                     actions.append([ACTION_LAUNCH, self.entity_id, target["position"]["lon"], target["position"]["lat"]])
                     self.launch_step = step
         else:
-                target:dict = self.get_random_target()
-                if target:
-                    actions.append([ACTION_LAUNCH, self.entity_id, target["position"]["lon"], target["position"]["lat"]])
-                    self.launch_step = step
+            target:dict = self.get_random_target()
+            if target:
+                actions.append([ACTION_LAUNCH, self.entity_id, target["position"]["lon"], target["position"]["lat"]])
+                self.launch_step = step
 
     def get_random_target(self)->dict:
         targets = []
