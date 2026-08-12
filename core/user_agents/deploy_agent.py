@@ -40,15 +40,13 @@ class DeployAgent(BaseAgent):
         for i in range(min(batch_size, len(keys) - self.index)):
             entity_id = keys[self.index + i]
 
-            lon = lat = 0
-
             entity_type = observation[entity_id]["type"]
             if (entity_type == 21000 or entity_type == 21001) and len(self.deploy_coordinatesHM) > 0:
                 lon, lat = self.random_point_in_rect(self.deploy_coordinatesHM)
             else:
                 lon, lat = self.random_point_in_rect(self.deploy_coordinates)
 
-            if entity_type == 21001:
+            if entity_type == 21002:
                 actions.append([
                     ACTION_DEPLOY,
                     entity_id,
