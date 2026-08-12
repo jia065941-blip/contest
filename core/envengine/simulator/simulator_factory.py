@@ -1,6 +1,7 @@
 # -*-coding:utf-8 -*-
 import json
 import logging
+import math
 from typing import Optional
 
 from envengine.sdk.base_struct.Message import Command
@@ -19,10 +20,7 @@ class SimulatorFactory:
     负责创建、管理和查询仿真器实例
 
     Attributes:
-        RED_SAT_MAX_USE_COUNT : 卫星最大使用次数
     """
-
-    RED_SAT_MAX_USE_COUNT = 0
 
     def __init__(self, profile: Profile):
         self._profile = profile
@@ -37,6 +35,14 @@ class SimulatorFactory:
 
         # 当前仿真轮次
         self.current_round = 0
+
+        # 目标命中关系，记录击中每个目标的飞行器信息
+        self.target_hit_relation:dict[int, list] = {}
+
+    @property
+    def profile(self)->Profile:
+        """当前想定"""
+        return self._profile
 
     @property
     def command_queue(self):
@@ -124,6 +130,16 @@ class SimulatorFactory:
             if target_sim:
                 if command.commandTypeId == SimmerCommandType.DAMAGE:
                     command = self.process_hit(command)
+
+                    prev_trigger = self.get_simulator_by_id(command.prevTriggerId)
+                    if prev_trigger:
+                        self.target_hit_relation.setdefault(command.executorId,[]).append({
+                            "id":prev_trigger.entity_ext.entity.id,
+                            "entity_type":prev_trigger.entity_ext.entity.entityType,
+                            "sim_time":prev_trigger.sim_time,
+                            "velEcf":prev_trigger.entity_ext.entity.velEcf,
+                            "posEcf":prev_trigger.entity_ext.entity.posEcf,
+                        })
                 target_sim.command_received(command)
                 # if command.commandTypeId == SimmerCommandType.DAMAGE:
                 #     print(command)
@@ -202,10 +218,145 @@ class SimulatorFactory:
         if executor_simulator_type not in hit_rate_table[prev_simulator_type]:
             return command
         hit_rate = hit_rate_table[prev_simulator_type][executor_simulator_type]
+        hit_rate = self.recalculate_rate(prev_simulator, executor_simulator, hit_rate)
         # damage_point = json.loads(command.commandAttributes)["cmd"]["damagePoint"]
         damage_point = damage_point_table[prev_simulator_type][executor_simulator_type]
         command.commandAttributes = json.dumps({"cmd": {"damagePoint": damage_point * hit_rate}})
         return command
+
+    def recalculate_rate(self, prev_simulator: ISimulator | None, executor_simulator: ISimulator | None, hit_rate:float):
+        """
+        命中率调整
+        :param prev_simulator:      进攻方
+        :param executor_simulator:  被集中目标
+        :param hit_rate:            原始命中率
+        :return:
+        """
+
+        if not executor_simulator or not prev_simulator:
+            return hit_rate
+
+        # 使用卫星期间，高性能飞行器对目标和阵地的命中率提升至 100%
+        if (prev_simulator.entity_ext.entity.entityType == 21000
+                and executor_simulator.entity_ext.entity.entityType in [9400, 9600]
+                and prev_simulator.is_using_satellite()):
+            return 1
+
+        # 命中率提升条件
+        hit_rate = self.hit_increase(prev_simulator, executor_simulator, hit_rate)
+        hit_rate = self.hit_decrease(prev_simulator, executor_simulator, hit_rate)
+
+        return hit_rate
+
+    def hit_increase(self, prev_simulator: ISimulator, executor_simulator: ISimulator, hit_rate:float)->float:
+        """
+        命中率提升
+
+        当任意两枚高/低性能飞行器在一定时间内命中同一目标，且入射夹角大于30°时，
+        命中率最大提升20%，按照时间间隔线性递减，时间间隔0为20%
+
+        :param prev_simulator: 进攻方
+        :param executor_simulator: 被击中目标
+        :param hit_rate: 原始命中率
+        :return: 新的命中率
+        """
+
+        if hit_rate == 0:
+            return hit_rate
+
+        if prev_simulator.entity_ext.entity.entityType not in [21000, 21001]:
+            return hit_rate
+
+        if executor_simulator.entity_ext.entity.entityType != 9400:
+            return hit_rate
+
+        if executor_simulator.entity_ext.entity.id not in self.target_hit_relation:
+            return hit_rate
+
+        # 时间间隔
+        time_interval = self.profile.imagineProfile.missileRateIncreaseTimeIntervalMinutes *60*1000
+        min_angle = self.profile.imagineProfile.missileRateIncreaseMinAngle # 最小入射夹角（度）
+        max_increase = self.profile.imagineProfile.missileRateIncreaseMaxValue # 最大提升比例
+
+        last_hit_time = 0
+        for item in self.target_hit_relation[executor_simulator.entity_ext.entity.id]:
+            if (item["entity_type"] in [21000, 21001] and
+                    prev_simulator.sim_time - item["sim_time"] <= time_interval and
+                    self.get_vector_angle(prev_simulator.entity_ext.entity.velEcf, item["velEcf"]) > min_angle):
+                # 满足提升条件，记录时间间隔最小的一次命中
+                last_hit_time = max(last_hit_time, item["sim_time"])
+
+        if last_hit_time == 0:
+            return hit_rate
+
+        # 计算命中率提升比例
+        increase_rate = max_increase * (1-(prev_simulator.sim_time - last_hit_time) / time_interval)
+        return hit_rate * (1+increase_rate)
+
+    def hit_decrease(self, prev_simulator: ISimulator, executor_simulator: ISimulator, hit_rate:float)->float:
+        """
+        命中率降低
+
+        当任意两枚高/低性能飞行器在一定时间内命中同一目标，且入射夹角小于10°时，
+        命中率最大降低40%，按照时间间隔线性递增，时间间隔0为40%
+
+        :param prev_simulator: 进攻方
+        :param executor_simulator: 被击中目标
+        :param hit_rate: 原始命中率
+        :return: 新的命中率
+        """
+
+        if hit_rate == 0:
+            return hit_rate
+
+        if prev_simulator.entity_ext.entity.entityType not in [21000, 21001]:
+            return hit_rate
+
+        if executor_simulator.entity_ext.entity.entityType != 9400:
+            return hit_rate
+
+        if executor_simulator.entity_ext.entity.id not in self.target_hit_relation:
+            return hit_rate
+
+        # 时间间隔
+        time_interval = self.profile.imagineProfile.missileRateDecreaseTimeIntervalMinutes *60*1000
+        max_angle = self.profile.imagineProfile.missileRateDecreaseMaxAngle # 最大入射夹角（度）
+        max_decrease = self.profile.imagineProfile.missileRateDecreaseMaxValue
+
+        last_hit_time = 0
+        for item in self.target_hit_relation[executor_simulator.entity_ext.entity.id]:
+            if (item["entity_type"] in [21000, 21001] and
+                    prev_simulator.sim_time - item["sim_time"] <= time_interval and
+                    self.get_vector_angle(prev_simulator.entity_ext.entity.velEcf, executor_simulator.entity_ext.entity.velEcf) < max_angle):
+                # 满足条件，记录时间间隔最小的一次命中
+                last_hit_time = max(last_hit_time, item["sim_time"])
+
+        if last_hit_time == 0:
+            return hit_rate
+
+        # 计算命中率提升比例
+        decrease_rate = max_decrease * (1-(prev_simulator.sim_time - last_hit_time) / time_interval)
+        return hit_rate * (1-decrease_rate)
+
+    @staticmethod
+    def get_vector_angle(vector1: Vector3d, vector2: Vector3d) -> float:
+        """
+        计算两个向量的夹角
+        :param vector1: 向量1
+        :param vector2: 向量2
+        :return: 夹角（度）
+        """
+        # 点积
+        dot = vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z
+        # 模长
+        norm1 = math.sqrt(vector1.x ** 2 + vector1.y ** 2 + vector1.z ** 2)
+        norm2 = math.sqrt(vector2.x ** 2 + vector2.y ** 2 + vector2.z ** 2)
+        # 零向量时夹角视为 0 度
+        if norm1 == 0 or norm2 == 0:
+            return 0.0
+        # 余弦值（截断到 [-1, 1] 防止浮点误差）
+        cos_theta = max(-1.0, min(1.0, dot / (norm1 * norm2)))
+        return math.degrees(math.acos(cos_theta))
 
     def process_ai_commands(self, ai_commands: list[Command]):
         """
@@ -279,7 +430,7 @@ class SimulatorFactory:
             simulator.reset()
         self._command_queue.clear()
         self.current_round += 1
-        SimulatorFactory.RED_SAT_MAX_USE_COUNT = 100
+        self.target_hit_relation.clear()
         logging.info("[仿真器工厂] 所有仿真器已重置")
 
     def remove_simulator(self, id: int) -> bool:

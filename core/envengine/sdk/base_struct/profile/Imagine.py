@@ -33,3 +33,23 @@ class Imagine(object):
 
     # 地图区域
     mapArea: MapArea = field(default=None)
+
+    # 卫星最大使用次数
+    satelliteMaxUseCount:int = 100
+
+    # 卫星使用时间（分钟）
+    satelliteUseMinutes:float = 3
+
+    # 导弹命中率提升条件的判断时间间隔（分钟）
+    missileRateIncreaseTimeIntervalMinutes:float = 2.0
+    # 导弹命中率提升条件的最小角度
+    missileRateIncreaseMinAngle:float = 30.0
+    # 导弹命中率提升最大值
+    missileRateIncreaseMaxValue:float = 0.2
+
+    # 导弹命中率降低条件的判断时间间隔（分钟）
+    missileRateDecreaseTimeIntervalMinutes:float= 2.0
+    # 导弹命中率降低判断条件的最大角度
+    missileRateDecreaseMaxAngle:float= 10.0
+    # 导弹命中率降低最大值
+    missileRateDecreaseMaxValue:float= 0.4

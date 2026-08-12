@@ -10574,6 +10574,17 @@
         "simStep": 1000,
         "simTime": 1783391450000,
         "taskList": [],
-        "simEndLogicTime": 50000000
+        "simEndLogicTime": 50000000,
+
+        "satelliteMaxUseCount":100,
+        "satelliteUseMinutes": 3,
+
+        "missileRateIncreaseTimeIntervalMinutes": 2.0,
+        "missileRateIncreaseMinAngle": 30,
+        "missileRateIncreaseMaxValue": 0.2,
+
+        "missileRateDecreaseTimeIntervalMinutes": 4.0,
+        "missileRateDecreaseMaxAngle": 10,
+        "missileRateDecreaseMaxValue": 0.4
     }
 }

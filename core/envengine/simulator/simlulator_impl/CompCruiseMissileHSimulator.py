@@ -181,15 +181,13 @@ class CompCruiseMissileHSimulator(ISimulator):
         for sim in interceptors:
             if (sim.entity_ext.entity.isVisible
                     and sim.entity_ext.entity.survivePoints > 0
-                    and (self.satellite_use_frames > 0 or self._is_geometrically_visible(sim.entity_ext.entity.posEcf, self.entity_ext.entity.posEcf, 100*1000))):
+                    and (self.is_using_satellite() or self._is_geometrically_visible(sim.entity_ext.entity.posEcf, self.entity_ext.entity.posEcf, 100 * 1000))):
                 detected.append(sim)
         for sim in ships:
             if (sim.entity_ext.entity.isVisible
                     and sim.entity_ext.entity.survivePoints > 0
                     and self._is_geometrically_visible(sim.entity_ext.entity.posEcf, self.entity_ext.entity.posEcf, 100*1000)):
                 detected.append(sim)
-
-        self.satellite_use_frames-=1
 
         if not detected:
             return
@@ -220,7 +218,6 @@ class CompCruiseMissileHSimulator(ISimulator):
         self.model.Init(self.simulator_sim_step / 1000, missile_lla, 20)
         self.ret = -1
         self.launch = 0
-        self.satellite_use_frames = 0
 
     def command_received(self, command: Command) -> None:
         """
@@ -253,13 +250,5 @@ class CompCruiseMissileHSimulator(ISimulator):
             ))
             self.model.SetTargetEcf(Vector3D(pos.x(), pos.y(), pos.z()),
                                     Vector3D(self.entity_ext.entity.velEcf.x, self.entity_ext.entity.velEcf.y, self.entity_ext.entity.velEcf.z))
-        elif command.commandTypeId == SimmerCommandType.EXECUTE_SATELLITE_DETECTION:
-            if SimulatorFactory.RED_SAT_MAX_USE_COUNT <= 0:
-                print(f"entity_id:{self.entity_ext.entity.id}, name:{self.entity_ext.entity.nameChn} 使用卫星次数已经超出最大使用次数")
-                return
-
-            logger.info(f"entity_id:{self.entity_ext.entity.id}, name:{self.entity_ext.entity.nameChn} 使用卫星")
-            SimulatorFactory.RED_SAT_MAX_USE_COUNT -= 1
-            self.satellite_use_frames = 10
         else:
             super().command_received(command)

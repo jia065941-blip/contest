@@ -54,10 +54,11 @@ class AttackMissileAgent(BaseAgent):
         self._launch(actions, entity_type, step)
 
         # 横向加速度
+        # self._set_acc_z(actions, entity_type, step)
         self._set_acc_z_avoid(actions, observation)
 
         # 使用卫星
-        self._use_satellite(actions, step)
+        # self._use_satellite(actions, step)
 
         return np.array(actions, dtype=np.float64)
 
@@ -178,6 +179,11 @@ class AttackMissileAgent(BaseAgent):
         if old_status != self.set_acc_z_z:
             self.acc_start_step = 0
 
+        if self.sat_used:
+            return
+        actions.append([ACTION_USE_SAT, self.entity_id, 0, 0])
+        self.sat_used = True
+
     def _use_satellite(self, actions, step):
         """
         使用卫星
@@ -194,3 +200,4 @@ class AttackMissileAgent(BaseAgent):
         super().reset()
         self.set_acc_z_z = 0
         self.launch_step = -1
+        self.sat_used = False

@@ -137,6 +137,54 @@
       },
       {
         "entity": {
+          "id": 20,
+          "parentId": -1,
+          "childrenId": [],
+          "entityType": 21000,
+          "typeId": 21000001,
+          "sideId": 0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "step": 1000,
+          "survivePoints": 1,
+          "maxSurvivePoints": 0.0,
+          "healthState": true,
+          "powerState": true,
+          "lla": {
+            "x": -2.5,
+            "y": 0.2,
+            "z": 0
+          },
+          "posEcf": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "velNue": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "velEcf": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "att": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "isVisible": true,
+          "nameChn": "红方_高性能飞行器_21000001_0020",
+          "nameEn": "高性能Cruise_002",
+          "detectInfo": {},
+          "commRangeInfo": []
+        },
+        "external": ""
+      },
+      {
+        "entity": {
           "id": 3,
           "parentId": -1,
           "childrenId": [],
@@ -479,7 +527,7 @@
       "latMax": 2.0
     },
     "satelliteMaxUseCount":100,
-    "satelliteUseMinutes": 3,
+    "satelliteUseMinutes": 1.1,
 
     "missileRateIncreaseTimeIntervalMinutes": 2.0,
     "missileRateIncreaseMinAngle": 30,

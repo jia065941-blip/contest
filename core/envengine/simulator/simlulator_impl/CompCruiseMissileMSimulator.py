@@ -28,8 +28,6 @@ class CompCruiseMissileMSimulator(ISimulator):
 
     Attributes:
         launch (int): 是否发射
-        satellite_use_count : 卫星最大使用次数
-        satellite_use_frames : 卫星可用帧数
     """
 
     def __init__(self, entity_ext: EntityExt,
@@ -42,8 +40,6 @@ class CompCruiseMissileMSimulator(ISimulator):
         self.damage_point = 5
         self.model = Missile()
         self.model.Save(False)
-
-        self.satellite_use_frames = 0
 
         missile_lla = UtilsPy.Vector3D(self.entity_ext.entity.lla.x, self.entity_ext.entity.lla.y,
                                        self.entity_ext.entity.lla.z)
@@ -177,7 +173,7 @@ class CompCruiseMissileMSimulator(ISimulator):
         :return:
         """
 
-        if self.satellite_use_frames <= 0:
+        if not self.is_using_satellite():
             return
 
         ships: list[ISimulator] = self._simulator_factory.get_simulators_by_type(9500)
@@ -187,8 +183,6 @@ class CompCruiseMissileMSimulator(ISimulator):
             if (sim.entity_ext.entity.isVisible
                     and sim.entity_ext.entity.survivePoints > 0):
                 detected.append(sim)
-
-        self.satellite_use_frames -= 1
 
         if not detected:
             return
@@ -248,13 +242,5 @@ class CompCruiseMissileMSimulator(ISimulator):
             ))
             self.model.SetTargetEcf(Vector3D(pos.x(), pos.y(), pos.z()),
                                     Vector3D(self.entity_ext.entity.velEcf.x, self.entity_ext.entity.velEcf.y, self.entity_ext.entity.velEcf.z))
-        elif command.commandTypeId == SimmerCommandType.EXECUTE_SATELLITE_DETECTION:
-            if SimulatorFactory.RED_SAT_MAX_USE_COUNT <= 0:
-                print(f"entity_id:{self.entity_ext.entity.id}, name:{self.entity_ext.entity.nameChn} 使用卫星次数已经超出最大使用次数")
-                return
-
-            logger.info(f"entity_id:{self.entity_ext.entity.id}, name:{self.entity_ext.entity.nameChn} 使用卫星")
-            SimulatorFactory.RED_SAT_MAX_USE_COUNT -= 1
-            self.satellite_use_frames = 10
         else:
             super().command_received(command)
