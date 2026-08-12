@@ -123,7 +123,7 @@ class CompCruiseMissileMSimulator(ISimulator):
         missile_lla = UtilsPy.Vector3D(self.entity_ext.entity.lla.x, self.entity_ext.entity.lla.y,
                                        self.entity_ext.entity.lla.z)
 
-        self.model.Init(self.simulator_sim_step / 1000, missile_lla, 20)
+        self.model.Init(self.simulator_sim_step / 1000, missile_lla, 10)
 
     def set_speed(self, speed: float) -> None:
         """
