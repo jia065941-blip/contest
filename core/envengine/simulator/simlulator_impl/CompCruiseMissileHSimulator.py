@@ -58,7 +58,7 @@ class CompCruiseMissileHSimulator(ISimulator):
         仿真器内部步长（毫秒）
         :return: 内部步长（毫秒）
         """
-        return 10
+        return 50
 
     def update(self) -> None:
         """
