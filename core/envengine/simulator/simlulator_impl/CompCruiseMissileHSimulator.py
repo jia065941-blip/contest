@@ -14,8 +14,6 @@ from envengine.sdk.Util import UtilsPy
 from envengine.sdk.Util import State_py
 from envengine.simulator.decorator import Simulator, timer_decorator
 from envengine.simulator.interfaces import ISimulator
-# from envengine.simulator.models.CompCruiseMissileModel.CompCruiseMissilePy import Missile
-# from envengine.simulator.models.CompCruiseMissileModel.CompCruiseMissileHPy import Missile
 from envengine.simulator.models.HXDMissileModel import BatchMissile
 from envengine.simulator.simulator_factory import SimulatorFactory
 
@@ -58,7 +56,7 @@ class CompCruiseMissileHSimulator(ISimulator):
         仿真器内部步长（毫秒）
         :return: 内部步长（毫秒）
         """
-        return 50
+        return 10
 
     def update(self) -> None:
         """

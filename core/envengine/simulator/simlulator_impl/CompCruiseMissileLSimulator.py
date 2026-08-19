@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 @Simulator.register("CruiseMissileLS")
 class CompCruiseMissileLSimulator(ISimulator):
     """
-    巡航弹
+    无人机
     """
 
     def __init__(self, entity_ext: EntityExt,
