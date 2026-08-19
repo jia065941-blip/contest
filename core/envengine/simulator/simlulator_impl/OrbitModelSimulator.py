@@ -28,9 +28,6 @@ class OrbitModelSimulator(ISimulator):
                  simulator_factory: SimulatorFactory = None):
         super().__init__(entity_ext, send_commands, send_events, simulator_factory)
 
-        # self.model = JTC_OrbitModel("1 68310U 26057S   26147.90258910  .00262022  00000-0  17035-2 0  9994",
-        #                             "2 68310  97.2843 274.2645 0001211  70.9562 289.1834 15.75199990")
-
     @property
     def simulator_sim_step(self) -> float:
         """
@@ -139,5 +136,8 @@ class OrbitModelSimulator(ISimulator):
     def reset(self) -> None:
         """重置到初始状态"""
         super().reset()
+
+    def init_model(self) -> None:
         # self.model = JTC_OrbitModel("1 68310U 26057S   26147.90258910  .00262022  00000-0  17035-2 0  9994",
         #                             "2 68310  97.2843 274.2645 0001211  70.9562 289.1834 15.75199990")
+        pass

@@ -59,3 +59,6 @@ class InterceptFieldSimulator(ISimulator):
         """重置到初始状态"""
         super().reset()
         self.pos_flag = -1
+
+    def init_model(self) -> None:
+        pass

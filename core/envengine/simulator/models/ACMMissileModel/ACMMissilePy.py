@@ -265,6 +265,9 @@ class BatchMissile(object):
     def Update(self, time):
         return _ACMMissilePy.BatchMissile_Update(self, time)
 
+    def Clear(self):
+        return _ACMMissilePy.BatchMissile_Clear(self)
+
     def getState(self, id):
         return _ACMMissilePy.BatchMissile_getState(self, id)
 

@@ -35,18 +35,6 @@ class CompCruiseMissileLSimulator(ISimulator):
         self.launch = 0
         self.damage_point = 1
 
-        self._init_model()
-
-    def _init_model(self):
-        self.model = BatchMissile.getInstance()
-
-        # 高低性能弹使用同一个模型，因此同时计算count
-        if self._simulator_factory:
-            count = self._simulator_factory.get_profile_entity_count_by_type(21002)
-            self.model.SetMissileCount(count)
-
-        self.set_lla(self.entity_ext.entity.lla)
-
     @property
     def simulator_sim_step(self) -> float:
         """
@@ -205,10 +193,20 @@ class CompCruiseMissileLSimulator(ISimulator):
         """重置到初始状态"""
         super().reset()
 
-        self._init_model()
+        BatchMissile.getInstance().Clear()
 
         self.ret = -1
         self.launch = 0
+
+    def init_model(self):
+        self.model = BatchMissile.getInstance()
+
+        # 高低性能弹使用同一个模型，因此同时计算count
+        if self._simulator_factory:
+            count = self._simulator_factory.get_profile_entity_count_by_type(21002)
+            self.model.SetMissileCount(count)
+
+        self.set_lla(self.entity_ext.entity.lla)
 
     def command_received(self, command: Command) -> None:
         """

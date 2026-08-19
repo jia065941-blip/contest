@@ -112,3 +112,6 @@ class RadarModelSimulator(ISimulator):
             posEcf.y(),
             posEcf.z()
         )
+
+    def init_model(self) -> None:
+        pass

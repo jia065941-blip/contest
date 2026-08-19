@@ -430,8 +430,14 @@ class SimulatorFactory:
 
     def reset_all(self):
         """重置所有仿真器"""
+
+        # 必须先重置所有仿真器，再统一进行初始化
         for simulator in self._simulators.values():
             simulator.reset()
+
+        for simulator in self._simulators.values():
+            simulator.init_model()
+
         self._command_queue.clear()
         self.current_round += 1
         self.target_hit_relation.clear()

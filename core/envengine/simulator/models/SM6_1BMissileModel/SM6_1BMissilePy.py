@@ -265,6 +265,9 @@ class BatchMissile(object):
     def Update(self, time):
         return _SM6_1BMissilePy.BatchMissile_Update(self, time)
 
+    def Clear(self):
+        return _SM6_1BMissilePy.BatchMissile_Clear(self)
+
     def getState(self, id):
         return _SM6_1BMissilePy.BatchMissile_getState(self, id)
 

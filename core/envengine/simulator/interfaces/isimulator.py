@@ -53,6 +53,7 @@ class ISimulator(ABC):
         self._send_commands = send_commands
         self._send_events = send_events
         self._satellite_use_end_time = 0
+        self.model = None
 
         if self._simulator_factory and self._simulator_factory.profile and self._simulator_factory.profile.imagineProfile:
             self.RED_SAT_MAX_USE_COUNT = max(0, self._simulator_factory.profile.imagineProfile.satelliteMaxUseCount)
@@ -110,6 +111,14 @@ class ISimulator(ABC):
         self._delivered_to = set()  # 已将探测信息送达的飞行器ID
         self._satellite_use_end_time = 0
         self.RED_SAT_USE_COUNT = 0
+
+    @abstractmethod
+    def init_model(self) -> None:
+        """
+        初始化模型
+        :return:
+        """
+        pass
 
     def _damage(self, damage_point: float, source: EntityInfo) -> None:
         """

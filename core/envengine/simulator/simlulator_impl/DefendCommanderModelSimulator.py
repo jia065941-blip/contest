@@ -160,6 +160,9 @@ class DefendCommanderModelSimulator(ISimulator):
         super().reset()
         self.launched_list = {}
 
+    def init_model(self):
+        pass
+
     def command_received(self, command: Command) -> None:
         """
         自定义指令接收

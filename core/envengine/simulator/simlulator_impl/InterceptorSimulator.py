@@ -31,22 +31,6 @@ class InterceptorSimulator(ISimulator):
         self.damage_point = 5000
         self.target_id = None
 
-        self._init_model()
-
-    def _init_model(self):
-        self.model = BatchMissile.getInstance()
-
-        # 高低性能弹使用同一个模型，因此同时计算count
-        if self._simulator_factory:
-            count = self._simulator_factory.get_profile_entity_count_by_type(24000)
-            self.model.SetMissileCount(count)
-
-        missile_lla = UtilsPy.Vector3D(self.entity_ext.entity.lla.x, self.entity_ext.entity.lla.y,
-                                       self.entity_ext.entity.lla.z)
-
-        self.model.Init(self.entity_ext.entity.id, self.simulator_sim_step / 1000, 20, missile_lla)
-        self.model.Save(self.entity_ext.entity.id, True)
-
     @property
     def simulator_sim_step(self) -> float:
         """
@@ -179,10 +163,26 @@ class InterceptorSimulator(ISimulator):
     def reset(self) -> None:
         """重置到初始状态"""
         super().reset()
+
+        BatchMissile.getInstance().Clear()
+
         self.ret = -1
         self.launched = -1
         self.target_id = None
-        self._init_model()
+
+    def init_model(self):
+        self.model = BatchMissile.getInstance()
+
+        # 高低性能弹使用同一个模型，因此同时计算count
+        if self._simulator_factory:
+            count = self._simulator_factory.get_profile_entity_count_by_type(24000)
+            self.model.SetMissileCount(count)
+
+        missile_lla = UtilsPy.Vector3D(self.entity_ext.entity.lla.x, self.entity_ext.entity.lla.y,
+                                       self.entity_ext.entity.lla.z)
+
+        self.model.Init(self.entity_ext.entity.id, self.simulator_sim_step / 1000, 20, missile_lla)
+        self.model.Save(self.entity_ext.entity.id, True)
 
     def command_received(self, command: Command) -> None:
         """
