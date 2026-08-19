@@ -16,7 +16,7 @@ from envengine.simulator.decorator import Simulator, timer_decorator
 from envengine.simulator.interfaces import ISimulator
 # from envengine.simulator.models.CompCruiseMissileModel.CompCruiseMissilePy import Missile
 # from envengine.simulator.models.CompCruiseMissileModel.CompCruiseMissileHPy import Missile
-from envengine.simulator.models.HXDMissileModel.HXDMissilePy import BatchMissile
+from envengine.simulator.models.HXDMissileModel import BatchMissile
 from envengine.simulator.simulator_factory import SimulatorFactory
 
 logger = logging.getLogger(__name__)
