@@ -73,6 +73,7 @@ class CompCruiseMissileHSimulator(ISimulator):
             self.model.Update(self.sim_time)
             self.ret = self.model.getRet(self.entity_ext.entity.id)
             state: State_py = self.model.getState(self.entity_ext.entity.id)
+
             pos = state.posEcf()
             vel = state.velEcf()
             lla = UtilsPy.CoordinateHelper.ecefToLla_py(pos)
