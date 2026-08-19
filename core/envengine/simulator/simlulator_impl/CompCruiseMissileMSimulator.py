@@ -244,7 +244,6 @@ class CompCruiseMissileMSimulator(ISimulator):
                 command.commandAttributes["target"]["y"],
                 command.commandAttributes["target"]["z"]
             ))
-            self.model.SetTargetEcf(self.entity_ext.entity.id, Vector3D(pos.x(), pos.y(), pos.z()),
-                                    Vector3D(self.entity_ext.entity.velEcf.x, self.entity_ext.entity.velEcf.y, self.entity_ext.entity.velEcf.z))
+            self.model.SetTargetEcf(self.entity_ext.entity.id, Vector3D(pos.x(), pos.y(), pos.z()), Vector3D(0, 0, 0))
         else:
             super().command_received(command)
