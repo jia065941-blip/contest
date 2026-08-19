@@ -424,6 +424,10 @@ class SimulatorFactory:
         """获取仿真器总数"""
         return len(self._simulators)
 
+    def get_profile_entity_count_by_type(self, entity_type: int):
+        """获取想定中的某种类型实体个数"""
+        return sum(1 for e in self.profile.imagineProfile.entityList if e.entity.entityType == entity_type)
+
     def reset_all(self):
         """重置所有仿真器"""
         for simulator in self._simulators.values():

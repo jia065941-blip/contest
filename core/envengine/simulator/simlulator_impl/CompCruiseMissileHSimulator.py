@@ -47,10 +47,8 @@ class CompCruiseMissileHSimulator(ISimulator):
 
         # 高低性能弹使用同一个模型，因此同时计算count
         if self._simulator_factory:
-            count = len(self._simulator_factory.get_simulators_by_type(21000)) + len(self._simulator_factory.get_simulators_by_type(21001))
+            count = self._simulator_factory.get_profile_entity_count_by_type(21000) + self._simulator_factory.get_profile_entity_count_by_type(21001)
             self.model.SetMissileCount(count)
-
-        self.model.Save(self.entity_ext.entity.id, True)
 
         self.set_lla(self.entity_ext.entity.lla)
 
@@ -74,7 +72,7 @@ class CompCruiseMissileHSimulator(ISimulator):
             # 更新探测信息
             self.execute_detection()
 
-            self.model.update(self.sim_time)
+            self.model.Update(self.sim_time)
             self.ret = self.model.getRet(self.entity_ext.entity.id)
             state: State_py = self.model.getState(self.entity_ext.entity.id)
             pos = state.posEcf()
@@ -139,6 +137,8 @@ class CompCruiseMissileHSimulator(ISimulator):
                                        self.entity_ext.entity.lla.z)
 
         self.model.Init(self.entity_ext.entity.id, self.simulator_sim_step / 1000, 20, missile_lla)
+        self.model.SetDesiredHeight(self.entity_ext.entity.id, 30000)
+        self.model.Save(self.entity_ext.entity.id, True)
 
     def set_speed(self, speed: float) -> None:
         """
