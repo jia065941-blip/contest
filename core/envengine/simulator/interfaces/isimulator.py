@@ -110,7 +110,6 @@ class ISimulator(ABC):
         self._delivered_to = set()  # 已将探测信息送达的飞行器ID
         self._satellite_use_end_time = 0
         self.RED_SAT_USE_COUNT = 0
-        # logger.info(f"[仿真器接口] 仿真器{self._entity_ext.entity.nameChn}已重置, 初始数据为{self._entity_ext}")
 
     def _damage(self, damage_point: float, source: EntityInfo) -> None:
         """

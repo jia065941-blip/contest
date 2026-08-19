@@ -167,13 +167,11 @@ def main():
     deploy_agent = DeployAgent(-1, -1,{}, profile.imagineProfile.redArea.coordinates, profile.imagineProfile.redArea.coordinatesHM)
     training_env.agent_manager.register_agent(deploy_agent)
 
-    # 重置环境
-    observation = training_env.reset()
     logging.info("[测试] 运行环境初始化完成")
-    # logging.info(f"[测试] 初始观测: {observation}")
 
     for i in range(args.total_rounds):
         logging.info(f"[测试] 运行第 {i + 1} 轮")
+        training_env.reset()
         # 红方模型部署
         training_env.red_model_deploy()
         # time.sleep(1000)
@@ -193,7 +191,6 @@ def main():
         logging.info(f"[测试] 第 {i + 1} 轮结束，本轮仿真总用时: {end_time - start_time:.6f} 秒")
         # 写剩余缓冲区数据
         write_immediately()
-        training_env.reset()
 
     training_env.close()
     # 关闭写入器
