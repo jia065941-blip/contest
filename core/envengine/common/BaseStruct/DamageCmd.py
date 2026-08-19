@@ -12,4 +12,4 @@ from dataclasses_json import dataclass_json
 @dataclass
 class DamageCmd:
 	# 伤害血量
-	damagePoint: int = 0
+	damagePoint: float = 0
