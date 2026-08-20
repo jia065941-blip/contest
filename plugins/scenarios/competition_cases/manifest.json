@@ -1,18 +1,65 @@
 {
   "suite": "异构九图·统一综合任务·无答案版",
-  "version": "2026-08-01-v11",
+  "version": "2026-08-20-final-v5",
   "mission_model": "comprehensive",
   "mission_model_name": "统一综合任务",
   "principles": [
-    "保留原红方两块部署矩形和5/9/44导弹基数",
-    "九图中的全部蓝方根实体均为计分目标；公开或初始隐藏只影响信息条件，不改变评分公式",
-    "图片和元数据不包含建议轨迹、发射顺序、目标分配、参考得分或标准答案",
-    "雷达为圆形三维距离探测，拦截弹仍由全局指挥池随机分配"
+    "Preserve the nine-map spatial layouts and scenario-policy bindings.",
+    "Use entity type 9500 for scoring ships so low-performance missiles can damage them.",
+    "Use 32/20/1.6 hit points for target/site/ship roots in all nine scenarios.",
+    "Size each red force independently: medium exceeds high by at least 10, and low is approximately twice medium.",
+    "Double the prior scoring-root hit points while leaving command/radar and interceptor hit points unchanged.",
+    "Double the prior 5-percent-enhanced interceptor totals and distribute them as evenly as possible across interceptor carriers."
   ],
   "red_missile_counts": {
-    "high": 5,
-    "medium": 9,
-    "low": 44
+    "varies_by_scenario": true,
+    "by_scenario": {
+      "E01": {
+        "high": 30,
+        "medium": 44,
+        "low": 90
+      },
+      "E02": {
+        "high": 31,
+        "medium": 46,
+        "low": 90
+      },
+      "E03": {
+        "high": 31,
+        "medium": 42,
+        "low": 80
+      },
+      "M01": {
+        "high": 47,
+        "medium": 60,
+        "low": 120
+      },
+      "M02": {
+        "high": 36,
+        "medium": 49,
+        "low": 100
+      },
+      "M03": {
+        "high": 35,
+        "medium": 53,
+        "low": 100
+      },
+      "H01": {
+        "high": 64,
+        "medium": 80,
+        "low": 160
+      },
+      "H02": {
+        "high": 61,
+        "medium": 75,
+        "low": 150
+      },
+      "H03": {
+        "high": 42,
+        "medium": 54,
+        "low": 110
+      }
+    }
   },
   "red_deployment_areas": {
     "type": "Polygon",
@@ -80,7 +127,7 @@
         "双深度覆盖识别",
         "末端扇形分流"
       ],
-      "difficulty_mechanism": "7个计分目标、两部串联雷达和160枚拦截弹；结构是一条明确的水平深度轴。",
+      "difficulty_mechanism": "7个计分目标、两部串联雷达和284枚拦截弹；结构是一条明确的水平深度轴。",
       "objective_ids": [
         51,
         52,
@@ -95,10 +142,10 @@
         "107": 62.4
       },
       "interceptor_counts": {
-        "54": 55,
-        "106": 55,
-        "168": 25,
-        "169": 25
+        "54": 71,
+        "106": 71,
+        "168": 71,
+        "169": 71
       },
       "roots": [
         {
@@ -106,7 +153,7 @@
           "kind": "target",
           "lon": 123.25,
           "lat": 24.75,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -116,7 +163,7 @@
           "kind": "target",
           "lon": 123.6,
           "lat": 23.0,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -126,7 +173,7 @@
           "kind": "target",
           "lon": 123.25,
           "lat": 21.25,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -136,8 +183,8 @@
           "kind": "site",
           "lon": 119.95,
           "lat": 23.0,
-          "hp": 12.0,
-          "interceptors": 55,
+          "hp": 20.0,
+          "interceptors": 71,
           "radar_id": 55,
           "radar_km": 81.6,
           "objective": true,
@@ -148,8 +195,8 @@
           "kind": "site",
           "lon": 121.55,
           "lat": 23.0,
-          "hp": 12.0,
-          "interceptors": 55,
+          "hp": 20.0,
+          "interceptors": 71,
           "radar_id": 107,
           "radar_km": 62.4,
           "objective": true,
@@ -160,8 +207,8 @@
           "kind": "ship",
           "lon": 119.3,
           "lat": 25.35,
-          "hp": 8.0,
-          "interceptors": 25,
+          "hp": 1.6,
+          "interceptors": 71,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -170,15 +217,15 @@
           "kind": "ship",
           "lon": 121.2,
           "lat": 20.55,
-          "hp": 8.0,
-          "interceptors": 25,
+          "hp": 1.6,
+          "interceptors": 71,
           "objective": true,
           "initial_information": "hidden"
         }
       ],
-      "scenario_sha256": "9d8fc86d913d52d88d1082cc7bde95a5dc7aa2324e2021193518db71fdbc4534",
-      "entity_total": 229,
-      "blue_entity_total": 169,
+      "scenario_sha256": "906bf6191ce8daf928d349e5680fbb586aa6f4e9267be482779f9fba1b11e6e8",
+      "entity_total": 459,
+      "blue_entity_total": 293,
       "blue_root_total": 7,
       "root_counts": {
         "ship": 2,
@@ -186,7 +233,7 @@
         "target": 3
       },
       "radar_total": 2,
-      "interceptor_total": 160,
+      "interceptor_total": 284,
       "objective_total": 7,
       "public_objective_ids": [
         51,
@@ -199,7 +246,17 @@
         168,
         169
       ],
-      "max_steps": 1200
+      "max_steps": 1200,
+      "red_missile_counts": {
+        "high": 30,
+        "medium": 44,
+        "low": 90
+      },
+      "blue_hp_by_kind": {
+        "target": 32.0,
+        "site": 20.0,
+        "ship": 1.6
+      }
     },
     {
       "scenario_id": "E02",
@@ -217,7 +274,7 @@
         "前沿—阵地—纵深分层",
         "跨岛资源差异"
       ],
-      "difficulty_mechanism": "两个互不相连的资源岛、8个计分目标和155枚拦截弹；空间上不存在中央连续防线。",
+      "difficulty_mechanism": "两个互不相连的资源岛、8个计分目标和284枚拦截弹；空间上不存在中央连续防线。",
       "objective_ids": [
         51,
         301,
@@ -233,11 +290,11 @@
         "311": 56.4
       },
       "interceptor_counts": {
-        "54": 50,
-        "310": 40,
-        "168": 25,
-        "169": 20,
-        "330": 20
+        "54": 57,
+        "310": 57,
+        "168": 57,
+        "169": 57,
+        "330": 56
       },
       "roots": [
         {
@@ -245,7 +302,7 @@
           "kind": "target",
           "lon": 122.05,
           "lat": 25.15,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -255,7 +312,7 @@
           "kind": "target",
           "lon": 122.05,
           "lat": 20.65,
-          "hp": 8.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -265,7 +322,7 @@
           "kind": "target",
           "lon": 123.15,
           "lat": 24.55,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -275,8 +332,8 @@
           "kind": "site",
           "lon": 120.55,
           "lat": 24.75,
-          "hp": 12.0,
-          "interceptors": 50,
+          "hp": 20.0,
+          "interceptors": 57,
           "radar_id": 55,
           "radar_km": 62.4,
           "objective": true,
@@ -287,8 +344,8 @@
           "kind": "site",
           "lon": 120.55,
           "lat": 20.95,
-          "hp": 6.0,
-          "interceptors": 40,
+          "hp": 20.0,
+          "interceptors": 57,
           "radar_id": 311,
           "radar_km": 56.4,
           "objective": true,
@@ -299,8 +356,8 @@
           "kind": "ship",
           "lon": 123.1,
           "lat": 20.45,
-          "hp": 4.8,
-          "interceptors": 25,
+          "hp": 1.6,
+          "interceptors": 57,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -309,8 +366,8 @@
           "kind": "ship",
           "lon": 119.35,
           "lat": 25.35,
-          "hp": 8.0,
-          "interceptors": 20,
+          "hp": 1.6,
+          "interceptors": 57,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -319,15 +376,15 @@
           "kind": "ship",
           "lon": 119.35,
           "lat": 20.45,
-          "hp": 8.0,
-          "interceptors": 20,
+          "hp": 1.6,
+          "interceptors": 56,
           "objective": true,
           "initial_information": "hidden"
         }
       ],
-      "scenario_sha256": "190a4186bd8c06a6fac21c1c7fe01d5f0f9cca899e1890a56b0e0e4a3d8b517a",
-      "entity_total": 225,
-      "blue_entity_total": 165,
+      "scenario_sha256": "0ed53699b9590c68ae7accea7b520119e821deb006376ebd57467bbfcc7d3ba4",
+      "entity_total": 463,
+      "blue_entity_total": 294,
       "blue_root_total": 8,
       "root_counts": {
         "ship": 3,
@@ -335,7 +392,7 @@
         "target": 3
       },
       "radar_total": 2,
-      "interceptor_total": 155,
+      "interceptor_total": 284,
       "objective_total": 8,
       "public_objective_ids": [
         51,
@@ -349,7 +406,17 @@
         169,
         330
       ],
-      "max_steps": 1500
+      "max_steps": 1500,
+      "red_missile_counts": {
+        "high": 31,
+        "medium": 46,
+        "low": 90
+      },
+      "blue_hp_by_kind": {
+        "target": 32.0,
+        "site": 20.0,
+        "ship": 1.6
+      }
     },
     {
       "scenario_id": "E03",
@@ -367,7 +434,7 @@
         "中央高密度堡垒",
         "东南纵深孤岛"
       ],
-      "difficulty_mechanism": "7个计分目标、两个初始隐藏节点、两部小半径雷达和170枚拦截弹。",
+      "difficulty_mechanism": "7个计分目标、两个初始隐藏节点、两部小半径雷达和252枚拦截弹。",
       "objective_ids": [
         51,
         52,
@@ -382,10 +449,10 @@
         "107": 42.0
       },
       "interceptor_counts": {
-        "54": 55,
-        "106": 45,
-        "168": 35,
-        "169": 35
+        "54": 63,
+        "106": 63,
+        "168": 63,
+        "169": 63
       },
       "roots": [
         {
@@ -393,7 +460,7 @@
           "kind": "target",
           "lon": 121.85,
           "lat": 23.1,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -403,7 +470,7 @@
           "kind": "target",
           "lon": 122.25,
           "lat": 23.7,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -413,7 +480,7 @@
           "kind": "target",
           "lon": 122.25,
           "lat": 22.45,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -423,8 +490,8 @@
           "kind": "site",
           "lon": 120.7,
           "lat": 23.15,
-          "hp": 12.0,
-          "interceptors": 55,
+          "hp": 20.0,
+          "interceptors": 63,
           "radar_id": 55,
           "radar_km": 62.4,
           "objective": true,
@@ -435,8 +502,8 @@
           "kind": "site",
           "lon": 121.15,
           "lat": 23.15,
-          "hp": 12.0,
-          "interceptors": 45,
+          "hp": 20.0,
+          "interceptors": 63,
           "radar_id": 107,
           "radar_km": 42.0,
           "objective": true,
@@ -447,8 +514,8 @@
           "kind": "ship",
           "lon": 123.55,
           "lat": 20.25,
-          "hp": 4.8,
-          "interceptors": 35,
+          "hp": 1.6,
+          "interceptors": 63,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -457,15 +524,15 @@
           "kind": "ship",
           "lon": 119.35,
           "lat": 25.3,
-          "hp": 8.0,
-          "interceptors": 35,
+          "hp": 1.6,
+          "interceptors": 63,
           "objective": true,
           "initial_information": "hidden"
         }
       ],
-      "scenario_sha256": "324d43b45bb666012a2ab6733beba52743979c4f79ad2f9f61ae2f05fd4ea085",
-      "entity_total": 239,
-      "blue_entity_total": 179,
+      "scenario_sha256": "b12a99af68b35b9f4ec884554c5cc03fef14274ebbefb44cc175601a98443c6d",
+      "entity_total": 416,
+      "blue_entity_total": 261,
       "blue_root_total": 7,
       "root_counts": {
         "ship": 2,
@@ -473,7 +540,7 @@
         "target": 3
       },
       "radar_total": 2,
-      "interceptor_total": 170,
+      "interceptor_total": 252,
       "objective_total": 7,
       "public_objective_ids": [
         51,
@@ -486,7 +553,17 @@
         168,
         169
       ],
-      "max_steps": 1600
+      "max_steps": 1600,
+      "red_missile_counts": {
+        "high": 31,
+        "medium": 42,
+        "low": 80
+      },
+      "blue_hp_by_kind": {
+        "target": 32.0,
+        "site": 20.0,
+        "ship": 1.6
+      }
     },
     {
       "scenario_id": "M01",
@@ -504,7 +581,7 @@
         "多关卡连续规避",
         "末端分支选择"
       ],
-      "difficulty_mechanism": "10个计分目标、四部中半径雷达和200枚拦截弹；至少需要多段空间决策。",
+      "difficulty_mechanism": "10个计分目标、四部中半径雷达和378枚拦截弹；至少需要多段空间决策。",
       "objective_ids": [
         51,
         52,
@@ -524,12 +601,12 @@
         "313": 75.6
       },
       "interceptor_counts": {
-        "54": 35,
-        "106": 35,
-        "310": 35,
-        "312": 35,
-        "168": 30,
-        "169": 30
+        "54": 63,
+        "106": 63,
+        "310": 63,
+        "312": 63,
+        "168": 63,
+        "169": 63
       },
       "roots": [
         {
@@ -537,7 +614,7 @@
           "kind": "target",
           "lon": 123.05,
           "lat": 25.2,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -547,7 +624,7 @@
           "kind": "target",
           "lon": 123.55,
           "lat": 23.65,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -557,7 +634,7 @@
           "kind": "target",
           "lon": 123.05,
           "lat": 20.7,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -567,7 +644,7 @@
           "kind": "target",
           "lon": 123.6,
           "lat": 22.0,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -577,8 +654,8 @@
           "kind": "site",
           "lon": 119.85,
           "lat": 24.7,
-          "hp": 12.0,
-          "interceptors": 35,
+          "hp": 20.0,
+          "interceptors": 63,
           "radar_id": 55,
           "radar_km": 81.6,
           "objective": true,
@@ -589,8 +666,8 @@
           "kind": "site",
           "lon": 120.65,
           "lat": 21.2,
-          "hp": 12.0,
-          "interceptors": 35,
+          "hp": 20.0,
+          "interceptors": 63,
           "radar_id": 107,
           "radar_km": 84.0,
           "objective": true,
@@ -601,8 +678,8 @@
           "kind": "site",
           "lon": 121.45,
           "lat": 24.45,
-          "hp": 12.0,
-          "interceptors": 35,
+          "hp": 20.0,
+          "interceptors": 63,
           "radar_id": 311,
           "radar_km": 81.6,
           "objective": true,
@@ -613,8 +690,8 @@
           "kind": "site",
           "lon": 122.1,
           "lat": 21.35,
-          "hp": 12.0,
-          "interceptors": 35,
+          "hp": 20.0,
+          "interceptors": 63,
           "radar_id": 313,
           "radar_km": 75.6,
           "objective": true,
@@ -625,8 +702,8 @@
           "kind": "ship",
           "lon": 119.25,
           "lat": 25.45,
-          "hp": 8.0,
-          "interceptors": 30,
+          "hp": 1.6,
+          "interceptors": 63,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -635,15 +712,15 @@
           "kind": "ship",
           "lon": 121.35,
           "lat": 20.3,
-          "hp": 8.0,
-          "interceptors": 30,
+          "hp": 1.6,
+          "interceptors": 63,
           "objective": true,
           "initial_information": "hidden"
         }
       ],
-      "scenario_sha256": "4a94ff391bf471e7682f5622c86346471b7853deb9c413cf62dc07aab4a31abb",
-      "entity_total": 274,
-      "blue_entity_total": 214,
+      "scenario_sha256": "dd5857827b48e30d37601b1c391e6b2b39fc3de6d5486db8474b409833d99e67",
+      "entity_total": 621,
+      "blue_entity_total": 392,
       "blue_root_total": 10,
       "root_counts": {
         "ship": 2,
@@ -651,7 +728,7 @@
         "target": 4
       },
       "radar_total": 4,
-      "interceptor_total": 200,
+      "interceptor_total": 378,
       "objective_total": 10,
       "public_objective_ids": [
         51,
@@ -667,7 +744,17 @@
         168,
         169
       ],
-      "max_steps": 1700
+      "max_steps": 1700,
+      "red_missile_counts": {
+        "high": 47,
+        "medium": 60,
+        "low": 120
+      },
+      "blue_hp_by_kind": {
+        "target": 32.0,
+        "site": 20.0,
+        "ship": 1.6
+      }
     },
     {
       "scenario_id": "M02",
@@ -685,7 +772,7 @@
         "双前沿节点",
         "不同纵深资源组合"
       ],
-      "difficulty_mechanism": "三个完全分离的资源岛、9个计分目标和200枚拦截弹；不存在可复用的单一推进线。",
+      "difficulty_mechanism": "三个完全分离的资源岛、9个计分目标和316枚拦截弹；不存在可复用的单一推进线。",
       "objective_ids": [
         51,
         301,
@@ -703,12 +790,12 @@
         "311": 69.6
       },
       "interceptor_counts": {
-        "54": 45,
-        "106": 45,
-        "310": 45,
-        "168": 22,
-        "169": 21,
-        "330": 22
+        "54": 53,
+        "106": 53,
+        "310": 52,
+        "168": 53,
+        "169": 53,
+        "330": 52
       },
       "roots": [
         {
@@ -726,7 +813,7 @@
           "kind": "target",
           "lon": 121.4,
           "lat": 20.45,
-          "hp": 12.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -736,7 +823,7 @@
           "kind": "target",
           "lon": 123.45,
           "lat": 23.0,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -746,8 +833,8 @@
           "kind": "site",
           "lon": 120.2,
           "lat": 24.55,
-          "hp": 12.0,
-          "interceptors": 45,
+          "hp": 20.0,
+          "interceptors": 53,
           "radar_id": 55,
           "radar_km": 78.0,
           "objective": true,
@@ -758,8 +845,8 @@
           "kind": "site",
           "lon": 120.2,
           "lat": 21.0,
-          "hp": 12.0,
-          "interceptors": 45,
+          "hp": 20.0,
+          "interceptors": 53,
           "radar_id": 107,
           "radar_km": 74.4,
           "objective": true,
@@ -770,8 +857,8 @@
           "kind": "site",
           "lon": 122.15,
           "lat": 23.0,
-          "hp": 6.0,
-          "interceptors": 45,
+          "hp": 20.0,
+          "interceptors": 52,
           "radar_id": 311,
           "radar_km": 69.6,
           "objective": true,
@@ -782,8 +869,8 @@
           "kind": "ship",
           "lon": 119.25,
           "lat": 20.55,
-          "hp": 4.8,
-          "interceptors": 22,
+          "hp": 1.6,
+          "interceptors": 53,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -792,8 +879,8 @@
           "kind": "ship",
           "lon": 119.25,
           "lat": 25.35,
-          "hp": 8.0,
-          "interceptors": 21,
+          "hp": 1.6,
+          "interceptors": 53,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -802,15 +889,15 @@
           "kind": "ship",
           "lon": 123.6,
           "lat": 22.15,
-          "hp": 8.0,
-          "interceptors": 22,
+          "hp": 1.6,
+          "interceptors": 52,
           "objective": true,
           "initial_information": "hidden"
         }
       ],
-      "scenario_sha256": "c7d630cd5faa0a7ac577814957b0a4802bac1ed5c1b31263dab9eb61f1e42a38",
-      "entity_total": 272,
-      "blue_entity_total": 212,
+      "scenario_sha256": "e69c5eb22b62337066a99e1313c5c3b23d882dffa926d334ea3832fa14bba5a8",
+      "entity_total": 515,
+      "blue_entity_total": 328,
       "blue_root_total": 9,
       "root_counts": {
         "ship": 3,
@@ -818,7 +905,7 @@
         "target": 3
       },
       "radar_total": 3,
-      "interceptor_total": 200,
+      "interceptor_total": 316,
       "objective_total": 9,
       "public_objective_ids": [
         51,
@@ -833,7 +920,17 @@
         169,
         330
       ],
-      "max_steps": 2100
+      "max_steps": 2100,
+      "red_missile_counts": {
+        "high": 36,
+        "medium": 49,
+        "low": 100
+      },
+      "blue_hp_by_kind": {
+        "target": 32.0,
+        "site": 20.0,
+        "ship": 1.6
+      }
     },
     {
       "scenario_id": "M03",
@@ -851,7 +948,7 @@
         "中央重叠雷达结",
         "东部双翼节点"
       ],
-      "difficulty_mechanism": "9个计分目标、三个初始隐藏节点、三部雷达和225枚拦截弹。",
+      "difficulty_mechanism": "9个计分目标、三个初始隐藏节点、三部雷达和316枚拦截弹。",
       "objective_ids": [
         51,
         52,
@@ -869,12 +966,12 @@
         "311": 100.8
       },
       "interceptor_counts": {
-        "54": 50,
-        "106": 50,
-        "310": 50,
-        "168": 25,
-        "169": 25,
-        "330": 25
+        "54": 53,
+        "106": 53,
+        "310": 52,
+        "168": 53,
+        "169": 53,
+        "330": 52
       },
       "roots": [
         {
@@ -882,7 +979,7 @@
           "kind": "target",
           "lon": 122.45,
           "lat": 23.65,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -892,7 +989,7 @@
           "kind": "target",
           "lon": 122.45,
           "lat": 22.35,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -902,7 +999,7 @@
           "kind": "target",
           "lon": 123.15,
           "lat": 23.0,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -912,8 +1009,8 @@
           "kind": "site",
           "lon": 120.55,
           "lat": 23.8,
-          "hp": 12.0,
-          "interceptors": 50,
+          "hp": 20.0,
+          "interceptors": 53,
           "radar_id": 55,
           "radar_km": 67.2,
           "objective": true,
@@ -924,8 +1021,8 @@
           "kind": "site",
           "lon": 120.55,
           "lat": 22.2,
-          "hp": 12.0,
-          "interceptors": 50,
+          "hp": 20.0,
+          "interceptors": 53,
           "radar_id": 107,
           "radar_km": 67.2,
           "objective": true,
@@ -936,8 +1033,8 @@
           "kind": "site",
           "lon": 121.35,
           "lat": 23.0,
-          "hp": 12.0,
-          "interceptors": 50,
+          "hp": 20.0,
+          "interceptors": 52,
           "radar_id": 311,
           "radar_km": 100.8,
           "objective": true,
@@ -948,8 +1045,8 @@
           "kind": "ship",
           "lon": 123.55,
           "lat": 25.4,
-          "hp": 4.8,
-          "interceptors": 25,
+          "hp": 1.6,
+          "interceptors": 53,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -958,8 +1055,8 @@
           "kind": "ship",
           "lon": 123.55,
           "lat": 20.6,
-          "hp": 4.8,
-          "interceptors": 25,
+          "hp": 1.6,
+          "interceptors": 53,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -968,15 +1065,15 @@
           "kind": "ship",
           "lon": 119.35,
           "lat": 23.0,
-          "hp": 8.0,
-          "interceptors": 25,
+          "hp": 1.6,
+          "interceptors": 52,
           "objective": true,
           "initial_information": "hidden"
         }
       ],
-      "scenario_sha256": "118c39a7c093d49ccc494a6fe9fc9b496691826eaf5960f41a4849fa3b9f78bd",
-      "entity_total": 297,
-      "blue_entity_total": 237,
+      "scenario_sha256": "923bd6fa33666dc30199cf8720ef1ab08c450173eadd4f30018a72783eab8430",
+      "entity_total": 518,
+      "blue_entity_total": 328,
       "blue_root_total": 9,
       "root_counts": {
         "ship": 3,
@@ -984,7 +1081,7 @@
         "target": 3
       },
       "radar_total": 3,
-      "interceptor_total": 225,
+      "interceptor_total": 316,
       "objective_total": 9,
       "public_objective_ids": [
         51,
@@ -999,7 +1096,17 @@
         169,
         330
       ],
-      "max_steps": 2200
+      "max_steps": 2200,
+      "red_missile_counts": {
+        "high": 35,
+        "medium": 53,
+        "low": 100
+      },
+      "blue_hp_by_kind": {
+        "target": 32.0,
+        "site": 20.0,
+        "ship": 1.6
+      }
     },
     {
       "scenario_id": "H01",
@@ -1017,7 +1124,7 @@
         "嵌套覆盖区判断",
         "分流—汇合—再分流"
       ],
-      "difficulty_mechanism": "14个计分目标、六部55–80千米雷达和265枚拦截弹；覆盖层级与末端门同时增加。",
+      "difficulty_mechanism": "14个计分目标、六部55–80千米雷达和504枚拦截弹；覆盖层级与末端门同时增加。",
       "objective_ids": [
         51,
         301,
@@ -1043,15 +1150,15 @@
         "317": 68
       },
       "interceptor_counts": {
-        "54": 40,
-        "106": 40,
-        "310": 35,
-        "312": 40,
-        "314": 30,
-        "316": 35,
-        "168": 15,
-        "169": 15,
-        "330": 15
+        "54": 56,
+        "106": 56,
+        "310": 56,
+        "312": 56,
+        "314": 56,
+        "316": 56,
+        "168": 56,
+        "169": 56,
+        "330": 56
       },
       "roots": [
         {
@@ -1059,7 +1166,7 @@
           "kind": "target",
           "lon": 123.3,
           "lat": 25.05,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -1069,7 +1176,7 @@
           "kind": "target",
           "lon": 123.55,
           "lat": 24.0,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -1079,7 +1186,7 @@
           "kind": "target",
           "lon": 123.55,
           "lat": 23.0,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -1089,7 +1196,7 @@
           "kind": "target",
           "lon": 123.55,
           "lat": 22.0,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -1099,7 +1206,7 @@
           "kind": "target",
           "lon": 123.3,
           "lat": 20.95,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -1109,8 +1216,8 @@
           "kind": "site",
           "lon": 119.8,
           "lat": 23.0,
-          "hp": 12.0,
-          "interceptors": 40,
+          "hp": 20.0,
+          "interceptors": 56,
           "radar_id": 55,
           "radar_km": 80,
           "objective": true,
@@ -1121,8 +1228,8 @@
           "kind": "site",
           "lon": 120.8,
           "lat": 25.0,
-          "hp": 12.0,
-          "interceptors": 40,
+          "hp": 20.0,
+          "interceptors": 56,
           "radar_id": 107,
           "radar_km": 78,
           "objective": true,
@@ -1133,8 +1240,8 @@
           "kind": "site",
           "lon": 121.75,
           "lat": 23.0,
-          "hp": 12.0,
-          "interceptors": 35,
+          "hp": 20.0,
+          "interceptors": 56,
           "radar_id": 311,
           "radar_km": 72,
           "objective": true,
@@ -1145,8 +1252,8 @@
           "kind": "site",
           "lon": 120.8,
           "lat": 21.0,
-          "hp": 12.0,
-          "interceptors": 40,
+          "hp": 20.0,
+          "interceptors": 56,
           "radar_id": 313,
           "radar_km": 78,
           "objective": true,
@@ -1157,8 +1264,8 @@
           "kind": "site",
           "lon": 120.85,
           "lat": 23.0,
-          "hp": 12.0,
-          "interceptors": 30,
+          "hp": 20.0,
+          "interceptors": 56,
           "radar_id": 315,
           "radar_km": 55,
           "objective": true,
@@ -1169,8 +1276,8 @@
           "kind": "site",
           "lon": 122.55,
           "lat": 23.0,
-          "hp": 12.0,
-          "interceptors": 35,
+          "hp": 20.0,
+          "interceptors": 56,
           "radar_id": 317,
           "radar_km": 68,
           "objective": true,
@@ -1181,8 +1288,8 @@
           "kind": "ship",
           "lon": 119.25,
           "lat": 25.45,
-          "hp": 8.0,
-          "interceptors": 15,
+          "hp": 1.6,
+          "interceptors": 56,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -1191,8 +1298,8 @@
           "kind": "ship",
           "lon": 119.25,
           "lat": 20.55,
-          "hp": 8.0,
-          "interceptors": 15,
+          "hp": 1.6,
+          "interceptors": 56,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -1201,15 +1308,15 @@
           "kind": "ship",
           "lon": 122.9,
           "lat": 24.25,
-          "hp": 8.0,
-          "interceptors": 15,
+          "hp": 1.6,
+          "interceptors": 56,
           "objective": true,
           "initial_information": "hidden"
         }
       ],
-      "scenario_sha256": "c7c4f76261307d584e7d2078f560463c922a6bafcbc59033e5aa60e2defaba33",
-      "entity_total": 345,
-      "blue_entity_total": 285,
+      "scenario_sha256": "ee5c029cc47f40b62f7a610e60925f9e1549d365b788a7526031ac46d8b1d8cb",
+      "entity_total": 830,
+      "blue_entity_total": 524,
       "blue_root_total": 14,
       "root_counts": {
         "ship": 3,
@@ -1217,7 +1324,7 @@
         "target": 5
       },
       "radar_total": 6,
-      "interceptor_total": 265,
+      "interceptor_total": 504,
       "objective_total": 14,
       "public_objective_ids": [
         51,
@@ -1237,7 +1344,17 @@
         169,
         330
       ],
-      "max_steps": 2300
+      "max_steps": 2300,
+      "red_missile_counts": {
+        "high": 64,
+        "medium": 80,
+        "low": 160
+      },
+      "blue_hp_by_kind": {
+        "target": 32.0,
+        "site": 20.0,
+        "ship": 1.6
+      }
     },
     {
       "scenario_id": "H02",
@@ -1255,7 +1372,7 @@
         "多节点资源组合",
         "交叉覆盖与边缘节点"
       ],
-      "difficulty_mechanism": "14个计分目标、五部雷达和260枚拦截弹；资源单元数量与交叉覆盖显著增加。",
+      "difficulty_mechanism": "14个计分目标、五部雷达和472枚拦截弹；资源单元数量与交叉覆盖显著增加。",
       "objective_ids": [
         51,
         52,
@@ -1280,15 +1397,15 @@
         "315": 65
       },
       "interceptor_counts": {
-        "54": 45,
-        "106": 35,
-        "310": 50,
-        "312": 30,
-        "314": 40,
-        "168": 15,
-        "169": 15,
-        "330": 15,
-        "331": 15
+        "54": 53,
+        "106": 53,
+        "310": 52,
+        "312": 52,
+        "314": 52,
+        "168": 53,
+        "169": 53,
+        "330": 52,
+        "331": 52
       },
       "roots": [
         {
@@ -1296,7 +1413,7 @@
           "kind": "target",
           "lon": 121.8,
           "lat": 23.0,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -1306,7 +1423,7 @@
           "kind": "target",
           "lon": 122.45,
           "lat": 23.9,
-          "hp": 20.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -1316,7 +1433,7 @@
           "kind": "target",
           "lon": 122.45,
           "lat": 22.1,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -1326,7 +1443,7 @@
           "kind": "target",
           "lon": 121.15,
           "lat": 23.9,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -1336,7 +1453,7 @@
           "kind": "target",
           "lon": 121.15,
           "lat": 22.1,
-          "hp": 8.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -1346,8 +1463,8 @@
           "kind": "site",
           "lon": 120.05,
           "lat": 23.0,
-          "hp": 12.0,
-          "interceptors": 45,
+          "hp": 20.0,
+          "interceptors": 53,
           "radar_id": 55,
           "radar_km": 65,
           "objective": true,
@@ -1358,8 +1475,8 @@
           "kind": "site",
           "lon": 120.95,
           "lat": 24.7,
-          "hp": 18.0,
-          "interceptors": 35,
+          "hp": 20.0,
+          "interceptors": 53,
           "radar_id": 107,
           "radar_km": 60,
           "objective": true,
@@ -1370,8 +1487,8 @@
           "kind": "site",
           "lon": 122.6,
           "lat": 24.7,
-          "hp": 12.0,
-          "interceptors": 50,
+          "hp": 20.0,
+          "interceptors": 52,
           "radar_id": 311,
           "radar_km": 65,
           "objective": true,
@@ -1382,8 +1499,8 @@
           "kind": "site",
           "lon": 123.4,
           "lat": 23.0,
-          "hp": 12.0,
-          "interceptors": 30,
+          "hp": 20.0,
+          "interceptors": 52,
           "radar_id": 313,
           "radar_km": 55,
           "objective": true,
@@ -1394,8 +1511,8 @@
           "kind": "site",
           "lon": 120.95,
           "lat": 21.3,
-          "hp": 12.0,
-          "interceptors": 40,
+          "hp": 20.0,
+          "interceptors": 52,
           "radar_id": 315,
           "radar_km": 65,
           "objective": true,
@@ -1406,8 +1523,8 @@
           "kind": "ship",
           "lon": 123.2,
           "lat": 21.3,
-          "hp": 4.8,
-          "interceptors": 15,
+          "hp": 1.6,
+          "interceptors": 53,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -1416,8 +1533,8 @@
           "kind": "ship",
           "lon": 119.25,
           "lat": 25.25,
-          "hp": 8.0,
-          "interceptors": 15,
+          "hp": 1.6,
+          "interceptors": 53,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -1426,8 +1543,8 @@
           "kind": "ship",
           "lon": 119.25,
           "lat": 20.55,
-          "hp": 8.0,
-          "interceptors": 15,
+          "hp": 1.6,
+          "interceptors": 52,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -1436,15 +1553,15 @@
           "kind": "ship",
           "lon": 123.7,
           "lat": 22.15,
-          "hp": 8.0,
-          "interceptors": 15,
+          "hp": 1.6,
+          "interceptors": 52,
           "objective": true,
           "initial_information": "hidden"
         }
       ],
-      "scenario_sha256": "9a062a061eb39a42f65ea62078ef4abf49c7e360aa65eea4d25905dff92a296c",
-      "entity_total": 339,
-      "blue_entity_total": 279,
+      "scenario_sha256": "022a275caaefc2564841b72e2f4925a8893bc710a412b7033c6da01905e6ba7b",
+      "entity_total": 779,
+      "blue_entity_total": 491,
       "blue_root_total": 14,
       "root_counts": {
         "ship": 4,
@@ -1452,7 +1569,7 @@
         "target": 5
       },
       "radar_total": 5,
-      "interceptor_total": 260,
+      "interceptor_total": 472,
       "objective_total": 14,
       "public_objective_ids": [
         51,
@@ -1472,7 +1589,17 @@
         330,
         331
       ],
-      "max_steps": 2400
+      "max_steps": 2400,
+      "red_missile_counts": {
+        "high": 61,
+        "medium": 75,
+        "low": 150
+      },
+      "blue_hp_by_kind": {
+        "target": 32.0,
+        "site": 20.0,
+        "ship": 1.6
+      }
     },
     {
       "scenario_id": "H03",
@@ -1490,7 +1617,7 @@
         "中央公开资源簇",
         "上下雷达带分区"
       ],
-      "difficulty_mechanism": "11个计分目标、四个初始隐藏节点、四部雷达和280枚拦截弹。",
+      "difficulty_mechanism": "11个计分目标、四个初始隐藏节点、四部雷达和346枚拦截弹。",
       "objective_ids": [
         51,
         52,
@@ -1511,14 +1638,14 @@
         "313": 60
       },
       "interceptor_counts": {
-        "54": 50,
-        "106": 50,
-        "310": 50,
-        "312": 50,
-        "168": 20,
-        "169": 20,
-        "330": 20,
-        "331": 20
+        "54": 44,
+        "106": 44,
+        "310": 43,
+        "312": 43,
+        "168": 43,
+        "169": 43,
+        "330": 43,
+        "331": 43
       },
       "roots": [
         {
@@ -1526,7 +1653,7 @@
           "kind": "target",
           "lon": 123.1,
           "lat": 23.65,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -1536,7 +1663,7 @@
           "kind": "target",
           "lon": 123.0,
           "lat": 22.0,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -1546,7 +1673,7 @@
           "kind": "target",
           "lon": 122.0,
           "lat": 23.0,
-          "hp": 16.0,
+          "hp": 32.0,
           "interceptors": 0,
           "objective": true,
           "initial_information": "public"
@@ -1556,8 +1683,8 @@
           "kind": "site",
           "lon": 120.15,
           "lat": 24.1,
-          "hp": 12.0,
-          "interceptors": 50,
+          "hp": 20.0,
+          "interceptors": 44,
           "radar_id": 55,
           "radar_km": 55,
           "objective": true,
@@ -1568,8 +1695,8 @@
           "kind": "site",
           "lon": 120.15,
           "lat": 21.9,
-          "hp": 12.0,
-          "interceptors": 50,
+          "hp": 20.0,
+          "interceptors": 44,
           "radar_id": 107,
           "radar_km": 55,
           "objective": true,
@@ -1580,8 +1707,8 @@
           "kind": "site",
           "lon": 121.55,
           "lat": 24.9,
-          "hp": 12.0,
-          "interceptors": 50,
+          "hp": 20.0,
+          "interceptors": 43,
           "radar_id": 311,
           "radar_km": 60,
           "objective": true,
@@ -1592,8 +1719,8 @@
           "kind": "site",
           "lon": 121.55,
           "lat": 21.1,
-          "hp": 12.0,
-          "interceptors": 50,
+          "hp": 20.0,
+          "interceptors": 43,
           "radar_id": 313,
           "radar_km": 60,
           "objective": true,
@@ -1604,8 +1731,8 @@
           "kind": "ship",
           "lon": 119.25,
           "lat": 25.3,
-          "hp": 4.8,
-          "interceptors": 20,
+          "hp": 1.6,
+          "interceptors": 43,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -1614,8 +1741,8 @@
           "kind": "ship",
           "lon": 123.5,
           "lat": 24.75,
-          "hp": 4.8,
-          "interceptors": 20,
+          "hp": 1.6,
+          "interceptors": 43,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -1624,8 +1751,8 @@
           "kind": "ship",
           "lon": 123.4,
           "lat": 20.55,
-          "hp": 4.8,
-          "interceptors": 20,
+          "hp": 1.6,
+          "interceptors": 43,
           "objective": true,
           "initial_information": "hidden"
         },
@@ -1634,15 +1761,15 @@
           "kind": "ship",
           "lon": 119.25,
           "lat": 20.7,
-          "hp": 4.8,
-          "interceptors": 20,
+          "hp": 1.6,
+          "interceptors": 43,
           "objective": true,
           "initial_information": "hidden"
         }
       ],
-      "scenario_sha256": "b778b0ed68c97f08a2281446fff1ff923d0a2252530cb8b1cc1218543ac3e551",
-      "entity_total": 355,
-      "blue_entity_total": 295,
+      "scenario_sha256": "c2e47164b39934a21c2605437a395e7b3bde47d08e1f6dfa739c1d62e6d6e1d5",
+      "entity_total": 569,
+      "blue_entity_total": 361,
       "blue_root_total": 11,
       "root_counts": {
         "ship": 4,
@@ -1650,7 +1777,7 @@
         "target": 3
       },
       "radar_total": 4,
-      "interceptor_total": 280,
+      "interceptor_total": 346,
       "objective_total": 11,
       "public_objective_ids": [
         51,
@@ -1667,7 +1794,189 @@
         330,
         331
       ],
-      "max_steps": 2400
+      "max_steps": 2400,
+      "red_missile_counts": {
+        "high": 42,
+        "medium": 54,
+        "low": 110
+      },
+      "blue_hp_by_kind": {
+        "target": 32.0,
+        "site": 20.0,
+        "ship": 1.6
+      }
     }
-  ]
+  ],
+  "balance": {
+    "scope": "all_nine_scenarios",
+    "blue_hp_by_kind": {
+      "target": 32.0,
+      "site": 20.0,
+      "ship": 1.6
+    },
+    "red_missile_counts": {
+      "varies_by_scenario": true,
+      "by_scenario": {
+        "E01": {
+          "high": 30,
+          "medium": 44,
+          "low": 90
+        },
+        "E02": {
+          "high": 31,
+          "medium": 46,
+          "low": 90
+        },
+        "E03": {
+          "high": 31,
+          "medium": 42,
+          "low": 80
+        },
+        "M01": {
+          "high": 47,
+          "medium": 60,
+          "low": 120
+        },
+        "M02": {
+          "high": 36,
+          "medium": 49,
+          "low": 100
+        },
+        "M03": {
+          "high": 35,
+          "medium": 53,
+          "low": 100
+        },
+        "H01": {
+          "high": 64,
+          "medium": 80,
+          "low": 160
+        },
+        "H02": {
+          "high": 61,
+          "medium": 75,
+          "low": 150
+        },
+        "H03": {
+          "high": 42,
+          "medium": 54,
+          "low": 110
+        }
+      }
+    },
+    "blue_interceptor_to_low_missile_ratio": 3.15,
+    "blue_interceptor_increase_percent": 5,
+    "blue_interceptor_multiplier": 2,
+    "blue_interceptor_allocation": "largest_remainder_equal_weight_per_carrier",
+    "blue_interceptor_total_by_scenario": {
+      "E01": 284,
+      "E02": 284,
+      "E03": 252,
+      "M01": 378,
+      "M02": 316,
+      "M03": 316,
+      "H01": 504,
+      "H02": 472,
+      "H03": 346
+    },
+    "standard_effective_red_damage_by_scenario": {
+      "E01": 728.0,
+      "E02": 752.0,
+      "E03": 728.0,
+      "M01": 1088.0,
+      "M02": 852.0,
+      "M03": 852.0,
+      "H01": 1472.0,
+      "H02": 1396.0,
+      "H03": 976.0
+    },
+    "blue_hp_to_red_damage_ratio_by_scenario": {
+      "E01": 0.1912087912087912,
+      "E02": 0.18723404255319145,
+      "E03": 0.1912087912087912,
+      "M01": 0.1941176470588235,
+      "M02": 0.18873239436619715,
+      "M03": 0.18873239436619715,
+      "H01": 0.19347826086956527,
+      "H02": 0.1908309455587393,
+      "H03": 0.18688524590163932
+    },
+    "typed_damage_pools_by_scenario": {
+      "E01": {
+        "general_9400": 656.0,
+        "ship_9500": 72.0
+      },
+      "E02": {
+        "general_9400": 680.0,
+        "ship_9500": 72.0
+      },
+      "E03": {
+        "general_9400": 664.0,
+        "ship_9500": 64.0
+      },
+      "M01": {
+        "general_9400": 992.0,
+        "ship_9500": 96.0
+      },
+      "M02": {
+        "general_9400": 772.0,
+        "ship_9500": 80.0
+      },
+      "M03": {
+        "general_9400": 772.0,
+        "ship_9500": 80.0
+      },
+      "H01": {
+        "general_9400": 1344.0,
+        "ship_9500": 128.0
+      },
+      "H02": {
+        "general_9400": 1276.0,
+        "ship_9500": 120.0
+      },
+      "H03": {
+        "general_9400": 888.0,
+        "ship_9500": 88.0
+      }
+    },
+    "typed_hp_to_damage_ratio_by_scenario": {
+      "E01": {
+        "general_9400": 0.2073170731707317,
+        "ship_9500": 0.044444444444444446
+      },
+      "E02": {
+        "general_9400": 0.2,
+        "ship_9500": 0.06666666666666668
+      },
+      "E03": {
+        "general_9400": 0.20481927710843373,
+        "ship_9500": 0.05
+      },
+      "M01": {
+        "general_9400": 0.20967741935483872,
+        "ship_9500": 0.03333333333333333
+      },
+      "M02": {
+        "general_9400": 0.20207253886010362,
+        "ship_9500": 0.06000000000000001
+      },
+      "M03": {
+        "general_9400": 0.20207253886010362,
+        "ship_9500": 0.06000000000000001
+      },
+      "H01": {
+        "general_9400": 0.20833333333333334,
+        "ship_9500": 0.037500000000000006
+      },
+      "H02": {
+        "general_9400": 0.20376175548589343,
+        "ship_9500": 0.05333333333333334
+      },
+      "H03": {
+        "general_9400": 0.1981981981981982,
+        "ship_9500": 0.07272727272727274
+      }
+    },
+    "average_blue_total_hp": 187.288889
+  }
 }

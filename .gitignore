@@ -108,3 +108,6 @@ venv.bak/
 *.swp
 *.sw
 /Results/
+tests/test_low_missile_ship_damage.py
+tests/test_reward.py
+tests/test_scenario_compatibility.py

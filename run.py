@@ -9,6 +9,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from plugins.scenarios.competition_cases import load_reward_policy
+
 
 ROOT = Path(__file__).resolve().parent
 CORE = ROOT / "core"
@@ -22,10 +24,21 @@ def load_registry() -> dict:
 def scenario_path(case_id: str) -> Path:
     if case_id == "default":
         return CORE / "scenarios" / "platform.json"
+
+    # Bundled case IDs always win. This keeps the current nine-map design
+    # authoritative even when a similarly named legacy path exists.
     candidate = PLUGINS / "scenarios" / "competition_cases" / case_id / "scenario.json"
-    if not candidate.is_file():
-        raise ValueError(f"Unknown scenario '{case_id}'. Use e.g. easy/E01, medium/M01, hard/H01.")
-    return candidate
+    if candidate.is_file():
+        return candidate
+
+    external = Path(case_id).expanduser()
+    if external.is_file() and external.suffix.lower() == ".json":
+        return external.resolve()
+
+    raise ValueError(
+        f"Unknown scenario '{case_id}'. Use e.g. easy/E01, medium/M01, "
+        "hard/H01, or an existing scenario.json path."
+    )
 
 
 def plugin_env() -> dict[str, str]:
@@ -35,6 +48,20 @@ def plugin_env() -> dict[str, str]:
     paths = [str(blue_src), str(red_src), env.get("PYTHONPATH", "")]
     env["PYTHONPATH"] = os.pathsep.join(path for path in paths if path)
     return env
+
+
+def with_competition_step_limit(scenario: Path, core_args: list[str]) -> list[str]:
+    has_explicit_limit = any(
+        value == "--max-steps" or value.startswith("--max-steps=")
+        for value in core_args
+    )
+    if has_explicit_limit:
+        return core_args
+
+    policy = load_reward_policy(scenario)
+    if policy is None:
+        return core_args
+    return ["--max-steps", str(policy.max_steps), *core_args]
 
 
 def cmd_list(_: argparse.Namespace) -> int:
@@ -55,12 +82,13 @@ def cmd_run(args: argparse.Namespace) -> int:
     # argparse keeps the separator used before REMAINDER.  It is meaningful to
     # this wrapper only; forwarding it makes core/main.py reject its arguments.
     core_args = args.core_args[1:] if args.core_args[:1] == ["--"] else args.core_args
-    command.extend(core_args)
+    command.extend(with_competition_step_limit(scenario, core_args))
     env = plugin_env()
     env["BLUE_POLICY"] = args.blue_policy
     env["RED_POLICY"] = args.red_policy
     if args.seed is not None:
         env["BLUE_POLICY_SEED"] = str(args.seed)
+        env["RED_POLICY_SEED"] = str(args.seed)
     return subprocess.call(command, cwd=CORE, env=env)
 
 

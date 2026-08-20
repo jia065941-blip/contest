@@ -24,9 +24,9 @@ class B2StaticAssignmentPolicy(BaselinePolicy):
             return Decision(assignments=assignments)
         platforms = observation.active_platforms()
         targets = observation.active_targets()
-        # Allocate the complete available force across targets in proportion to
-        # declared target value.  This is an optimization capacity, not a
-        # global fire-budget cap.
+        # Allocate by declared target value while honoring the configured
+        # per-target capacity. Surplus platforms remain unassigned when the
+        # combined capacity is smaller than the available force.
         capacities = self._target_capacities(platforms, targets)
         self.model = AssignmentModel(capacities, self.model.candidate_limit, self.model.exact_platform_limit)
         solution = self.model.solve(platforms, targets, self.pair_score)
@@ -39,16 +39,37 @@ class B2StaticAssignmentPolicy(BaselinePolicy):
         self._plan = Decision(assignments=assignments)
         return self._plan
 
-    @staticmethod
-    def _target_capacities(platforms: tuple[Platform, ...], targets: tuple[Target, ...]) -> dict[int, int]:
+    def _target_capacities(self, platforms: tuple[Platform, ...], targets: tuple[Target, ...]) -> dict[int, int]:
         if not platforms or not targets:
             return {}
         total_value = sum(max(0.0, target.value) for target in targets)
         if total_value <= 0:
             total_value = float(len(targets))
         raw = {target.entity_id: len(platforms) * max(0.0, target.value) / total_value for target in targets}
-        capacities = {target_id: int(value) for target_id, value in raw.items()}
+        target_limit = self.rules.target_capacity
+        capacities = {
+            target_id: min(int(value), target_limit)
+            for target_id, value in raw.items()
+        }
         remainder = len(platforms) - sum(capacities.values())
-        for target_id, _ in sorted(raw.items(), key=lambda item: (-(item[1] - int(item[1])), item[0]))[:remainder]:
-            capacities[target_id] += 1
+        allocation_order = [
+            target_id
+            for target_id, _ in sorted(
+                raw.items(),
+                key=lambda item: (-(item[1] - int(item[1])), item[0]),
+            )
+        ]
+        while remainder > 0:
+            eligible = [
+                target_id
+                for target_id in allocation_order
+                if capacities[target_id] < target_limit
+            ]
+            if not eligible:
+                break
+            for target_id in eligible:
+                capacities[target_id] += 1
+                remainder -= 1
+                if remainder == 0:
+                    break
         return capacities

@@ -1,6 +1,6 @@
 # 异构九图（无答案版）
 
-当前目录包含 3 个难度、每级 3 种异构结构，共 9 张综合任务地图。九图全部使用同一套仿真规则、动作接口、目标规则和 K/D/T 计分公式；地图之间只改变蓝方资源、空间拓扑、生命值、雷达覆盖、父子挂载、拦截弹规模和时限。每张图均把部分无人船部署在第一层雷达前缘或侧前方，并保留部分纵深无人船，避免所有隐藏节点都堆在后方。
+当前目录包含 3 个难度、每级 3 种异构结构，共 9 张综合任务地图。九图全部使用同一套仿真规则、动作接口、目标规则和 K/T 计分公式；地图之间只改变蓝方资源、空间拓扑、生命值、雷达覆盖、父子挂载、拦截弹规模和时限。每张图均把部分无人船部署在第一层雷达前缘或侧前方，并保留部分纵深无人船，避免所有隐藏节点都堆在后方。
 
 ```text
 competition_cases/<easy|medium|hard>/<scenario_id>/
@@ -14,9 +14,9 @@ competition_cases/<easy|medium|hard>/<scenario_id>/
 - `manifest.json`：九图统一索引、结构参数及信息边界。
 - `images/`：九张信息图的集中副本。
 - `registry.py`：场景路径与一致性校验。
-- `competition_runtime/reward.py`：九图共用的唯一计分实现。
+- `reward.py`：九图共用的唯一计分实现。
 
-参赛者只编写并提交项目根目录的 `user_agents/attack_missile_agent.py`。`scenario.json`、`user_agents/deploy_agent.py`、`user_agents/base_agent/`、`competition_runtime/` 和本目录注册文件均为赛方固定内容。
+参赛者只编写并提交项目根目录的 `user_agents/attack_missile_agent.py`。`scenario.json`、`user_agents/deploy_agent.py`、`user_agents/base_agent/`、本目录的 `reward.py` 和注册文件均为赛方固定内容。
 
 本版本不提供标准答案、推荐航迹、发射波次、目标分配或参考得分，策略需要由后续使用者自行探索。
 
@@ -25,20 +25,16 @@ competition_cases/<easy|medium|hard>/<scenario_id>/
 列出地图和参数：
 
 ```powershell
-python run_competition.py --list
+python run.py list
 ```
 
 运行单图：
 
 ```powershell
-python run_competition.py --case E01 --render-mode human
+python run.py run --scenario easy/E01 -- --total-rounds 1 --render-mode human
 ```
 
-使用统一 K/D/T 系统评分：
-
-```powershell
-python run_competition.py --case E01 --score
-```
+九图未显式传入 `--max-steps` 时，运行入口会自动使用对应 `case_info.json` 的正式时限。每轮结束时，`FINAL_SUMMARY` 会直接输出统一 K/T 评分。最终得分为 `100 × clip(0.8K + 0.2T, 0, 1)`。`K` 是按目标价值加权的摧毁率；`T` 是按目标价值加权的时间效率，目标越早摧毁贡献越高，未摧毁目标的时间贡献为 0。红方剩余弹药不再参与评分。
 
 ## 九图结构
 

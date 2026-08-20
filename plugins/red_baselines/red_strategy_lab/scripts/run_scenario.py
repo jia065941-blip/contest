@@ -30,7 +30,7 @@ def targets_from_scenario(scenario: Mapping[str, Any]) -> tuple[Target, ...]:
     targets: list[Target] = []
     for entry in entities:
         entity = entry["entity"]
-        if entity.get("sideId") == 0 or entity.get("entityType") != 9400:
+        if entity.get("sideId") == 0 or entity.get("entityType") not in (9400, 9500, 9600):
             continue
         position = entity["lla"]
         targets.append(Target(
@@ -40,7 +40,7 @@ def targets_from_scenario(scenario: Mapping[str, Any]) -> tuple[Target, ...]:
             health=float(entity.get("survivePoints", 1.0)),
         ))
     if not targets:
-        raise ValueError("scenario does not contain blue-side type-9400 targets")
+        raise ValueError("scenario does not contain supported blue-side targets")
     return tuple(targets)
 
 

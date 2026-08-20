@@ -92,7 +92,7 @@ class AttackMissileAgent(BaseAgent):
 
         # 获取所有目标
         for entity_id, entity_info in self.init_observation["entities"].items():
-            if entity_info["type"] == 9400:
+            if entity_info["type"] in (9400, 9500, 9600):
                 targets.append(entity_info)
 
         if targets:

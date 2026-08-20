@@ -102,20 +102,21 @@ class DefendCommanderModelSimulator(ISimulator):
             )
 
         assets = []
-        for simulator in self._simulator_factory.get_simulators_by_type(9400):
-            entity = simulator.entity_ext.entity
-            if entity.survivePoints <= 0 or not entity.isVisible:
-                continue
-            assets.append(
-                DefendedAsset(
-                    asset_id=entity.id,
-                    name=entity.nameChn,
-                    lla=self._copy_vector(entity.lla),
-                    pos_ecf=self._copy_vector(entity.posEcf),
-                    health=entity.survivePoints,
-                    value=self._asset_value(entity.nameChn),
+        for entity_type in (9400, 9500):
+            for simulator in self._simulator_factory.get_simulators_by_type(entity_type):
+                entity = simulator.entity_ext.entity
+                if entity.survivePoints <= 0 or not entity.isVisible:
+                    continue
+                assets.append(
+                    DefendedAsset(
+                        asset_id=entity.id,
+                        name=entity.nameChn,
+                        lla=self._copy_vector(entity.lla),
+                        pos_ecf=self._copy_vector(entity.posEcf),
+                        health=entity.survivePoints,
+                        value=self._asset_value(entity.nameChn),
+                    )
                 )
-            )
 
         return BlueObservation(
             sim_time=self.sim_time,

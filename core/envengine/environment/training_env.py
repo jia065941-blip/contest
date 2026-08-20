@@ -263,7 +263,7 @@ class TrainingEnv:
 
         for simulator in simulators:
             entity_data = simulator.entity_ext.entity
-            if entity_data.entityType != 9400 and entity_data.entityType != 9600:
+            if entity_data.entityType not in (9400, 9500, 9600):
                 continue
 
             observation["entities"][entity_data.id] = {

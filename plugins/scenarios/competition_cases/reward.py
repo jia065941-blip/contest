@@ -1,4 +1,4 @@
-"""Unified K/D/T scoring for the nine competition scenarios."""
+"""Unified destruction/time scoring for the nine competition scenarios."""
 
 from __future__ import annotations
 
@@ -9,9 +9,8 @@ from pathlib import Path
 from typing import Any, Mapping
 
 
-DESTROYED_TARGET_WEIGHT = 0.7
-MISSILE_SURVIVAL_WEIGHT = 0.3
-TIME_PENALTY_WEIGHT = 0.2
+DESTROYED_TARGET_WEIGHT = 0.8
+TIME_EFFICIENCY_WEIGHT = 0.2
 
 # 不同蓝方根节点的任务价值。普通目标建筑是主要打击对象，
 # 雷达/拦截阵地和无人船统一按基础价值计分。
@@ -37,7 +36,6 @@ class RewardBreakdown:
     score: float
     raw_score: float
     K: float
-    D: float
     T: float
     completed: bool
     destroyed_ids: tuple[int, ...]
@@ -64,8 +62,10 @@ def _entity_health(
     entities: Mapping[int | str, Mapping[str, Any]],
     entity_id: int,
 ) -> float:
-    entity = entities.get(entity_id, entities.get(str(entity_id), {}))
-    return float(entity.get("health", 0.0))
+    entity = entities.get(entity_id, entities.get(str(entity_id)))
+    if entity is None:
+        return float("inf")
+    return float(entity.get("health", float("inf")))
 
 
 def load_reward_policy(scenario: str | Path) -> RewardPolicy | None:
@@ -85,8 +85,16 @@ def load_reward_policy(scenario: str | Path) -> RewardPolicy | None:
 
     info = json.loads(info_path.read_text(encoding="utf-8"))
     expected_hash = str(info.get("scenario_sha256", ""))
-    actual_hash = hashlib.sha256(scenario_path.read_bytes()).hexdigest()
-    if expected_hash and expected_hash != actual_hash:
+    scenario_bytes = scenario_path.read_bytes()
+    # Git may check JSON out with CRLF on Windows. Treat newline conversion as
+    # transport-level normalization while still rejecting content changes.
+    lf_bytes = scenario_bytes.replace(b"\r\n", b"\n")
+    hash_candidates = {
+        hashlib.sha256(scenario_bytes).hexdigest(),
+        hashlib.sha256(lf_bytes).hexdigest(),
+        hashlib.sha256(lf_bytes.replace(b"\n", b"\r\n")).hexdigest(),
+    }
+    if expected_hash and expected_hash not in hash_candidates:
         raise ValueError(
             f"场景校验失败：{scenario_path} 与 case_info.json 的 SHA-256 不一致"
         )
@@ -130,26 +138,17 @@ def calculate_reward(
     *,
     policy: RewardPolicy,
     target_health: Mapping[int | str, float],
-    surviving_red_missile_count: int,
-    initial_red_missile_count: int,
-    completion_step: int | None = None,
     destruction_steps: Mapping[int | str, int] | None = None,
 ) -> RewardBreakdown:
-    """Calculate ``100 * clip(0.7K + 0.3D - 0.2T, 0, 1)``.
+    """Calculate ``100 * clip(0.8K + 0.2T, 0, 1)``.
 
     ``K`` is the destroyed objective *value* ratio instead of a plain count.
-    ``T`` is the remaining weighted time debt.  Every destroyed objective
-    reduces that debt according to its value and destruction time, so time
-    credit no longer depends on destroying every enemy root node.
+    ``T`` is weighted time efficiency.  A destroyed objective earns more time
+    credit when it is destroyed earlier; an undestroyed objective earns none.
 
-    ``completion_step`` is retained for callers using the former API.  The
-    tracker supplies per-objective ``destruction_steps`` for the new formula.
+    ``destruction_steps`` supplies each objective's first destroyed step.
+    Missing timing information earns no time credit.
     """
-    if initial_red_missile_count <= 0:
-        raise ValueError("initial_red_missile_count 必须大于 0")
-    if not 0 <= surviving_red_missile_count <= initial_red_missile_count:
-        raise ValueError("surviving_red_missile_count 必须在 0 和初始数量之间")
-
     destroyed_ids = tuple(
         entity_id
         for entity_id in policy.objective_ids
@@ -172,7 +171,6 @@ def calculate_reward(
 
     destroyed_weight = sum(weight_by_id[entity_id] for entity_id in destroyed_ids)
     k_value = destroyed_weight / total_objective_weight
-    d_value = surviving_red_missile_count / initial_red_missile_count
     completed = len(destroyed_ids) == len(policy.objective_ids)
 
     supplied_steps = destruction_steps or {}
@@ -184,26 +182,22 @@ def calculate_reward(
             supplied_steps.get(str(entity_id)),
         )
         if raw_step is None:
-            # 兼容旧调用：只有“全部完成时刻”时，把它作为已摧毁目标的
-            # 保守近似；没有任何时间信息则不授予提前完成奖励。
-            raw_step = completion_step if completion_step is not None else policy.max_steps
+            raw_step = policy.max_steps
         step = max(0, min(policy.max_steps, int(raw_step)))
         normalized_steps[entity_id] = step
         remaining_fraction = 1.0 - step / policy.max_steps
         earned_time_credit += weight_by_id[entity_id] * remaining_fraction
 
-    t_value = 1.0 - earned_time_credit / total_objective_weight
+    t_value = earned_time_credit / total_objective_weight
     t_value = max(0.0, min(1.0, t_value))
     raw_score = (
         DESTROYED_TARGET_WEIGHT * k_value
-        + MISSILE_SURVIVAL_WEIGHT * d_value
-        - TIME_PENALTY_WEIGHT * t_value
+        + TIME_EFFICIENCY_WEIGHT * t_value
     )
     return RewardBreakdown(
         score=100.0 * max(0.0, min(1.0, raw_score)),
         raw_score=raw_score,
         K=k_value,
-        D=d_value,
         T=t_value,
         completed=completed,
         destroyed_ids=destroyed_ids,
@@ -217,18 +211,9 @@ def calculate_reward(
 class RewardTracker:
     """Accumulate one round of state without changing the simulator."""
 
-    def __init__(
-        self,
-        policy: RewardPolicy,
-        red_missile_ids: tuple[int, ...],
-    ) -> None:
-        if not red_missile_ids:
-            raise ValueError("场景中没有可评分的红方导弹")
+    def __init__(self, policy: RewardPolicy) -> None:
         self.policy = policy
-        self.red_missile_ids = red_missile_ids
-        self.completion_step: int | None = None
         self.destruction_steps: dict[int, int] = {}
-        self.final_step = 0
 
     def check_completion(
         self,
@@ -237,29 +222,18 @@ class RewardTracker:
     ) -> None:
         """Record each objective's first destroyed step.
 
-        ``completion_step`` remains an informational field for result files;
-        it no longer gates the time component of the score.
+        Repeated observations do not overwrite the first destroyed step.
         """
         entities = observation.get("entities", {})
-        self.final_step = int(step)
         for entity_id in self.policy.objective_ids:
             if (
                 entity_id not in self.destruction_steps
                 and _entity_health(entities, entity_id) <= 0
             ):
                 self.destruction_steps[entity_id] = int(step)
-        if (
-            self.completion_step is None
-            and len(self.destruction_steps) == len(self.policy.objective_ids)
-        ):
-            self.completion_step = int(step)
 
     def finish(self, observation: Mapping[str, Any]) -> RewardBreakdown:
         entities = observation.get("entities", {})
-        surviving_red_missile_count = sum(
-            _entity_health(entities, entity_id) > 0
-            for entity_id in self.red_missile_ids
-        )
         target_health = {
             entity_id: _entity_health(entities, entity_id)
             for entity_id in self.policy.objective_ids
@@ -267,8 +241,5 @@ class RewardTracker:
         return calculate_reward(
             policy=self.policy,
             target_health=target_health,
-            surviving_red_missile_count=surviving_red_missile_count,
-            initial_red_missile_count=len(self.red_missile_ids),
-            completion_step=self.completion_step,
             destruction_steps=self.destruction_steps,
         )
