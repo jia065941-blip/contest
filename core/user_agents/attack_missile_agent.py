@@ -33,8 +33,11 @@ class AttackMissileAgent(BaseAgent):
         launch_step: 发射时的帧数，为发射为 -1
     """
 
-    def __init__(self, agent_id: int, entity_id: int, init_observation:dict):
+    def __init__(self, agent_id: int, entity_id: int, init_observation:dict, commander=None):
         super().__init__(agent_id, entity_id, AgentType.AIRCRAFT, init_observation)
+        # The commander owns target allocation and launch timing; this agent
+        # retains the per-missile manoeuvre state after launch.
+        self.commander = commander
         self.set_acc_z_z = 0
         self.acc_start_step = 0
         self.launch_step = -1
@@ -51,7 +54,14 @@ class AttackMissileAgent(BaseAgent):
         step = observation["step"]
 
         # 发射
-        self._launch(actions, entity_type, step)
+        if self.commander is None:
+            self._launch(actions, entity_type, step)
+        else:
+            self.commander.report(observation)
+            launch = self.commander.action_for(self.entity_id, step)
+            if launch is not None:
+                actions.append(launch)
+                self.launch_step = step
 
         # 横向加速度
         # self._set_acc_z(actions, entity_type, step)
@@ -159,7 +169,14 @@ class AttackMissileAgent(BaseAgent):
         """
 
         # 当探测到拦截弹时，进行机动规避
-        interceptors = [ target for target in observation["self"]["detectInfo"].values() if target.entity_type==24000]
+        if self.launch_step < 0:
+            return
+
+        interceptors = [
+            target
+            for target in observation["self"].get("detectInfo", {}).values()
+            if (target.get("entity_type") if isinstance(target, dict) else getattr(target, "entity_type", None)) == 24000
+        ]
 
         if not interceptors:
             return

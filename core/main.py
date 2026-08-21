@@ -12,6 +12,14 @@ from envengine.sdk.log import LogManager
 from envengine.sdk.writer import WriteConfig, init_writer, get_writer, write_immediately
 from user_agents import AttackMissileAgent, DeployAgent
 
+try:
+    # The workspace wrapper adds the red-baseline plugin to PYTHONPATH. Keep
+    # direct core execution available when optional plugins are absent.
+    from red_strategy_lab.domain import Target, Position
+    from user_agents.red_policy_commander import RedPolicyCommander
+except ImportError:
+    Target = Position = RedPolicyCommander = None
+
 
 def parse_args():
     """解析命令行参数"""
@@ -154,12 +162,28 @@ def main():
 
     # 初始化需要给红方 AI 的信息
     init_observation_ship = training_env._get_init_ship_observation()
+    commander = None
+    if RedPolicyCommander is not None:
+        targets = tuple(
+            Target(
+                int(entity_id),
+                Position(float(entity_info["position"]["lon"]), float(entity_info["position"]["lat"])),
+                value=(10.0 if str(entity_info.get("nameChn", "")).startswith("目标") else 6.0 if str(entity_info.get("nameChn", "")).startswith("拦截阵地") else 3.0),
+            )
+            for entity_id, entity_info in init_observation_ship["entities"].items()
+            if entity_info.get("side") == 1 and entity_info.get("health", 0) > 0
+        )
+        commander = RedPolicyCommander(targets)
+    else:
+        logging.warning("red_strategy_lab is unavailable; using the standalone random red launcher")
     for i, simulator in enumerate(simulators):
         entity_id = simulator.entity_ext.entity.id
         agent_id = i + 1
         # 按类型注册红方飞行器智能体
         if simulator.entity_ext.entity.entityType == 21000 or simulator.entity_ext.entity.entityType == 21001 or simulator.entity_ext.entity.entityType == 21002:
-            agent = AttackMissileAgent(agent_id, entity_id, init_observation_ship)
+            agent = AttackMissileAgent(agent_id, entity_id, init_observation_ship, commander=commander)
+            if commander is not None:
+                commander.register_platform(entity_id)
             training_env.agent_manager.register_agent(agent)
     logging.info(f"[测试] 已注册 {training_env.agent_manager.get_agent_count()} 个智能体")
 
