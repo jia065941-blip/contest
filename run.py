@@ -86,6 +86,7 @@ def cmd_run(args: argparse.Namespace) -> int:
     env = plugin_env()
     env["BLUE_POLICY"] = args.blue_policy
     env["RED_POLICY"] = args.red_policy
+    env["RED_MOTION_POLICY"] = args.red_motion_policy
     if args.seed is not None:
         env["BLUE_POLICY_SEED"] = str(args.seed)
         env["RED_POLICY_SEED"] = str(args.seed)
@@ -106,6 +107,12 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser = subparsers.add_parser("run", help="Run a blue baseline against a scenario")
     run_parser.add_argument("--blue-policy", default="fixed_ratio_random")
     run_parser.add_argument("--red-policy", default="b0_random", choices=["b0_random", "b1_priority", "b2_static_assignment", "b3_rolling_rules"])
+    run_parser.add_argument(
+        "--red-motion-policy",
+        default="reactive_evasion",
+        choices=["straight", "reactive_evasion"],
+        help="Red post-launch motion policy (default: reactive_evasion)",
+    )
     run_parser.add_argument("--scenario", default="default", help="default or easy/E01 … hard/H03")
     run_parser.add_argument("--seed", type=int)
     run_parser.add_argument("--run-id", default="manual")

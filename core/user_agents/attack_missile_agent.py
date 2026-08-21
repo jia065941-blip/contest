@@ -34,11 +34,15 @@ class AttackMissileAgent(BaseAgent):
         launch_step: 发射时的帧数，为发射为 -1
     """
 
-    def __init__(self, agent_id: int, entity_id: int, init_observation:dict, commander=None):
+    def __init__(self, agent_id: int, entity_id: int, init_observation:dict, commander=None,
+                 motion_policy: str = "reactive_evasion"):
         super().__init__(agent_id, entity_id, AgentType.AIRCRAFT, init_observation)
         # The commander owns target allocation and launch timing; this agent
         # retains the per-missile manoeuvre state after launch.
         self.commander = commander
+        if motion_policy not in {"straight", "reactive_evasion"}:
+            raise ValueError(f"Unsupported red motion policy: {motion_policy}")
+        self.motion_policy = motion_policy
         self.set_acc_z_z = 0
         self.acc_start_step = 0
         self.launch_step = -1
@@ -66,7 +70,8 @@ class AttackMissileAgent(BaseAgent):
 
         # 横向加速度
         # self._set_acc_z(actions, entity_type, step)
-        self._set_acc_z_avoid(actions, observation)
+        if self.motion_policy == "reactive_evasion":
+            self._set_acc_z_avoid(actions, observation)
 
         # 使用卫星
         # self._use_satellite(actions, step)

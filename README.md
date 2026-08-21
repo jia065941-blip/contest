@@ -61,6 +61,48 @@ E01 的环境回合终点为 1200 步。请显式保留 `--total-rounds 1`；当
 - `threat_priority`
 - `min_cost_assignment`
 
+## 红方策略与运动参数
+
+`--red-policy` 与 `--red-motion-policy` 分别控制不同层级，可自由组合：前者
+决定目标分配和发射时机，后者决定每枚红方导弹发射后的飞行行为。
+
+| 参数 | 控制层级 | 默认值 | 可选值 | 作用 |
+|---|---|---|---|---|
+| `--red-policy` | 上层任务分配 | `b0_random` | `b0_random`, `b1_priority`, `b2_static_assignment`, `b3_rolling_rules` | 为平台分配目标并确定发射帧。 |
+| `--red-motion-policy` | 下层飞行运动 | `reactive_evasion` | `straight`, `reactive_evasion` | 选择导弹发射后的飞行与规避行为。 |
+| `--blue-policy` | 蓝方拦截分配 | `fixed_ratio_random` | `fixed_ratio_random`, `nearest_interceptor`, `threat_priority`, `min_cost_assignment` | 选择蓝方拦截弹分配策略。 |
+| `--scenario` | 环境 | `default` | `default`、`easy/E01`--`easy/E03`、`medium/M01`--`medium/M03`、`hard/H01`--`hard/H03` | 选择对抗场景。 |
+| `--seed` | 可复现性 | 未设置 | 整数 | 设置红、蓝方随机策略的随机种子。 |
+
+下层运动策略：
+
+- `straight`：无规避运动基线。按分配任务发射后，不再产生额外规避动作。
+- `reactive_evasion`：发射后的导弹探测到 `entity_type == 24000` 且其飞行方向
+  指向本弹的拦截弹时，执行内置横向机动，并仅使用一次卫星动作。
+
+例如，以下命令保持 B2 静态分配不变，并采用无规避运动基线：
+
+```powershell
+.\run_local.cmd run --scenario easy/E01 --red-policy b2_static_assignment --red-motion-policy straight --blue-policy threat_priority --run-id e01_b2_straight -- --total-rounds 1 --max-steps 1200 --render-mode none
+```
+
+仅切换下层运动策略，即可启用响应式规避：
+
+```powershell
+.\run_local.cmd run --scenario easy/E01 --red-policy b2_static_assignment --red-motion-policy reactive_evasion --blue-policy threat_priority --run-id e01_b2_evasion -- --total-rounds 1 --max-steps 1200 --render-mode none
+```
+
+## 单局汇总
+
+每轮结束后，控制台会输出一行以 `FINAL_SUMMARY ` 开头的 JSON；同一内容会
+同步写入 `results/runs/<run-id>/<timestamp>/summary.json`，不依赖可选的动作
+或状态日志。
+
+汇总包括：场景和策略参数、实际执行步数、终止原因、正式 K/T 得分、红方实际
+发射/存活/损失数量、蓝方实体存活/毁伤数量与总剩余血量，以及每个计分目标的
+初始血量、最终血量和首次毁伤帧。`突防数` 尚未写入正式汇总，因为引擎目前没
+有统一的突防事件和边界定义。
+
 场景可选 `easy/E01` 至 `easy/E03`、`medium/M01` 至 `medium/M03`、`hard/H01` 至 `hard/H03`。
 
 ## 已完成的 E01 冒烟对打

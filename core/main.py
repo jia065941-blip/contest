@@ -3,7 +3,9 @@ import logging
 import os
 import time
 import json
+import sys
 from datetime import datetime
+from pathlib import Path
 
 import requests
 from urllib.parse import urlparse
@@ -11,6 +13,16 @@ from envengine import Profile, TrainingEnv
 from envengine.sdk.log import LogManager
 from envengine.sdk.writer import WriteConfig, init_writer, get_writer, write_immediately
 from user_agents import AttackMissileAgent, DeployAgent
+from evaluation import RunSummary
+
+WORKSPACE_ROOT = Path(__file__).resolve().parents[1]
+if str(WORKSPACE_ROOT) not in sys.path:
+    sys.path.append(str(WORKSPACE_ROOT))
+
+try:
+    from plugins.scenarios.competition_cases import RewardTracker, load_reward_policy
+except ImportError:
+    RewardTracker = load_reward_policy = None
 
 try:
     # The workspace wrapper adds the red-baseline plugin to PYTHONPATH. Keep
@@ -162,6 +174,7 @@ def main():
 
     # 初始化需要给红方 AI 的信息
     init_observation_ship = training_env._get_init_ship_observation()
+    red_motion_policy = os.getenv("RED_MOTION_POLICY", "reactive_evasion")
     commander = None
     if RedPolicyCommander is not None:
         targets = tuple(
@@ -181,7 +194,13 @@ def main():
         agent_id = i + 1
         # 按类型注册红方飞行器智能体
         if simulator.entity_ext.entity.entityType == 21000 or simulator.entity_ext.entity.entityType == 21001 or simulator.entity_ext.entity.entityType == 21002:
-            agent = AttackMissileAgent(agent_id, entity_id, init_observation_ship, commander=commander)
+            agent = AttackMissileAgent(
+                agent_id,
+                entity_id,
+                init_observation_ship,
+                commander=commander,
+                motion_policy=red_motion_policy,
+            )
             if commander is not None:
                 commander.register_platform(entity_id)
             training_env.agent_manager.register_agent(agent)
@@ -193,9 +212,22 @@ def main():
 
     logging.info("[测试] 运行环境初始化完成")
 
+    reward_policy = load_reward_policy(args.scenario) if load_reward_policy is not None else None
     for i in range(args.total_rounds):
         logging.info(f"[测试] 运行第 {i + 1} 轮")
-        training_env.reset()
+        initial_observation = training_env.reset()
+        run_summary = RunSummary(
+            scenario=reward_policy.scenario_id if reward_policy is not None else str(args.scenario),
+            policies={
+                "red": os.getenv("RED_POLICY", "standalone_random"),
+                "red_motion": red_motion_policy,
+                "blue": os.getenv("BLUE_POLICY", "engine_default"),
+            },
+            reward_tracker=RewardTracker(reward_policy) if reward_policy is not None else None,
+        )
+        run_summary.start(initial_observation)
+        final_observation = initial_observation
+        termination_reason = "time_limit"
         # 红方模型部署
         training_env.red_model_deploy()
         # time.sleep(1000)
@@ -203,18 +235,38 @@ def main():
         # 运行仿真, 训练环境会自动调用智能体的get_action方法
         for step in range(1, args.max_steps + 1):
             obs, reward, done, info = training_env.step()
+            final_observation = obs
+            run_summary.update(step, obs)
             if step % 200 == 0:
                 # logging.info(f"[测试] Step {step}: obs={obs}, reward={reward}, done={done}, info={info}")
                 logging.info(f"[测试] Step {step}")
                 # pass
             if done:
                 logging.info("[测试] 仿真结束")
+                termination_reason = "environment_done"
                 break
         end_time = time.perf_counter()
 
         logging.info(f"[测试] 第 {i + 1} 轮结束，本轮仿真总用时: {end_time - start_time:.6f} 秒")
         # 写剩余缓冲区数据
         write_immediately()
+        red_launched = (
+            commander.dispatched_count
+            if commander is not None
+            else sum(
+                getattr(agent, "launch_step", -1) >= 0
+                for agent in training_env.agent_manager.get_all_agents()
+            )
+        )
+        summary = run_summary.build(
+            final_observation,
+            termination_reason=termination_reason,
+            red_launched=red_launched,
+        )
+        summary_filename = "summary.json" if args.total_rounds == 1 else f"summary_round_{i + 1}.json"
+        summary_path = run_summary.write(write_config.output_dir, summary, summary_filename)
+        print("FINAL_SUMMARY " + json.dumps(summary, ensure_ascii=False))
+        logging.info(f"[测试] 单局汇总已写入: {summary_path}")
 
     training_env.close()
     # 关闭写入器
