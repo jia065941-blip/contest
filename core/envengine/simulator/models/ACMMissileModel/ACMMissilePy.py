@@ -276,4 +276,44 @@ class BatchMissile(object):
 
 # Register BatchMissile in _ACMMissilePy:
 _ACMMissilePy.BatchMissile_swigregister(BatchMissile)
+class Missile(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self):
+        _ACMMissilePy.Missile_swiginit(self, _ACMMissilePy.new_Missile())
+    __swig_destroy__ = _ACMMissilePy.delete_Missile
+
+    def Save(self, flag, id):
+        return _ACMMissilePy.Missile_Save(self, flag, id)
+
+    def Init(self, step, m_lla, maxLoad):
+        return _ACMMissilePy.Missile_Init(self, step, m_lla, maxLoad)
+
+    def Launch(self, t_lla):
+        return _ACMMissilePy.Missile_Launch(self, t_lla)
+
+    def SetDesiredSpeed(self, speed):
+        return _ACMMissilePy.Missile_SetDesiredSpeed(self, speed)
+
+    def SetDesiredHeight(self, height):
+        return _ACMMissilePy.Missile_SetDesiredHeight(self, height)
+
+    def SetDesiredAccZ(self, accZ):
+        return _ACMMissilePy.Missile_SetDesiredAccZ(self, accZ)
+
+    def ClearDesiredAccZ(self):
+        return _ACMMissilePy.Missile_ClearDesiredAccZ(self)
+
+    def SetTargetEcf(self, targetPosEcf, targetVelEcf):
+        return _ACMMissilePy.Missile_SetTargetEcf(self, targetPosEcf, targetVelEcf)
+
+    def Update(self):
+        return _ACMMissilePy.Missile_Update(self)
+
+    def getState(self):
+        return _ACMMissilePy.Missile_getState(self)
+
+# Register Missile in _ACMMissilePy:
+_ACMMissilePy.Missile_swigregister(Missile)
 

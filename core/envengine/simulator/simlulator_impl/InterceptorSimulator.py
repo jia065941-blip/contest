@@ -181,10 +181,10 @@ class InterceptorSimulator(ISimulator):
             self.model.SetMissileCount(count)
 
         missile_lla = UtilsPy.Vector3D(self.entity_ext.entity.lla.x, self.entity_ext.entity.lla.y,
-                                       self.entity_ext.entity.lla.z)
+                                       self.entity_ext.entity.lla.z + 0.1)
 
         self.model.Init(self.entity_ext.entity.id, self.simulator_sim_step / 1000, 20, missile_lla)
-        self.model.Save(self.entity_ext.entity.id, True)
+        self.model.Save(self.entity_ext.entity.id, False)
 
     def command_received(self, command: Command) -> None:
         """

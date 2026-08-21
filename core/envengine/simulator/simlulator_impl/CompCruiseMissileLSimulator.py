@@ -118,7 +118,7 @@ class CompCruiseMissileLSimulator(ISimulator):
         """
         self.entity_ext.entity.lla = lla
         missile_lla = UtilsPy.Vector3D(self.entity_ext.entity.lla.x, self.entity_ext.entity.lla.y,
-                                       self.entity_ext.entity.lla.z)
+                                       self.entity_ext.entity.lla.z + 0.1)
 
         self.model.Init(self.entity_ext.entity.id, self.simulator_sim_step / 1000, 5, missile_lla)
         self.model.SetDesiredHeight(self.entity_ext.entity.id, 10000)
@@ -232,7 +232,10 @@ class CompCruiseMissileLSimulator(ISimulator):
 
             self.launch = 1
         elif command.commandTypeId == SimmerCommandType.SET_DESIRED_ACC_Z:
-            self.model.SetDesiredAccZ(self.entity_ext.entity.id, command.commandAttributes["acc_z"] * 20 * 9.8)
+            if command.commandAttributes["acc_z"] == 0:
+                self.model.ClearDesiredAccZ(self.entity_ext.entity.id)
+            else:
+                self.model.SetDesiredAccZ(self.entity_ext.entity.id, command.commandAttributes["acc_z"] * 20 * 9.8)
         elif command.commandTypeId == SimmerCommandType.SET_DESIRED_VEL_X:
             self.model.SetDesiredSpeed(self.entity_ext.entity.id, command.commandAttributes["vel_x"])
         elif command.commandTypeId == SimmerCommandType.CHANGE_MISSILE_TARGET:

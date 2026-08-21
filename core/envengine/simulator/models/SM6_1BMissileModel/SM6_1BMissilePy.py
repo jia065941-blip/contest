@@ -276,4 +276,44 @@ class BatchMissile(object):
 
 # Register BatchMissile in _SM6_1BMissilePy:
 _SM6_1BMissilePy.BatchMissile_swigregister(BatchMissile)
+class Missile(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self):
+        _SM6_1BMissilePy.Missile_swiginit(self, _SM6_1BMissilePy.new_Missile())
+    __swig_destroy__ = _SM6_1BMissilePy.delete_Missile
+
+    def Save(self, flag, id):
+        return _SM6_1BMissilePy.Missile_Save(self, flag, id)
+
+    def Init(self, step, m_lla, maxLoad):
+        return _SM6_1BMissilePy.Missile_Init(self, step, m_lla, maxLoad)
+
+    def Launch(self, t_lla):
+        return _SM6_1BMissilePy.Missile_Launch(self, t_lla)
+
+    def SetDesiredSpeed(self, speed):
+        return _SM6_1BMissilePy.Missile_SetDesiredSpeed(self, speed)
+
+    def SetDesiredHeight(self, height):
+        return _SM6_1BMissilePy.Missile_SetDesiredHeight(self, height)
+
+    def SetDesiredAccZ(self, accZ):
+        return _SM6_1BMissilePy.Missile_SetDesiredAccZ(self, accZ)
+
+    def ClearDesiredAccZ(self):
+        return _SM6_1BMissilePy.Missile_ClearDesiredAccZ(self)
+
+    def SetTargetEcf(self, targetPosEcf, targetVelEcf):
+        return _SM6_1BMissilePy.Missile_SetTargetEcf(self, targetPosEcf, targetVelEcf)
+
+    def Update(self):
+        return _SM6_1BMissilePy.Missile_Update(self)
+
+    def getState(self):
+        return _SM6_1BMissilePy.Missile_getState(self)
+
+# Register Missile in _SM6_1BMissilePy:
+_SM6_1BMissilePy.Missile_swigregister(Missile)
 
