@@ -330,6 +330,7 @@ class TrainingEnv:
                     "y":entity_data.posEcf.y,
                     "z":entity_data.posEcf.z,
                 },
+                "stage":entity_data.stage,
                 "health": entity_data.survivePoints,
                 "isVisible": entity_data.isVisible,
                 "type": entity_data.entityType,
