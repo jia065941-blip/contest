@@ -1,3 +1,4 @@
+import math
 import random
 from typing import Callable
 
@@ -38,6 +39,7 @@ class DefendCommanderModelSimulator(ISimulator):
         """
         执行仿真步进
         """
+        pass
 
     def set_lla(self, lla: Vector3d) -> None:
         """
@@ -56,6 +58,7 @@ class DefendCommanderModelSimulator(ISimulator):
         接收雷达的探测信息, 控制拦截弹发射
         :param new_detect_info: 新探测信息
         """
+
         target_dict = self._entity_ext.entity.detectInfo
         for key, new_value in new_detect_info.items():
             old_value = target_dict.get(key)
@@ -69,58 +72,46 @@ class DefendCommanderModelSimulator(ISimulator):
             return
 
         # 发射拦截弹
-        self.launch_intercept_missile(detect_info_list)
+        self.launch_intercept_for_target(detect_info_list)
 
-    def launch_intercept_missile(self, detect_info_list: [DetectInfo]) -> None:
+    def launch_intercept_for_target(self, detect_info_list: list[DetectInfo]):
         """
         发射拦截弹 - 2拦1策略
         :param detect_info_list: 目标列表
         """
-        INTERCEPTOR_RATIO = 5
 
-        # 获取可用拦截弹
-        interceptor_list = self._simulator_factory.get_simulators_by_type(24000)
+        INTERCEPTOR_RATIO = 2
+
+        all_interceptor_list = self._simulator_factory.get_simulators_by_type(24000)
         launched_interceptor_list = [num for sublist in self.launched_list.values() for num in sublist]
-        un_launched_interceptor_list = [interceptor for interceptor in interceptor_list if
+        un_launched_interceptor_list = [interceptor for interceptor in all_interceptor_list if
                                         interceptor.entity_ext.entity.id not in launched_interceptor_list]
 
-        if not un_launched_interceptor_list or not detect_info_list:
-            return
-
-        # 计算每个目标需要的拦截弹数量
-        target_needs = {}
-        for detect_info in detect_info_list:
-            target_id = detect_info.entity_id
-            if target_id in self.launched_list:
-                need = max(0, INTERCEPTOR_RATIO - len(self.launched_list[target_id]))
-            else:
-                need = INTERCEPTOR_RATIO
-            if need > 0:
-                target_needs[target_id] = need
-
-        if not target_needs:
-            return
-
-        # 按需求排序（优先拦截需求多的目标）
-        sorted_targets = sorted(target_needs.items(), key=lambda x: x[1], reverse=True)
-
-        # 分配拦截弹
         command_list = []
-        available_interceptors = un_launched_interceptor_list.copy()
 
-        for target_id, need in sorted_targets:
-            if not available_interceptors:
-                break
+        for target in detect_info_list:
+            # 获取可用拦截弹
+            interceptor_list = self.filter_interceptor_by_angle(target, un_launched_interceptor_list)
 
-            # 找到对应的目标信息
-            target_info = next((t for t in detect_info_list if t.entity_id == target_id), None)
-            if not target_info:
+            if not interceptor_list:
+                continue
+
+            # 计算目标需要的拦截弹数量
+            target_need = 0
+            target_id = target.entity_id
+            if target_id in self.launched_list:
+                target_need = max(0, INTERCEPTOR_RATIO - len(self.launched_list[target_id]))
+            else:
+                target_need = INTERCEPTOR_RATIO
+
+            if target_need <= 0:
                 continue
 
             # 分配拦截弹
-            allocated = min(need, len(available_interceptors))
-            # selected = available_interceptors[:allocated]
-            # available_interceptors = available_interceptors[allocated:]
+            available_interceptors = interceptor_list.copy()
+
+            # 分配拦截弹
+            allocated = min(target_need, len(available_interceptors))
 
             # 生成指令
             for _ in range(allocated):
@@ -134,14 +125,14 @@ class DefendCommanderModelSimulator(ISimulator):
                         targetId=target_id,
                         targetPosLLA=PosVelAcc(
                             cPos=Vector3D(
-                                target_info.pos_ecf.x,
-                                target_info.pos_ecf.y,
-                                target_info.pos_ecf.z
+                                target.pos_ecf.x,
+                                target.pos_ecf.y,
+                                target.pos_ecf.z
                             ),
                             cVel=Vector3D(
-                                target_info.vel_ecf.x,
-                                target_info.vel_ecf.y,
-                                target_info.vel_ecf.z
+                                target.vel_ecf.x,
+                                target.vel_ecf.y,
+                                target.vel_ecf.z
                             )
                         )
                     )
@@ -154,6 +145,60 @@ class DefendCommanderModelSimulator(ISimulator):
 
         if command_list:
             self._send_commands(command_list)
+
+    def filter_interceptor_by_angle(self, target: DetectInfo, un_launched_interceptor_list: list[ISimulator])->list[ISimulator]:
+        """
+        可用拦截弹：满足发射角度
+        :param target:
+        :return:
+        """
+
+        # return un_launched_interceptor_list
+
+        interceptor_angle_test = []
+        # 按照拦截阵地和无人船的位置进行判断，如果角度满足，则其上挂载的拦截弹可以发射
+        ship_id = []
+        for wr in self._simulator_factory.get_simulators_by_type(9500):
+            re_pos = wr.entity_ext.entity.posEcf - target.pos_ecf
+            re_vel = target.vel_ecf
+
+            dis = math.sqrt(re_pos.x ** 2 + re_pos.y ** 2 + re_pos.z ** 2)
+            if self.get_vector_angle(re_pos, re_vel) < 30 and dis < 600_000:
+                ship_id.append(wr.entity_ext.entity.id)
+
+        for wr in self._simulator_factory.get_simulators_by_type(9600):
+            re_pos = wr.entity_ext.entity.posEcf - target.pos_ecf
+            re_vel = target.vel_ecf
+
+            dis = math.sqrt(re_pos.x ** 2 + re_pos.y ** 2 + re_pos.z ** 2)
+            if self.get_vector_angle(re_pos, re_vel) < 20 and dis < 600_000:
+                ship_id.append(wr.entity_ext.entity.id)
+
+        for interceptor in un_launched_interceptor_list:
+            if interceptor.entity_ext.entity.parentId in ship_id:
+                interceptor_angle_test.append(interceptor)
+        return interceptor_angle_test
+
+
+    @staticmethod
+    def get_vector_angle(vector1: Vector3d, vector2: Vector3d) -> float:
+        """
+        计算两个向量的夹角
+        :param vector1: 向量1
+        :param vector2: 向量2
+        :return: 夹角（度）
+        """
+        # 点积
+        dot = vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z
+        # 模长
+        norm1 = math.sqrt(vector1.x ** 2 + vector1.y ** 2 + vector1.z ** 2)
+        norm2 = math.sqrt(vector2.x ** 2 + vector2.y ** 2 + vector2.z ** 2)
+        # 零向量时夹角视为 0 度
+        if norm1 == 0 or norm2 == 0:
+            return 0.0
+        # 余弦值（截断到 [-1, 1] 防止浮点误差）
+        cos_theta = max(-1.0, min(1.0, dot / (norm1 * norm2)))
+        return math.degrees(math.acos(cos_theta))
 
     def reset(self) -> None:
         """重置到初始状态"""

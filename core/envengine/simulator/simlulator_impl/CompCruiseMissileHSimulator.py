@@ -44,7 +44,7 @@ class CompCruiseMissileHSimulator(ISimulator):
         仿真器内部步长（毫秒）
         :return: 内部步长（毫秒）
         """
-        return 10
+        return 50
 
     def update(self) -> None:
         """
@@ -56,7 +56,8 @@ class CompCruiseMissileHSimulator(ISimulator):
         if self.ret < 0:
 
             # 更新探测信息
-            self.execute_detection()
+            if self.sim_time % 1000 == 0:
+                self.execute_detection()
 
             self.model.Update(self.sim_time)
             self.ret = self.model.getRet(self.entity_ext.entity.id)
@@ -71,6 +72,7 @@ class CompCruiseMissileHSimulator(ISimulator):
             entity.lla.x, entity.lla.y, entity.lla.z = lla.x(), lla.y(), lla.z()
             entity.posEcf.x, entity.posEcf.y, entity.posEcf.z = pos.x(), pos.y(), pos.z()
             entity.velEcf.x, entity.velEcf.y, entity.velEcf.z = vel.x(), vel.y(), vel.z()
+            entity.stage = state.stage()
         else:
             if self.entity_ext.entity.isVisible:
                 # 自爆
@@ -125,13 +127,14 @@ class CompCruiseMissileHSimulator(ISimulator):
 
         self.model.Init(self.entity_ext.entity.id, self.simulator_sim_step / 1000, 20, missile_lla)
         self.model.SetDesiredHeight(self.entity_ext.entity.id, 30000)
-        self.model.Save(self.entity_ext.entity.id, True)
+        self.model.SetDesiredSpeed(self.entity_ext.entity.id, 2000)
+        self.model.Save(self.entity_ext.entity.id, False)
 
     def set_speed(self, speed: float) -> None:
         """
         初始设置速度
         """
-        self.model.SetDesiredSpeed(self.entity_ext.entity.id, 1200)
+        self.model.SetDesiredSpeed(self.entity_ext.entity.id, 2000)
 
     def send_detect_info(self):
         """
@@ -237,6 +240,7 @@ class CompCruiseMissileHSimulator(ISimulator):
                 command.commandAttributes["target"]["y"],
                 command.commandAttributes["target"]["z"]
             ))
+
             self.launch = 1
         elif command.commandTypeId == SimmerCommandType.SET_DESIRED_ACC_Z:
             self.model.SetDesiredAccZ(self.entity_ext.entity.id, command.commandAttributes["acc_z"] * 20 * 9.8)

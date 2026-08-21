@@ -12,3 +12,6 @@ class Vector3d:
     y: float = 0.0
     # z
     z: float = 0.0
+
+    def __sub__(self, other):
+        return Vector3d(self.x - other.x, self.y - other.y, self.z - other.z)

@@ -27,6 +27,7 @@ class OrbitModelSimulator(ISimulator):
                  send_events: Callable[[dict], None],
                  simulator_factory: SimulatorFactory = None):
         super().__init__(entity_ext, send_commands, send_events, simulator_factory)
+        self.entity_ext.entity.stage = 1
 
     @property
     def simulator_sim_step(self) -> float:

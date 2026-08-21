@@ -276,4 +276,44 @@ class BatchMissile(object):
 
 # Register BatchMissile in _HXDMissilePy:
 _HXDMissilePy.BatchMissile_swigregister(BatchMissile)
+class Missile(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self):
+        _HXDMissilePy.Missile_swiginit(self, _HXDMissilePy.new_Missile())
+    __swig_destroy__ = _HXDMissilePy.delete_Missile
+
+    def Save(self, flag, id):
+        return _HXDMissilePy.Missile_Save(self, flag, id)
+
+    def Init(self, step, m_lla, maxLoad):
+        return _HXDMissilePy.Missile_Init(self, step, m_lla, maxLoad)
+
+    def Launch(self, t_lla):
+        return _HXDMissilePy.Missile_Launch(self, t_lla)
+
+    def SetDesiredSpeed(self, speed):
+        return _HXDMissilePy.Missile_SetDesiredSpeed(self, speed)
+
+    def SetDesiredHeight(self, height):
+        return _HXDMissilePy.Missile_SetDesiredHeight(self, height)
+
+    def SetDesiredAccZ(self, accZ):
+        return _HXDMissilePy.Missile_SetDesiredAccZ(self, accZ)
+
+    def ClearDesiredAccZ(self):
+        return _HXDMissilePy.Missile_ClearDesiredAccZ(self)
+
+    def SetTargetEcf(self, targetPosEcf, targetVelEcf):
+        return _HXDMissilePy.Missile_SetTargetEcf(self, targetPosEcf, targetVelEcf)
+
+    def Update(self):
+        return _HXDMissilePy.Missile_Update(self)
+
+    def getState(self):
+        return _HXDMissilePy.Missile_getState(self)
+
+# Register Missile in _HXDMissilePy:
+_HXDMissilePy.Missile_swigregister(Missile)
 

@@ -60,6 +60,8 @@ class InterceptorSimulator(ISimulator):
             entity.lla.x, entity.lla.y, entity.lla.z = lla.x(), lla.y(), lla.z()
             entity.posEcf.x, entity.posEcf.y, entity.posEcf.z = pos.x(), pos.y(), pos.z()
             entity.velEcf.x, entity.velEcf.y, entity.velEcf.z = vel.x(), vel.y(), vel.z()
+            entity.stage = state.stage()
+
             self.set_target_ecf()
 
             if self.ret > 0 and self.entity_ext.entity.isVisible:

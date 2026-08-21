@@ -17,6 +17,8 @@ class Entity(object):
         lla : 经纬高位置
         posEcf : 地固系位置
         att : 姿态
+
+        stage: 运动状态: 默认 - 1, Launch = 1, Rise = 2, Cruise = 3, Terminal = 4, Explode = 5
     """
 
     # id
@@ -45,6 +47,9 @@ class Entity(object):
     healthState: bool = True
     # 能量状态
     powerState: bool = True
+
+    #运动状态: 默认 - 1, Launch = 1, Rise = 2, Cruise = 3, Terminal = 4, Explode = 5
+    stage: float = -1
     # 经纬高
     lla: Vector3d = field(default_factory=Vector3d)
     # 地固系位置

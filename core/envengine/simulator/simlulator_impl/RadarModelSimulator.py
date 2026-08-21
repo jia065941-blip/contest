@@ -26,6 +26,7 @@ class RadarModelSimulator(ISimulator):
                  send_events: Callable[[dict], None],
                  simulator_factory: SimulatorFactory = None):
         super().__init__(entity_ext, send_commands, send_events, simulator_factory)
+        self.entity_ext.entity.stage = 1
 
     @property
     def simulator_sim_step(self) -> float:
@@ -33,7 +34,7 @@ class RadarModelSimulator(ISimulator):
         仿真器内部步长（毫秒）
         :return: 内部步长（毫秒）
         """
-        return 50
+        return 1000
 
     def update(self) -> None:
         """
@@ -82,10 +83,10 @@ class RadarModelSimulator(ISimulator):
         detected_candidate_simulators: list[ISimulator] = self._simulator_factory.get_simulators_by_side(
             1 if self.entity_ext.entity.sideId == 0 else 0)
         detected: list[ISimulator] = self._get_targets_within_self_range(detected_candidate_simulators,
-                                                                         max_range=200 * 1000)
+                                                                         max_range=500 * 1000)
         if not detected:
             return
-        # print("探测到的目标：", detected)
+
         # 组装探测信息
         detect_info: dict[int, DetectInfo] = {
             target.entity_ext.entity.id: DetectInfo(

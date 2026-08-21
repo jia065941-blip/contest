@@ -76,7 +76,7 @@ class AttackMissileAgent(BaseAgent):
 
         if entity_type == 21000:
             # 高性能弹，在一定时间后发射
-            if step > 50:
+            if step > 0:
                 target:dict = self.get_random_target()
                 if target:
                     actions.append([ACTION_LAUNCH, self.entity_id, target["position"]["lon"], target["position"]["lat"]])

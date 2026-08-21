@@ -423,7 +423,7 @@ RED_CONFIG = [
     # 高性能飞行器 (21000) - 左侧区域 (将保存到 redArea.coordinatesHM)
     {
         "type": 21000,
-        "count": 50,
+        "count": 1,
         "survive_points": 1,
         "threat_level": 0,
         "area": LAND_AREA
@@ -431,7 +431,7 @@ RED_CONFIG = [
     # 低性能飞行器 (21001) - 左侧区域 (将保存到 redArea.coordinatesHM)
     {
         "type": 21001,
-        "count": 100,
+        "count": 0,
         "survive_points": 1500,
         "threat_level": 0,
         "area": LAND_AREA
@@ -439,7 +439,7 @@ RED_CONFIG = [
     # 无人机 (21002) - 左半边偏右区域 (将保存到 redArea.coordinates)
     {
         "type": 21002,
-        "count": 200,
+        "count": 0,
         "survive_points": 1,
         "threat_level": 5,
         "area": {
