@@ -30,6 +30,8 @@ class DeployAgent(BaseAgent):
             行数表示同时执行的动作数量
             当 action_type=1 时，只有一行，且 entity_id=-1
         """
+        # random.seed(42)
+
         observation = observation["entities"]
         keys = list(observation.keys())
 

@@ -1,0 +1,1 @@
+from .SM6_1BMissilePy import BatchMissile

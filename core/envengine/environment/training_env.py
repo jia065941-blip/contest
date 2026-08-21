@@ -94,6 +94,7 @@ class TrainingEnv:
         红方模型部署
         :return:
         """
+
         while True:
             np_action: dict = self._generate_actions_from_deploy_agent()
             # 转换np.array动作到结构体动作
@@ -169,7 +170,7 @@ class TrainingEnv:
         rewards = self._compute_reward()
 
         # 判断是否结束
-        done = self.current_step >= self.max_steps
+        done = self.get_is_done()
 
         # 额外信息
         info = {
@@ -209,6 +210,29 @@ class TrainingEnv:
         self._last_observation = observation.copy()
         self._last_actions = action.copy() if action else None
         return observation, rewards, done, info
+
+    def get_is_done(self) -> bool:
+        if self.current_step >= self.max_steps:
+            return True
+
+        # 所有 红方弹、拦截弹 结束之后，仿真结束
+        for h in self.engine.simulator_factory.get_simulators_by_type(21000):
+            if h.entity_ext.entity.isVisible:
+                return False
+
+        for l in self.engine.simulator_factory.get_simulators_by_type(21001):
+            if l.entity_ext.entity.isVisible:
+                return False
+
+        for m in self.engine.simulator_factory.get_simulators_by_type(21002):
+            if m.entity_ext.entity.isVisible:
+                return False
+
+        for la in self.engine.simulator_factory.get_simulators_by_type(24000):
+            if la.entity_ext.entity.isVisible:
+                return False
+
+        return True
 
     def _generate_actions_from_agents(self) -> list[np.array]:
         """

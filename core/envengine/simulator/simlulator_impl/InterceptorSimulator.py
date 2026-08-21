@@ -11,7 +11,7 @@ from envengine.sdk.base_struct.Message import Command
 from envengine.sdk.Util import UtilsPy
 from envengine.simulator.decorator import Simulator
 from envengine.simulator.interfaces import ISimulator
-from envengine.simulator.models.PAC2Model.PAC2Py import Missile
+from envengine.simulator.models.SM6_1BMissileModel import BatchMissile
 from envengine.simulator.simulator_factory import SimulatorFactory
 
 
@@ -30,13 +30,6 @@ class InterceptorSimulator(ISimulator):
         self.launched = -1
         self.damage_point = 5000
         self.target_id = None
-        self.model = Missile()
-        self.model.Save(False)
-
-        missile_lla = UtilsPy.Vector3D(self.entity_ext.entity.lla.x, self.entity_ext.entity.lla.y,
-                                       self.entity_ext.entity.lla.z)
-
-        self.model.Init(self.simulator_sim_step / 1000, missile_lla)
 
     @property
     def simulator_sim_step(self) -> float:
@@ -52,9 +45,12 @@ class InterceptorSimulator(ISimulator):
         """
         if self.launched == -1 or self.entity_ext.entity.survivePoints <= 0:
             return
+
         if self.ret < 0:
-            self.ret = self.model.update()
-            state: State_py = self.model.getState()
+            self.model.Update(self.sim_time)
+            self.ret = self.model.getRet(self.entity_ext.entity.id)
+            state: State_py = self.model.getState(self.entity_ext.entity.id)
+
             pos = state.posEcf()
             vel = state.velEcf()
             lla = UtilsPy.CoordinateHelper.ecefToLla_py(pos)
@@ -64,6 +60,8 @@ class InterceptorSimulator(ISimulator):
             entity.lla.x, entity.lla.y, entity.lla.z = lla.x(), lla.y(), lla.z()
             entity.posEcf.x, entity.posEcf.y, entity.posEcf.z = pos.x(), pos.y(), pos.z()
             entity.velEcf.x, entity.velEcf.y, entity.velEcf.z = vel.x(), vel.y(), vel.z()
+            entity.stage = state.stage()
+
             self.set_target_ecf()
 
             if self.ret > 0 and self.entity_ext.entity.isVisible:
@@ -119,17 +117,17 @@ class InterceptorSimulator(ISimulator):
             return
         self.target_id = target_id
 
-        # target_lla = CoordinateHelper.ecefToLla_py(target_pos_ecf)
+        target_lla = CoordinateHelper.ecefToLla_py(target_pos_ecf)
         # print(f"target_lla:{target_lla.x(), target_lla.y(), target_lla.z()}")
         # print(f"target_vel_ecf:{target_vel_ecf.x(), target_vel_ecf.y(), target_vel_ecf.z()}")
 
-        targetPosNue = CoordinateHelper.ecefToNuePosition_py(target_pos_ecf, self.entity_ext.entity.lla.x,
-                                                             self.entity_ext.entity.lla.y)
-        theta_f = CoordinateHelper.getTheta_py(targetPosNue) * 57.3
-        psi_f = CoordinateHelper.getPsi_py(targetPosNue) * 57.3
-        self.model.SetTargetEcf(target_pos_ecf, target_vel_ecf)
+        # targetPosNue = CoordinateHelper.ecefToNuePosition_py(target_pos_ecf, self.entity_ext.entity.lla.x,
+        #                                                      self.entity_ext.entity.lla.y)
+        # theta_f = CoordinateHelper.getTheta_py(targetPosNue) * 57.3
+        # psi_f = CoordinateHelper.getPsi_py(targetPosNue) * 57.3
+        # self.model.SetTargetEcf(self.entity_ext.entity.id, target_pos_ecf, target_vel_ecf)
 
-        self.model.Launch(30, psi_f)
+        self.model.Launch(self.entity_ext.entity.id, target_lla)
         self.leave_parent()
         self.launched = 1
 
@@ -142,7 +140,7 @@ class InterceptorSimulator(ISimulator):
 
         if target.entity_ext.entity.survivePoints <= 0:
             return
-        self.model.SetTargetEcf(
+        self.model.SetTargetEcf(self.entity_ext.entity.id,
             Vector3D(
                 target.entity_ext.entity.posEcf.x,
                 target.entity_ext.entity.posEcf.y,
@@ -167,14 +165,26 @@ class InterceptorSimulator(ISimulator):
     def reset(self) -> None:
         """重置到初始状态"""
         super().reset()
+
+        BatchMissile.getInstance().Clear()
+
         self.ret = -1
         self.launched = -1
         self.target_id = None
-        self.model = Missile()
-        self.model.Save(False)
+
+    def init_model(self):
+        self.model = BatchMissile.getInstance()
+
+        # 高低性能弹使用同一个模型，因此同时计算count
+        if self._simulator_factory:
+            count = self._simulator_factory.get_profile_entity_count_by_type(24000)
+            self.model.SetMissileCount(count)
+
         missile_lla = UtilsPy.Vector3D(self.entity_ext.entity.lla.x, self.entity_ext.entity.lla.y,
-                                       self.entity_ext.entity.lla.z)
-        self.model.Init(self.simulator_sim_step / 1000, missile_lla)
+                                       self.entity_ext.entity.lla.z + 0.1)
+
+        self.model.Init(self.entity_ext.entity.id, self.simulator_sim_step / 1000, 20, missile_lla)
+        self.model.Save(self.entity_ext.entity.id, False)
 
     def command_received(self, command: Command) -> None:
         """

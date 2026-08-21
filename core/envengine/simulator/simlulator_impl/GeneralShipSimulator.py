@@ -21,6 +21,7 @@ class GeneralShipSimulator(ISimulator):
                  simulator_factory: SimulatorFactory = None):
         super().__init__(entity_ext, send_commands, send_events, simulator_factory)
         self.pos_flag = -1
+        self.entity_ext.entity.stage = 1
 
     @property
     def simulator_sim_step(self) -> float:
@@ -59,3 +60,6 @@ class GeneralShipSimulator(ISimulator):
         """重置到初始状态"""
         super().reset()
         self.pos_flag = -1
+
+    def init_model(self) -> None:
+        pass

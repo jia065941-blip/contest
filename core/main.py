@@ -1,23 +1,15 @@
 import argparse
-import json
 import logging
 import os
-import sys
 import time
+import json
 from datetime import datetime
-from pathlib import Path
-
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.append(str(PROJECT_ROOT))
 
 import requests
 from urllib.parse import urlparse
 from envengine import Profile, TrainingEnv
 from envengine.sdk.log import LogManager
 from envengine.sdk.writer import WriteConfig, init_writer, get_writer, write_immediately
-from plugins.scenarios.competition_cases import RewardTracker, load_reward_policy
 from user_agents import AttackMissileAgent, DeployAgent
 
 
@@ -154,7 +146,6 @@ def main():
 
     # 加载配置
     profile: Profile = read_profile(args.scenario)
-    reward_policy = load_reward_policy(args.scenario)
     # print(profile)
     # 实例化训练环境
     training_env = TrainingEnv(profile, render_mode=args.render_mode)
@@ -163,19 +154,12 @@ def main():
 
     # 初始化需要给红方 AI 的信息
     init_observation_ship = training_env._get_init_ship_observation()
-    red_agent_class = AttackMissileAgent
-    red_baseline_agent = None
-    if os.getenv("RED_POLICY"):
-        from user_agents.red_baseline_agent import RedBaselineAgent
-
-        red_agent_class = RedBaselineAgent
-        red_baseline_agent = RedBaselineAgent
     for i, simulator in enumerate(simulators):
         entity_id = simulator.entity_ext.entity.id
         agent_id = i + 1
         # 按类型注册红方飞行器智能体
         if simulator.entity_ext.entity.entityType == 21000 or simulator.entity_ext.entity.entityType == 21001 or simulator.entity_ext.entity.entityType == 21002:
-            agent = red_agent_class(agent_id, entity_id, init_observation_ship)
+            agent = AttackMissileAgent(agent_id, entity_id, init_observation_ship)
             training_env.agent_manager.register_agent(agent)
     logging.info(f"[测试] 已注册 {training_env.agent_manager.get_agent_count()} 个智能体")
 
@@ -183,14 +167,11 @@ def main():
     deploy_agent = DeployAgent(-1, -1,{}, profile.imagineProfile.redArea.coordinates, profile.imagineProfile.redArea.coordinatesHM)
     training_env.agent_manager.register_agent(deploy_agent)
 
-    # 重置环境
-    observation = training_env.reset()
     logging.info("[测试] 运行环境初始化完成")
-    # logging.info(f"[测试] 初始观测: {observation}")
 
     for i in range(args.total_rounds):
         logging.info(f"[测试] 运行第 {i + 1} 轮")
-        reward_tracker = RewardTracker(reward_policy) if reward_policy else None
+        training_env.reset()
         # 红方模型部署
         training_env.red_model_deploy()
         # time.sleep(1000)
@@ -198,8 +179,6 @@ def main():
         # 运行仿真, 训练环境会自动调用智能体的get_action方法
         for step in range(1, args.max_steps + 1):
             obs, reward, done, info = training_env.step()
-            if reward_tracker:
-                reward_tracker.check_completion(int(info["step"]), obs)
             if step % 200 == 0:
                 # logging.info(f"[测试] Step {step}: obs={obs}, reward={reward}, done={done}, info={info}")
                 logging.info(f"[测试] Step {step}")
@@ -209,58 +188,9 @@ def main():
                 break
         end_time = time.perf_counter()
 
-        entities = obs.get("entities", {})
-        red = [
-            item
-            for item in entities.values()
-            if item.get("side") == 0 and item.get("type") in (21000, 21001, 21002)
-        ]
-        blue = [item for item in entities.values() if item.get("side") == 1]
-        blue_commanders = [
-            simulator
-            for simulator in simulators
-            if simulator.entity_ext.entity.entityType == 35000
-        ]
-        blue_roots = [
-            item
-            for item in blue
-            if str(item.get("nameChn", "")).startswith(("目标", "拦截阵地", "无人船"))
-        ]
-        red_commander = getattr(red_baseline_agent, "_commander", None)
-        blue_policy_impl = next(
-            (
-                type(commander.blue_policy).__name__
-                for commander in blue_commanders
-                if getattr(commander, "blue_policy", None) is not None
-            ),
-            None,
-        )
-        summary = {
-            "steps": int(info["step"]),
-            "done": done,
-            "wall_time_s": round(end_time - start_time, 6),
-            "red_policy": os.getenv("RED_POLICY", "attack_missile_agent"),
-            "blue_policy": os.getenv("BLUE_POLICY", "fixed_ratio_random"),
-            "blue_policy_impl": blue_policy_impl,
-            "red_alive": sum(item.get("health", 0) > 0 for item in red),
-            "red_lost": sum(item.get("health", 0) <= 0 for item in red),
-            "blue_root_alive": sum(item.get("health", 0) > 0 for item in blue_roots),
-            "blue_root_destroyed": sum(item.get("health", 0) <= 0 for item in blue_roots),
-            "red_dispatched": getattr(red_commander, "dispatched_count", 0),
-            "blue_interceptors_launched": sum(
-                len(items)
-                for commander in blue_commanders
-                for items in getattr(commander, "launched_list", {}).values()
-            ),
-        }
-        if reward_tracker:
-            summary.update(reward_tracker.finish(obs).to_dict())
-        print("FINAL_SUMMARY=" + json.dumps(summary, ensure_ascii=False))
-
         logging.info(f"[测试] 第 {i + 1} 轮结束，本轮仿真总用时: {end_time - start_time:.6f} 秒")
         # 写剩余缓冲区数据
         write_immediately()
-        training_env.reset()
 
     training_env.close()
     # 关闭写入器

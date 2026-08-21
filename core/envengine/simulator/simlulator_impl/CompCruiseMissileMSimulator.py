@@ -14,8 +14,7 @@ from envengine.sdk.Util import UtilsPy
 from envengine.sdk.Util import State_py
 from envengine.simulator.decorator import Simulator, timer_decorator
 from envengine.simulator.interfaces import ISimulator
-from envengine.simulator.models.CompCruiseMissileModel.CompCruiseMissileHPy import Missile
-# from envengine.simulator.models.CompCruiseMissileModel.CompCruiseMissilePy import Missile
+from envengine.simulator.models.HXDMissileModel import BatchMissile
 from envengine.simulator.simulator_factory import SimulatorFactory
 
 logger = logging.getLogger(__name__)
@@ -38,10 +37,6 @@ class CompCruiseMissileMSimulator(ISimulator):
         self.ret = -1
         self.launch = 0
         self.damage_point = 5
-        self.model = Missile()
-        self.model.Save(False)
-
-        self.set_lla(self.entity_ext.entity.lla)
 
     @property
     def simulator_sim_step(self) -> float:
@@ -49,7 +44,7 @@ class CompCruiseMissileMSimulator(ISimulator):
         仿真器内部步长（毫秒）
         :return: 内部步长（毫秒）
         """
-        return 10
+        return 50
 
     def update(self) -> None:
         """
@@ -60,17 +55,22 @@ class CompCruiseMissileMSimulator(ISimulator):
         if self.ret < 0:
 
             # 更新探测信息
-            self.execute_detection()
+            if self.sim_time % 1000 == 0:
+                self.execute_detection()
 
-            self.ret = self.model.update()
-            state: State_py = self.model.getState()
+            self.model.Update(self.sim_time)
+            self.ret = self.model.getRet(self.entity_ext.entity.id)
+            state: State_py = self.model.getState(self.entity_ext.entity.id)
+
             pos = state.posEcf()
             vel = state.velEcf()
             lla = UtilsPy.CoordinateHelper.ecefToLla_py(pos)
+
             entity = self.entity_ext.entity
             entity.lla.x, entity.lla.y, entity.lla.z = lla.x(), lla.y(), lla.z()
             entity.posEcf.x, entity.posEcf.y, entity.posEcf.z = pos.x(), pos.y(), pos.z()
             entity.velEcf.x, entity.velEcf.y, entity.velEcf.z = vel.x(), vel.y(), vel.z()
+            entity.stage = state.stage()
         else:
             if self.entity_ext.entity.isVisible:
                 # 自爆
@@ -121,16 +121,19 @@ class CompCruiseMissileMSimulator(ISimulator):
         """
         self.entity_ext.entity.lla = lla
         missile_lla = UtilsPy.Vector3D(self.entity_ext.entity.lla.x, self.entity_ext.entity.lla.y,
-                                       self.entity_ext.entity.lla.z)
+                                       self.entity_ext.entity.lla.z + 0.1)
 
-        self.model.Init(self.simulator_sim_step / 1000, missile_lla, 10)
+        self.model.Init(self.entity_ext.entity.id, self.simulator_sim_step / 1000, 10, missile_lla)
+        self.model.SetDesiredHeight(self.entity_ext.entity.id, 30000)
+        self.model.SetDesiredSpeed(self.entity_ext.entity.id, 1800)
+        self.model.Save(self.entity_ext.entity.id, False)
 
     def set_speed(self, speed: float) -> None:
         """
         初始设置速度
         """
         # self.model.SetDesiredSpeed(speed)
-        self.model.SetDesiredSpeed(1200)
+        self.model.SetDesiredSpeed(self.entity_ext.entity.id, 1200)
 
     def send_detect_info(self):
         """
@@ -200,12 +203,21 @@ class CompCruiseMissileMSimulator(ISimulator):
     def reset(self) -> None:
         """重置到初始状态"""
         super().reset()
-        self.model = Missile()
-        self.model.Save(False)
-        self.set_lla(self.entity_ext.entity.lla)
+
+        BatchMissile.getInstance().Clear()
 
         self.ret = -1
         self.launch = 0
+
+    def init_model(self):
+        self.model = BatchMissile.getInstance()
+
+        # 高低性能弹使用同一个模型，因此同时计算count
+        if self._simulator_factory:
+            count = self._simulator_factory.get_profile_entity_count_by_type(21000) + self._simulator_factory.get_profile_entity_count_by_type(21001)
+            self.model.SetMissileCount(count)
+
+        self.set_lla(self.entity_ext.entity.lla)
 
     def command_received(self, command: Command) -> None:
         """
@@ -216,24 +228,30 @@ class CompCruiseMissileMSimulator(ISimulator):
         if command.commandTypeId == SimmerCommandType.ATTACK_COMMANDER_START:
             pass
         elif command.commandTypeId == SimmerCommandType.MISSILE_LAUNCH:
-            if self.launch == 0:
-                self.model.Launch(Vector3D(  # type:ignore
-                    command.commandAttributes["target"]["x"],
-                    command.commandAttributes["target"]["y"],
-                    command.commandAttributes["target"]["z"]
-                ))
-                self.launch = 1
+            if self.launch != 0:
+                print(f"entity_id:{self.entity_ext.entity.id}, name:{self.entity_ext.entity.nameChn} 重复发射")
+                return
+
+            self.model.Launch(self.entity_ext.entity.id, Vector3D(  # type:ignore
+                command.commandAttributes["target"]["x"],
+                command.commandAttributes["target"]["y"],
+                command.commandAttributes["target"]["z"]
+            ))
+
+            self.launch = 1
         elif command.commandTypeId == SimmerCommandType.SET_DESIRED_ACC_Z:
-            self.model.SetDesiredAccZ(command.commandAttributes["acc_z"] * 15 * 9.8)
+            if command.commandAttributes["acc_z"] == 0:
+                self.model.ClearDesiredAccZ(self.entity_ext.entity.id)
+            else:
+                self.model.SetDesiredAccZ(self.entity_ext.entity.id, command.commandAttributes["acc_z"] * 15 * 9.8)
         elif command.commandTypeId == SimmerCommandType.SET_DESIRED_VEL_X:
-            self.model.SetDesiredSpeed(command.commandAttributes["vel_x"])
+            self.model.SetDesiredSpeed(self.entity_ext.entity.id, command.commandAttributes["vel_x"])
         elif command.commandTypeId == SimmerCommandType.CHANGE_MISSILE_TARGET:
             pos = UtilsPy.CoordinateHelper.llaToEcef_py(Vector3D(  # type:ignore
                 command.commandAttributes["target"]["x"],
                 command.commandAttributes["target"]["y"],
                 command.commandAttributes["target"]["z"]
             ))
-            self.model.SetTargetEcf(Vector3D(pos.x(), pos.y(), pos.z()),
-                                    Vector3D(self.entity_ext.entity.velEcf.x, self.entity_ext.entity.velEcf.y, self.entity_ext.entity.velEcf.z))
+            self.model.SetTargetEcf(self.entity_ext.entity.id, Vector3D(pos.x(), pos.y(), pos.z()), Vector3D(0, 0, 0))
         else:
             super().command_received(command)

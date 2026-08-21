@@ -53,6 +53,7 @@ class ISimulator(ABC):
         self._send_commands = send_commands
         self._send_events = send_events
         self._satellite_use_end_time = 0
+        self.model = None
 
         if self._simulator_factory and self._simulator_factory.profile and self._simulator_factory.profile.imagineProfile:
             self.RED_SAT_MAX_USE_COUNT = max(0, self._simulator_factory.profile.imagineProfile.satelliteMaxUseCount)
@@ -110,7 +111,14 @@ class ISimulator(ABC):
         self._delivered_to = set()  # 已将探测信息送达的飞行器ID
         self._satellite_use_end_time = 0
         self.RED_SAT_USE_COUNT = 0
-        # logger.info(f"[仿真器接口] 仿真器{self._entity_ext.entity.nameChn}已重置, 初始数据为{self._entity_ext}")
+
+    @abstractmethod
+    def init_model(self) -> None:
+        """
+        初始化模型
+        :return:
+        """
+        pass
 
     def _damage(self, damage_point: float, source: EntityInfo) -> None:
         """
@@ -372,6 +380,10 @@ class ISimulator(ABC):
 
             # 跳过已摧毁或不可见的实体
             if not target.entity_ext.entity.isVisible or target.entity_ext.entity.survivePoints <= 0:
+                continue
+
+            # 只有蓝方有雷达，仅探测 stage = 3 的实体（滑翔段）
+            if target.entity_ext.entity.stage < 3:
                 continue
 
             target_pos = target.entity_ext.entity.posEcf
