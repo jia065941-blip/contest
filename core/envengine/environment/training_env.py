@@ -325,6 +325,11 @@ class TrainingEnv:
                     "lat": entity_data.lla.y,
                     "alt": entity_data.lla.z
                 },
+                "pos_ecf":{
+                    "x":entity_data.posEcf.x,
+                    "y":entity_data.posEcf.y,
+                    "z":entity_data.posEcf.z,
+                },
                 "health": entity_data.survivePoints,
                 "isVisible": entity_data.isVisible,
                 "type": entity_data.entityType,

@@ -1,10 +1,11 @@
 # -*-coding:utf-8 -*-
 import logging
+import math
 import random
 
 import numpy as np
 
-from envengine.sdk.base_struct.Basic import DetectInfo
+from envengine.sdk.base_struct.Basic import Vector3d
 from user_agents.base_agent import BaseAgent, AgentType
 
 ACTION_SET_ACC_Z = 0  # 设置Z轴加速度
@@ -175,7 +176,8 @@ class AttackMissileAgent(BaseAgent):
         interceptors = [
             target
             for target in observation["self"].get("detectInfo", {}).values()
-            if (target.get("entity_type") if isinstance(target, dict) else getattr(target, "entity_type", None)) == 24000
+            if (target.get("entity_type") if isinstance(target, dict) else getattr(target, "entity_type", None)) == 24000 and
+            self.is_self_interceptor(target, observation["self"])
         ]
 
         if not interceptors:
@@ -201,6 +203,11 @@ class AttackMissileAgent(BaseAgent):
         actions.append([ACTION_USE_SAT, self.entity_id, 0, 0])
         self.sat_used = True
 
+    def is_self_interceptor(self, target:dict, entity:dict)->bool:
+        re_pos = Vector3d(entity["pos_ecf"]["x"] - target.pos_ecf.x, entity["pos_ecf"]["y"] - target.pos_ecf.y, entity["pos_ecf"]["z"] - target.pos_ecf.z)
+        re_vel = target.vel_ecf
+        return self.get_vector_angle(re_pos, re_vel) < 20
+
     def _use_satellite(self, actions, step):
         """
         使用卫星
@@ -218,3 +225,23 @@ class AttackMissileAgent(BaseAgent):
         self.set_acc_z_z = 0
         self.launch_step = -1
         self.sat_used = False
+
+    @staticmethod
+    def get_vector_angle(vector1: Vector3d, vector2: Vector3d) -> float:
+        """
+        计算两个向量的夹角
+        :param vector1: 向量1
+        :param vector2: 向量2
+        :return: 夹角（度）
+        """
+        # 点积
+        dot = vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z
+        # 模长
+        norm1 = math.sqrt(vector1.x ** 2 + vector1.y ** 2 + vector1.z ** 2)
+        norm2 = math.sqrt(vector2.x ** 2 + vector2.y ** 2 + vector2.z ** 2)
+        # 零向量时夹角视为 0 度
+        if norm1 == 0 or norm2 == 0:
+            return 0.0
+        # 余弦值（截断到 [-1, 1] 防止浮点误差）
+        cos_theta = max(-1.0, min(1.0, dot / (norm1 * norm2)))
+        return math.degrees(math.acos(cos_theta))
