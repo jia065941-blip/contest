@@ -1,19 +1,15 @@
-param(
-    [Parameter(ValueFromRemainingArguments = $true)]
-    [string[]]$Arguments
-)
+$pythonCandidates = @(
+    $env:COMPETITION_PYTHON
+    $(if ($env:VIRTUAL_ENV) { Join-Path $env:VIRTUAL_ENV 'Scripts\python.exe' })
+    (Join-Path $PSScriptRoot '.venv\Scripts\python.exe')
+    $(Get-Command python.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1)
+) | Where-Object { $_ -and (Test-Path -LiteralPath $_ -PathType Leaf) }
 
-$python = 'C:\Program Files\Blender Foundation\Blender 5.0\5.0\python\bin\python.exe'
-$runtime = 'C:\tmp\competition_platform_runtime'
-
-if (-not (Test-Path -LiteralPath $python)) {
-    throw "Python runtime not found: $python"
-}
-if (-not (Test-Path -LiteralPath $runtime)) {
-    throw "Project dependencies not found: $runtime"
+$python = $pythonCandidates | Select-Object -First 1
+if (-not $python) {
+    throw 'Python runtime not found. Activate a virtual environment, create .venv, or set COMPETITION_PYTHON.'
 }
 
-$env:PYTHONPATH = $runtime
 $env:PYTHONDONTWRITEBYTECODE = '1'
-& $python (Join-Path $PSScriptRoot 'run.py') @Arguments
+& $python (Join-Path $PSScriptRoot 'run.py') @args
 exit $LASTEXITCODE

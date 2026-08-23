@@ -4,7 +4,7 @@
 
 ## 启动前提
 
-在本目录中通过 `run_local.cmd` 启动。该脚本会使用已配置的 Python 运行时，并自动加入红、蓝方插件依赖路径。
+在本目录中通过 `run_local.cmd` 启动。该脚本依次查找 `COMPETITION_PYTHON` 指定的解释器、当前已激活的虚拟环境、仓库内 `.venv` 和系统 `python.exe`，并自动加入红、蓝方插件依赖路径。
 
 ```powershell
 cd competition_platform_all
