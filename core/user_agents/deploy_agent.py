@@ -20,8 +20,12 @@ class DeployAgent(BaseAgent):
         self.deploy_coordinates: list[list[list[float]]] = deploy_coordinates
         self.deploy_coordinatesHM: list[list[list[float]]] = deploy_coordinatesHM
         self.index = 0
+        self.latest_observation = None
 
-    def get_action(self, observation: dict) -> np.ndarray:
+    def set_observation(self, observation: dict) -> None:
+        self.latest_observation = observation
+
+    def get_action(self) -> np.ndarray:
         """
         生成动作
 
@@ -32,7 +36,7 @@ class DeployAgent(BaseAgent):
         """
         # random.seed(42)
 
-        observation = observation["entities"]
+        observation = self.latest_observation["entities"]
         keys = list(observation.keys())
 
         # 可以配置每次部署的实体数量

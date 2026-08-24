@@ -32,10 +32,17 @@ class BaseAgent(ABC):
         self.info_history = deque(maxlen=history_length)
 
     @abstractmethod
-    def get_action(self, observation: dict) -> np.array:
+    def set_observation(self, observation: dict) -> None:
         """
-        根据观测获取动作
+        传入观测信息
         :param observation: 该智能体对应的观测信息
+        """
+        pass
+
+    @abstractmethod
+    def get_action(self) -> np.array:
+        """
+        获取动作
         :return: 动作
         """
         pass

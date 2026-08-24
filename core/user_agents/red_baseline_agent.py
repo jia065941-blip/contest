@@ -23,11 +23,16 @@ class RedBaselineAgent(BaseAgent):
             )
             RedBaselineAgent._commander = RedPolicyCommander(targets)
         RedBaselineAgent._commander.register_platform(entity_id)
+        self.lastest_step = 0
 
-    def get_action(self, observation):
+    def set_observation(self, observation: dict) -> None:
         commander = RedBaselineAgent._commander
         commander.report(observation)
-        row = commander.action_for(self.entity_id, int(observation.get('step', 0)))
+        self.lastest_step = int(observation.get('step', 0))
+
+    def get_action(self):
+        commander = RedBaselineAgent._commander
+        row = commander.action_for(self.entity_id, self.lastest_step)
         return np.array([row], dtype=np.float64) if row else np.empty((0, 4), dtype=np.float64)
 
     def reset(self):

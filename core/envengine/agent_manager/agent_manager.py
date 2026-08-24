@@ -91,7 +91,7 @@ class AgentManager:
 
     def collect_actions_from_agents(self, agent_observations: Dict[int, dict]) -> list[np.array]:
         """
-        收集所有智能体的动作
+        向所有智能体传递观测信息，并收集智能体的动作
         :param agent_observations: {agent_id: observation}
         :return: {entity_id: actions} 格式的总动作字典
         """
@@ -100,11 +100,21 @@ class AgentManager:
             agent = self._agents.get(agent_id)
             if agent:
                 try:
-                    action = agent.get_action(observation)
-                    # entity_id = agent.get_entity_id()
+                    agent.set_observation(observation)
+                except Exception as e:
+                    logger.error(f"[智能体工厂] 智能体 {agent_id} 输入观测信息错误: {e}")
+            else:
+                logger.warning(f"[智能体工厂] 智能体 {agent_id} 不存在")
+
+
+        for agent_id, observation in agent_observations.items():
+            agent = self._agents.get(agent_id)
+            if agent:
+                try:
+                    action = agent.get_action()
                     actions.append(action)
                 except Exception as e:
-                    logger.error(f"[智能体工厂] 智能体 {agent_id} 生成动作失败: {e}")
+                    logger.error(f"[智能体工厂] 智能体 {agent_id} 获取动作失败: {e}")
             else:
                 logger.warning(f"[智能体工厂] 智能体 {agent_id} 不存在")
 
@@ -120,7 +130,8 @@ class AgentManager:
         agent = self._agents.get(-1)
         if agent:
             try:
-                action = agent.get_action(agent_observations[-1])
+                agent.set_observation(agent_observations[-1])
+                action = agent.get_action()
             except Exception as e:
                 logger.error(f"[智能体工厂] 部署智能体 生成动作失败: {e}")
         else:

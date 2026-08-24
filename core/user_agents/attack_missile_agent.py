@@ -47,12 +47,16 @@ class AttackMissileAgent(BaseAgent):
         self.acc_start_step = 0
         self.launch_step = -1
         self.sat_used = False
+        self.lastest_observation = None
 
-    def get_action(self, observation: dict) -> np.array:
-        # print("observation:", observation)
+    def set_observation(self, observation: dict) -> None:
+        self.lastest_observation = observation
+
+    def get_action(self) -> np.array:
         """生成动作"""
         # 这里可以根据observation做出更智能的决策
         num = random.randint(1, 200)
+        observation = self.lastest_observation
         actions = []  # 存储多个动作
 
         entity_type = observation["self"]["type"]
