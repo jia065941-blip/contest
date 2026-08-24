@@ -382,10 +382,6 @@ class ISimulator(ABC):
             if not target.entity_ext.entity.isVisible or target.entity_ext.entity.survivePoints <= 0:
                 continue
 
-            # 只有蓝方有雷达，仅探测 stage = 3 的实体（滑翔段）
-            if target.entity_ext.entity.stage < 3:
-                continue
-
             target_pos = target.entity_ext.entity.posEcf
 
             if self._is_geometrically_visible(self_pos, target_pos, max_range):
