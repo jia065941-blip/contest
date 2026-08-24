@@ -86,8 +86,8 @@ class RadarModelSimulator(ISimulator):
             1 if self.entity_ext.entity.sideId == 0 else 0)
         detected: list[ISimulator] = self._get_targets_within_self_range(detected_candidate_simulators,
                                                                          max_range=500 * 1000)
-        # 只有蓝方有雷达，仅探测 stage = 3 的实体（滑翔段）
-        detected = [i for i in detected if i.entity_ext.entity.stage < 3]
+        # 只有蓝方有雷达，仅探测 stage >= 3 的实体（滑翔段及以后）
+        detected = [i for i in detected if i.entity_ext.entity.stage >= 3]
 
         if not detected:
             return
