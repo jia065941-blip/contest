@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+import random
 import time
 import json
 import sys
@@ -8,6 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 import requests
+import numpy as np
 from urllib.parse import urlparse
 from envengine import Profile, TrainingEnv
 from envengine.sdk.log import LogManager
@@ -129,6 +131,10 @@ def read_profile(url: str) -> Profile:
 def main():
     # 解析命令行参数
     args = parse_args()
+    simulation_seed = os.getenv("SIMULATION_SEED")
+    if simulation_seed is not None:
+        random.seed(int(simulation_seed))
+        np.random.seed(int(simulation_seed))
 
     # 打印配置信息
     logging.info("=" * 60)
@@ -143,6 +149,7 @@ def main():
     logging.info(f"  Verbose: {args.verbose}")
     logging.info(f"  Enable state: {args.enable_state}")
     logging.info(f"  Enable event: {args.enable_event}")
+    logging.info(f"  Simulation seed: {simulation_seed}")
     logging.info(f"  Enable AI action: {args.enable_ai_action}")
 
     logging.info("=" * 60)

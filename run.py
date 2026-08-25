@@ -15,6 +15,12 @@ from plugins.scenarios.competition_cases import load_reward_policy
 ROOT = Path(__file__).resolve().parent
 CORE = ROOT / "core"
 PLUGINS = ROOT / "plugins"
+BLUE_POLICY_CHOICES = (
+    "fixed_ratio_random",
+    "nearest_interceptor",
+    "threat_priority",
+    "min_cost_assignment",
+)
 
 
 def load_registry() -> dict:
@@ -90,6 +96,7 @@ def cmd_run(args: argparse.Namespace) -> int:
     if args.seed is not None:
         env["BLUE_POLICY_SEED"] = str(args.seed)
         env["RED_POLICY_SEED"] = str(args.seed)
+        env["SIMULATION_SEED"] = str(args.seed)
     return subprocess.call(command, cwd=CORE, env=env)
 
 
@@ -105,7 +112,12 @@ def build_parser() -> argparse.ArgumentParser:
     list_parser = subparsers.add_parser("list", help="List registered plugins")
     list_parser.set_defaults(handler=cmd_list)
     run_parser = subparsers.add_parser("run", help="Run a blue baseline against a scenario")
-    run_parser.add_argument("--blue-policy", default="fixed_ratio_random")
+    run_parser.add_argument(
+        "--blue-policy",
+        default="fixed_ratio_random",
+        choices=BLUE_POLICY_CHOICES,
+        help="Blue interception policy (default: fixed_ratio_random)",
+    )
     run_parser.add_argument("--red-policy", default="b0_random", choices=["b0_random", "b1_priority", "b2_static_assignment", "b3_rolling_rules"])
     run_parser.add_argument(
         "--red-motion-policy",
