@@ -1,9 +1,0 @@
-{
-  "id": "evaluation",
-  "name": "批量评估",
-  "version": "1.0.0",
-  "status": "ready",
-  "entry": "evaluate.py",
-  "dimensions": ["blue_policy", "scenario", "seed"],
-  "output": "results/runs/<run_id>/"
-}

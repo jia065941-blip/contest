@@ -1,5 +1,0 @@
-target_capacity: 2
-candidate_limit: 6
-exact_platform_limit: 12
-solver: branch_and_bound
-

@@ -1,9 +1,0 @@
-{
-  "id": "scenarios",
-  "name": "竞赛场景库",
-  "version": "1.0.0",
-  "status": "ready",
-  "entry": "competition_cases/manifest.json",
-  "levels": ["easy", "medium", "hard"],
-  "default": "easy/E01"
-}

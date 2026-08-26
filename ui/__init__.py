@@ -1,1 +1,1 @@
-"""Local browser UI for selecting plugins and starting runs."""
+"""Local browser UI for inspecting available workspace capabilities."""

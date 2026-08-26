@@ -4,10 +4,14 @@
 <title>Competition Platform</title>
 <style>body{font:16px system-ui;max-width:760px;margin:48px auto;color:#18212f}code{background:#f2f4f7;padding:2px 5px}li{margin:10px 0}.pending{color:#9a6700}</style>
 <h1>Competition Platform</h1>
-<p>本地插件控制台。运行任务请使用下方命令；该页面用于确认可用模块和迁移状态。</p>
-<p><code>python run.py run --blue-policy threat_priority --scenario medium/M01 -- --render-mode none</code></p>
-<h2>已注册插件</h2><ul id="plugins"></ul>
-<script>
-fetch('/api/plugins').then(r=>r.json()).then(data=>{document.querySelector('#plugins').innerHTML=data.plugins.map(p=>`<li><b>${p.id}</b> — <span class="${p.status==='ready'?'':'pending'}">${p.status}</span></li>`).join('')})
-</script>
+<p>本地运行入口。运行任务请使用下方命令。</p>
+<p><code>python run.py run --blue-policy b2_threat_priority --scenario medium/M01 -- --render-mode none</code></p>
+<h2>当前能力</h2>
+<ul>
+  <li><b>policies/blue</b>：可选蓝方拦截策略</li>
+  <li><b>policies/red</b>：部分可观测红方规划契约</li>
+  <li><b>scenarios</b>：九个竞赛场景与计分规则</li>
+  <li><b>tools/evaluate.py</b>：离线评测辅助</li>
+  <li><b>experiments</b>：尚未接入运行链路的学习与预测研究代码</li>
+</ul>
 </html>

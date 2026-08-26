@@ -8,6 +8,10 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+WORKSPACE_ROOT = Path(__file__).resolve().parents[1]
+if str(WORKSPACE_ROOT) not in sys.path:
+    sys.path.insert(0, str(WORKSPACE_ROOT))
+
 import requests
 import numpy as np
 from urllib.parse import urlparse
@@ -17,22 +21,12 @@ from envengine.sdk.writer import WriteConfig, init_writer, get_writer, write_imm
 from user_agents import AttackMissileAgent, DeployAgent
 from evaluation import RunSummary
 
-WORKSPACE_ROOT = Path(__file__).resolve().parents[1]
-if str(WORKSPACE_ROOT) not in sys.path:
-    sys.path.append(str(WORKSPACE_ROOT))
-
 try:
-    from plugins.scenarios.competition_cases import RewardTracker, load_reward_policy
+    from scenarios.cases import RewardTracker, load_reward_policy
 except ImportError:
     RewardTracker = load_reward_policy = None
 
-try:
-    # The workspace wrapper adds the red-baseline plugin to PYTHONPATH. Keep
-    # direct core execution available when optional plugins are absent.
-    from red_strategy_lab.domain import Target, Position
-    from user_agents.red_policy_commander import RedPolicyCommander
-except ImportError:
-    Target = Position = RedPolicyCommander = None
+from policies.red import RED_POLICY_CHOICES, RedBaselineCommander, initial_targets_from_observation
 
 
 def parse_args():
@@ -181,21 +175,15 @@ def main():
 
     # 初始化需要给红方 AI 的信息
     init_observation_ship = training_env._get_init_ship_observation()
+    red_policy = os.getenv("RED_POLICY", "r0_random")
+    if red_policy not in RED_POLICY_CHOICES:
+        raise ValueError(f"Unsupported red policy '{red_policy}'")
+    commander = RedBaselineCommander(
+        initial_targets_from_observation(init_observation_ship),
+        policy_name=red_policy,
+        seed=int(os.getenv("RED_POLICY_SEED", "1")),
+    )
     red_motion_policy = os.getenv("RED_MOTION_POLICY", "reactive_evasion")
-    commander = None
-    if RedPolicyCommander is not None:
-        targets = tuple(
-            Target(
-                int(entity_id),
-                Position(float(entity_info["position"]["lon"]), float(entity_info["position"]["lat"])),
-                value=(10.0 if str(entity_info.get("nameChn", "")).startswith("目标") else 6.0 if str(entity_info.get("nameChn", "")).startswith("拦截阵地") else 3.0),
-            )
-            for entity_id, entity_info in init_observation_ship["entities"].items()
-            if entity_info.get("side") == 1 and entity_info.get("health", 0) > 0
-        )
-        commander = RedPolicyCommander(targets)
-    else:
-        logging.warning("red_strategy_lab is unavailable; using the standalone random red launcher")
     for i, simulator in enumerate(simulators):
         entity_id = simulator.entity_ext.entity.id
         agent_id = i + 1
@@ -208,9 +196,8 @@ def main():
                 commander=commander,
                 motion_policy=red_motion_policy,
             )
-            if commander is not None:
-                commander.register_platform(entity_id)
             training_env.agent_manager.register_agent(agent)
+            commander.register_platform(entity_id)
     logging.info(f"[测试] 已注册 {training_env.agent_manager.get_agent_count()} 个智能体")
 
     # 注册部署智能体
@@ -226,7 +213,7 @@ def main():
         run_summary = RunSummary(
             scenario=reward_policy.scenario_id if reward_policy is not None else str(args.scenario),
             policies={
-                "red": os.getenv("RED_POLICY", "standalone_random"),
+                "red": red_policy,
                 "red_motion": red_motion_policy,
                 "blue": os.getenv("BLUE_POLICY", "engine_default"),
             },
@@ -257,13 +244,9 @@ def main():
         logging.info(f"[测试] 第 {i + 1} 轮结束，本轮仿真总用时: {end_time - start_time:.6f} 秒")
         # 写剩余缓冲区数据
         write_immediately()
-        red_launched = (
-            commander.dispatched_count
-            if commander is not None
-            else sum(
-                getattr(agent, "launch_step", -1) >= 0
-                for agent in training_env.agent_manager.get_all_agents()
-            )
+        red_launched = sum(
+            getattr(agent, "launch_step", -1) >= 0
+            for agent in training_env.agent_manager.get_all_agents()
         )
         summary = run_summary.build(
             final_observation,

@@ -14,7 +14,7 @@ from envengine.sdk.base_struct.Message import Command
 from envengine.simulator.decorator import Simulator
 from envengine.simulator.interfaces import ISimulator
 from envengine.simulator.simulator_factory import SimulatorFactory
-from user_agents.blue_strategies import (
+from policies.blue import (
     BlueObservation,
     DefendedAsset,
     InterceptorAssignment,
@@ -40,7 +40,7 @@ class DefendCommanderModelSimulator(ISimulator):
         self.launched_list: dict[int, list[int]] = {}
         self._last_policy_decision_time = float("-inf")
         self.blue_policy = build_blue_policy(
-            name=os.getenv("BLUE_POLICY", "fixed_ratio_random"),
+            name=os.getenv("BLUE_POLICY", "b0_fixed_ratio_random"),
             # Keep the engine's historic 2-on-1 fire scale unless the caller
             # explicitly requests a different salvo size.
             max_shots_per_target=self._read_int_env("BLUE_INTERCEPTOR_RATIO", 2),
@@ -75,7 +75,7 @@ class DefendCommanderModelSimulator(ISimulator):
 
     def launch_intercept_missile(self, detect_info_list: list[DetectInfo]) -> None:
         if (
-            self.blue_policy.name == "min_cost_assignment"
+            self.blue_policy.name == "b3_min_cost_assignment"
             and self.sim_time - self._last_policy_decision_time
             < self._read_int_env("BLUE_MIN_COST_DECISION_INTERVAL", 5)
         ):
