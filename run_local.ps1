@@ -7,7 +7,7 @@ $pythonCandidates = @(
 
 $python = $pythonCandidates | Select-Object -First 1
 if (-not $python) {
-    throw 'Python runtime not found. Activate a virtual environment, create .venv, or set COMPETITION_PYTHON.'
+    throw 'CPython 3.11 x64 runtime not found. Create .venv with CPython 3.11, activate a virtual environment, or set COMPETITION_PYTHON.'
 }
 
 $env:PYTHONDONTWRITEBYTECODE = '1'

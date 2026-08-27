@@ -106,23 +106,26 @@ class MAPPOSharedPolicy(SharedPolicy):
             self.update()
 
     def select_action(self, observation: np.ndarray, action_mask: np.ndarray) -> int:
-        if self._global_state is None:
+        if self.training and self._global_state is None:
             raise RuntimeError("MAPPO选择动作前未设置全局状态")
         observation_tensor = torch.as_tensor(
             observation, dtype=torch.float32, device=self.device
         ).unsqueeze(0)
-        state_tensor = torch.as_tensor(
-            self._global_state, dtype=torch.float32, device=self.device
-        ).unsqueeze(0)
         mask_tensor = torch.as_tensor(action_mask, dtype=torch.bool, device=self.device).unsqueeze(0)
         with torch.no_grad():
             logits = self.network.actor_forward(observation_tensor)
-            value = self.network.critic_forward(state_tensor, observation_tensor)
+            value = None
+            if self.training:
+                state_tensor = torch.as_tensor(
+                    self._global_state, dtype=torch.float32, device=self.device
+                ).unsqueeze(0)
+                value = self.network.critic_forward(state_tensor, observation_tensor)
             logits = logits.masked_fill(~mask_tensor, torch.finfo(logits.dtype).min)
             distribution = Categorical(logits=logits)
             action = distribution.sample() if self.training else torch.argmax(logits, dim=-1)
             log_prob = distribution.log_prob(action)
         if self.training:
+            assert value is not None
             self._pending.append((float(log_prob.item()), float(value.item())))
         return int(action.item())
 

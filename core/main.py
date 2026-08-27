@@ -27,6 +27,7 @@ except ImportError:
     RewardTracker = load_reward_policy = None
 
 from policies.red import RED_POLICY_CHOICES, RedBaselineCommander, initial_targets_from_observation
+from policies.red.learning import build_learning_motion_policy
 
 
 def parse_args():
@@ -184,6 +185,26 @@ def main():
         seed=int(os.getenv("RED_POLICY_SEED", "1")),
     )
     red_motion_policy = os.getenv("RED_MOTION_POLICY", "reactive_evasion")
+    hierarchical_learning = red_policy == "r9_hierarchical_learning"
+    if hierarchical_learning and red_motion_policy not in {"random_masked", "ppo", "mappo"}:
+        raise ValueError(
+            "r9_hierarchical_learning requires RED_MOTION_POLICY to be "
+            "random_masked, ppo, or mappo"
+        )
+    learning_training = os.getenv("RED_LEARNING_TRAIN", "0") == "1"
+    learning_model = os.getenv("RED_LEARNING_MODEL")
+    learning_policy = None
+    if red_motion_policy in {"random_masked", "ppo", "mappo"}:
+        learning_policy = build_learning_motion_policy(
+            red_motion_policy,
+            seed=int(os.getenv("RED_POLICY_SEED", "1")),
+            model_path=learning_model,
+            max_steps=args.max_steps,
+            training=learning_training,
+            observation_dim=90 if hierarchical_learning else 85,
+        )
+        if learning_training:
+            training_env.set_shared_learning_policy(learning_policy)
     for i, simulator in enumerate(simulators):
         entity_id = simulator.entity_ext.entity.id
         agent_id = i + 1
@@ -195,6 +216,9 @@ def main():
                 init_observation_ship,
                 commander=commander,
                 motion_policy=red_motion_policy,
+                learning_policy=learning_policy,
+                learning_max_steps=args.max_steps,
+                hierarchical_learning=hierarchical_learning,
             )
             training_env.agent_manager.register_agent(agent)
             commander.register_platform(entity_id)
@@ -257,6 +281,11 @@ def main():
         summary_path = run_summary.write(write_config.output_dir, summary, summary_filename)
         print("FINAL_SUMMARY " + json.dumps(summary, ensure_ascii=False))
         logging.info(f"[测试] 单局汇总已写入: {summary_path}")
+
+    if learning_training and learning_policy is not None and learning_model:
+        Path(learning_model).parent.mkdir(parents=True, exist_ok=True)
+        learning_policy.save(learning_model)
+        logging.info(f"[测试] 红方学习模型已保存: {learning_model}")
 
     training_env.close()
     # 关闭写入器

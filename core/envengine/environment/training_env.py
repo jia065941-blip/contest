@@ -52,12 +52,25 @@ class TrainingEnv:
         # 初始化上一帧状态缓存（用于奖励计算）
         self._last_observation = None
         self._last_actions = None
+        self._shared_learning_policy = None
+
+    def set_shared_learning_policy(self, policy) -> None:
+        """Register a training-only centralized critic lifecycle hook.
+
+        Platform agents still receive only isolated observations.  The shared
+        policy is supplied the full state solely when explicitly training.
+        """
+
+        self._shared_learning_policy = policy
 
     def reset(self) -> dict:
         """
         重置环境
         :return: 初始观测
         """
+        if self._shared_learning_policy is not None:
+            self._shared_learning_policy.reset_episode()
+
         # 重置引擎
         self.engine.reset()
         self.current_step = 0
@@ -175,8 +188,12 @@ class TrainingEnv:
         # 额外信息
         info = {
             "step": self.current_step,
-            "max_steps": self.max_steps
+            "max_steps": self.max_steps,
+            "done": done,
         }
+
+        if self._shared_learning_policy is not None:
+            self._shared_learning_policy.end_environment_step(observation)
 
         # 通知每个智能体它们的奖励，并记录历史
         for agent in self.agent_manager.get_all_agents():
@@ -202,6 +219,9 @@ class TrainingEnv:
                 reward=reward,
                 info=info
             )
+
+        if self._shared_learning_policy is not None:
+            self._shared_learning_policy.finish_environment_step()
 
         if self.render_mode == 'human' and self.renderer:
             self.renderer.update_data(observation["entities"])
@@ -241,6 +261,8 @@ class TrainingEnv:
         """
         # 获取当前完整观测
         full_observation = self._get_observation()
+        if self._shared_learning_policy is not None:
+            self._shared_learning_policy.begin_environment_step(full_observation)
 
         # 为每个智能体(前提是模型存活)提取隔离观测并收集动作
         agent_observations = {}
@@ -251,6 +273,16 @@ class TrainingEnv:
             )
             if isolated_obs:
                 agent_observations[agent.agent_id] = isolated_obs
+
+        commanders = {
+            agent.commander
+            for agent in self.agent_manager.get_all_agents()
+            if getattr(agent, "commander", None) is not None
+        }
+        for commander in commanders:
+            begin_step = getattr(commander, "begin_step", None)
+            if begin_step is not None:
+                begin_step(tuple(agent_observations.values()))
 
         # 收集所有智能体的动作
         actions = self.agent_manager.collect_actions_from_agents(agent_observations)

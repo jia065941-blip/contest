@@ -24,7 +24,13 @@ RED_POLICY_CHOICES = (
     "r0_random",
     "r1_priority",
     "r2_static_assignment",
-    "r3_rolling_rules",
+    "r3_wave_schedule",
+    "r4_rolling_rules",
+    "r5_event_rolling",
+    "r6_frontload_decoy",
+    "r7_strike_packages",
+    "r8_satellite_packages",
+    "r9_hierarchical_learning",
 )
 
 
@@ -63,6 +69,15 @@ def with_competition_step_limit(scenario: Path, core_args: list[str]) -> list[st
 
 
 def cmd_run(args: argparse.Namespace) -> int:
+    if args.red_policy == "r9_hierarchical_learning" and args.red_motion_policy not in {
+        "random_masked", "ppo", "mappo",
+    }:
+        print(
+            "r9_hierarchical_learning requires --red-motion-policy "
+            "random_masked, ppo, or mappo",
+            file=sys.stderr,
+        )
+        return 2
     try:
         scenario = scenario_path(args.scenario)
     except ValueError as error:
@@ -79,6 +94,10 @@ def cmd_run(args: argparse.Namespace) -> int:
     env["BLUE_POLICY"] = args.blue_policy
     env["RED_POLICY"] = args.red_policy
     env["RED_MOTION_POLICY"] = args.red_motion_policy
+    if args.red_learning_model is not None:
+        env["RED_LEARNING_MODEL"] = str(Path(args.red_learning_model).resolve())
+    if args.red_learning_train:
+        env["RED_LEARNING_TRAIN"] = "1"
     if args.seed is not None:
         env["BLUE_POLICY_SEED"] = str(args.seed)
         env["RED_POLICY_SEED"] = str(args.seed)
@@ -111,8 +130,17 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument(
         "--red-motion-policy",
         default="reactive_evasion",
-        choices=["straight", "reactive_evasion"],
+        choices=["straight", "reactive_evasion", "random_masked", "ppo", "mappo"],
         help="Red post-launch motion policy (default: reactive_evasion)",
+    )
+    run_parser.add_argument(
+        "--red-learning-model",
+        help="PPO/MAPPO checkpoint path; required when --red-motion-policy is ppo or mappo",
+    )
+    run_parser.add_argument(
+        "--red-learning-train",
+        action="store_true",
+        help="Train the selected PPO/MAPPO policy; use --red-learning-model as the output checkpoint path",
     )
     run_parser.add_argument("--scenario", default="default", help="default or easy/E01 … hard/H03")
     run_parser.add_argument("--seed", type=int)

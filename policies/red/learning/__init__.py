@@ -15,6 +15,7 @@ from .red_policy import (
     RandomMaskedPolicy,
     SharedPolicy,
 )
+from .runtime import LEARNING_MOTION_CHOICES, build_learning_motion_policy
 
 __all__ = [
     "ACTION_DIM",
@@ -22,8 +23,10 @@ __all__ = [
     "HighLevelAction",
     "GlobalStateEncoder",
     "LearningActionAdapter",
+    "LEARNING_MOTION_CHOICES",
     "ObservationEncoder",
     "PolicyTransition",
     "RandomMaskedPolicy",
     "SharedPolicy",
+    "build_learning_motion_policy",
 ]

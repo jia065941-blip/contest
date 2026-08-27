@@ -105,6 +105,7 @@ class ObservationEncoder:
     SELF_FEATURES = 21
     TARGET_FEATURES = 12
     DETECTION_FEATURES = 4
+    TASK_FEATURES = 5
 
     def __init__(
         self,
@@ -114,12 +115,14 @@ class ObservationEncoder:
         coordinate_scale: float = 1.0,
         agent_id: int = 0,
         team_size: int = 58,
+        hierarchical_task_context: bool = False,
     ):
         self.target_slots = target_slots
         self.max_steps = max(1, max_steps)
         self.coordinate_scale = max(float(coordinate_scale), 1e-6)
         self.agent_id = int(agent_id)
         self.team_size = max(1, int(team_size))
+        self.hierarchical_task_context = bool(hierarchical_task_context)
         entities = init_observation.get("entities", {})
         self.targets = sorted(
             (dict(value, entity_id=int(key)) for key, value in entities.items()),
@@ -128,11 +131,12 @@ class ObservationEncoder:
 
     @property
     def observation_dim(self) -> int:
-        return (
+        base_dim = (
             self.SELF_FEATURES
             + self.target_slots * self.TARGET_FEATURES
             + self.DETECTION_FEATURES
         )
+        return base_dim + (self.TASK_FEATURES if self.hierarchical_task_context else 0)
 
     def encode(
         self,
@@ -144,6 +148,7 @@ class ObservationEncoder:
         maneuver_state: int,
         current_target_index: int | None = None,
         target_switch_elapsed: int = 0,
+        task_context: Sequence[float] | None = None,
     ) -> np.ndarray:
         self_info = observation["self"]
         position = self_info["position"]
@@ -240,6 +245,10 @@ class ObservationEncoder:
             np.clip(sum(name.startswith("无人船") for name in detected_names) / 10.0, 0.0, 1.0),
             np.clip(comm_count / 64.0, 0.0, 1.0),
         ])
+        if self.hierarchical_task_context:
+            context = tuple(task_context or ())[:self.TASK_FEATURES]
+            features.extend(context)
+            features.extend([0.0] * (self.TASK_FEATURES - len(context)))
         return np.asarray(features, dtype=np.float32)
 
 

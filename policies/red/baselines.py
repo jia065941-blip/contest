@@ -1,9 +1,10 @@
-"""Small, comparable R0--R3 launch-allocation baselines for core priors."""
+"""Small, comparable R0--R8 launch-allocation baselines for core priors."""
 
 from __future__ import annotations
 
 import random
-from dataclasses import dataclass
+import math
+from dataclasses import dataclass, field
 from math import cos, hypot, radians
 
 from .contracts import Position
@@ -13,7 +14,13 @@ RED_POLICY_CHOICES = (
     "r0_random",
     "r1_priority",
     "r2_static_assignment",
-    "r3_rolling_rules",
+    "r3_wave_schedule",
+    "r4_rolling_rules",
+    "r5_event_rolling",
+    "r6_frontload_decoy",
+    "r7_strike_packages",
+    "r8_satellite_packages",
+    "r9_hierarchical_learning",
 )
 
 
@@ -46,10 +53,33 @@ class Assignment:
 
 
 @dataclass(frozen=True)
+class TacticalMetrics:
+    """Legal, red-side indicators used by adaptive rolling baselines."""
+
+    observed_interceptor_count: int = 0
+    launched_count: int = 0
+    alive_count: int = 0
+    lost_count: int = 0
+    total_count: int = 0
+    event_revision: int = 0
+    assigned_target_counts: tuple[tuple[int, int], ...] = ()
+
+    @property
+    def pressure(self) -> float:
+        """Exposure indicator from own losses and locally received tracks."""
+
+        launched = max(1, self.launched_count)
+        interceptor_pressure = min(1.0, self.observed_interceptor_count / launched)
+        loss_pressure = self.lost_count / max(1, self.total_count)
+        return min(1.0, 0.65 * interceptor_pressure + 0.35 * loss_pressure)
+
+
+@dataclass(frozen=True)
 class BaselineObservation:
     step: int
     platforms: tuple[PlatformState, ...]
     targets: tuple[TargetPrior, ...]
+    metrics: TacticalMetrics = field(default_factory=TacticalMetrics)
 
     def active_platforms(self) -> tuple[PlatformState, ...]:
         return tuple(item for item in self.platforms if item.alive and not item.launched)
@@ -67,10 +97,19 @@ class BaselineRules:
     distance_weight: float = 0.25
     coverage_weight: float = 0.75
     replan_interval: int = 20
+    event_replan_cooldown: int = 5
+    adaptive_replan_interval: int = 5
+    probe_window: int = 10
+    cautious_pressure: float = 0.20
+    probe_release_fraction: float = 0.15
+    commit_release_fraction: float = 0.30
+    cautious_release_fraction: float = 0.12
+    package_high_delay: int = 3
+    wave_count: int = 3
+    wave_interval: int = 40
 
     def wave_delay(self, kind: str) -> int:
         return dict(self.wave_by_kind).get(kind, 0)
-
 
 def engagement_effectiveness(platform_kind: str, target_type: int) -> float:
     """Core's base hit-rate table, used only by optimizing baselines."""
@@ -221,7 +260,7 @@ class R2StaticAssignmentPolicy(R1PriorityPolicy):
         return list(best)
 
 
-class R3RollingRulePolicy(R1PriorityPolicy):
+class R4RollingRulePolicy(R1PriorityPolicy):
     def __init__(self, rules: BaselineRules) -> None:
         super().__init__(rules)
         self._last_replan_step: int | None = None
@@ -236,6 +275,217 @@ class R3RollingRulePolicy(R1PriorityPolicy):
         return tuple(item for item in self._decision if item.platform_id in active_platform_ids and item.target_id in active_target_ids)
 
 
+class R5EventRollingPolicy(R1PriorityPolicy):
+    """Reallocate only when the commander receives a legal state-change event."""
+
+
+class R3WaveSchedulePolicy(R1PriorityPolicy):
+    """Compute one capability-aware plan, then execute it in fixed waves.
+
+    R3 deliberately has no new observation feedback.  It is the controlled
+    multi-wave precursor to R4: each platform kind is split evenly across
+    a fixed number of waves, and the launch plan is never recomputed.
+    """
+
+    def __init__(self, rules: BaselineRules) -> None:
+        super().__init__(rules)
+        self._plan: tuple[Assignment, ...] | None = None
+
+    def decide(self, observation: BaselineObservation) -> tuple[Assignment, ...]:
+        if self._plan is None:
+            initial = super().decide(observation)
+            platform_by_id = {item.entity_id: item for item in observation.platforms}
+            totals: dict[str, int] = {}
+            for assignment in initial:
+                platform = platform_by_id[assignment.platform_id]
+                totals[platform.kind] = totals.get(platform.kind, 0) + 1
+
+            seen: dict[str, int] = {}
+            wave_count = max(1, self.rules.wave_count)
+            scheduled: list[Assignment] = []
+            for assignment in initial:
+                platform = platform_by_id[assignment.platform_id]
+                ordinal = seen.get(platform.kind, 0)
+                seen[platform.kind] = ordinal + 1
+                wave_index = min(
+                    wave_count - 1,
+                    ordinal * wave_count // max(1, totals[platform.kind]),
+                )
+                scheduled.append(
+                    Assignment(
+                        platform_id=assignment.platform_id,
+                        target_id=assignment.target_id,
+                        launch_step=(
+                            observation.step
+                            + self.rules.wave_delay(platform.kind)
+                            + wave_index * self.rules.wave_interval
+                        ),
+                        score=assignment.score,
+                    )
+                )
+            self._plan = tuple(scheduled)
+
+        active_platform_ids = {item.entity_id for item in observation.active_platforms()}
+        active_target_ids = {item.entity_id for item in observation.active_targets()}
+        return tuple(
+            item
+            for item in self._plan
+            if item.platform_id in active_platform_ids and item.target_id in active_target_ids
+        )
+
+
+class AdaptiveRollingPolicy(R1PriorityPolicy):
+    """Shared rolling controller for R6--R8 using legal red-side metrics."""
+
+    def _stage(self, observation: BaselineObservation) -> str:
+        low_remaining = any(item.kind == "L" for item in observation.active_platforms())
+        metrics = observation.metrics
+        if low_remaining and (metrics.launched_count == 0 or observation.step < self.rules.probe_window):
+            return "probe"
+        if low_remaining and metrics.pressure >= self.rules.cautious_pressure:
+            return "absorb"
+        return "commit"
+
+    def _release_budget(self, observation: BaselineObservation, stage: str) -> int:
+        remaining = len(observation.active_platforms())
+        if remaining == 0:
+            return 0
+        if stage == "probe":
+            fraction = self.rules.probe_release_fraction
+        elif observation.metrics.pressure >= self.rules.cautious_pressure:
+            fraction = self.rules.cautious_release_fraction
+        else:
+            fraction = self.rules.commit_release_fraction
+        return max(1, math.ceil(remaining * fraction))
+
+    def _best_target(
+        self,
+        platform: PlatformState,
+        targets: tuple[TargetPrior, ...],
+        counts: dict[int, int],
+    ) -> TargetPrior | None:
+        candidates = [item for item in targets if counts.get(item.entity_id, 0) < self.rules.target_capacity]
+        if not candidates:
+            return None
+        return max(
+            candidates,
+            key=lambda item: (self.score(platform, item, counts.get(item.entity_id, 0)), -item.entity_id),
+        )
+
+    def _priority_assignments(
+        self,
+        observation: BaselineObservation,
+        platforms: list[PlatformState],
+        limit: int,
+        counts: dict[int, int] | None = None,
+    ) -> tuple[Assignment, ...]:
+        targets = tuple(sorted(observation.active_targets(), key=lambda item: item.entity_id))
+        counts = dict(observation.metrics.assigned_target_counts) if counts is None else counts
+        assignments: list[Assignment] = []
+        for platform in platforms:
+            if len(assignments) >= limit:
+                break
+            target = self._best_target(platform, targets, counts)
+            if target is None:
+                break
+            score = self.score(platform, target, counts.get(target.entity_id, 0))
+            counts[target.entity_id] = counts.get(target.entity_id, 0) + 1
+            assignments.append(Assignment(platform.entity_id, target.entity_id, observation.step, score))
+        return tuple(assignments)
+
+
+class R6FrontloadDecoyPolicy(AdaptiveRollingPolicy):
+    """Adaptively release a bounded L probe before rolling main-strike batches."""
+
+    def decide(self, observation: BaselineObservation) -> tuple[Assignment, ...]:
+        stage = self._stage(observation)
+        active = tuple(sorted(observation.active_platforms(), key=lambda item: item.entity_id))
+        if stage in {"probe", "absorb"}:
+            candidates = [item for item in active if item.kind == "L"]
+        else:
+            candidates = [item for kind in ("H", "M", "L") for item in active if item.kind == kind]
+        return self._priority_assignments(observation, candidates, self._release_budget(observation, stage))
+
+
+class R7StrikePackagePolicy(AdaptiveRollingPolicy):
+    """R6's adaptive release controller with rolling H/M strike packages."""
+
+    def decide(self, observation: BaselineObservation) -> tuple[Assignment, ...]:
+        stage = self._stage(observation)
+        active = tuple(sorted(observation.active_platforms(), key=lambda item: item.entity_id))
+        budget = self._release_budget(observation, stage)
+        if stage in {"probe", "absorb"}:
+            low = [item for item in active if item.kind == "L"]
+            return self._priority_assignments(observation, low, budget)
+
+        targets = tuple(sorted(observation.active_targets(), key=lambda item: item.entity_id))
+        counts = dict(observation.metrics.assigned_target_counts)
+        assignments: list[Assignment] = []
+        high = [item for item in active if item.kind == "H"]
+        medium = [item for item in active if item.kind == "M"]
+        low = [item for item in active if item.kind == "L"]
+        paired = min(len(high), len(medium))
+        processed_pairs = 0
+        for index in range(paired):
+            if len(assignments) + 2 > budget:
+                break
+            h_platform, m_platform = high[index], medium[index]
+            target = self._best_target(h_platform, targets, counts)
+            if target is None:
+                break
+            h_score = self.score(h_platform, target, counts.get(target.entity_id, 0))
+            counts[target.entity_id] = counts.get(target.entity_id, 0) + 1
+            m_score = self.score(m_platform, target, counts.get(target.entity_id, 0))
+            counts[target.entity_id] = counts.get(target.entity_id, 0) + 1
+            assignments.extend((
+                Assignment(h_platform.entity_id, target.entity_id, observation.step + self.rules.package_high_delay, h_score),
+                Assignment(m_platform.entity_id, target.entity_id, observation.step, m_score),
+            ))
+            processed_pairs += 1
+
+        paired_ids = {item.entity_id for item in high[:processed_pairs] + medium[:processed_pairs]}
+        remaining = [item for item in high + medium + low if item.entity_id not in paired_ids]
+        if len(assignments) < budget:
+            assignments.extend(self._priority_assignments(observation, remaining, budget - len(assignments), counts))
+        return tuple(sorted(assignments, key=lambda item: (item.launch_step, item.platform_id)))
+
+
+class R8SatellitePackagePolicy(R7StrikePackagePolicy):
+    """R7 packages plus one planned H-platform satellite use per strike target."""
+
+    def __init__(self, rules: BaselineRules) -> None:
+        super().__init__(rules)
+        self.satellite_platform_ids: frozenset[int] = frozenset()
+
+    def decide(self, observation: BaselineObservation) -> tuple[Assignment, ...]:
+        assignments = super().decide(observation)
+        platform_by_id = {item.entity_id: item for item in observation.platforms}
+        target_by_id = {item.entity_id: item for item in observation.targets}
+        selected: set[int] = set()
+        covered_targets: set[int] = set()
+        for assignment in assignments:
+            platform = platform_by_id[assignment.platform_id]
+            target = target_by_id[assignment.target_id]
+            if (
+                platform.kind == "H"
+                and target.entity_type in {9400, 9600}
+                and assignment.target_id not in covered_targets
+            ):
+                selected.add(assignment.platform_id)
+                covered_targets.add(assignment.target_id)
+        self.satellite_platform_ids = frozenset(selected)
+        return assignments
+
+
+class R9HierarchicalLearningPolicy(R8SatellitePackagePolicy):
+    """R8's legal task layer for the hierarchical PPO/MAPPO motion policy.
+
+    This class intentionally keeps target allocation deterministic.  The R9
+    learning actor operates beneath it, choosing only each assigned platform's
+    lateral maneuver from isolated observations plus this task context.
+    """
+
+
 def build_red_baseline(name: str, rules: BaselineRules, seed: int) -> RedBaseline:
     if name == "r0_random":
         return R0RandomPolicy(rules, seed)
@@ -243,6 +493,18 @@ def build_red_baseline(name: str, rules: BaselineRules, seed: int) -> RedBaselin
         return R1PriorityPolicy(rules)
     if name == "r2_static_assignment":
         return R2StaticAssignmentPolicy(rules)
-    if name == "r3_rolling_rules":
-        return R3RollingRulePolicy(rules)
+    if name == "r3_wave_schedule":
+        return R3WaveSchedulePolicy(rules)
+    if name == "r4_rolling_rules":
+        return R4RollingRulePolicy(rules)
+    if name == "r5_event_rolling":
+        return R5EventRollingPolicy(rules)
+    if name == "r6_frontload_decoy":
+        return R6FrontloadDecoyPolicy(rules)
+    if name == "r7_strike_packages":
+        return R7StrikePackagePolicy(rules)
+    if name == "r8_satellite_packages":
+        return R8SatellitePackagePolicy(rules)
+    if name == "r9_hierarchical_learning":
+        return R9HierarchicalLearningPolicy(rules)
     raise ValueError(f"Unknown red baseline '{name}'")
