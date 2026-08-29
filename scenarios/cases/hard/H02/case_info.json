@@ -14,7 +14,7 @@
     "多节点资源组合",
     "交叉覆盖与边缘节点"
   ],
-  "difficulty_mechanism": "14个计分目标、五部雷达和472枚拦截弹；资源单元数量与交叉覆盖显著增加。",
+  "difficulty_mechanism": "14个计分目标、5部雷达和408枚拦截弹；蓝方拦截弹/红方高中性能打击弹=3.0。",
   "objective_ids": [
     51,
     52,
@@ -39,15 +39,15 @@
     "315": 65
   },
   "interceptor_counts": {
-    "54": 53,
-    "106": 53,
-    "310": 52,
-    "312": 52,
-    "314": 52,
-    "168": 53,
-    "169": 53,
-    "330": 52,
-    "331": 52
+    "54": 46,
+    "106": 46,
+    "168": 46,
+    "169": 45,
+    "310": 45,
+    "312": 45,
+    "314": 45,
+    "330": 45,
+    "331": 45
   },
   "roots": [
     {
@@ -106,7 +106,7 @@
       "lon": 120.05,
       "lat": 23.0,
       "hp": 20.0,
-      "interceptors": 53,
+      "interceptors": 46,
       "radar_id": 55,
       "radar_km": 65,
       "objective": true,
@@ -118,7 +118,7 @@
       "lon": 120.95,
       "lat": 24.7,
       "hp": 20.0,
-      "interceptors": 53,
+      "interceptors": 46,
       "radar_id": 107,
       "radar_km": 60,
       "objective": true,
@@ -130,7 +130,7 @@
       "lon": 122.6,
       "lat": 24.7,
       "hp": 20.0,
-      "interceptors": 52,
+      "interceptors": 45,
       "radar_id": 311,
       "radar_km": 65,
       "objective": true,
@@ -142,7 +142,7 @@
       "lon": 123.4,
       "lat": 23.0,
       "hp": 20.0,
-      "interceptors": 52,
+      "interceptors": 45,
       "radar_id": 313,
       "radar_km": 55,
       "objective": true,
@@ -154,7 +154,7 @@
       "lon": 120.95,
       "lat": 21.3,
       "hp": 20.0,
-      "interceptors": 52,
+      "interceptors": 45,
       "radar_id": 315,
       "radar_km": 65,
       "objective": true,
@@ -166,9 +166,9 @@
       "lon": 123.2,
       "lat": 21.3,
       "hp": 1.6,
-      "interceptors": 53,
+      "interceptors": 46,
       "objective": true,
-      "initial_information": "hidden"
+      "initial_information": "public"
     },
     {
       "id": 169,
@@ -176,9 +176,9 @@
       "lon": 119.25,
       "lat": 25.25,
       "hp": 1.6,
-      "interceptors": 53,
+      "interceptors": 45,
       "objective": true,
-      "initial_information": "hidden"
+      "initial_information": "public"
     },
     {
       "id": 330,
@@ -186,9 +186,9 @@
       "lon": 119.25,
       "lat": 20.55,
       "hp": 1.6,
-      "interceptors": 52,
+      "interceptors": 45,
       "objective": true,
-      "initial_information": "hidden"
+      "initial_information": "public"
     },
     {
       "id": 331,
@@ -196,14 +196,14 @@
       "lon": 123.7,
       "lat": 22.15,
       "hp": 1.6,
-      "interceptors": 52,
+      "interceptors": 45,
       "objective": true,
-      "initial_information": "hidden"
+      "initial_information": "public"
     }
   ],
-  "scenario_sha256": "022a275caaefc2564841b72e2f4925a8893bc710a412b7033c6da01905e6ba7b",
-  "entity_total": 779,
-  "blue_entity_total": 491,
+  "scenario_sha256": "e8f2ff9eb8d1b93bbfaa8bb6ce081eaa7ddb32a334a0b7d581a572b1f1bbdb28",
+  "entity_total": 715,
+  "blue_entity_total": 427,
   "blue_root_total": 14,
   "root_counts": {
     "ship": 4,
@@ -211,7 +211,7 @@
     "target": 5
   },
   "radar_total": 5,
-  "interceptor_total": 472,
+  "interceptor_total": 408,
   "objective_total": 14,
   "public_objective_ids": [
     51,
@@ -223,14 +223,13 @@
     106,
     310,
     312,
-    314
-  ],
-  "hidden_objective_ids": [
+    314,
     168,
     169,
     330,
     331
   ],
+  "hidden_objective_ids": [],
   "max_steps": 2400,
   "red_missile_counts": {
     "high": 61,

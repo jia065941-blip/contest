@@ -14,7 +14,7 @@
     "中央高密度堡垒",
     "东南纵深孤岛"
   ],
-  "difficulty_mechanism": "7个计分目标、两个初始隐藏节点、两部小半径雷达和252枚拦截弹。",
+  "difficulty_mechanism": "7个计分目标、2部雷达和146枚拦截弹；蓝方拦截弹/红方高中性能打击弹=2.0。",
   "objective_ids": [
     51,
     52,
@@ -29,10 +29,10 @@
     "107": 42.0
   },
   "interceptor_counts": {
-    "54": 63,
-    "106": 63,
-    "168": 63,
-    "169": 63
+    "54": 37,
+    "106": 37,
+    "168": 36,
+    "169": 36
   },
   "roots": [
     {
@@ -71,7 +71,7 @@
       "lon": 120.7,
       "lat": 23.15,
       "hp": 20.0,
-      "interceptors": 63,
+      "interceptors": 37,
       "radar_id": 55,
       "radar_km": 62.4,
       "objective": true,
@@ -83,7 +83,7 @@
       "lon": 121.15,
       "lat": 23.15,
       "hp": 20.0,
-      "interceptors": 63,
+      "interceptors": 37,
       "radar_id": 107,
       "radar_km": 42.0,
       "objective": true,
@@ -95,9 +95,9 @@
       "lon": 123.55,
       "lat": 20.25,
       "hp": 1.6,
-      "interceptors": 63,
+      "interceptors": 36,
       "objective": true,
-      "initial_information": "hidden"
+      "initial_information": "public"
     },
     {
       "id": 169,
@@ -105,14 +105,14 @@
       "lon": 119.35,
       "lat": 25.3,
       "hp": 1.6,
-      "interceptors": 63,
+      "interceptors": 36,
       "objective": true,
-      "initial_information": "hidden"
+      "initial_information": "public"
     }
   ],
-  "scenario_sha256": "b12a99af68b35b9f4ec884554c5cc03fef14274ebbefb44cc175601a98443c6d",
-  "entity_total": 416,
-  "blue_entity_total": 261,
+  "scenario_sha256": "806558e07d0944a32cd37c1fca082c5a7b048e2a4d1ed05409cf22c9d235b5c2",
+  "entity_total": 310,
+  "blue_entity_total": 155,
   "blue_root_total": 7,
   "root_counts": {
     "ship": 2,
@@ -120,19 +120,18 @@
     "target": 3
   },
   "radar_total": 2,
-  "interceptor_total": 252,
+  "interceptor_total": 146,
   "objective_total": 7,
   "public_objective_ids": [
     51,
     52,
     53,
     54,
-    106
-  ],
-  "hidden_objective_ids": [
+    106,
     168,
     169
   ],
+  "hidden_objective_ids": [],
   "max_steps": 1600,
   "red_missile_counts": {
     "high": 31,

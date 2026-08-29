@@ -124,7 +124,7 @@ class CompCruiseMissileMSimulator(ISimulator):
                 self.entity_ext.entity.sideId)
             can_communication_simulators: list[ISimulator] = self._get_targets_within_self_range(
                 communication_candidate_simulators,
-                max_range=300 * 1000)
+                max_range=200 * 1000)
 
             # 如果已经发送过同样的探测信息，则不再发送
             can_communication_send_simulators = []

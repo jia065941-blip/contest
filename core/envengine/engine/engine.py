@@ -16,6 +16,13 @@ from envengine.simulator.interfaces import ISimulator
 logger = logging.getLogger(__name__)
 
 
+MISSILE_COMMUNICATION_RANGE_M = {
+    21000: 500_000.0,
+    21001: 200_000.0,
+    21002: 100_000.0,
+}
+
+
 class Engine:
     """
     Env引擎 - 驱动仿真的核心引擎
@@ -179,6 +186,9 @@ class Engine:
 
         allf_list: list[ISimulator] = hf_list + mf_list + lf_list
         ds = fastdisjointset.DisjointSet()
+        for missile in allf_list:
+            missile_id = missile.entity_ext.entity.id
+            ds.union(missile_id, missile_id)
         for i in range(len(allf_list)):
             for j in range(i + 1, len(allf_list)):
                 # 获取两个弹
@@ -187,8 +197,15 @@ class Engine:
                 # 获取两个弹的坐标
                 f1_pos: Vector3d = f1.entity_ext.entity.posEcf
                 f2_pos: Vector3d = f2.entity_ext.entity.posEcf
-                # 获取第一个弹的通信距离
-                distance_limit = 500 * 1000 if f1.entity_ext.entity.typeId == 21000 else 200 * 1000 if f1.entity_ext.entity.typeId == 21001 else 100 * 1000
+                # A link is available when either platform can reach the other.
+                # entityType identifies the high/medium/low platform class;
+                # typeId is only a scenario-specific model instance identifier.
+                f1_type = f1.entity_ext.entity.entityType
+                f2_type = f2.entity_ext.entity.entityType
+                distance_limit = max(
+                    MISSILE_COMMUNICATION_RANGE_M[f1_type],
+                    MISSILE_COMMUNICATION_RANGE_M[f2_type],
+                )
                 if self.is_geometrically_visible(f1_pos, f2_pos, distance_limit):
                     ds.union(f1.entity_ext.entity.id, f2.entity_ext.entity.id)
         groups = ds.sets()

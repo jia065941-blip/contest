@@ -1,5 +1,7 @@
 # -*-coding:utf-8 -*-
 
+import json
+import math
 from typing import Callable
 
 from envengine.sdk.Util.UtilsPy import Vector3D
@@ -26,7 +28,33 @@ class RadarModelSimulator(ISimulator):
                  send_events: Callable[[dict], None],
                  simulator_factory: SimulatorFactory = None):
         super().__init__(entity_ext, send_commands, send_events, simulator_factory)
+        self._detection_range_m = self._read_detection_range(self.entity_ext)
         self.entity_ext.entity.stage = 1
+
+    TRACK_TTL_MS = 30_000
+
+    @staticmethod
+    def _read_detection_range(entity_ext: EntityExt) -> float:
+        """Read and validate the radar range declared by the scenario."""
+        radar_id = entity_ext.entity.id
+        try:
+            external = json.loads(entity_ext.external)
+            distance = external["raderExternal"]["distance"]
+        except (json.JSONDecodeError, KeyError, TypeError) as error:
+            raise ValueError(
+                f"雷达实体 {radar_id} 缺少有效的 external.raderExternal.distance 配置"
+            ) from error
+
+        if (
+            isinstance(distance, bool)
+            or not isinstance(distance, (int, float))
+            or not math.isfinite(distance)
+            or distance <= 0
+        ):
+            raise ValueError(
+                f"雷达实体 {radar_id} 的 external.raderExternal.distance 必须是正数（米）"
+            )
+        return float(distance)
 
     @property
     def simulator_sim_step(self) -> float:
@@ -43,6 +71,9 @@ class RadarModelSimulator(ISimulator):
 
         # 执行探测
         self.execute_detection()
+
+        # Tracks are finite-lived sensor snapshots, not live truth references.
+        self._expire_stale_tracks()
 
         # 发送探测信息
         self.send_detect_info()
@@ -85,7 +116,7 @@ class RadarModelSimulator(ISimulator):
         detected_candidate_simulators: list[ISimulator] = self._simulator_factory.get_simulators_by_side(
             1 if self.entity_ext.entity.sideId == 0 else 0)
         detected: list[ISimulator] = self._get_targets_within_self_range(detected_candidate_simulators,
-                                                                         max_range=500 * 1000)
+                                                                         max_range=self._detection_range_m)
         # 只有蓝方有雷达，仅探测 stage >= 3 的实体（滑翔段及以后）
         detected = [i for i in detected if i.entity_ext.entity.stage >= 3]
 
@@ -100,12 +131,26 @@ class RadarModelSimulator(ISimulator):
                 entity_id=target.entity_ext.entity.id,
                 entity_type=target.entity_ext.entity.entityType,
                 nameChn=target.entity_ext.entity.nameChn,
-                lla=target.entity_ext.entity.lla,
-                pos_ecf=target.entity_ext.entity.posEcf,
-                vel_ecf=target.entity_ext.entity.velEcf
+                lla=self._copy_vector(target.entity_ext.entity.lla),
+                pos_ecf=self._copy_vector(target.entity_ext.entity.posEcf),
+                vel_ecf=self._copy_vector(target.entity_ext.entity.velEcf)
             ) for target in detected}
         # 更新自身探测信息
         self.handel_detect_info(detect_info)
+
+    def _expire_stale_tracks(self) -> None:
+        tracks = self.entity_ext.entity.detectInfo
+        expired_ids = [
+            target_id
+            for target_id, track in tracks.items()
+            if self.sim_time - track.time > self.TRACK_TTL_MS
+        ]
+        for target_id in expired_ids:
+            del tracks[target_id]
+
+    @staticmethod
+    def _copy_vector(vector: Vector3d) -> Vector3d:
+        return Vector3d(vector.x, vector.y, vector.z)
 
     def reset(self) -> None:
         """重置到初始状态"""

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import subprocess
 import sys
@@ -19,6 +20,12 @@ BLUE_POLICY_CHOICES = (
     "b1_nearest_interceptor",
     "b2_threat_priority",
     "b3_min_cost_assignment",
+    "b4_joint_timing_assignment",
+    "b5_successive_depth_coordination",
+    "b6_mixed_fire_coordination",
+    "b7_planned_nearest",
+    "b8_threat_multi_wave",
+    "b9_min_cost_planned_multi_wave",
 )
 RED_POLICY_CHOICES = (
     "r0_random",
@@ -31,6 +38,13 @@ RED_POLICY_CHOICES = (
     "r7_strike_packages",
     "r8_satellite_packages",
     "r9_hierarchical_learning",
+)
+RED_MOTION_POLICY_CHOICES = (
+    "straight",
+    "reactive_evasion",
+    "random_masked",
+    "ppo",
+    "mappo",
 )
 
 
@@ -94,6 +108,23 @@ def cmd_run(args: argparse.Namespace) -> int:
     env["BLUE_POLICY"] = args.blue_policy
     env["RED_POLICY"] = args.red_policy
     env["RED_MOTION_POLICY"] = args.red_motion_policy
+    if args.blue_interceptor_ratio is not None:
+        env["BLUE_INTERCEPTOR_RATIO"] = str(args.blue_interceptor_ratio)
+    if args.blue_plan_delay is not None:
+        env["BLUE_PLAN_DELAY"] = str(args.blue_plan_delay * 1000.0)
+    if args.blue_wave_gap is not None:
+        env["BLUE_WAVE_GAP"] = str(args.blue_wave_gap * 1000.0)
+    if args.blue_wave_size is not None:
+        env["BLUE_WAVE_SIZE"] = str(args.blue_wave_size)
+    if args.blue_min_cost_decision_interval is not None:
+        env["BLUE_MIN_COST_DECISION_INTERVAL"] = str(
+            args.blue_min_cost_decision_interval
+        )
+    reward_policy = load_reward_policy(scenario)
+    if reward_policy is not None:
+        env["BLUE_ASSET_VALUES"] = json.dumps(
+            dict(reward_policy.objective_weights)
+        )
     if args.red_learning_model is not None:
         env["RED_LEARNING_MODEL"] = str(Path(args.red_learning_model).resolve())
     if args.red_learning_train:
@@ -122,6 +153,31 @@ def build_parser() -> argparse.ArgumentParser:
         help="Blue interception policy (default: b0_fixed_ratio_random)",
     )
     run_parser.add_argument(
+        "--blue-interceptor-ratio",
+        type=int,
+        help="Maximum interceptors assigned per detected red platform",
+    )
+    run_parser.add_argument(
+        "--blue-plan-delay",
+        type=float,
+        help="Planning delay for B7/B9, in seconds",
+    )
+    run_parser.add_argument(
+        "--blue-wave-gap",
+        type=float,
+        help="Gap between B8/B9 interceptor waves, in seconds",
+    )
+    run_parser.add_argument(
+        "--blue-wave-size",
+        type=int,
+        help="Interceptors released per target in each blue wave",
+    )
+    run_parser.add_argument(
+        "--blue-min-cost-decision-interval",
+        type=int,
+        help="B3 minimum decision interval in simulation-time units",
+    )
+    run_parser.add_argument(
         "--red-policy",
         default="r0_random",
         choices=RED_POLICY_CHOICES,
@@ -130,7 +186,7 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument(
         "--red-motion-policy",
         default="reactive_evasion",
-        choices=["straight", "reactive_evasion", "random_masked", "ppo", "mappo"],
+        choices=RED_MOTION_POLICY_CHOICES,
         help="Red post-launch motion policy (default: reactive_evasion)",
     )
     run_parser.add_argument(

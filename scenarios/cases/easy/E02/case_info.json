@@ -14,7 +14,7 @@
     "前沿—阵地—纵深分层",
     "跨岛资源差异"
   ],
-  "difficulty_mechanism": "两个互不相连的资源岛、8个计分目标和284枚拦截弹；空间上不存在中央连续防线。",
+  "difficulty_mechanism": "8个计分目标、2部雷达和154枚拦截弹；蓝方拦截弹/红方高中性能打击弹=2.0。",
   "objective_ids": [
     51,
     301,
@@ -30,11 +30,11 @@
     "311": 56.4
   },
   "interceptor_counts": {
-    "54": 57,
-    "310": 57,
-    "168": 57,
-    "169": 57,
-    "330": 56
+    "54": 31,
+    "168": 31,
+    "169": 31,
+    "310": 31,
+    "330": 30
   },
   "roots": [
     {
@@ -73,7 +73,7 @@
       "lon": 120.55,
       "lat": 24.75,
       "hp": 20.0,
-      "interceptors": 57,
+      "interceptors": 31,
       "radar_id": 55,
       "radar_km": 62.4,
       "objective": true,
@@ -85,7 +85,7 @@
       "lon": 120.55,
       "lat": 20.95,
       "hp": 20.0,
-      "interceptors": 57,
+      "interceptors": 31,
       "radar_id": 311,
       "radar_km": 56.4,
       "objective": true,
@@ -97,9 +97,9 @@
       "lon": 123.1,
       "lat": 20.45,
       "hp": 1.6,
-      "interceptors": 57,
+      "interceptors": 31,
       "objective": true,
-      "initial_information": "hidden"
+      "initial_information": "public"
     },
     {
       "id": 169,
@@ -107,9 +107,9 @@
       "lon": 119.35,
       "lat": 25.35,
       "hp": 1.6,
-      "interceptors": 57,
+      "interceptors": 31,
       "objective": true,
-      "initial_information": "hidden"
+      "initial_information": "public"
     },
     {
       "id": 330,
@@ -117,14 +117,14 @@
       "lon": 119.35,
       "lat": 20.45,
       "hp": 1.6,
-      "interceptors": 56,
+      "interceptors": 30,
       "objective": true,
-      "initial_information": "hidden"
+      "initial_information": "public"
     }
   ],
-  "scenario_sha256": "0ed53699b9590c68ae7accea7b520119e821deb006376ebd57467bbfcc7d3ba4",
-  "entity_total": 463,
-  "blue_entity_total": 294,
+  "scenario_sha256": "55c051d9b7b48230fc24ca3d56feef8a2602ef9f26d91ec90acd84961401269f",
+  "entity_total": 333,
+  "blue_entity_total": 164,
   "blue_root_total": 8,
   "root_counts": {
     "ship": 3,
@@ -132,20 +132,19 @@
     "target": 3
   },
   "radar_total": 2,
-  "interceptor_total": 284,
+  "interceptor_total": 154,
   "objective_total": 8,
   "public_objective_ids": [
     51,
     301,
     52,
     54,
-    310
-  ],
-  "hidden_objective_ids": [
+    310,
     168,
     169,
     330
   ],
+  "hidden_objective_ids": [],
   "max_steps": 1500,
   "red_missile_counts": {
     "high": 31,

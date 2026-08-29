@@ -21,3 +21,4 @@ class UseSatelliteAction(object):
 
     executor_id: Optional[int] = -1
     commandType_id: int = SimmerCommandType.EXECUTE_SATELLITE_DETECTION
+    requested: bool = True
