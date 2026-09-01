@@ -61,7 +61,7 @@ class ISimulator(ABC):
 
     @property
     def sim_time(self) -> float:
-        """仿真时间"""
+        """仿真时间（毫秒）"""
         return self._sim_time
 
     # 修改_sim_time

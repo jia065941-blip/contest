@@ -24,6 +24,9 @@ logger = logging.getLogger(__name__)
 class CompCruiseMissileLSimulator(ISimulator):
     """
     无人机
+
+    Attributes:
+        launch: 发射时间
     """
 
     def __init__(self, entity_ext: EntityExt,
@@ -32,7 +35,7 @@ class CompCruiseMissileLSimulator(ISimulator):
                  simulator_factory: SimulatorFactory = None):
         super().__init__(entity_ext, send_commands, send_events, simulator_factory)
         self.ret = -1
-        self.launch = 0
+        self.launch = -1
         self.damage_point = 1
 
     @property
@@ -47,11 +50,10 @@ class CompCruiseMissileLSimulator(ISimulator):
         """
         执行仿真步进
         """
-        if self.launch == 0:
+        if self.launch <= 0:
             return
 
-        if self.ret < 0:
-
+        if self.ret < 0 and (self.sim_time - self.launch <= 1800_000):
             # 更新探测信息
             if self.sim_time % 1000 == 0:
                 self.execute_detection()
@@ -69,6 +71,9 @@ class CompCruiseMissileLSimulator(ISimulator):
             entity.stage = state.stage()
         else:
             if self.entity_ext.entity.isVisible:
+                if self.ret < 0:
+                    logger.warning(f"无人机 '{self.entity_ext.entity.nameChn}' 飞行时间超时自爆")
+
                 # 自爆
                 self.entity_ext.entity.isVisible = False
                 self.entity_ext.entity.survivePoints = 0
@@ -179,7 +184,7 @@ class CompCruiseMissileLSimulator(ISimulator):
         self.model = None
 
         self.ret = -1
-        self.launch = 0
+        self.launch = -1
 
     def init_model(self):
         self.model = Missile()
@@ -213,7 +218,7 @@ class CompCruiseMissileLSimulator(ISimulator):
         if command.commandTypeId == SimmerCommandType.ATTACK_COMMANDER_START:
             pass
         elif command.commandTypeId == SimmerCommandType.MISSILE_LAUNCH:
-            if self.launch != 0:
+            if self.launch > 0:
                 print(f"entity_id:{self.entity_ext.entity.id}, name:{self.entity_ext.entity.nameChn} 重复发射")
                 return
 
@@ -223,7 +228,7 @@ class CompCruiseMissileLSimulator(ISimulator):
                 command.commandAttributes["target"]["z"]
             ))
 
-            self.launch = 1
+            self.launch = self.sim_time
         elif command.commandTypeId == SimmerCommandType.SET_DESIRED_ACC_Z:
             if command.commandAttributes["acc_z"] == 0:
                 self.model.ClearDesiredAccZ()
