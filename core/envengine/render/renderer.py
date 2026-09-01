@@ -517,111 +517,30 @@ class Renderer:
                     case 9500:
                         # 无人船
                         self.draw_autonomous_ship(screen, (x, y))
-                        pygame.draw.circle(screen, (0, 255, 0), (x, y), 300 * self.zoom, 1)  # 拦截范围
+
+                        # 雷达：按 200km 长度绘制探测范围圆形
+                        pixel_radius = self.km_to_pixel_radius(lon, lat, 200)
+                        pygame.draw.circle(screen, (0, 255, 0), (x, y), pixel_radius * self.zoom, 1)
                     case 9600:
                         # 拦截阵地
                         self.draw_defensive(screen, (x,y))
-                        pygame.draw.circle(screen, (0, 255, 0), (x,y), 500 * self.zoom, 1) # 拦截范围
+
+                        # 雷达：按 200km 长度绘制探测范围圆形
+                        pixel_radius = self.km_to_pixel_radius(lon, lat, 200)
+                        pygame.draw.circle(screen, (0, 255, 0), (x, y), pixel_radius * self.zoom, 1)
                     case 24000:
                         # 拦截弹
                         self.draw_intercept(screen, (x,y))
                     case _:
                         pygame.draw.circle(screen, color, (x, y), self.draw_radius)
+                        text_surface = self.font.render(str(name), True, color)
+                        text_rect = text_surface.get_rect(center=(x, y - 12))
+                        screen.blit(text_surface, text_rect)
 
                 # 绘制名称
                 # text_surface = self.font.render(str(name), True, color)
                 # text_rect = text_surface.get_rect(center=(x, y - 12))
                 # screen.blit(text_surface, text_rect)
-
-                # # 绘制雷达
-                # if data.get("type") == 44000:
-                #     # 更新扫描角度（每帧旋转）
-                #     self.radar_angle += 3  # 旋转速度
-                #     if self.radar_angle >= 360:
-                #         self.radar_angle = 0
-                #
-                #     # 获取雷达探测范围
-                #     radar_range_km = data.get('range', 80)
-                #
-                #     # 方法：计算雷达覆盖范围边界上的多个点
-                #     num_points = 36  # 点越多越精确
-                #     max_radius = 0
-                #
-                #     for i in range(num_points):
-                #         # 在雷达覆盖范围边界上取点
-                #         angle = 2 * math.pi * i / num_points
-                #
-                #         # 计算该方向上的经纬度偏移
-                #         lat_rad = math.radians(lat)
-                #         km_per_deg_lat = 111.32
-                #         km_per_deg_lon = 111.32 * math.cos(lat_rad)
-                #
-                #         # 经纬度偏移量
-                #         delta_lat = (radar_range_km * math.sin(angle)) / km_per_deg_lat
-                #         delta_lon = (radar_range_km * math.cos(angle)) / km_per_deg_lon
-                #
-                #         # 边界点的经纬度
-                #         boundary_lon = lon + delta_lon
-                #         boundary_lat = lat + delta_lat
-                #
-                #         # 使用现有的坐标转换方法
-                #         if self.use_projection:
-                #             bx, by = self._geo_to_screen_projection(boundary_lon, boundary_lat)
-                #         else:
-                #             bx, by = self._geo_to_screen_linear(boundary_lon, boundary_lat)
-                #
-                #         # 计算到雷达中心的像素距离
-                #         dist = math.sqrt((bx - x) ** 2 + (by - y) ** 2)
-                #         max_radius = max(max_radius, dist)
-                #
-                #     # 限制半径范围
-                #     pixel_radius = max(5, min(800, max_radius))
-                #
-                #     radar_color = (0, 255, 100)
-                #
-                #     # 绘制雷达探测圈（外圈）
-                #     pygame.draw.circle(screen, (*radar_color, 80), (x, y), int(pixel_radius), 2)
-                #
-                #     # 内部半透明填充
-                #     radar_surface = pygame.Surface((int(pixel_radius * 2), int(pixel_radius * 2)), pygame.SRCALPHA)
-                #     pygame.draw.circle(radar_surface, (*radar_color, 15),
-                #                        (int(pixel_radius), int(pixel_radius)), int(pixel_radius))
-                #     screen.blit(radar_surface, (x - int(pixel_radius), y - int(pixel_radius)))
-                #
-                #     # 绘制距离环
-                #     for ratio in [0.25, 0.5, 0.75]:
-                #         ring_radius = int(pixel_radius * ratio)
-                #         pygame.draw.circle(screen, (*radar_color, 30), (x, y), ring_radius, 1)
-                #
-                #     # 绘制扫描线（扇形扫描区域）
-                #     scan_angle_rad = math.radians(self.radar_angle)
-                #
-                #     # 绘制扫描线
-                #     end_x = x + pixel_radius * math.cos(scan_angle_rad)
-                #     end_y = y - pixel_radius * math.sin(scan_angle_rad)
-                #     pygame.draw.line(screen, (*radar_color, 180), (x, y), (end_x, end_y), 2)
-                #
-                #     # 绘制扇形扫描区域（半透明）
-                #     num_segments = 20
-                #     points = [(x, y)]
-                #     for i in range(num_segments + 1):
-                #         angle = scan_angle_rad - math.radians(30) + math.radians(60) * i / num_segments
-                #         px = x + pixel_radius * math.cos(angle)
-                #         py = y - pixel_radius * math.sin(angle)
-                #         points.append((px, py))
-                #
-                #     if len(points) > 2:
-                #         # 创建扇形表面
-                #         scan_surface = pygame.Surface((self.MAP_W, self.MAP_H), pygame.SRCALPHA)
-                #         pygame.draw.polygon(scan_surface, (*radar_color, 30), points)
-                #         screen.blit(scan_surface, (0, 0))
-                #
-                #     # 绘制十字交叉线
-                #     cross_len = int(pixel_radius * 0.3)
-                #     pygame.draw.line(screen, (*radar_color, 50),
-                #                      (x - cross_len, y), (x + cross_len, y), 1)
-                #     pygame.draw.line(screen, (*radar_color, 50),
-                #                      (x, y - cross_len), (x, y + cross_len), 1)
 
             # ========== 右上角图例 ==========
             self.draw_legend(screen)
@@ -634,10 +553,6 @@ class Renderer:
             # 计算相对于原点（屏幕中心）的偏移量
             cx, cy = self.MAP_W // 2, self.MAP_H // 2
 
-            # 屏幕坐标相对于原点的偏移（像素单位）
-            screen_offset_x = self.mouse_x - cx
-            screen_offset_y = -(self.mouse_y - cy)  # Y轴向上为正
-
             # 世界坐标相对于原点的偏移
             world_offset_x = mouse_wx - cx
             world_offset_y = cy - mouse_wy  # Y轴向上为正
@@ -645,7 +560,6 @@ class Renderer:
             # 构建坐标信息字符串
             coord_info = [
                 f"鼠标位置 (原点为屏幕中心):",
-                # f"  屏幕偏移: ({screen_offset_x:+.0f}, {screen_offset_y:+.0f}) px",
                 f"  世界坐标: ({world_offset_x:+.0f}, {world_offset_y:+.0f})",
                 f"  经纬度: ({mouse_lon:.4f}, {mouse_lat:.4f})"
             ]
@@ -712,6 +626,24 @@ class Renderer:
             clock.tick(self.fps)
 
         pygame.quit()
+
+    def km_to_pixel_radius(self, lon: float, lat: float, range_km: float) -> float:
+        """
+        1、根据经纬度与公里数的近似对应关系，计算出目标距离对应的经度和纬度
+        2、根据当前render的经纬度与对应的像素的关系，分别计算在经纬度方向上的像素
+        3、两个方向取平均
+        """
+
+        lat_rad = math.radians(lat)
+        km_per_deg_lat = 111.32
+        km_per_deg_lon = 111.32 * math.cos(lat_rad)
+
+        range_lat = range_km / km_per_deg_lat
+        range_lon = range_km / km_per_deg_lon
+
+        r_lat = range_lat / self.lat_per_pixel
+        r_lon = range_lon / self.lon_per_pixel
+        return (r_lat + r_lon) / 2.0
 
     def draw_missile_h(self,
                       screen: pygame.Surface,
