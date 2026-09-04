@@ -4,9 +4,7 @@ from __future__ import annotations
 
 from .contracts import Position
 from .baselines import TargetPrior
-
-
-_VALUE_BY_TYPE = {9400: 10.0, 9600: 6.0, 9500: 3.0}
+from .objectives import objective_value
 
 
 def initial_targets_from_observation(initial_observation: dict) -> tuple[TargetPrior, ...]:
@@ -25,7 +23,7 @@ def initial_targets_from_observation(initial_observation: dict) -> tuple[TargetP
                     lat=float(location.get("lat", 0.0)),
                     alt=float(location.get("alt", 0.0)),
                 ),
-                value=_VALUE_BY_TYPE.get(entity_type, 1.0),
+                value=objective_value(entity_type),
             )
         )
     return tuple(sorted(targets, key=lambda item: item.entity_id))

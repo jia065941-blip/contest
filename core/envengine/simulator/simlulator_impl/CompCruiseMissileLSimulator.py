@@ -50,7 +50,7 @@ class CompCruiseMissileLSimulator(ISimulator):
         """
         执行仿真步进
         """
-        if self.launch <= 0:
+        if self.launch < 0:
             return
 
         if self.ret < 0 and (self.sim_time - self.launch <= 1800_000):
@@ -218,7 +218,7 @@ class CompCruiseMissileLSimulator(ISimulator):
         if command.commandTypeId == SimmerCommandType.ATTACK_COMMANDER_START:
             pass
         elif command.commandTypeId == SimmerCommandType.MISSILE_LAUNCH:
-            if self.launch > 0:
+            if self.launch >= 0:
                 print(f"entity_id:{self.entity_ext.entity.id}, name:{self.entity_ext.entity.nameChn} 重复发射")
                 return
 

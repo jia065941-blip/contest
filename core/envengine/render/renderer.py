@@ -517,10 +517,6 @@ class Renderer:
                     case 9500:
                         # 无人船
                         self.draw_autonomous_ship(screen, (x, y))
-
-                        # 雷达：按 200km 长度绘制探测范围圆形
-                        pixel_radius = self.km_to_pixel_radius(lon, lat, 200)
-                        pygame.draw.circle(screen, (0, 255, 0), (x, y), pixel_radius * self.zoom, 1)
                     case 9600:
                         # 拦截阵地
                         self.draw_defensive(screen, (x,y))

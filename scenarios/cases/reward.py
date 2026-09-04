@@ -1,4 +1,4 @@
-"""Unified destruction/time scoring for the nine competition scenarios."""
+"""Unified weighted-damage scoring for competition scenarios."""
 
 from __future__ import annotations
 
@@ -9,14 +9,10 @@ from pathlib import Path
 from typing import Any, Mapping
 
 
-DESTROYED_TARGET_WEIGHT = 0.8
-TIME_EFFICIENCY_WEIGHT = 0.2
-
-# 不同蓝方根节点的任务价值。普通目标建筑是主要打击对象，
-# 雷达/拦截阵地和无人船统一按基础价值计分。
+# 不同蓝方根节点的任务价值：无人船:拦截阵地:计分目标 = 1:2:5。
 OBJECTIVE_KIND_WEIGHTS = {
-    "target": 3.0,
-    "site": 1.0,
+    "target": 5.0,
+    "site": 2.0,
     "ship": 1.0,
 }
 DEFAULT_OBJECTIVE_WEIGHT = 1.0
@@ -29,6 +25,7 @@ class RewardPolicy:
     max_steps: int
     scenario_path: Path
     objective_weights: tuple[tuple[int, float], ...] = ()
+    objective_initial_health: tuple[tuple[int, float], ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -117,6 +114,13 @@ def load_reward_policy(scenario: str | Path) -> RewardPolicy | None:
         )
         for entity_id in objective_ids
     )
+    objective_initial_health = tuple(
+        (
+            entity_id,
+            float(roots_by_id.get(entity_id, {}).get("hp", 0.0)),
+        )
+        for entity_id in objective_ids
+    )
     max_steps = int(info["max_steps"])
     if not objective_ids:
         raise ValueError(f"{info_path} 没有计分目标")
@@ -124,6 +128,8 @@ def load_reward_policy(scenario: str | Path) -> RewardPolicy | None:
         raise ValueError(f"{info_path} 的 max_steps 必须大于 0")
     if any(weight <= 0 for _, weight in objective_weights):
         raise ValueError(f"{info_path} 包含非正数的目标权重")
+    if any(health <= 0 for _, health in objective_initial_health):
+        raise ValueError(f"{info_path} 包含非正数的目标初始血量")
 
     return RewardPolicy(
         scenario_id=str(info["scenario_id"]),
@@ -131,6 +137,7 @@ def load_reward_policy(scenario: str | Path) -> RewardPolicy | None:
         max_steps=max_steps,
         scenario_path=scenario_path,
         objective_weights=objective_weights,
+        objective_initial_health=objective_initial_health,
     )
 
 
@@ -140,14 +147,12 @@ def calculate_reward(
     target_health: Mapping[int | str, float],
     destruction_steps: Mapping[int | str, int] | None = None,
 ) -> RewardBreakdown:
-    """Calculate ``100 * clip(0.8K + 0.2T, 0, 1)``.
+    """Calculate the 0--100 weighted damage ratio, independent of time.
 
-    ``K`` is the destroyed objective *value* ratio instead of a plain count.
-    ``T`` is weighted time efficiency.  A destroyed objective earns more time
-    credit when it is destroyed earlier; an undestroyed objective earns none.
-
-    ``destruction_steps`` supplies each objective's first destroyed step.
-    Missing timing information earns no time credit.
+    Each objective contributes its own fractional health loss multiplied by
+    the configured kind weight.  ``K`` and ``raw_score`` both expose that
+    normalized damage value. ``T`` is retained as a compatibility field and
+    is always zero; destruction steps are retained only for result reporting.
     """
     destroyed_ids = tuple(
         entity_id
@@ -170,12 +175,29 @@ def calculate_reward(
         raise ValueError("计分目标总权重必须大于 0")
 
     destroyed_weight = sum(weight_by_id[entity_id] for entity_id in destroyed_ids)
-    k_value = destroyed_weight / total_objective_weight
+    initial_pairs = policy.objective_initial_health or tuple(
+        (entity_id, 1.0)
+        for entity_id in policy.objective_ids
+    )
+    initial_health_by_id = dict(initial_pairs)
+    weighted_damage = 0.0
+    for entity_id in policy.objective_ids:
+        initial_health = float(initial_health_by_id.get(entity_id, 0.0))
+        if initial_health <= 0:
+            raise ValueError(f"计分目标 {entity_id} 的初始血量必须大于 0")
+        final_health = float(
+            target_health.get(
+                entity_id,
+                target_health.get(str(entity_id), initial_health),
+            )
+        )
+        damage_fraction = max(0.0, min(1.0, (initial_health - final_health) / initial_health))
+        weighted_damage += weight_by_id[entity_id] * damage_fraction
+    k_value = weighted_damage / total_objective_weight
     completed = len(destroyed_ids) == len(policy.objective_ids)
 
     supplied_steps = destruction_steps or {}
     normalized_steps: dict[int, int] = {}
-    earned_time_credit = 0.0
     for entity_id in destroyed_ids:
         raw_step = supplied_steps.get(
             entity_id,
@@ -185,15 +207,9 @@ def calculate_reward(
             raw_step = policy.max_steps
         step = max(0, min(policy.max_steps, int(raw_step)))
         normalized_steps[entity_id] = step
-        remaining_fraction = 1.0 - step / policy.max_steps
-        earned_time_credit += weight_by_id[entity_id] * remaining_fraction
 
-    t_value = earned_time_credit / total_objective_weight
-    t_value = max(0.0, min(1.0, t_value))
-    raw_score = (
-        DESTROYED_TARGET_WEIGHT * k_value
-        + TIME_EFFICIENCY_WEIGHT * t_value
-    )
+    t_value = 0.0
+    raw_score = max(0.0, min(1.0, k_value))
     return RewardBreakdown(
         score=100.0 * max(0.0, min(1.0, raw_score)),
         raw_score=raw_score,

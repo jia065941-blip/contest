@@ -24,10 +24,6 @@
     168,
     169
   ],
-  "radar_ranges_km": {
-    "55": 62.4,
-    "107": 42.0
-  },
   "interceptor_counts": {
     "54": 37,
     "106": 37,
@@ -73,7 +69,6 @@
       "hp": 20.0,
       "interceptors": 37,
       "radar_id": 55,
-      "radar_km": 62.4,
       "objective": true,
       "initial_information": "public"
     },
@@ -85,7 +80,6 @@
       "hp": 20.0,
       "interceptors": 37,
       "radar_id": 107,
-      "radar_km": 42.0,
       "objective": true,
       "initial_information": "public"
     },
@@ -110,7 +104,7 @@
       "initial_information": "public"
     }
   ],
-  "scenario_sha256": "806558e07d0944a32cd37c1fca082c5a7b048e2a4d1ed05409cf22c9d235b5c2",
+  "scenario_sha256": "6480a83bf1ec83efee28fd9b7aa99612e3650ab3166462db31fa012fccdaea2f",
   "entity_total": 310,
   "blue_entity_total": 155,
   "blue_root_total": 7,

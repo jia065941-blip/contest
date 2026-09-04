@@ -2143,7 +2143,7 @@
           "detectInfo": {},
           "commRangeInfo": []
         },
-        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"distance\":62400,\"scanSpeed\":5}}"
+        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"scanSpeed\":5}}"
       },
       {
         "entity": {
@@ -2858,7 +2858,7 @@
           "detectInfo": {},
           "commRangeInfo": []
         },
-        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"distance\":56400,\"scanSpeed\":5}}"
+        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"scanSpeed\":5}}"
       },
       {
         "entity": {

@@ -12,6 +12,7 @@ from .baselines import (
     TacticalMetrics,
     TargetPrior,
     build_red_baseline,
+    distance_km,
 )
 from .contracts import Position
 from .tracks import InitialCatalogueTrackFusion
@@ -23,7 +24,13 @@ _KIND_BY_TYPE = {21000: "H", 21001: "M", 21002: "L"}
 class RedBaselineCommander:
     """Coordinate launch allocation from own-platform reports and core priors."""
 
-    def __init__(self, targets: tuple[TargetPrior, ...], policy_name: str, seed: int = 1) -> None:
+    def __init__(
+        self,
+        targets: tuple[TargetPrior, ...],
+        policy_name: str,
+        seed: int = 1,
+        search_polygon: tuple[Position, ...] | None = None,
+    ) -> None:
         if policy_name not in RED_POLICY_CHOICES:
             raise ValueError(f"Unsupported red baseline '{policy_name}'")
         self.initial_targets = targets
@@ -31,14 +38,16 @@ class RedBaselineCommander:
         self.track_fusion = InitialCatalogueTrackFusion(targets)
         self.policy_name = policy_name
         self.seed = seed
+        self.search_polygon = search_polygon
         self.rules = BaselineRules()
-        self.policy = build_red_baseline(policy_name, self.rules, seed)
+        self.policy = build_red_baseline(policy_name, self.rules, seed, search_polygon)
         self.reports: dict[int, PlatformState] = {}
         self.expected_platform_ids: set[int] = set()
         self.launched_ids: set[int] = set()
         self.assigned_by_target: dict[int, int] = {}
         self.target_by_platform: dict[int, int] = {}
         self.pending: dict[int, list[tuple[int, float, float]]] = {}
+        self.observed_target_ids: dict[int, set[int]] = {}
         self.last_plan_step = -1
         self.event_revision = 0
         self.planned_revision = -1
@@ -107,6 +116,12 @@ class RedBaselineCommander:
         position = own.get("position", {})
         if entity_id < 0 or kind is None or not isinstance(position, dict):
             return
+        observed_ship_ids = {
+            int(self._track_field(track, "entity_id", raw_id))
+            for raw_id, track in (own.get("detectInfo") or {}).items()
+            if int(self._track_field(track, "entity_type", -1)) == 9500
+        }
+        self.observed_target_ids[entity_id] = observed_ship_ids
         self.reports[entity_id] = PlatformState(
             entity_id=entity_id,
             kind=kind,
@@ -122,6 +137,8 @@ class RedBaselineCommander:
     def action_for(self, entity_id: int, step: int) -> list[float] | None:
         if self._should_plan(step):
             self._plan(step)
+        if int(entity_id) in self.launched_ids:
+            return self._retarget_action_for(int(entity_id))
         rows = self.pending.get(int(entity_id), [])
         due = [row for row in rows if row[0] <= step]
         future = [row for row in rows if row[0] > step]
@@ -143,6 +160,7 @@ class RedBaselineCommander:
         if self.policy_name in {
             "r6_frontload_decoy",
             "r7_strike_packages",
+            "r7_static_search",
             "r8_satellite_packages",
             "r9_hierarchical_learning",
         }:
@@ -183,6 +201,7 @@ class RedBaselineCommander:
                     "r5_event_rolling",
                     "r6_frontload_decoy",
                     "r7_strike_packages",
+                    "r7_static_search",
                     "r8_satellite_packages",
                     "r9_hierarchical_learning",
                 }:
@@ -193,14 +212,47 @@ class RedBaselineCommander:
             target = target_by_id.get(assignment.target_id)
             if target is None:
                 continue
+            destination = assignment.destination or target.position
             self.pending.setdefault(assignment.platform_id, []).append(
-                (assignment.launch_step, target.position.lon, target.position.lat)
+                (assignment.launch_step, destination.lon, destination.lat)
             )
             self.assigned_by_target[assignment.target_id] = self.assigned_by_target.get(assignment.target_id, 0) + 1
             self.target_by_platform[assignment.platform_id] = assignment.target_id
             accepted += 1
         self.last_plan_step = step
         self.planned_revision = self.event_revision
+
+    def _retarget_action_for(self, platform_id: int) -> list[float] | None:
+        observed_ids = self.observed_target_ids.get(platform_id, set())
+        platform = self.reports.get(platform_id)
+        if platform is None or not observed_ids:
+            return None
+        candidates = tuple(
+            sorted(
+                (
+                    target
+                    for target in self.targets
+                    if target.entity_id in observed_ids and target.entity_type == 9500
+                ),
+                key=lambda target: (
+                    distance_km(platform.position, target.position),
+                    target.entity_id,
+                ),
+            )
+        )
+        target = self.policy.claim_retarget(platform, candidates)
+        if target is None:
+            return None
+
+        previous_target = self.target_by_platform.get(platform_id)
+        if previous_target is not None:
+            self.assigned_by_target[previous_target] = max(
+                0,
+                self.assigned_by_target.get(previous_target, 1) - 1,
+            )
+        self.target_by_platform[platform_id] = target.entity_id
+        self.assigned_by_target[target.entity_id] = self.assigned_by_target.get(target.entity_id, 0) + 1
+        return [2.0, float(platform_id), target.position.lon, target.position.lat]
 
     def _drop_pending(self, platform_id: int) -> None:
         previous_target = self.target_by_platform.pop(platform_id, None)
@@ -247,10 +299,16 @@ class RedBaselineCommander:
         self.assigned_by_target.clear()
         self.target_by_platform.clear()
         self.pending.clear()
+        self.observed_target_ids.clear()
         self.last_plan_step = -1
         self.event_revision = 0
         self.planned_revision = -1
         self.tactical_metrics = TacticalMetrics()
-        self.policy = build_red_baseline(self.policy_name, self.rules, self.seed)
+        self.policy = build_red_baseline(
+            self.policy_name,
+            self.rules,
+            self.seed,
+            self.search_polygon,
+        )
         self.targets = self.initial_targets
         self.track_fusion = InitialCatalogueTrackFusion(self.initial_targets)

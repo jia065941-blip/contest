@@ -2198,7 +2198,7 @@
           "detectInfo": {},
           "commRangeInfo": []
         },
-        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"distance\":65000,\"scanSpeed\":5}}"
+        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"scanSpeed\":5}}"
       },
       {
         "entity": {
@@ -2326,7 +2326,7 @@
           "detectInfo": {},
           "commRangeInfo": []
         },
-        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"distance\":60000,\"scanSpeed\":5}}"
+        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"scanSpeed\":5}}"
       },
       {
         "entity": {
@@ -3124,7 +3124,7 @@
           "detectInfo": {},
           "commRangeInfo": []
         },
-        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"distance\":65000,\"scanSpeed\":5}}"
+        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"scanSpeed\":5}}"
       },
       {
         "entity": {
@@ -3251,7 +3251,7 @@
           "detectInfo": {},
           "commRangeInfo": []
         },
-        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"distance\":55000,\"scanSpeed\":5}}"
+        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"scanSpeed\":5}}"
       },
       {
         "entity": {
@@ -3378,7 +3378,7 @@
           "detectInfo": {},
           "commRangeInfo": []
         },
-        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"distance\":65000,\"scanSpeed\":5}}"
+        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"scanSpeed\":5}}"
       },
       {
         "entity": {

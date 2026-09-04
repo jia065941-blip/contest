@@ -4,14 +4,16 @@ from __future__ import annotations
 
 from .baselines import TargetPrior
 from .contracts import Position
+from .objectives import objective_value
 
 
 class InitialCatalogueTrackFusion:
-    """Refine only targets explicitly supplied in the initial core catalogue.
+    """Refine public targets and admit legally detected hidden unmanned ships.
 
     ``DetectInfo`` currently carries an ID, type and kinematics, but no target
     health.  This component therefore updates location only; it never infers
-    hidden damage or silently removes a target.
+    hidden damage or silently removes a target. A hidden 9500 target is added
+    only after it appears in an isolated platform observation.
     """
 
     def __init__(self, targets: tuple[TargetPrior, ...]) -> None:
@@ -29,6 +31,21 @@ class InitialCatalogueTrackFusion:
             entity_id = int(self._field(track, "entity_id", raw_id))
             current = self._targets.get(entity_id)
             if current is None:
+                entity_type = int(self._field(track, "entity_type", -1))
+                lla = self._field(track, "lla", None)
+                if entity_type != 9500 or lla is None:
+                    continue
+                self._targets[entity_id] = TargetPrior(
+                    entity_id=entity_id,
+                    entity_type=entity_type,
+                    position=Position(
+                        lon=float(self._field(lla, "x", 0.0)),
+                        lat=float(self._field(lla, "y", 0.0)),
+                        alt=float(self._field(lla, "z", 0.0)),
+                    ),
+                    value=objective_value(entity_type),
+                )
+                changed = True
                 continue
             entity_type = int(self._field(track, "entity_type", current.entity_type))
             if entity_type != current.entity_type:

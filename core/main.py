@@ -26,7 +26,7 @@ try:
 except ImportError:
     RewardTracker = load_reward_policy = None
 
-from policies.red import RED_POLICY_CHOICES, RedBaselineCommander, initial_targets_from_observation
+from policies.red import Position, RED_POLICY_CHOICES, RedBaselineCommander, initial_targets_from_observation
 from policies.red.learning import build_learning_motion_policy
 
 
@@ -179,10 +179,17 @@ def main():
     red_policy = os.getenv("RED_POLICY", "r0_random")
     if red_policy not in RED_POLICY_CHOICES:
         raise ValueError(f"Unsupported red policy '{red_policy}'")
+    map_area = profile.imagineProfile.mapArea
     commander = RedBaselineCommander(
         initial_targets_from_observation(init_observation_ship),
         policy_name=red_policy,
         seed=int(os.getenv("RED_POLICY_SEED", "1")),
+        search_polygon=(
+            Position(map_area.lonMin, map_area.latMin),
+            Position(map_area.lonMax, map_area.latMin),
+            Position(map_area.lonMax, map_area.latMax),
+            Position(map_area.lonMin, map_area.latMax),
+        ),
     )
     red_motion_policy = os.getenv("RED_MOTION_POLICY", "reactive_evasion")
     hierarchical_learning = red_policy == "r9_hierarchical_learning"

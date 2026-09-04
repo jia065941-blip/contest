@@ -1,0 +1,299 @@
+{
+  "scenario_id": "H05",
+  "display_id": "H05",
+  "title": "非对称多路径",
+  "difficulty": "hard",
+  "difficulty_name": "困难",
+  "mission_type": "route_and_key_node",
+  "mission_type_name": "通道与关键节点",
+  "topology_id": "t25",
+  "topology_name": "非对称多路径",
+  "design_intent": "结合短窄道、中等破点路与长距离外绕路，用于综合决策。",
+  "structural_features": [
+    "通道选择",
+    "关键节点",
+    "破点与绕行"
+  ],
+  "difficulty_mechanism": "困难计分实体数量+弹药规模+独立空间拓扑；同类实体血量跨难度固定。",
+  "objective_ids": [
+    51,
+    52,
+    53,
+    301,
+    302,
+    2952,
+    2953,
+    54,
+    106,
+    310,
+    312,
+    314,
+    316,
+    2954,
+    2956,
+    168,
+    169,
+    330
+  ],
+  "interceptor_counts": {
+    "54": 30,
+    "106": 30,
+    "310": 30,
+    "312": 30,
+    "314": 30,
+    "316": 29,
+    "2954": 29,
+    "2956": 29,
+    "168": 29,
+    "169": 29,
+    "330": 29
+  },
+  "roots": [
+    {
+      "id": 51,
+      "kind": "target",
+      "lon": 123.0,
+      "lat": 25.3,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 52,
+      "kind": "target",
+      "lon": 123.6,
+      "lat": 24.0,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 53,
+      "kind": "target",
+      "lon": 123.5,
+      "lat": 22.0,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 301,
+      "kind": "target",
+      "lon": 123.0,
+      "lat": 20.7,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 302,
+      "kind": "target",
+      "lon": 123.055,
+      "lat": 23.0,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 2952,
+      "kind": "target",
+      "lon": 123.45500000000001,
+      "lat": 23.55,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 2953,
+      "kind": "target",
+      "lon": 123.45500000000001,
+      "lat": 22.45,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 54,
+      "kind": "site",
+      "lon": 120.0,
+      "lat": 24.8,
+      "hp": 12.0,
+      "interceptors": 30,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 55
+    },
+    {
+      "id": 106,
+      "kind": "site",
+      "lon": 120.7,
+      "lat": 22.8,
+      "hp": 12.0,
+      "interceptors": 30,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 107
+    },
+    {
+      "id": 310,
+      "kind": "site",
+      "lon": 121.7,
+      "lat": 24.0,
+      "hp": 12.0,
+      "interceptors": 30,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 311
+    },
+    {
+      "id": 312,
+      "kind": "site",
+      "lon": 122.3,
+      "lat": 21.2,
+      "hp": 12.0,
+      "interceptors": 30,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 313
+    },
+    {
+      "id": 314,
+      "kind": "site",
+      "lon": 120.47,
+      "lat": 23.7,
+      "hp": 12.0,
+      "interceptors": 30,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 315
+    },
+    {
+      "id": 316,
+      "kind": "site",
+      "lon": 121.88,
+      "lat": 22.700000000000003,
+      "hp": 12.0,
+      "interceptors": 29,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 317
+    },
+    {
+      "id": 2954,
+      "kind": "site",
+      "lon": 120.72999999999999,
+      "lat": 24.5,
+      "hp": 12.0,
+      "interceptors": 29,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 2955
+    },
+    {
+      "id": 2956,
+      "kind": "site",
+      "lon": 121.62,
+      "lat": 21.9,
+      "hp": 12.0,
+      "interceptors": 29,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 2957
+    },
+    {
+      "id": 168,
+      "kind": "ship",
+      "lon": 119.4,
+      "lat": 20.5,
+      "hp": 0.8,
+      "interceptors": 29,
+      "objective": true,
+      "initial_information": "hidden"
+    },
+    {
+      "id": 169,
+      "kind": "ship",
+      "lon": 122.6,
+      "lat": 25.4,
+      "hp": 0.8,
+      "interceptors": 29,
+      "objective": true,
+      "initial_information": "hidden"
+    },
+    {
+      "id": 330,
+      "kind": "ship",
+      "lon": 121.35,
+      "lat": 22.95,
+      "hp": 0.8,
+      "interceptors": 29,
+      "objective": true,
+      "initial_information": "hidden"
+    }
+  ],
+  "scenario_sha256": "fe880d51e3f8ded59313e6f2569a98d3b38cca0383683a06e1f3ff99ad6cc8b0",
+  "entity_total": 712,
+  "blue_entity_total": 350,
+  "blue_root_total": 18,
+  "root_counts": {
+    "target": 7,
+    "site": 8,
+    "ship": 3
+  },
+  "radar_total": 8,
+  "interceptor_total": 324,
+  "objective_total": 18,
+  "public_objective_ids": [
+    51,
+    52,
+    53,
+    301,
+    302,
+    2952,
+    2953,
+    54,
+    106,
+    310,
+    312,
+    314,
+    316,
+    2954,
+    2956
+  ],
+  "hidden_objective_ids": [
+    168,
+    169,
+    330
+  ],
+  "max_steps": 2300,
+  "red_missile_counts": {
+    "high": 60,
+    "medium": 84,
+    "low": 216
+  },
+  "blue_hp_by_kind": {
+    "target": 16.0,
+    "site": 12.0,
+    "ship": 0.8
+  },
+  "evaluation_focus": "短窄、中等破点和长绕三路决策",
+  "key_node_ids": [
+    310,
+    316
+  ],
+  "ammo_rules": {
+    "medium_to_high": 1.4,
+    "low_to_high_plus_medium": 1.5,
+    "interceptor_to_low": 1.5
+  },
+  "building_damage_budget": 1620.0,
+  "building_health_total": 208.0,
+  "building_health_to_damage_ratio": 0.12839506172839507
+}

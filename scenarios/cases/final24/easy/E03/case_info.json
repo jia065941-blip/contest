@@ -1,0 +1,177 @@
+{
+  "scenario_id": "E03",
+  "display_id": "E03",
+  "title": "Y形分叉",
+  "difficulty": "easy",
+  "difficulty_name": "简单",
+  "mission_type": "route_and_key_node",
+  "mission_type_name": "通道与关键节点",
+  "topology_id": "t10",
+  "topology_name": "Y形分叉",
+  "design_intent": "前端关键节点后分为南北两路，可破前门或选一支线。",
+  "structural_features": [
+    "通道选择",
+    "关键节点",
+    "破点与绕行"
+  ],
+  "difficulty_mechanism": "简单计分实体数量+弹药规模+独立空间拓扑；同类实体血量跨难度固定。",
+  "objective_ids": [
+    51,
+    52,
+    53,
+    2551,
+    2552,
+    54,
+    106,
+    168,
+    169
+  ],
+  "interceptor_counts": {
+    "54": 41,
+    "106": 41,
+    "168": 40,
+    "169": 40
+  },
+  "roots": [
+    {
+      "id": 51,
+      "kind": "target",
+      "lon": 123.1,
+      "lat": 25.1,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 52,
+      "kind": "target",
+      "lon": 123.6,
+      "lat": 24.0,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 53,
+      "kind": "target",
+      "lon": 123.6,
+      "lat": 22.0,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 2551,
+      "kind": "target",
+      "lon": 123.1,
+      "lat": 20.9,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 2552,
+      "kind": "target",
+      "lon": 123.13,
+      "lat": 23.0,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 54,
+      "kind": "site",
+      "lon": 120.1,
+      "lat": 23.0,
+      "hp": 12.0,
+      "interceptors": 41,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 55
+    },
+    {
+      "id": 106,
+      "kind": "site",
+      "lon": 122.1,
+      "lat": 23.0,
+      "hp": 12.0,
+      "interceptors": 41,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 107
+    },
+    {
+      "id": 168,
+      "kind": "ship",
+      "lon": 120.0,
+      "lat": 25.4,
+      "hp": 0.8,
+      "interceptors": 40,
+      "objective": true,
+      "initial_information": "hidden"
+    },
+    {
+      "id": 169,
+      "kind": "ship",
+      "lon": 120.0,
+      "lat": 20.6,
+      "hp": 0.8,
+      "interceptors": 40,
+      "objective": true,
+      "initial_information": "hidden"
+    }
+  ],
+  "scenario_sha256": "f967a507057335ed2210987d8d7b6aa9359336e021d9b75f78e04077af20e969",
+  "entity_total": 355,
+  "blue_entity_total": 173,
+  "blue_root_total": 9,
+  "root_counts": {
+    "target": 5,
+    "site": 2,
+    "ship": 2
+  },
+  "radar_total": 2,
+  "interceptor_total": 162,
+  "objective_total": 9,
+  "public_objective_ids": [
+    51,
+    52,
+    53,
+    2551,
+    2552,
+    54,
+    106
+  ],
+  "hidden_objective_ids": [
+    168,
+    169
+  ],
+  "max_steps": 1200,
+  "red_missile_counts": {
+    "high": 30,
+    "medium": 42,
+    "low": 108
+  },
+  "blue_hp_by_kind": {
+    "target": 16.0,
+    "site": 12.0,
+    "ship": 0.8
+  },
+  "evaluation_focus": "分叉后的兵力分流",
+  "key_node_ids": [
+    54
+  ],
+  "ammo_rules": {
+    "medium_to_high": 1.4,
+    "low_to_high_plus_medium": 1.5,
+    "interceptor_to_low": 1.5
+  },
+  "building_damage_budget": 810.0,
+  "building_health_total": 104.0,
+  "building_health_to_damage_ratio": 0.12839506172839507
+}

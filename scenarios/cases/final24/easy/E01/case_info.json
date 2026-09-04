@@ -1,0 +1,177 @@
+{
+  "scenario_id": "E01",
+  "display_id": "E01",
+  "title": "单门桥接",
+  "difficulty": "easy",
+  "difficulty_name": "简单",
+  "mission_type": "route_and_key_node",
+  "mission_type_name": "通道与关键节点",
+  "topology_id": "t01",
+  "topology_name": "单门桥接",
+  "design_intent": "中路最短；摧毁中央节点可打开直通口，否则需从南北外侧绕行。",
+  "structural_features": [
+    "通道选择",
+    "关键节点",
+    "破点与绕行"
+  ],
+  "difficulty_mechanism": "简单计分实体数量+弹药规模+独立空间拓扑；同类实体血量跨难度固定。",
+  "objective_ids": [
+    51,
+    52,
+    53,
+    2551,
+    2552,
+    54,
+    106,
+    168,
+    169
+  ],
+  "interceptor_counts": {
+    "54": 41,
+    "106": 41,
+    "168": 40,
+    "169": 40
+  },
+  "roots": [
+    {
+      "id": 51,
+      "kind": "target",
+      "lon": 123.1,
+      "lat": 25.0,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 52,
+      "kind": "target",
+      "lon": 123.5,
+      "lat": 23.7,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 53,
+      "kind": "target",
+      "lon": 123.5,
+      "lat": 22.2,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 2551,
+      "kind": "target",
+      "lon": 123.1,
+      "lat": 20.9,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 2552,
+      "kind": "target",
+      "lon": 123.08,
+      "lat": 22.95,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 54,
+      "kind": "site",
+      "lon": 120.0,
+      "lat": 25.0,
+      "hp": 12.0,
+      "interceptors": 41,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 55
+    },
+    {
+      "id": 106,
+      "kind": "site",
+      "lon": 121.6,
+      "lat": 21.4,
+      "hp": 12.0,
+      "interceptors": 41,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 107
+    },
+    {
+      "id": 168,
+      "kind": "ship",
+      "lon": 119.5,
+      "lat": 20.5,
+      "hp": 0.8,
+      "interceptors": 40,
+      "objective": true,
+      "initial_information": "hidden"
+    },
+    {
+      "id": 169,
+      "kind": "ship",
+      "lon": 122.0,
+      "lat": 25.6,
+      "hp": 0.8,
+      "interceptors": 40,
+      "objective": true,
+      "initial_information": "hidden"
+    }
+  ],
+  "scenario_sha256": "9a5593101a560be7a750ace6aa8f2a5fa876824f382f61ab6aad1f24fe61eda7",
+  "entity_total": 355,
+  "blue_entity_total": 173,
+  "blue_root_total": 9,
+  "root_counts": {
+    "target": 5,
+    "site": 2,
+    "ship": 2
+  },
+  "radar_total": 2,
+  "interceptor_total": 162,
+  "objective_total": 9,
+  "public_objective_ids": [
+    51,
+    52,
+    53,
+    2551,
+    2552,
+    54,
+    106
+  ],
+  "hidden_objective_ids": [
+    168,
+    169
+  ],
+  "max_steps": 1200,
+  "red_missile_counts": {
+    "high": 30,
+    "medium": 42,
+    "low": 108
+  },
+  "blue_hp_by_kind": {
+    "target": 16.0,
+    "site": 12.0,
+    "ship": 0.8
+  },
+  "evaluation_focus": "单节点破口与南北绕行",
+  "key_node_ids": [
+    54
+  ],
+  "ammo_rules": {
+    "medium_to_high": 1.4,
+    "low_to_high_plus_medium": 1.5,
+    "interceptor_to_low": 1.5
+  },
+  "building_damage_budget": 810.0,
+  "building_health_total": 104.0,
+  "building_health_to_damage_ratio": 0.12839506172839507
+}

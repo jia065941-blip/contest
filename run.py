@@ -36,6 +36,7 @@ RED_POLICY_CHOICES = (
     "r5_event_rolling",
     "r6_frontload_decoy",
     "r7_strike_packages",
+    "r7_static_search",
     "r8_satellite_packages",
     "r9_hierarchical_learning",
 )

@@ -1,0 +1,232 @@
+{
+  "scenario_id": "M04",
+  "display_id": "M04",
+  "title": "沙漏双颈",
+  "difficulty": "medium",
+  "difficulty_name": "中等",
+  "mission_type": "route_and_key_node",
+  "mission_type_name": "通道与关键节点",
+  "topology_id": "t12",
+  "topology_name": "沙漏双颈",
+  "design_intent": "两个狭口串联，任一关键点失效都会改变中路宽度。",
+  "structural_features": [
+    "通道选择",
+    "关键节点",
+    "破点与绕行"
+  ],
+  "difficulty_mechanism": "中等计分实体数量+弹药规模+独立空间拓扑；同类实体血量跨难度固定。",
+  "objective_ids": [
+    51,
+    52,
+    53,
+    301,
+    2728,
+    2729,
+    54,
+    106,
+    310,
+    312,
+    2730,
+    168,
+    169
+  ],
+  "interceptor_counts": {
+    "54": 35,
+    "106": 35,
+    "310": 35,
+    "312": 35,
+    "2730": 35,
+    "168": 34,
+    "169": 34
+  },
+  "roots": [
+    {
+      "id": 51,
+      "kind": "target",
+      "lon": 123.1,
+      "lat": 25.1,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 52,
+      "kind": "target",
+      "lon": 123.55,
+      "lat": 23.8,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 53,
+      "kind": "target",
+      "lon": 123.55,
+      "lat": 22.2,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 301,
+      "kind": "target",
+      "lon": 123.1,
+      "lat": 20.9,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 2728,
+      "kind": "target",
+      "lon": 123.10499999999999,
+      "lat": 23.0,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 2729,
+      "kind": "target",
+      "lon": 123.505,
+      "lat": 23.55,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 54,
+      "kind": "site",
+      "lon": 120.1,
+      "lat": 23.0,
+      "hp": 12.0,
+      "interceptors": 35,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 55
+    },
+    {
+      "id": 106,
+      "kind": "site",
+      "lon": 121.0,
+      "lat": 25.0,
+      "hp": 12.0,
+      "interceptors": 35,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 107
+    },
+    {
+      "id": 310,
+      "kind": "site",
+      "lon": 121.8,
+      "lat": 23.0,
+      "hp": 12.0,
+      "interceptors": 35,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 311
+    },
+    {
+      "id": 312,
+      "kind": "site",
+      "lon": 121.0,
+      "lat": 21.0,
+      "hp": 12.0,
+      "interceptors": 35,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 313
+    },
+    {
+      "id": 2730,
+      "kind": "site",
+      "lon": 120.67,
+      "lat": 23.9,
+      "hp": 12.0,
+      "interceptors": 35,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 2731
+    },
+    {
+      "id": 168,
+      "kind": "ship",
+      "lon": 119.5,
+      "lat": 25.5,
+      "hp": 0.8,
+      "interceptors": 34,
+      "objective": true,
+      "initial_information": "hidden"
+    },
+    {
+      "id": 169,
+      "kind": "ship",
+      "lon": 119.5,
+      "lat": 20.5,
+      "hp": 0.8,
+      "interceptors": 34,
+      "objective": true,
+      "initial_information": "hidden"
+    }
+  ],
+  "scenario_sha256": "be5318194206502c8d79bdec28767e991fdf27e00423573889c20b7c230e0c4b",
+  "entity_total": 533,
+  "blue_entity_total": 261,
+  "blue_root_total": 13,
+  "root_counts": {
+    "target": 6,
+    "site": 5,
+    "ship": 2
+  },
+  "radar_total": 5,
+  "interceptor_total": 243,
+  "objective_total": 13,
+  "public_objective_ids": [
+    51,
+    52,
+    53,
+    301,
+    2728,
+    2729,
+    54,
+    106,
+    310,
+    312,
+    2730
+  ],
+  "hidden_objective_ids": [
+    168,
+    169
+  ],
+  "max_steps": 1700,
+  "red_missile_counts": {
+    "high": 45,
+    "medium": 63,
+    "low": 162
+  },
+  "blue_hp_by_kind": {
+    "target": 16.0,
+    "site": 12.0,
+    "ship": 0.8
+  },
+  "evaluation_focus": "串联双颈的攻击顺序",
+  "key_node_ids": [
+    54,
+    312
+  ],
+  "ammo_rules": {
+    "medium_to_high": 1.4,
+    "low_to_high_plus_medium": 1.5,
+    "interceptor_to_low": 1.5
+  },
+  "building_damage_budget": 1215.0,
+  "building_health_total": 156.0,
+  "building_health_to_damage_ratio": 0.12839506172839507
+}

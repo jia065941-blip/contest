@@ -19,6 +19,7 @@ RED_POLICY_CHOICES = (
     "r5_event_rolling",
     "r6_frontload_decoy",
     "r7_strike_packages",
+    "r7_static_search",
     "r8_satellite_packages",
     "r9_hierarchical_learning",
 )
@@ -50,6 +51,8 @@ class Assignment:
     target_id: int
     launch_step: int
     score: float
+    destination: Position | None = None
+    search_group_id: int | None = None
 
 
 @dataclass(frozen=True)
@@ -107,6 +110,14 @@ class BaselineRules:
     package_high_delay: int = 3
     wave_count: int = 3
     wave_interval: int = 40
+    static_search_group_size: int = 3
+    static_search_group_spacing_km: float = 50.0
+    static_search_low_fraction: float = 0.06
+    static_search_min_platforms: int = 9
+    static_search_max_range_km: float = 480.0
+    static_search_danger_radius_km: float = 200.0
+    # Policy time is the TrainingEnv step index; final24 uses one second/step.
+    static_search_lead_steps: int = 700
 
     def wave_delay(self, kind: str) -> int:
         return dict(self.wave_by_kind).get(kind, 0)
@@ -131,6 +142,15 @@ def distance_km(left: Position, right: Position) -> float:
 class RedBaseline:
     def decide(self, observation: BaselineObservation) -> tuple[Assignment, ...]:
         raise NotImplementedError
+
+    def claim_retarget(
+        self,
+        platform: PlatformState,
+        observed_targets: tuple[TargetPrior, ...],
+    ) -> TargetPrior | None:
+        """Optionally claim one legally observed target for an in-flight platform."""
+
+        return None
 
 
 class R0RandomPolicy(RedBaseline):
@@ -486,7 +506,12 @@ class R9HierarchicalLearningPolicy(R8SatellitePackagePolicy):
     """
 
 
-def build_red_baseline(name: str, rules: BaselineRules, seed: int) -> RedBaseline:
+def build_red_baseline(
+    name: str,
+    rules: BaselineRules,
+    seed: int,
+    search_polygon: tuple[Position, ...] | None = None,
+) -> RedBaseline:
     if name == "r0_random":
         return R0RandomPolicy(rules, seed)
     if name == "r1_priority":
@@ -503,6 +528,12 @@ def build_red_baseline(name: str, rules: BaselineRules, seed: int) -> RedBaselin
         return R6FrontloadDecoyPolicy(rules)
     if name == "r7_strike_packages":
         return R7StrikePackagePolicy(rules)
+    if name == "r7_static_search":
+        if search_polygon is None:
+            raise ValueError("r7_static_search requires a public search polygon")
+        from .r7_static_search import R7StaticSearchPolicy
+
+        return R7StaticSearchPolicy(rules, search_polygon)
     if name == "r8_satellite_packages":
         return R8SatellitePackagePolicy(rules)
     if name == "r9_hierarchical_learning":
