@@ -1,0 +1,114 @@
+{
+  "scenario": "E01",
+  "policies": {
+    "red": "r9_hierarchical_learning",
+    "red_motion": "ppo",
+    "blue": "b0_fixed_ratio_random"
+  },
+  "steps_executed": 1200,
+  "termination_reason": "environment_done",
+  "score": {
+    "score": 35.22817460317461,
+    "raw_score": 0.35228174603174606,
+    "K": 0.35228174603174606,
+    "T": 0.0,
+    "completed": false,
+    "destroyed_ids": [
+      54,
+      106
+    ],
+    "destroyed_weight": 4.0,
+    "total_objective_weight": 21.0,
+    "objective_weights": {
+      "51": 5.0,
+      "52": 5.0,
+      "53": 5.0,
+      "54": 2.0,
+      "106": 2.0,
+      "168": 1.0,
+      "169": 1.0
+    },
+    "destruction_steps": {
+      "54": 128,
+      "106": 228
+    }
+  },
+  "red": {
+    "platforms_total": 164,
+    "launched": 164,
+    "alive": 57,
+    "lost": 107
+  },
+  "blue": {
+    "entities_total": 157,
+    "alive": 5,
+    "destroyed": 152,
+    "initial_health_total": 225139.2,
+    "remaining_health_total": 77.45333333333332
+  },
+  "objectives": [
+    {
+      "id": 51,
+      "name": "目标_51",
+      "type": 9400,
+      "weight": 5.0,
+      "initial_health": 32.0,
+      "final_health": 32.0,
+      "destroyed_step": null
+    },
+    {
+      "id": 52,
+      "name": "目标_52",
+      "type": 9400,
+      "weight": 5.0,
+      "initial_health": 32.0,
+      "final_health": 32.0,
+      "destroyed_step": null
+    },
+    {
+      "id": 53,
+      "name": "目标_53",
+      "type": 9400,
+      "weight": 5.0,
+      "initial_health": 32.0,
+      "final_health": 10.253333333333332,
+      "destroyed_step": null
+    },
+    {
+      "id": 54,
+      "name": "拦截阵地_54",
+      "type": 9600,
+      "weight": 2.0,
+      "initial_health": 20.0,
+      "final_health": 0.0,
+      "destroyed_step": 128
+    },
+    {
+      "id": 106,
+      "name": "拦截阵地_106",
+      "type": 9600,
+      "weight": 2.0,
+      "initial_health": 20.0,
+      "final_health": 0.0,
+      "destroyed_step": 228
+    },
+    {
+      "id": 168,
+      "name": "无人船_168",
+      "type": 9500,
+      "weight": 1.0,
+      "initial_health": 1.6,
+      "final_health": 1.6,
+      "destroyed_step": null
+    },
+    {
+      "id": 169,
+      "name": "无人船_169",
+      "type": 9500,
+      "weight": 1.0,
+      "initial_health": 1.6,
+      "final_health": 1.6,
+      "destroyed_step": null
+    }
+  ]
+}

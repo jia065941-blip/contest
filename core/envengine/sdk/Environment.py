@@ -1,7 +1,12 @@
 # -*-coding:utf-8 -*-
 import time
 from json import JSONDecodeError
-from typing import Callable, Final, Never
+from typing import Callable, Final
+
+try:
+    from typing import Never
+except ImportError:
+    from typing_extensions import Never
 from envengine.sdk.Transport import MQTT
 from envengine.sdk.Struct import Invoker, LogicInput, Negotiation
 
@@ -160,4 +165,3 @@ class Environment:
                   "    Instance: ", self.__prefix__, "\n",
                   "    Local: ", Negotiation.current().version, "\n",
                   "    Remote: UNKNOWN")
-

@@ -150,6 +150,16 @@ class AttackMissileAgent(BaseAgent):
         if not bool(getattr(self.learning_policy, "training", False)):
             return
         assert self.learning_encoder is not None
+        assert self.learning_adapter is not None
+        target_id = self.commander.target_id_for(self.entity_id)
+        target_index = next(
+            (
+                index
+                for index, target in enumerate(self.learning_adapter.targets)
+                if int(target.get("entity_id", -1)) == target_id
+            ),
+            None,
+        )
         next_observation = (
             self.learning_encoder.encode(
                 observation,
@@ -157,6 +167,7 @@ class AttackMissileAgent(BaseAgent):
                 launch_step=self.launch_step,
                 satellite_used=self.sat_used,
                 maneuver_state=self.set_acc_z_z,
+                current_target_index=target_index,
                 task_context=(
                     self.commander.learning_task_context(self.entity_id)
                     if self.hierarchical_learning else None

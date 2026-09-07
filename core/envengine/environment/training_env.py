@@ -78,6 +78,13 @@ class TrainingEnv:
 
         # 重置所有智能体
         self.agent_manager.reset_all()
+        commanders = {
+            agent.commander
+            for agent in self.agent_manager.get_all_agents()
+            if getattr(agent, "commander", None) is not None
+        }
+        for commander in commanders:
+            commander.reset()
 
         # 获取初始态势作为观测
         observation = self._get_observation()

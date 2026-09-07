@@ -1,9 +1,9 @@
-"""基于 PyTorch 的轻量参数共享 PPO 基线。"""
+"""Decentralized parameter-sharing PPO for red-side missile motion."""
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import asdict, dataclass
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -11,65 +11,113 @@ from torch import nn
 from torch.distributions import Categorical
 
 from .red_policy import ACTION_DIM, PolicyTransition, SharedPolicy
+from .reward_shaping import R9RewardShaper
 
 
 @dataclass
 class PPOConfig:
     observation_dim: int = 85
     action_dim: int = ACTION_DIM
-    hidden_dim: int = 128
+    actor_hidden_dim: int = 128
+    critic_hidden_dim: int = 256
     learning_rate: float = 3e-4
     gamma: float = 0.99
+    gae_lambda: float = 0.95
     clip_ratio: float = 0.2
+    value_clip_ratio: float = 0.2
     value_coef: float = 0.5
     entropy_coef: float = 0.01
     max_grad_norm: float = 0.5
     update_epochs: int = 4
     minibatch_size: int = 256
-    rollout_size: int = 2048
+    rollout_size: int = 8192
+    min_update_size: int = 512
+    objective_damage_scale: float = 1.0
+    target_progress_scale: float = 2.0
+    intercepted_penalty: float = 0.2
+    maneuver_penalty: float = 0.001
+    direction_change_penalty: float = 0.002
+    reward_clip: float = 25.0
     seed: int = 0
-    device: str = "cpu"
+    device: str = "auto"
+    max_steps: int = 1000
 
 
-class ActorCritic(nn.Module):
+PPORewardShaper = R9RewardShaper
+
+
+class PPOActorCritic(nn.Module):
+    """Use local observations for both the actor and decentralized critic."""
+
     def __init__(self, config: PPOConfig):
         super().__init__()
-        self.backbone = nn.Sequential(
-            nn.Linear(config.observation_dim, config.hidden_dim),
+        self.actor = nn.Sequential(
+            nn.Linear(config.observation_dim, config.actor_hidden_dim),
             nn.Tanh(),
-            nn.Linear(config.hidden_dim, config.hidden_dim),
+            nn.Linear(config.actor_hidden_dim, config.actor_hidden_dim),
             nn.Tanh(),
+            nn.Linear(config.actor_hidden_dim, config.action_dim),
         )
-        self.actor = nn.Linear(config.hidden_dim, config.action_dim)
-        self.critic = nn.Linear(config.hidden_dim, 1)
+        self.critic = nn.Sequential(
+            nn.Linear(config.observation_dim, config.critic_hidden_dim),
+            nn.Tanh(),
+            nn.Linear(config.critic_hidden_dim, config.critic_hidden_dim),
+            nn.Tanh(),
+            nn.Linear(config.critic_hidden_dim, 1),
+        )
 
-    def forward(self, observation: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
-        features = self.backbone(observation)
-        return self.actor(features), self.critic(features).squeeze(-1)
+    def actor_forward(self, observation: torch.Tensor) -> torch.Tensor:
+        return self.actor(observation)
+
+    def critic_forward(self, observation: torch.Tensor) -> torch.Tensor:
+        return self.critic(observation).squeeze(-1)
 
 
 class PPOSharedPolicy(SharedPolicy):
-    """所有红方导弹共享的一套 PPO Actor-Critic 参数。"""
+    """Share one decentralized PPO actor-critic across all red missiles."""
 
-    def __init__(self, config: Optional[PPOConfig] = None):
+    def __init__(self, config: PPOConfig | None = None):
         self.config = config or PPOConfig()
         torch.manual_seed(self.config.seed)
         np.random.seed(self.config.seed)
-        self.device = torch.device(self.config.device)
-        self.network = ActorCritic(self.config).to(self.device)
-        self.optimizer = torch.optim.Adam(self.network.parameters(), lr=self.config.learning_rate)
-        self._buffer = []
-        self._pending = []
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(self.config.seed)
+        device_name = self.config.device
+        if device_name == "auto":
+            device_name = "cuda:0" if torch.cuda.is_available() else "cpu"
+        self.device = torch.device(device_name)
+        self.network = PPOActorCritic(self.config).to(self.device)
+        self.optimizer = torch.optim.Adam(
+            self.network.parameters(), lr=self.config.learning_rate
+        )
+        self.reward_shaper = PPORewardShaper(self.config)
+        self._buffer: list[tuple[PolicyTransition, float, float]] = []
+        self._pending: list[tuple[float, float]] = []
         self.update_count = 0
         self.transition_count = 0
-        self.last_metrics = {}
+        self.last_metrics: dict[str, float] = {}
         self.training = True
 
+    def begin_environment_step(self, full_observation) -> None:
+        self.reward_shaper.begin_environment_step(full_observation)
+
+    def end_environment_step(self, full_observation) -> None:
+        self.reward_shaper.end_environment_step(full_observation)
+
+    def finish_environment_step(self) -> None:
+        if self.training and len(self._buffer) >= self.config.rollout_size:
+            self.update()
+
     def select_action(self, observation: np.ndarray, action_mask: np.ndarray) -> int:
-        observation_tensor = torch.as_tensor(observation, dtype=torch.float32, device=self.device).unsqueeze(0)
-        mask_tensor = torch.as_tensor(action_mask, dtype=torch.bool, device=self.device).unsqueeze(0)
+        observation_tensor = torch.as_tensor(
+            observation, dtype=torch.float32, device=self.device
+        ).unsqueeze(0)
+        mask_tensor = torch.as_tensor(
+            action_mask, dtype=torch.bool, device=self.device
+        ).unsqueeze(0)
         with torch.no_grad():
-            logits, value = self.network(observation_tensor)
+            logits = self.network.actor_forward(observation_tensor)
+            value = self.network.critic_forward(observation_tensor)
             logits = logits.masked_fill(~mask_tensor, torch.finfo(logits.dtype).min)
             distribution = Categorical(logits=logits)
             action = distribution.sample() if self.training else torch.argmax(logits, dim=-1)
@@ -82,53 +130,91 @@ class PPOSharedPolicy(SharedPolicy):
         if not self.training:
             return
         if not self._pending:
-            raise RuntimeError("PPO 收到 transition 前没有对应的动作采样")
+            raise RuntimeError("PPO收到transition前没有对应动作")
         log_prob, value = self._pending.pop(0)
-        self._buffer.append((transition, log_prob, value))
+        shaped_transition = PolicyTransition(
+            agent_id=transition.agent_id,
+            observation=transition.observation,
+            action=transition.action,
+            action_mask=transition.action_mask,
+            reward=self.reward_shaper.shape(transition),
+            next_observation=transition.next_observation,
+            done=transition.done,
+            global_state=None,
+            next_global_state=None,
+        )
+        self._buffer.append((shaped_transition, log_prob, value))
         self.transition_count += 1
-        if len(self._buffer) >= self.config.rollout_size:
-            self.update()
 
     def reset_episode(self) -> None:
         if not self.training:
             return
         if self._pending:
-            raise RuntimeError("回合结束时仍有未匹配的 PPO 动作")
-        if self._buffer:
+            raise RuntimeError("回合结束时仍有未匹配的PPO动作")
+        if len(self._buffer) >= self.config.min_update_size:
             self.update()
+        self.reward_shaper.reset_episode()
 
     def set_training(self, training: bool) -> None:
-        """切换训练/评估模式；评估时使用 argmax 且不收集经验。"""
         self.training = bool(training)
         self.network.train(self.training)
+        if not self.training:
+            self._buffer.clear()
+            self._pending.clear()
+
+    def _advantages_and_returns(self, rewards, dones, values, next_values, agent_ids):
+        advantages = torch.zeros_like(rewards)
+        for agent_id in torch.unique(agent_ids).tolist():
+            indices = torch.nonzero(agent_ids == agent_id, as_tuple=False).flatten()
+            gae = torch.zeros((), dtype=torch.float32, device=self.device)
+            for index in reversed(indices.tolist()):
+                nonterminal = 1.0 - dones[index]
+                delta = (
+                    rewards[index]
+                    + self.config.gamma * next_values[index] * nonterminal
+                    - values[index]
+                )
+                gae = (
+                    delta
+                    + self.config.gamma
+                    * self.config.gae_lambda
+                    * nonterminal
+                    * gae
+                )
+                advantages[index] = gae
+        return advantages, advantages + values
 
     def update(self) -> dict[str, float]:
-        if not self._buffer:
+        if len(self._buffer) < self.config.min_update_size:
             return self.last_metrics
 
+        transitions = [item[0] for item in self._buffer]
         observations = torch.as_tensor(
-            np.stack([item[0].observation for item in self._buffer]),
+            np.stack([item.observation for item in transitions]),
             dtype=torch.float32,
             device=self.device,
         )
         next_observations = torch.as_tensor(
-            np.stack([item[0].next_observation for item in self._buffer]),
+            np.stack([item.next_observation for item in transitions]),
             dtype=torch.float32,
             device=self.device,
         )
         actions = torch.as_tensor(
-            [item[0].action for item in self._buffer], dtype=torch.long, device=self.device
+            [item.action for item in transitions], dtype=torch.long, device=self.device
         )
         action_masks = torch.as_tensor(
-            np.stack([item[0].action_mask for item in self._buffer]),
+            np.stack([item.action_mask for item in transitions]),
             dtype=torch.bool,
             device=self.device,
         )
         rewards = torch.as_tensor(
-            [item[0].reward for item in self._buffer], dtype=torch.float32, device=self.device
+            [item.reward for item in transitions], dtype=torch.float32, device=self.device
         )
         dones = torch.as_tensor(
-            [item[0].done for item in self._buffer], dtype=torch.float32, device=self.device
+            [item.done for item in transitions], dtype=torch.float32, device=self.device
+        )
+        agent_ids = torch.as_tensor(
+            [item.agent_id for item in transitions], dtype=torch.long, device=self.device
         )
         old_log_probs = torch.as_tensor(
             [item[1] for item in self._buffer], dtype=torch.float32, device=self.device
@@ -138,20 +224,29 @@ class PPOSharedPolicy(SharedPolicy):
         )
 
         with torch.no_grad():
-            _, next_values = self.network(next_observations)
-            returns = rewards + self.config.gamma * next_values * (1.0 - dones)
-            advantages = returns - old_values
+            next_values = self.network.critic_forward(next_observations)
+            advantages, returns = self._advantages_and_returns(
+                rewards, dones, old_values, next_values, agent_ids
+            )
             if advantages.numel() > 1:
-                advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+                advantages = (advantages - advantages.mean()) / (
+                    advantages.std() + 1e-8
+                )
 
-        sample_count = observations.shape[0]
-        metrics = {"policy_loss": 0.0, "value_loss": 0.0, "entropy": 0.0}
+        totals = {
+            "policy_loss": 0.0,
+            "value_loss": 0.0,
+            "entropy": 0.0,
+            "approx_kl": 0.0,
+            "clip_fraction": 0.0,
+        }
         updates = 0
+        sample_count = observations.shape[0]
         for _ in range(self.config.update_epochs):
             permutation = torch.randperm(sample_count, device=self.device)
             for start in range(0, sample_count, self.config.minibatch_size):
                 indices = permutation[start:start + self.config.minibatch_size]
-                logits, values = self.network(observations[indices])
+                logits = self.network.actor_forward(observations[indices])
                 logits = logits.masked_fill(
                     ~action_masks[indices], torch.finfo(logits.dtype).min
                 )
@@ -166,7 +261,18 @@ class PPOSharedPolicy(SharedPolicy):
                     1.0 + self.config.clip_ratio,
                 ) * advantages[indices]
                 policy_loss = -torch.min(unclipped, clipped).mean()
-                value_loss = torch.nn.functional.mse_loss(values, returns[indices])
+
+                predicted_values = self.network.critic_forward(observations[indices])
+                clipped_values = old_values[indices] + torch.clamp(
+                    predicted_values - old_values[indices],
+                    -self.config.value_clip_ratio,
+                    self.config.value_clip_ratio,
+                )
+                value_losses = (predicted_values - returns[indices]).pow(2)
+                clipped_value_losses = (clipped_values - returns[indices]).pow(2)
+                value_loss = 0.5 * torch.maximum(
+                    value_losses, clipped_value_losses
+                ).mean()
                 loss = (
                     policy_loss
                     + self.config.value_coef * value_loss
@@ -175,33 +281,71 @@ class PPOSharedPolicy(SharedPolicy):
 
                 self.optimizer.zero_grad()
                 loss.backward()
-                nn.utils.clip_grad_norm_(self.network.parameters(), self.config.max_grad_norm)
+                nn.utils.clip_grad_norm_(
+                    self.network.parameters(), self.config.max_grad_norm
+                )
                 self.optimizer.step()
 
-                metrics["policy_loss"] += float(policy_loss.item())
-                metrics["value_loss"] += float(value_loss.item())
-                metrics["entropy"] += float(entropy.item())
+                totals["policy_loss"] += float(policy_loss.item())
+                totals["value_loss"] += float(value_loss.item())
+                totals["entropy"] += float(entropy.item())
+                log_ratio = new_log_probs - old_log_probs[indices]
+                totals["approx_kl"] += float(
+                    ((ratio - 1.0) - log_ratio).mean().item()
+                )
+                totals["clip_fraction"] += float(
+                    (torch.abs(ratio - 1.0) > self.config.clip_ratio)
+                    .float()
+                    .mean()
+                    .item()
+                )
                 updates += 1
 
-        self._buffer.clear()
         self.update_count += 1
-        self.last_metrics = {key: value / max(1, updates) for key, value in metrics.items()}
+        self.last_metrics = {
+            key: value / max(updates, 1) for key, value in totals.items()
+        }
         self.last_metrics["samples"] = float(sample_count)
+        self.last_metrics["reward_mean"] = float(rewards.mean().item())
+        self.last_metrics["reward_std"] = float(rewards.std(unbiased=False).item())
+        return_variance = torch.var(returns, unbiased=False)
+        if return_variance > 1e-8:
+            explained_variance = 1.0 - torch.var(
+                returns - old_values, unbiased=False
+            ) / return_variance
+            self.last_metrics["explained_variance"] = float(
+                explained_variance.item()
+            )
+        else:
+            self.last_metrics["explained_variance"] = 0.0
+        self._buffer.clear()
         return self.last_metrics
 
     def save(self, path: str) -> None:
-        torch.save({
-            "config": self.config.__dict__,
+        if self.training and len(self._buffer) >= self.config.min_update_size:
+            self.update()
+        payload = {
+            "algorithm": "ppo",
+            "config": asdict(self.config),
             "network": self.network.state_dict(),
             "optimizer": self.optimizer.state_dict(),
             "update_count": self.update_count,
             "transition_count": self.transition_count,
-        }, path)
+            "last_metrics": self.last_metrics,
+        }
+        target = Path(path)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        temporary = target.with_name(f".{target.name}.tmp")
+        torch.save(payload, temporary)
+        temporary.replace(target)
 
     def load(self, path: str) -> None:
         checkpoint = torch.load(path, map_location=self.device, weights_only=False)
+        if checkpoint.get("algorithm", "ppo") != "ppo":
+            raise ValueError("该checkpoint不是PPO模型")
         self.network.load_state_dict(checkpoint["network"])
         if "optimizer" in checkpoint:
             self.optimizer.load_state_dict(checkpoint["optimizer"])
         self.update_count = int(checkpoint.get("update_count", 0))
         self.transition_count = int(checkpoint.get("transition_count", 0))
+        self.last_metrics = dict(checkpoint.get("last_metrics", {}))

@@ -1,0 +1,701 @@
+seed,score,completed,red_alive,red_lost,destroyed_ids,summary_path
+1,95.23809523809523,False,23,141,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0001/20260906043415/summary.json
+2,91.42857142857143,False,13,151,51 52 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0002/20260906043415/summary.json
+3,76.76587301587303,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0003/20260906043415/summary.json
+4,65.04960317460318,False,26,138,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0004/20260906043415/summary.json
+5,66.30952380952382,False,26,138,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0005/20260906043415/summary.json
+6,90.47619047619048,False,32,132,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0006/20260906043415/summary.json
+7,73.88888888888889,False,27,137,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0007/20260906043415/summary.json
+8,61.07142857142858,False,19,145,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0008/20260906043415/summary.json
+9,67.57936507936509,False,21,143,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0009/20260906043415/summary.json
+10,85.24801587301587,False,18,146,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0010/20260906043415/summary.json
+11,88.50198412698414,False,17,147,51 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0011/20260906043415/summary.json
+12,93.03571428571429,False,20,144,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0012/20260906043415/summary.json
+13,85.87301587301587,False,23,141,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0013/20260906043415/summary.json
+14,52.39087301587302,False,28,136,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0014/20260906043415/summary.json
+15,54.27579365079366,False,21,143,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0015/20260906043415/summary.json
+16,94.28571428571428,False,20,144,51 52 53 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0016/20260906043415/summary.json
+17,90.47619047619048,False,33,131,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0017/20260906043415/summary.json
+18,78.90873015873015,False,20,144,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0018/20260906043415/summary.json
+19,90.84325396825396,False,21,143,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0019/20260906043415/summary.json
+20,59.64285714285714,False,21,143,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0020/20260906043415/summary.json
+21,48.829365079365076,False,21,143,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0021/20260906043415/summary.json
+22,94.58333333333334,False,19,145,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0022/20260906043415/summary.json
+23,63.95833333333333,False,25,139,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0023/20260906043415/summary.json
+24,90.47619047619048,False,31,133,51 52 53 106,/workspace/results/runs/eval_e01_b0_final_700_s0024/20260906043415/summary.json
+25,84.85119047619048,False,18,146,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0025/20260906043415/summary.json
+26,76.21031746031746,False,27,137,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0026/20260906043415/summary.json
+27,94.63293650793652,False,19,145,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0027/20260906043415/summary.json
+28,85.625,False,24,140,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0028/20260906043415/summary.json
+29,90.47619047619048,False,31,133,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0029/20260906043415/summary.json
+30,82.83730158730161,False,32,132,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0030/20260906043415/summary.json
+31,59.8015873015873,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0031/20260906043415/summary.json
+32,70.75396825396825,False,24,140,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0032/20260906043415/summary.json
+33,56.746031746031754,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0033/20260906043703/summary.json
+34,67.53968253968254,False,19,145,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0034/20260906043711/summary.json
+35,81.10119047619048,False,35,129,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0035/20260906043716/summary.json
+36,95.23809523809523,False,17,147,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0036/20260906043716/summary.json
+37,94.59325396825396,False,16,148,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0037/20260906043720/summary.json
+38,90.47619047619048,False,33,131,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0038/20260906043722/summary.json
+39,59.16666666666666,False,25,139,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0039/20260906043726/summary.json
+40,64.06746031746032,False,28,136,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0040/20260906043726/summary.json
+41,71.42857142857143,False,22,142,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0041/20260906043738/summary.json
+42,75.00992063492063,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0042/20260906043743/summary.json
+43,55.04960317460318,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0043/20260906043747/summary.json
+44,87.74801587301589,False,28,136,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0044/20260906043749/summary.json
+45,95.23809523809523,False,21,143,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0045/20260906043750/summary.json
+46,91.03174603174602,False,19,145,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0046/20260906043753/summary.json
+47,89.52380952380953,False,25,139,51 52 53 54,/workspace/results/runs/eval_e01_b0_final_700_s0047/20260906043755/summary.json
+48,67.73809523809524,False,22,142,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0048/20260906043757/summary.json
+49,84.52380952380952,False,37,127,51 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0049/20260906043800/summary.json
+50,86.77579365079366,False,24,140,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0050/20260906043801/summary.json
+51,90.63492063492062,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0051/20260906043800/summary.json
+52,62.74801587301587,False,20,144,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0052/20260906043802/summary.json
+53,87.0734126984127,False,17,147,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0053/20260906043803/summary.json
+54,85.30753968253968,False,25,139,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0054/20260906043804/summary.json
+55,90.49603174603175,False,17,147,51 52 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0055/20260906043805/summary.json
+56,74.02777777777779,False,24,140,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0056/20260906043807/summary.json
+57,70.05952380952381,False,22,142,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0057/20260906043809/summary.json
+58,60.119047619047606,False,22,142,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0058/20260906043812/summary.json
+59,93.13492063492063,False,16,148,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0059/20260906043815/summary.json
+60,90.47619047619048,False,33,131,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0060/20260906043817/summary.json
+61,60.952380952380956,False,18,146,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0061/20260906043824/summary.json
+62,65.63492063492063,False,22,142,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0062/20260906043827/summary.json
+63,43.76984126984127,False,18,146,51,/workspace/results/runs/eval_e01_b0_final_700_s0063/20260906043848/summary.json
+64,63.095238095238095,False,23,141,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0064/20260906043853/summary.json
+65,71.93452380952381,False,19,145,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0065/20260906044024/summary.json
+66,95.23809523809523,False,19,145,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0066/20260906044029/summary.json
+67,85.58531746031746,False,19,145,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0067/20260906044032/summary.json
+68,77.4404761904762,False,19,145,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0068/20260906044048/summary.json
+69,58.08531746031746,False,21,143,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0069/20260906044054/summary.json
+70,78.11507936507935,False,32,132,51 106,/workspace/results/runs/eval_e01_b0_final_700_s0070/20260906044058/summary.json
+71,52.87698412698413,False,21,143,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0071/20260906044101/summary.json
+72,93.4623015873016,False,20,144,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0072/20260906044101/summary.json
+73,76.95436507936509,False,20,144,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0073/20260906044103/summary.json
+74,66.6765873015873,False,20,144,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0074/20260906044105/summary.json
+75,74.40476190476191,False,27,137,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0075/20260906044113/summary.json
+76,88.07539682539682,False,30,134,51 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0076/20260906044116/summary.json
+77,76.41865079365078,False,22,142,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0077/20260906044116/summary.json
+78,76.19047619047619,False,20,144,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0078/20260906044117/summary.json
+79,66.58730158730158,False,25,139,51 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0079/20260906044118/summary.json
+80,66.19047619047619,False,19,145,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0080/20260906044119/summary.json
+81,58.6111111111111,False,22,142,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0081/20260906044122/summary.json
+82,71.65674603174604,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0082/20260906044123/summary.json
+83,68.13492063492063,False,19,145,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0083/20260906044130/summary.json
+84,70.93253968253968,False,24,140,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0084/20260906044136/summary.json
+85,89.6626984126984,False,34,130,51 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0085/20260906044143/summary.json
+86,95.04960317460318,False,15,149,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0086/20260906044144/summary.json
+87,95.23809523809523,False,21,143,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0087/20260906044145/summary.json
+88,94.28571428571428,False,22,142,51 52 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0088/20260906044145/summary.json
+89,50.61507936507936,False,22,142,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0089/20260906044148/summary.json
+90,90.47619047619048,False,32,132,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0090/20260906044149/summary.json
+91,90.69444444444444,False,24,140,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0091/20260906044154/summary.json
+92,47.767857142857146,False,19,145,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0092/20260906044159/summary.json
+93,90.86309523809524,False,22,142,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0093/20260906044209/summary.json
+94,39.08730158730158,False,17,147,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0094/20260906044230/summary.json
+95,92.40079365079366,False,32,132,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0095/20260906044231/summary.json
+96,84.31547619047619,False,20,144,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0096/20260906044246/summary.json
+97,65.1190476190476,False,23,141,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0097/20260906044332/summary.json
+98,85.23809523809524,False,34,130,51 52 53 54,/workspace/results/runs/eval_e01_b0_final_700_s0098/20260906044333/summary.json
+99,74.8313492063492,False,25,139,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0099/20260906044401/summary.json
+100,90.47619047619048,False,32,132,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0100/20260906044413/summary.json
+101,85.18849206349208,False,20,144,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0101/20260906044414/summary.json
+102,75.14880952380952,False,25,139,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0102/20260906044417/summary.json
+103,94.28571428571428,False,13,151,51 52 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0103/20260906044419/summary.json
+104,90.47619047619048,False,21,143,51 52 53 54,/workspace/results/runs/eval_e01_b0_final_700_s0104/20260906044422/summary.json
+105,65.7936507936508,False,18,146,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0105/20260906044422/summary.json
+106,91.38888888888889,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0106/20260906044424/summary.json
+107,65.20833333333333,False,24,140,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0107/20260906044424/summary.json
+108,83.88888888888889,False,17,147,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0108/20260906044431/summary.json
+109,76.46825396825398,False,26,138,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0109/20260906044433/summary.json
+110,56.72619047619049,False,23,141,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0110/20260906044439/summary.json
+111,91.34920634920634,False,20,144,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0111/20260906044446/summary.json
+112,69.8015873015873,False,25,139,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0112/20260906044452/summary.json
+113,85.74404761904762,False,18,146,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0113/20260906044459/summary.json
+114,69.70238095238095,False,22,142,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0114/20260906044500/summary.json
+115,75.37698412698413,False,25,139,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0115/20260906044507/summary.json
+116,90.47619047619048,False,32,132,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0116/20260906044508/summary.json
+117,95.23809523809523,False,34,130,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0117/20260906044513/summary.json
+118,86.51785714285714,False,26,138,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0118/20260906044517/summary.json
+119,90.47619047619048,False,31,133,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0119/20260906044530/summary.json
+120,57.41071428571429,False,21,143,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0120/20260906044530/summary.json
+121,79.8611111111111,False,18,146,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0121/20260906044533/summary.json
+122,61.95436507936508,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0122/20260906044540/summary.json
+123,68.99801587301587,False,18,146,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0123/20260906044540/summary.json
+124,82.73809523809523,False,27,137,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0124/20260906044548/summary.json
+125,61.95436507936508,False,17,147,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0125/20260906044555/summary.json
+126,87.91666666666667,False,19,145,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0126/20260906044557/summary.json
+127,56.67658730158729,False,21,143,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0127/20260906044610/summary.json
+128,88.40277777777779,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0128/20260906044643/summary.json
+129,90.47619047619048,False,30,134,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0129/20260906044651/summary.json
+130,92.85714285714286,False,18,146,51 52 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0130/20260906044655/summary.json
+131,90.7638888888889,False,29,135,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0131/20260906044721/summary.json
+132,92.12301587301587,False,25,139,51 52 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0132/20260906044725/summary.json
+133,79.79166666666666,False,29,135,51 54,/workspace/results/runs/eval_e01_b0_final_700_s0133/20260906044726/summary.json
+134,95.23809523809523,False,21,143,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0134/20260906044733/summary.json
+135,76.49801587301587,False,21,143,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0135/20260906044734/summary.json
+136,76.78571428571429,False,23,141,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0136/20260906044734/summary.json
+137,87.08333333333333,False,28,136,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0137/20260906044739/summary.json
+138,89.35515873015873,False,19,145,51 52 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0138/20260906044752/summary.json
+139,95.23809523809523,False,27,137,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0139/20260906044758/summary.json
+140,88.22420634920634,False,32,132,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0140/20260906044806/summary.json
+141,61.30952380952381,False,19,145,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0141/20260906044813/summary.json
+142,82.0734126984127,False,25,139,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0142/20260906044817/summary.json
+143,72.78769841269842,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0143/20260906044818/summary.json
+144,92.85714285714286,False,27,137,51 52 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0144/20260906044822/summary.json
+145,84.7718253968254,False,26,138,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0145/20260906044829/summary.json
+146,95.23809523809523,False,19,145,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0146/20260906044835/summary.json
+147,95.23809523809523,False,16,148,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0147/20260906044839/summary.json
+148,52.77777777777777,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0148/20260906044840/summary.json
+149,77.23214285714286,False,19,145,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0149/20260906044841/summary.json
+150,75.54563492063492,False,24,140,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0150/20260906044848/summary.json
+151,72.51984126984128,False,22,142,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0151/20260906044903/summary.json
+152,76.32936507936509,False,17,147,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0152/20260906044909/summary.json
+153,95.23809523809523,False,24,140,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0153/20260906044913/summary.json
+154,84.86111111111111,False,20,144,51 52 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0154/20260906044918/summary.json
+155,80.65476190476191,False,25,139,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0155/20260906044921/summary.json
+156,79.92063492063491,False,21,143,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0156/20260906044927/summary.json
+157,58.214285714285715,False,19,145,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0157/20260906044927/summary.json
+158,90.47619047619048,False,32,132,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0158/20260906044930/summary.json
+159,66.28968253968254,False,26,138,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0159/20260906044936/summary.json
+160,73.45238095238096,False,13,151,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0160/20260906045019/summary.json
+161,66.30952380952382,False,20,144,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0161/20260906045022/summary.json
+162,52.51984126984127,False,19,145,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0162/20260906045044/summary.json
+163,88.92857142857143,False,30,134,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0163/20260906045053/summary.json
+164,85.15873015873015,False,21,143,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0164/20260906045054/summary.json
+165,92.6984126984127,False,26,138,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0165/20260906045100/summary.json
+166,95.23809523809523,False,17,147,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0166/20260906045101/summary.json
+167,85.23809523809524,False,28,136,51 52 53 54,/workspace/results/runs/eval_e01_b0_final_700_s0167/20260906045105/summary.json
+168,73.9186507936508,False,21,143,51 52 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0168/20260906045113/summary.json
+169,61.47817460317461,False,23,141,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0169/20260906045119/summary.json
+170,71.07142857142857,False,19,145,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0170/20260906045119/summary.json
+171,76.57738095238096,False,21,143,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0171/20260906045129/summary.json
+172,92.85714285714286,False,30,134,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0172/20260906045143/summary.json
+173,61.07142857142858,False,19,145,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0173/20260906045148/summary.json
+174,89.68253968253967,False,22,142,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0174/20260906045158/summary.json
+175,68.16468253968256,False,24,140,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0175/20260906045158/summary.json
+176,60.873015873015866,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0176/20260906045203/summary.json
+177,59.09722222222222,False,18,146,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0177/20260906045208/summary.json
+178,80.54563492063492,False,27,137,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0178/20260906045214/summary.json
+179,80.67460317460318,False,32,132,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0179/20260906045214/summary.json
+180,89.52380952380953,False,29,135,51 52 53 54,/workspace/results/runs/eval_e01_b0_final_700_s0180/20260906045214/summary.json
+181,51.607142857142854,False,25,139,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0181/20260906045216/summary.json
+182,94.28571428571428,False,14,150,51 52 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0182/20260906045231/summary.json
+183,88.09523809523809,False,28,136,51 52 53 54,/workspace/results/runs/eval_e01_b0_final_700_s0183/20260906045233/summary.json
+184,58.86904761904762,False,25,139,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0184/20260906045240/summary.json
+185,81.77579365079364,False,22,142,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0185/20260906045245/summary.json
+186,85.13888888888889,False,18,146,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0186/20260906045251/summary.json
+187,95.23809523809523,False,22,142,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0187/20260906045257/summary.json
+188,64.35515873015872,False,23,141,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0188/20260906045301/summary.json
+189,95.23809523809523,False,22,142,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0189/20260906045306/summary.json
+190,91.15079365079364,False,15,149,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0190/20260906045308/summary.json
+191,48.045634920634924,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0191/20260906045315/summary.json
+192,90.47619047619048,False,31,133,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0192/20260906045331/summary.json
+193,87.82738095238096,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0193/20260906045349/summary.json
+194,88.57142857142858,False,17,147,51 52 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0194/20260906045354/summary.json
+195,95.23809523809523,False,21,143,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0195/20260906045400/summary.json
+196,92.85714285714286,False,30,134,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0196/20260906045414/summary.json
+197,60.29761904761906,False,20,144,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0197/20260906045433/summary.json
+198,90.47619047619048,False,34,130,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0198/20260906045438/summary.json
+199,83.45238095238095,False,33,131,51 53 54,/workspace/results/runs/eval_e01_b0_final_700_s0199/20260906045443/summary.json
+200,66.41865079365078,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0200/20260906045443/summary.json
+201,76.66666666666667,False,23,141,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0201/20260906045443/summary.json
+202,62.78769841269841,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0202/20260906045453/summary.json
+203,80.83333333333333,False,22,142,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0203/20260906045506/summary.json
+204,65.58531746031746,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0204/20260906045507/summary.json
+205,85.86309523809523,False,26,138,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0205/20260906045510/summary.json
+206,82.3809523809524,False,33,131,51 52 53 54,/workspace/results/runs/eval_e01_b0_final_700_s0206/20260906045514/summary.json
+207,72.64880952380952,False,27,137,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0207/20260906045518/summary.json
+208,64.12698412698413,False,21,143,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0208/20260906045521/summary.json
+209,95.23809523809523,False,17,147,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0209/20260906045528/summary.json
+210,76.45833333333333,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0210/20260906045533/summary.json
+211,49.642857142857146,False,24,140,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0211/20260906045559/summary.json
+212,61.904761904761905,False,24,140,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0212/20260906045600/summary.json
+213,85.23809523809524,False,32,132,51 52 53 54,/workspace/results/runs/eval_e01_b0_final_700_s0213/20260906045603/summary.json
+214,92.43055555555554,False,19,145,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0214/20260906045605/summary.json
+215,92.85714285714286,False,29,135,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0215/20260906045616/summary.json
+216,83.67063492063492,False,15,149,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0216/20260906045618/summary.json
+217,48.323412698412696,False,20,144,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0217/20260906045630/summary.json
+218,63.33333333333334,False,19,145,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0218/20260906045633/summary.json
+219,95.23809523809523,False,17,147,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0219/20260906045635/summary.json
+220,90.65476190476191,False,23,141,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0220/20260906045638/summary.json
+221,53.57142857142857,False,26,138,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0221/20260906045638/summary.json
+222,90.47619047619048,False,34,130,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0222/20260906045644/summary.json
+223,71.24007936507937,False,35,129,51 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0223/20260906045648/summary.json
+224,90.47619047619048,False,29,135,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0224/20260906045707/summary.json
+225,60.406746031746025,False,18,146,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0225/20260906045708/summary.json
+226,88.21428571428571,False,20,144,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0226/20260906045717/summary.json
+227,84.36507936507938,False,34,130,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0227/20260906045754/summary.json
+228,92.32142857142857,False,19,145,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0228/20260906045800/summary.json
+229,82.3313492063492,False,27,137,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0229/20260906045809/summary.json
+230,78.79960317460318,False,21,143,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0230/20260906045813/summary.json
+231,87.26190476190477,False,20,144,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0231/20260906045813/summary.json
+232,83.35317460317461,False,22,142,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0232/20260906045814/summary.json
+233,67.27182539682539,False,19,145,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0233/20260906045826/summary.json
+234,54.38492063492064,False,21,143,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0234/20260906045834/summary.json
+235,92.47023809523809,False,21,143,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0235/20260906045840/summary.json
+236,85.12896825396824,False,20,144,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0236/20260906045844/summary.json
+237,64.89087301587301,False,21,143,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0237/20260906045847/summary.json
+238,63.77976190476191,False,21,143,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0238/20260906045847/summary.json
+239,92.60912698412697,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0239/20260906045857/summary.json
+240,75.23809523809524,False,22,142,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0240/20260906045900/summary.json
+241,83.45238095238095,False,13,151,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0241/20260906045902/summary.json
+242,74.2063492063492,False,24,140,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0242/20260906045913/summary.json
+243,79.88095238095238,False,32,132,51 106,/workspace/results/runs/eval_e01_b0_final_700_s0243/20260906045931/summary.json
+244,76.43849206349206,False,19,145,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0244/20260906045931/summary.json
+245,73.77976190476191,False,24,140,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0245/20260906045933/summary.json
+246,90.47619047619048,False,29,135,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0246/20260906045939/summary.json
+247,91.15079365079364,False,20,144,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0247/20260906045942/summary.json
+248,90.47619047619048,False,32,132,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0248/20260906045946/summary.json
+249,95.23809523809523,False,19,145,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0249/20260906045947/summary.json
+250,87.20238095238095,False,20,144,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0250/20260906050007/summary.json
+251,68.62103174603175,False,18,146,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0251/20260906050013/summary.json
+252,78.2440476190476,False,24,140,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0252/20260906050016/summary.json
+253,88.02579365079364,False,16,148,51 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0253/20260906050024/summary.json
+254,69.55357142857143,False,22,142,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0254/20260906050027/summary.json
+255,52.539682539682545,False,27,137,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0255/20260906050037/summary.json
+256,83.13492063492063,False,21,143,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0256/20260906050116/summary.json
+257,94.7123015873016,False,25,139,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0257/20260906050116/summary.json
+258,58.551587301587304,False,22,142,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0258/20260906050117/summary.json
+259,90.47619047619048,False,32,132,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0259/20260906050119/summary.json
+260,82.70833333333333,False,24,140,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0260/20260906050120/summary.json
+261,70.47619047619048,False,18,146,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0261/20260906050125/summary.json
+262,60.44642857142857,False,20,144,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0262/20260906050128/summary.json
+263,84.14682539682539,False,32,132,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0263/20260906050129/summary.json
+264,68.62103174603175,False,15,149,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0264/20260906050133/summary.json
+265,89.96031746031746,False,19,145,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0265/20260906050152/summary.json
+266,72.59920634920634,False,18,146,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0266/20260906050157/summary.json
+267,60.49603174603174,False,26,138,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0267/20260906050207/summary.json
+268,59.325396825396815,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0268/20260906050209/summary.json
+269,90.94246031746032,False,22,142,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0269/20260906050219/summary.json
+270,92.85714285714286,False,22,142,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0270/20260906050226/summary.json
+271,75.24801587301587,False,19,145,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0271/20260906050229/summary.json
+272,52.976190476190474,False,22,142,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0272/20260906050233/summary.json
+273,64.05753968253968,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0273/20260906050237/summary.json
+274,86.08134920634919,False,17,147,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0274/20260906050238/summary.json
+275,67.14285714285714,False,18,146,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0275/20260906050241/summary.json
+276,71.65674603174604,False,26,138,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0276/20260906050244/summary.json
+277,95.23809523809523,False,17,147,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0277/20260906050254/summary.json
+278,90.47619047619048,False,34,130,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0278/20260906050301/summary.json
+279,67.34126984126985,False,23,141,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0279/20260906050317/summary.json
+280,52.0436507936508,False,21,143,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0280/20260906050327/summary.json
+281,85.29761904761905,False,24,140,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0281/20260906050336/summary.json
+282,75.58531746031746,False,19,145,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0282/20260906050346/summary.json
+283,77.4702380952381,False,33,131,51 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0283/20260906050357/summary.json
+284,85.69444444444446,False,23,141,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0284/20260906050359/summary.json
+285,90.60515873015873,False,25,139,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0285/20260906050403/summary.json
+286,60.416666666666664,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0286/20260906050406/summary.json
+287,90.625,False,24,140,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0287/20260906050414/summary.json
+288,68.21428571428572,False,21,143,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0288/20260906050422/summary.json
+289,62.23214285714286,False,23,141,51 54,/workspace/results/runs/eval_e01_b0_final_700_s0289/20260906050429/summary.json
+290,87.52976190476191,False,14,150,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0290/20260906050429/summary.json
+291,85.76388888888887,False,22,142,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0291/20260906050443/summary.json
+292,90.7638888888889,False,18,146,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0292/20260906050443/summary.json
+293,95.23809523809523,False,23,141,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0293/20260906050444/summary.json
+294,95.23809523809523,False,24,140,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0294/20260906050454/summary.json
+295,88.65079365079366,False,21,143,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0295/20260906050500/summary.json
+296,94.58333333333334,False,16,148,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0296/20260906050517/summary.json
+297,84.5436507936508,False,30,134,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0297/20260906050535/summary.json
+298,94.32539682539682,False,24,140,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0298/20260906050536/summary.json
+299,64.3452380952381,False,17,147,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0299/20260906050549/summary.json
+300,87.6190476190476,False,27,137,51 52 53 54,/workspace/results/runs/eval_e01_b0_final_700_s0300/20260906050556/summary.json
+301,95.23809523809523,False,18,146,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0301/20260906050556/summary.json
+302,95.23809523809523,False,15,149,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0302/20260906050557/summary.json
+303,75.8531746031746,False,33,131,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0303/20260906050600/summary.json
+304,87.16269841269842,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0304/20260906050607/summary.json
+305,61.36904761904761,False,29,135,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0305/20260906050610/summary.json
+306,63.154761904761905,False,21,143,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0306/20260906050611/summary.json
+307,83.33333333333334,False,20,144,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0307/20260906050616/summary.json
+308,57.34126984126985,False,23,141,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0308/20260906050617/summary.json
+309,92.38095238095238,False,28,136,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0309/20260906050626/summary.json
+310,95.23809523809523,False,22,142,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0310/20260906050632/summary.json
+311,83.98809523809524,False,19,145,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0311/20260906050640/summary.json
+312,90.67460317460319,False,16,148,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0312/20260906050651/summary.json
+313,83.77976190476191,False,21,143,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0313/20260906050705/summary.json
+314,60.952380952380956,False,20,144,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0314/20260906050719/summary.json
+315,90.47619047619048,False,36,128,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0315/20260906050722/summary.json
+316,66.58730158730158,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0316/20260906050724/summary.json
+317,91.09126984126983,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0317/20260906050729/summary.json
+318,73.45238095238096,False,24,140,51 52 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0318/20260906050738/summary.json
+319,78.82936507936508,False,33,131,51 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0319/20260906050759/summary.json
+320,81.24007936507938,False,19,145,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0320/20260906050807/summary.json
+321,59.523809523809526,False,21,143,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0321/20260906050808/summary.json
+322,94.36507936507937,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0322/20260906050815/summary.json
+323,61.835317460317455,False,21,143,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0323/20260906050818/summary.json
+324,90.47619047619048,False,31,133,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0324/20260906050821/summary.json
+325,90.47619047619048,False,30,134,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0325/20260906050822/summary.json
+326,72.02380952380953,False,21,143,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0326/20260906050823/summary.json
+327,95.23809523809523,False,31,133,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0327/20260906050846/summary.json
+328,39.77182539682539,False,23,141,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0328/20260906050901/summary.json
+329,65.00992063492063,False,19,145,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0329/20260906050904/summary.json
+330,66.78571428571429,False,19,145,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0330/20260906050914/summary.json
+331,63.035714285714285,False,24,140,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0331/20260906050919/summary.json
+332,90.47619047619048,False,35,129,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0332/20260906050923/summary.json
+333,70.03968253968253,False,28,136,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0333/20260906050934/summary.json
+334,95.23809523809523,False,18,146,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0334/20260906050940/summary.json
+335,63.84920634920634,False,24,140,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0335/20260906050943/summary.json
+336,89.44444444444444,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0336/20260906050948/summary.json
+337,69.96031746031747,False,20,144,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0337/20260906050949/summary.json
+338,92.77777777777779,False,17,147,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0338/20260906050949/summary.json
+339,90.47619047619048,False,32,132,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0339/20260906050958/summary.json
+340,74.40476190476191,False,22,142,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0340/20260906051001/summary.json
+341,78.88888888888889,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0341/20260906051005/summary.json
+342,91.54761904761905,False,18,146,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0342/20260906051013/summary.json
+343,60.68452380952382,False,20,144,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0343/20260906051020/summary.json
+344,95.23809523809523,False,21,143,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0344/20260906051023/summary.json
+345,58.492063492063494,False,19,145,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0345/20260906051029/summary.json
+346,54.672619047619044,False,25,139,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0346/20260906051031/summary.json
+347,92.00396825396825,False,29,135,51 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0347/20260906051037/summary.json
+348,95.23809523809523,False,19,145,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0348/20260906051110/summary.json
+349,89.32539682539682,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0349/20260906051112/summary.json
+350,85.76388888888887,False,21,143,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0350/20260906051116/summary.json
+351,95.23809523809523,False,19,145,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0351/20260906051117/summary.json
+352,90.47619047619048,False,35,129,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0352/20260906051117/summary.json
+353,60.039682539682545,False,24,140,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0353/20260906051144/summary.json
+354,90.47619047619048,False,36,128,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0354/20260906051149/summary.json
+355,95.00992063492065,False,19,145,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0355/20260906051157/summary.json
+356,94.28571428571428,False,14,150,51 52 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0356/20260906051202/summary.json
+357,90.47619047619048,False,35,129,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0357/20260906051215/summary.json
+358,79.78174603174602,False,25,139,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0358/20260906051220/summary.json
+359,90.46626984126985,False,37,127,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0359/20260906051229/summary.json
+360,55.386904761904766,False,20,144,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0360/20260906051242/summary.json
+361,85.23809523809524,False,27,137,51 52 53,/workspace/results/runs/eval_e01_b0_final_700_s0361/20260906051245/summary.json
+362,67.33134920634922,False,26,138,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0362/20260906051248/summary.json
+363,92.85714285714286,False,30,134,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0363/20260906051251/summary.json
+364,90.47619047619048,False,37,127,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0364/20260906051255/summary.json
+365,89.27579365079366,False,16,148,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0365/20260906051304/summary.json
+366,94.28571428571428,False,26,138,51 52 53 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0366/20260906051304/summary.json
+367,83.01587301587303,False,19,145,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0367/20260906051312/summary.json
+368,95.23809523809523,False,27,137,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0368/20260906051316/summary.json
+369,95.23809523809523,False,17,147,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0369/20260906051319/summary.json
+370,85.40674603174604,False,17,147,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0370/20260906051333/summary.json
+371,92.91666666666666,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0371/20260906051339/summary.json
+372,59.49404761904762,False,22,142,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0372/20260906051348/summary.json
+373,79.91071428571429,False,20,144,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0373/20260906051349/summary.json
+374,64.53373015873017,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0374/20260906051354/summary.json
+375,83.33333333333334,False,18,146,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0375/20260906051357/summary.json
+376,90.71428571428571,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0376/20260906051403/summary.json
+377,64.86111111111111,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0377/20260906051407/summary.json
+378,70.47619047619048,False,24,140,51 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0378/20260906051407/summary.json
+379,66.30952380952382,False,20,144,51 52 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0379/20260906051430/summary.json
+380,75.1190476190476,False,32,132,51 52 106,/workspace/results/runs/eval_e01_b0_final_700_s0380/20260906051430/summary.json
+381,90.47619047619048,False,38,126,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0381/20260906051434/summary.json
+382,64.48412698412697,False,23,141,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0382/20260906051441/summary.json
+383,91.48809523809524,False,26,138,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0383/20260906051451/summary.json
+384,67.6190476190476,False,23,141,51 52 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0384/20260906051454/summary.json
+385,79.92063492063492,False,21,143,51 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0385/20260906051513/summary.json
+386,90.96230158730158,False,23,141,51 52 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0386/20260906051525/summary.json
+387,84.6825396825397,False,25,139,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0387/20260906051525/summary.json
+388,60.962301587301596,False,20,144,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0388/20260906051547/summary.json
+389,90.95238095238096,False,22,142,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0389/20260906051601/summary.json
+390,87.08333333333333,False,21,143,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0390/20260906051602/summary.json
+391,95.23809523809523,False,18,146,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0391/20260906051607/summary.json
+392,83.06547619047619,False,22,142,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0392/20260906051609/summary.json
+393,55.43650793650793,False,20,144,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0393/20260906051613/summary.json
+394,52.15277777777778,False,19,145,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0394/20260906051630/summary.json
+395,90.47619047619048,False,36,128,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0395/20260906051638/summary.json
+396,64.5734126984127,False,21,143,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0396/20260906051640/summary.json
+397,79.64285714285715,False,13,151,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0397/20260906051649/summary.json
+398,59.08730158730159,False,20,144,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0398/20260906051652/summary.json
+399,83.48214285714286,False,20,144,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0399/20260906051654/summary.json
+400,82.93650793650794,False,33,131,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0400/20260906051701/summary.json
+401,50.80357142857142,False,22,142,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0401/20260906051703/summary.json
+402,80.55555555555554,False,30,134,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0402/20260906051704/summary.json
+403,90.84325396825396,False,26,138,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0403/20260906051705/summary.json
+404,77.43055555555554,False,23,141,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0404/20260906051706/summary.json
+405,83.02579365079366,False,32,132,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0405/20260906051720/summary.json
+406,82.04365079365078,False,34,130,51 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0406/20260906051721/summary.json
+407,90.86309523809524,False,18,146,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0407/20260906051726/summary.json
+408,66.96428571428571,False,22,142,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0408/20260906051728/summary.json
+409,92.5,False,13,151,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0409/20260906051731/summary.json
+410,95.23809523809523,False,18,146,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0410/20260906051753/summary.json
+411,70.85317460317461,False,22,142,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0411/20260906051755/summary.json
+412,48.19444444444444,False,21,143,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0412/20260906051805/summary.json
+413,60.029761904761905,False,25,139,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0413/20260906051806/summary.json
+414,72.34126984126983,False,21,143,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0414/20260906051808/summary.json
+415,95.23809523809523,False,14,150,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0415/20260906051829/summary.json
+416,95.23809523809523,False,23,141,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0416/20260906051853/summary.json
+417,86.08134920634922,False,31,133,51 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0417/20260906051855/summary.json
+418,92.53968253968252,False,20,144,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0418/20260906051859/summary.json
+419,58.58134920634922,False,24,140,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0419/20260906051859/summary.json
+420,74.40476190476191,False,25,139,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0420/20260906051906/summary.json
+421,85.75396825396825,False,17,147,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0421/20260906051929/summary.json
+422,84.55357142857144,False,25,139,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0422/20260906051935/summary.json
+423,59.6031746031746,False,21,143,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0423/20260906051938/summary.json
+424,92.5,False,15,149,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0424/20260906051944/summary.json
+425,55.07936507936508,False,23,141,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0425/20260906051946/summary.json
+426,78.57142857142857,False,37,127,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0426/20260906051947/summary.json
+427,90.47619047619048,False,33,131,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0427/20260906051959/summary.json
+428,95.23809523809523,False,21,143,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0428/20260906052011/summary.json
+429,95.23809523809523,False,18,146,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0429/20260906052014/summary.json
+430,83.33333333333334,False,27,137,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0430/20260906052025/summary.json
+431,85.41666666666666,False,28,136,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0431/20260906052029/summary.json
+432,81.66666666666667,False,22,142,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0432/20260906052034/summary.json
+433,89.9702380952381,False,32,132,51 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0433/20260906052036/summary.json
+434,90.47619047619048,False,29,135,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0434/20260906052037/summary.json
+435,50.029761904761905,False,24,140,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0435/20260906052040/summary.json
+436,95.23809523809523,False,29,135,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0436/20260906052050/summary.json
+437,89.52380952380953,False,32,132,51 52 53 54,/workspace/results/runs/eval_e01_b0_final_700_s0437/20260906052051/summary.json
+438,77.85714285714288,False,19,145,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0438/20260906052055/summary.json
+439,88.09523809523809,False,32,132,51 52 53 106,/workspace/results/runs/eval_e01_b0_final_700_s0439/20260906052058/summary.json
+440,86.88492063492063,False,21,143,51 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0440/20260906052121/summary.json
+441,85.66468253968253,False,22,142,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0441/20260906052122/summary.json
+442,67.73809523809524,False,21,143,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0442/20260906052126/summary.json
+443,70.64484126984127,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0443/20260906052129/summary.json
+444,71.54761904761905,False,22,142,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0444/20260906052131/summary.json
+445,86.51785714285714,False,20,144,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0445/20260906052133/summary.json
+446,67.6190476190476,False,20,144,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0446/20260906052136/summary.json
+447,74.41468253968256,False,21,143,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0447/20260906052139/summary.json
+448,66.82539682539682,False,25,139,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0448/20260906052216/summary.json
+449,72.2123015873016,False,19,145,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0449/20260906052218/summary.json
+450,63.343253968253975,False,21,143,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0450/20260906052234/summary.json
+451,84.4940476190476,False,33,131,51 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0451/20260906052247/summary.json
+452,54.30555555555555,False,23,141,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0452/20260906052248/summary.json
+453,74.40476190476191,False,26,138,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0453/20260906052252/summary.json
+454,90.12896825396824,False,38,126,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0454/20260906052305/summary.json
+455,58.24404761904762,False,25,139,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0455/20260906052313/summary.json
+456,95.23809523809523,False,29,135,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0456/20260906052317/summary.json
+457,66.60714285714286,False,24,140,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0457/20260906052326/summary.json
+458,80.35714285714286,False,16,148,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0458/20260906052337/summary.json
+459,60.74404761904761,False,22,142,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0459/20260906052340/summary.json
+460,85.2281746031746,False,20,144,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0460/20260906052355/summary.json
+461,90.47619047619048,False,32,132,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0461/20260906052406/summary.json
+462,94.28571428571428,False,18,146,51 52 53 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0462/20260906052411/summary.json
+463,66.38888888888889,False,25,139,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0463/20260906052412/summary.json
+464,93.3234126984127,False,21,143,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0464/20260906052413/summary.json
+465,77.26190476190476,False,15,149,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0465/20260906052420/summary.json
+466,62.82738095238096,False,21,143,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0466/20260906052425/summary.json
+467,60.48611111111112,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0467/20260906052428/summary.json
+468,91.42857142857143,False,20,144,51 52 53 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0468/20260906052428/summary.json
+469,85.44642857142858,False,31,133,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0469/20260906052435/summary.json
+470,92.85714285714286,False,36,128,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0470/20260906052436/summary.json
+471,92.08333333333334,False,20,144,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0471/20260906052439/summary.json
+472,95.23809523809523,False,25,139,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0472/20260906052444/summary.json
+473,58.21428571428571,False,22,142,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0473/20260906052445/summary.json
+474,61.60714285714286,False,20,144,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0474/20260906052446/summary.json
+475,78.31349206349206,False,24,140,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0475/20260906052453/summary.json
+476,80.31746031746032,False,22,142,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0476/20260906052457/summary.json
+477,63.144841269841265,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0477/20260906052503/summary.json
+478,94.7420634920635,False,21,143,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0478/20260906052510/summary.json
+479,83.51190476190476,False,24,140,51 52 54,/workspace/results/runs/eval_e01_b0_final_700_s0479/20260906052511/summary.json
+480,68.33333333333333,False,22,142,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0480/20260906052513/summary.json
+481,82.88690476190477,False,19,145,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0481/20260906052601/summary.json
+482,90.3174603174603,False,21,143,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0482/20260906052603/summary.json
+483,88.09523809523809,False,31,133,51 52 53 54,/workspace/results/runs/eval_e01_b0_final_700_s0483/20260906052609/summary.json
+484,55.46626984126984,False,22,142,51 54,/workspace/results/runs/eval_e01_b0_final_700_s0484/20260906052638/summary.json
+485,87.11309523809524,False,21,143,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0485/20260906052640/summary.json
+486,74.61309523809524,False,26,138,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0486/20260906052647/summary.json
+487,86.69642857142857,False,22,142,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0487/20260906052655/summary.json
+488,85.61507936507935,False,21,143,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0488/20260906052657/summary.json
+489,74.28571428571429,False,21,143,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0489/20260906052705/summary.json
+490,71.27976190476191,False,26,138,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0490/20260906052705/summary.json
+491,80.46626984126985,False,29,135,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0491/20260906052720/summary.json
+492,85.2281746031746,False,17,147,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0492/20260906052726/summary.json
+493,87.13293650793649,False,18,146,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0493/20260906052735/summary.json
+494,92.85714285714286,False,18,146,51 52 53 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0494/20260906052735/summary.json
+495,90.47619047619048,False,32,132,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0495/20260906052747/summary.json
+496,71.81547619047619,False,19,145,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0496/20260906052748/summary.json
+497,87.05357142857143,False,18,146,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0497/20260906052751/summary.json
+498,69.04761904761905,False,19,145,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0498/20260906052753/summary.json
+499,83.40277777777779,False,34,130,51 106,/workspace/results/runs/eval_e01_b0_final_700_s0499/20260906052802/summary.json
+500,81.06150793650794,False,34,130,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0500/20260906052806/summary.json
+501,70.47619047619048,False,21,143,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0501/20260906052812/summary.json
+502,72.02380952380952,False,22,142,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0502/20260906052815/summary.json
+503,64.9702380952381,False,19,145,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0503/20260906052817/summary.json
+504,95.23809523809523,False,15,149,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0504/20260906052817/summary.json
+505,57.23214285714286,False,20,144,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0505/20260906052818/summary.json
+506,92.85714285714286,False,29,135,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0506/20260906052824/summary.json
+507,85.87301587301587,False,23,141,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0507/20260906052826/summary.json
+508,95.23809523809523,False,23,141,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0508/20260906052836/summary.json
+509,73.5515873015873,False,22,142,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0509/20260906052840/summary.json
+510,83.73015873015872,False,29,135,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0510/20260906052844/summary.json
+511,92.85714285714286,False,12,152,51 52 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0511/20260906052852/summary.json
+512,66.37896825396827,False,22,142,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0512/20260906052907/summary.json
+513,82.3809523809524,False,23,141,51 52 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0513/20260906052926/summary.json
+514,56.160714285714285,False,18,146,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0514/20260906052938/summary.json
+515,73.37301587301587,False,23,141,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0515/20260906053001/summary.json
+516,95.23809523809523,False,24,140,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0516/20260906053009/summary.json
+517,95.23809523809523,False,21,143,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0517/20260906053014/summary.json
+518,66.8154761904762,False,23,141,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0518/20260906053015/summary.json
+519,90.47619047619048,False,33,131,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0519/20260906053018/summary.json
+520,78.48214285714286,False,19,145,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0520/20260906053026/summary.json
+521,59.375,False,25,139,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0521/20260906053031/summary.json
+522,89.01785714285714,False,27,137,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0522/20260906053037/summary.json
+523,69.375,False,22,142,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0523/20260906053039/summary.json
+524,90.47619047619048,False,34,130,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0524/20260906053039/summary.json
+525,61.33928571428571,False,24,140,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0525/20260906053058/summary.json
+526,45.40674603174603,False,23,141,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0526/20260906053059/summary.json
+527,60.8234126984127,False,22,142,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0527/20260906053111/summary.json
+528,65.39682539682539,False,18,146,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0528/20260906053111/summary.json
+529,82.3809523809524,False,21,143,51 52 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0529/20260906053113/summary.json
+530,66.42857142857143,False,23,141,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0530/20260906053129/summary.json
+531,80.95238095238095,False,18,146,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0531/20260906053133/summary.json
+532,83.40277777777779,False,32,132,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0532/20260906053134/summary.json
+533,79.04761904761905,False,17,147,51 52 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0533/20260906053140/summary.json
+534,92.8968253968254,False,31,133,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0534/20260906053142/summary.json
+535,66.63690476190476,False,23,141,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0535/20260906053148/summary.json
+536,65.73412698412699,False,21,143,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0536/20260906053150/summary.json
+537,92.76785714285714,False,24,140,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0537/20260906053157/summary.json
+538,59.31547619047619,False,23,141,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0538/20260906053200/summary.json
+539,87.29166666666667,False,17,147,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0539/20260906053206/summary.json
+540,79.52380952380952,False,12,152,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0540/20260906053212/summary.json
+541,95.23809523809523,False,16,148,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0541/20260906053230/summary.json
+542,95.23809523809523,False,22,142,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0542/20260906053232/summary.json
+543,59.82142857142857,False,26,138,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0543/20260906053233/summary.json
+544,69.61309523809524,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0544/20260906053250/summary.json
+545,72.06349206349208,False,24,140,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0545/20260906053252/summary.json
+546,86.95436507936508,False,21,143,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0546/20260906053257/summary.json
+547,95.23809523809523,False,28,136,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0547/20260906053306/summary.json
+548,85.23809523809524,False,34,130,51 52 53 54,/workspace/results/runs/eval_e01_b0_final_700_s0548/20260906053325/summary.json
+549,82.3809523809524,False,20,144,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0549/20260906053355/summary.json
+550,90.47619047619048,False,35,129,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0550/20260906053356/summary.json
+551,91.42857142857143,False,30,134,51 52 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0551/20260906053359/summary.json
+552,87.43055555555556,False,29,135,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0552/20260906053406/summary.json
+553,87.99603174603173,False,22,142,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0553/20260906053409/summary.json
+554,63.02579365079365,False,24,140,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0554/20260906053410/summary.json
+555,69.51388888888889,False,20,144,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0555/20260906053412/summary.json
+556,95.23809523809523,False,20,144,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0556/20260906053424/summary.json
+557,90.47619047619048,False,33,131,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0557/20260906053429/summary.json
+558,79.78174603174602,False,21,143,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0558/20260906053429/summary.json
+559,92.85714285714286,False,27,137,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0559/20260906053431/summary.json
+560,66.25,False,24,140,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0560/20260906053441/summary.json
+561,59.166666666666664,False,24,140,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0561/20260906053450/summary.json
+562,88.25396825396824,False,33,131,51 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0562/20260906053451/summary.json
+563,95.23809523809523,False,21,143,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0563/20260906053501/summary.json
+564,92.85714285714286,False,28,136,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0564/20260906053502/summary.json
+565,74.1468253968254,False,15,149,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0565/20260906053502/summary.json
+566,79.21626984126982,False,22,142,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0566/20260906053518/summary.json
+567,65.11904761904762,False,25,139,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0567/20260906053522/summary.json
+568,55.49603174603175,False,27,137,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0568/20260906053523/summary.json
+569,92.17261904761904,False,29,135,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0569/20260906053527/summary.json
+570,56.86507936507936,False,22,142,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0570/20260906053528/summary.json
+571,79.80158730158729,False,19,145,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0571/20260906053534/summary.json
+572,85.18849206349208,False,22,142,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0572/20260906053538/summary.json
+573,59.25595238095237,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0573/20260906053552/summary.json
+574,94.18650793650795,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0574/20260906053558/summary.json
+575,80.83333333333333,False,26,138,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0575/20260906053603/summary.json
+576,67.28174603174604,False,22,142,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0576/20260906053610/summary.json
+577,88.68055555555556,False,33,131,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0577/20260906053622/summary.json
+578,71.35912698412697,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0578/20260906053630/summary.json
+579,66.30952380952382,False,21,143,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0579/20260906053641/summary.json
+580,68.4920634920635,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0580/20260906053713/summary.json
+581,66.78571428571428,False,22,142,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0581/20260906053719/summary.json
+582,85.53571428571428,False,20,144,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0582/20260906053720/summary.json
+583,73.75992063492063,False,25,139,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0583/20260906053730/summary.json
+584,88.57142857142858,False,18,146,51 52 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0584/20260906053742/summary.json
+585,92.85714285714286,False,17,147,51 52 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0585/20260906053748/summary.json
+586,87.6190476190476,False,19,145,51 52 53 106,/workspace/results/runs/eval_e01_b0_final_700_s0586/20260906053750/summary.json
+587,47.926587301587304,False,19,145,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0587/20260906053752/summary.json
+588,60.95238095238095,False,25,139,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0588/20260906053752/summary.json
+589,60.95238095238095,False,23,141,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0589/20260906053810/summary.json
+590,87.06349206349205,False,19,145,51 52 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0590/20260906053814/summary.json
+591,71.47817460317461,False,19,145,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0591/20260906053826/summary.json
+592,83.33333333333334,False,20,144,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0592/20260906053826/summary.json
+593,83.33333333333334,False,22,142,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0593/20260906053834/summary.json
+594,84.58333333333333,False,24,140,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0594/20260906053836/summary.json
+595,77.43055555555556,False,30,134,51 52 54,/workspace/results/runs/eval_e01_b0_final_700_s0595/20260906053843/summary.json
+596,87.17261904761904,False,24,140,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0596/20260906053844/summary.json
+597,85.00992063492063,False,28,136,51 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0597/20260906053847/summary.json
+598,92.85714285714286,False,30,134,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0598/20260906053852/summary.json
+599,95.23809523809523,False,24,140,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0599/20260906053903/summary.json
+600,70.59523809523809,False,21,143,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0600/20260906053905/summary.json
+601,75.98214285714285,False,21,143,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0601/20260906053905/summary.json
+602,90.47619047619048,False,30,134,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0602/20260906053908/summary.json
+603,86.66666666666666,False,31,133,51 52 53 106,/workspace/results/runs/eval_e01_b0_final_700_s0603/20260906053913/summary.json
+604,81.64682539682539,False,30,134,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0604/20260906053923/summary.json
+605,90.47619047619048,False,34,130,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0605/20260906053932/summary.json
+606,95.23809523809523,False,16,148,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0606/20260906053933/summary.json
+607,70.09920634920634,False,26,138,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0607/20260906053944/summary.json
+608,77.0238095238095,False,26,138,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0608/20260906053943/summary.json
+609,85.43650793650794,False,29,135,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0609/20260906054000/summary.json
+610,85.29761904761905,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0610/20260906054006/summary.json
+611,56.23015873015873,False,24,140,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0611/20260906054011/summary.json
+612,81.37896825396825,False,22,142,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0612/20260906054013/summary.json
+613,60.992063492063494,False,19,145,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0613/20260906054015/summary.json
+614,66.45833333333334,False,24,140,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0614/20260906054050/summary.json
+615,90.40674603174604,False,22,142,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0615/20260906054059/summary.json
+616,71.3690476190476,False,24,140,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0616/20260906054100/summary.json
+617,89.52380952380953,False,30,134,51 52 53 54,/workspace/results/runs/eval_e01_b0_final_700_s0617/20260906054111/summary.json
+618,95.23809523809523,False,29,135,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0618/20260906054118/summary.json
+619,90.47619047619048,False,38,126,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0619/20260906054120/summary.json
+620,87.44047619047619,False,18,146,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0620/20260906054119/summary.json
+621,76.41865079365078,False,18,146,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0621/20260906054130/summary.json
+622,55.50595238095237,False,21,143,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0622/20260906054143/summary.json
+623,53.08531746031746,False,19,145,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0623/20260906054149/summary.json
+624,55.367063492063494,False,22,142,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0624/20260906054204/summary.json
+625,92.17261904761904,False,25,139,51 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0625/20260906054208/summary.json
+626,95.23809523809523,False,24,140,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0626/20260906054218/summary.json
+627,58.69047619047618,False,20,144,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0627/20260906054218/summary.json
+628,58.90873015873016,False,23,141,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0628/20260906054226/summary.json
+629,90.47619047619048,False,32,132,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0629/20260906054236/summary.json
+630,79.52380952380952,False,22,142,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0630/20260906054238/summary.json
+631,66.15079365079364,False,20,144,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0631/20260906054241/summary.json
+632,95.23809523809523,False,25,139,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0632/20260906054243/summary.json
+633,90.47619047619048,False,34,130,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0633/20260906054248/summary.json
+634,80.76388888888889,False,38,126,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0634/20260906054258/summary.json
+635,67.16269841269842,False,26,138,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0635/20260906054306/summary.json
+636,81.44841269841271,False,35,129,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0636/20260906054313/summary.json
+637,73.24404761904762,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0637/20260906054315/summary.json
+638,84.07738095238095,False,24,140,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0638/20260906054316/summary.json
+639,95.23809523809523,False,23,141,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0639/20260906054319/summary.json
+640,82.69841269841271,False,35,129,51 52 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0640/20260906054322/summary.json
+641,81.66666666666667,False,20,144,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0641/20260906054331/summary.json
+642,83.64087301587301,False,28,136,51 52 54,/workspace/results/runs/eval_e01_b0_final_700_s0642/20260906054333/summary.json
+643,59.18650793650794,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0643/20260906054338/summary.json
+644,61.269841269841265,False,19,145,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0644/20260906054344/summary.json
+645,58.21428571428571,False,22,142,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0645/20260906054404/summary.json
+646,81.72619047619048,False,19,145,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0646/20260906054415/summary.json
+647,62.0436507936508,False,23,141,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0647/20260906054419/summary.json
+648,72.61904761904762,False,20,144,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0648/20260906054443/summary.json
+649,56.91468253968254,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0649/20260906054450/summary.json
+650,75.28769841269842,False,22,142,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0650/20260906054452/summary.json
+651,59.65277777777778,False,22,142,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0651/20260906054459/summary.json
+652,60.69444444444445,False,22,142,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0652/20260906054509/summary.json
+653,83.75992063492063,False,25,139,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0653/20260906054520/summary.json
+654,70.57539682539682,False,21,143,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0654/20260906054524/summary.json
+655,80.8234126984127,False,24,140,51 54,/workspace/results/runs/eval_e01_b0_final_700_s0655/20260906054525/summary.json
+656,61.07142857142858,False,19,145,51 52 168,/workspace/results/runs/eval_e01_b0_final_700_s0656/20260906054527/summary.json
+657,91.24007936507937,False,25,139,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0657/20260906054530/summary.json
+658,94.34523809523809,False,31,133,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0658/20260906054541/summary.json
+659,92.85714285714286,False,32,132,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0659/20260906054557/summary.json
+660,60.51587301587303,False,18,146,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0660/20260906054601/summary.json
+661,90.47619047619048,False,30,134,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0661/20260906054606/summary.json
+662,71.42857142857143,False,25,139,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0662/20260906054613/summary.json
+663,94.8015873015873,False,32,132,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0663/20260906054613/summary.json
+664,90.47619047619048,False,29,135,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0664/20260906054625/summary.json
+665,95.23809523809523,False,17,147,51 52 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0665/20260906054631/summary.json
+666,80.56547619047618,False,22,142,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0666/20260906054646/summary.json
+667,75.68452380952382,False,18,146,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0667/20260906054701/summary.json
+668,63.40277777777777,False,18,146,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0668/20260906054701/summary.json
+669,92.49007936507935,False,18,146,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0669/20260906054703/summary.json
+670,71.42857142857143,False,26,138,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0670/20260906054703/summary.json
+671,90.47619047619048,False,35,129,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0671/20260906054705/summary.json
+672,92.85714285714286,False,22,142,51 52 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0672/20260906054707/summary.json
+673,85.01984126984128,False,23,141,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0673/20260906054722/summary.json
+674,82.51984126984127,False,31,133,51 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0674/20260906054733/summary.json
+675,77.06349206349206,False,20,144,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0675/20260906054738/summary.json
+676,78.40277777777777,False,18,146,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0676/20260906054738/summary.json
+677,85.39682539682539,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0677/20260906054742/summary.json
+678,49.76190476190476,False,23,141,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0678/20260906054752/summary.json
+679,82.05357142857143,False,16,148,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0679/20260906054753/summary.json
+680,73.80952380952381,False,21,143,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0680/20260906054754/summary.json
+681,93.08531746031746,False,27,137,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0681/20260906054807/summary.json
+682,70.59523809523809,False,21,143,51 52 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0682/20260906054808/summary.json
+683,75.74404761904762,False,21,143,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0683/20260906054825/summary.json
+684,93.8888888888889,False,16,148,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0684/20260906054830/summary.json
+685,91.42857142857143,False,15,149,51 52 53 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0685/20260906054833/summary.json
+686,86.66666666666666,False,30,134,51 52 53 106,/workspace/results/runs/eval_e01_b0_final_700_s0686/20260906054833/summary.json
+687,60.644841269841265,False,18,146,51 54,/workspace/results/runs/eval_e01_b0_final_700_s0687/20260906054834/summary.json
+688,94.58333333333334,False,23,141,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0688/20260906054900/summary.json
+689,68.8690476190476,False,30,134,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0689/20260906054920/summary.json
+690,90.8829365079365,False,26,138,51 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0690/20260906054930/summary.json
+691,59.87103174603175,False,25,139,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0691/20260906054940/summary.json
+692,83.49206349206348,False,22,142,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0692/20260906054958/summary.json
+693,85.27777777777776,False,17,147,51 52 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0693/20260906055000/summary.json
+694,90.61507936507938,False,24,140,51 53 54 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0694/20260906055013/summary.json
+695,58.02579365079366,False,20,144,51 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0695/20260906055014/summary.json
+696,83.30357142857144,False,18,146,51 52 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0696/20260906055018/summary.json
+697,94.28571428571428,False,17,147,51 52 53 106 168,/workspace/results/runs/eval_e01_b0_final_700_s0697/20260906055020/summary.json
+698,71.42857142857143,False,24,140,51 54 168,/workspace/results/runs/eval_e01_b0_final_700_s0698/20260906055021/summary.json
+699,71.09126984126985,False,17,147,51 168,/workspace/results/runs/eval_e01_b0_final_700_s0699/20260906055022/summary.json
+700,84.29563492063492,False,34,130,51 53 54 106,/workspace/results/runs/eval_e01_b0_final_700_s0700/20260906055023/summary.json

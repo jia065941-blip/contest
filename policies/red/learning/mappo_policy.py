@@ -3,13 +3,20 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from pathlib import Path
 
 import numpy as np
 import torch
 from torch import nn
 from torch.distributions import Categorical
 
-from .red_policy import ACTION_DIM, GlobalStateEncoder, PolicyTransition, SharedPolicy
+from .red_policy import (
+    ACTION_DIM,
+    GlobalStateEncoder,
+    PolicyTransition,
+    SharedPolicy,
+)
+from .reward_shaping import R9RewardShaper
 
 
 @dataclass
@@ -23,6 +30,7 @@ class MAPPOConfig:
     gamma: float = 0.99
     gae_lambda: float = 0.95
     clip_ratio: float = 0.2
+    value_clip_ratio: float = 0.2
     value_coef: float = 0.5
     entropy_coef: float = 0.01
     max_grad_norm: float = 0.5
@@ -30,9 +38,18 @@ class MAPPOConfig:
     minibatch_size: int = 256
     rollout_size: int = 8192
     min_update_size: int = 512
+    objective_damage_scale: float = 1.0
+    target_progress_scale: float = 2.0
+    intercepted_penalty: float = 0.2
+    maneuver_penalty: float = 0.001
+    direction_change_penalty: float = 0.002
+    reward_clip: float = 25.0
     seed: int = 0
-    device: str = "cpu"
+    device: str = "auto"
     max_steps: int = 1000
+
+
+MAPPORewardShaper = R9RewardShaper
 
 
 class MAPPOActorCritic(nn.Module):
@@ -79,9 +96,15 @@ class MAPPOSharedPolicy(SharedPolicy):
             )
         torch.manual_seed(self.config.seed)
         np.random.seed(self.config.seed)
-        self.device = torch.device(self.config.device)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(self.config.seed)
+        device_name = self.config.device
+        if device_name == "auto":
+            device_name = "cuda:0" if torch.cuda.is_available() else "cpu"
+        self.device = torch.device(device_name)
         self.network = MAPPOActorCritic(self.config).to(self.device)
         self.optimizer = torch.optim.Adam(self.network.parameters(), lr=self.config.learning_rate)
+        self.reward_shaper = MAPPORewardShaper(self.config)
         self._buffer: list[tuple[PolicyTransition, float, float]] = []
         self._pending: list[tuple[float, float]] = []
         self._global_state: np.ndarray | None = None
@@ -94,9 +117,11 @@ class MAPPOSharedPolicy(SharedPolicy):
     def begin_environment_step(self, full_observation) -> None:
         self._global_state = self.global_encoder.encode(full_observation)
         self._next_global_state = None
+        self.reward_shaper.begin_environment_step(full_observation)
 
     def end_environment_step(self, full_observation) -> None:
         self._next_global_state = self.global_encoder.encode(full_observation)
+        self.reward_shaper.end_environment_step(full_observation)
 
     def get_global_state_context(self):
         return self._global_state, self._next_global_state
@@ -137,6 +162,17 @@ class MAPPOSharedPolicy(SharedPolicy):
         if transition.global_state is None or transition.next_global_state is None:
             raise RuntimeError("MAPPO transition缺少全局状态")
         log_prob, value = self._pending.pop(0)
+        transition = PolicyTransition(
+            agent_id=transition.agent_id,
+            observation=transition.observation,
+            action=transition.action,
+            action_mask=transition.action_mask,
+            reward=self.reward_shaper.shape(transition),
+            next_observation=transition.next_observation,
+            done=transition.done,
+            global_state=transition.global_state,
+            next_global_state=transition.next_global_state,
+        )
         self._buffer.append((transition, log_prob, value))
         self.transition_count += 1
 
@@ -149,6 +185,7 @@ class MAPPOSharedPolicy(SharedPolicy):
             self.update()
         self._global_state = None
         self._next_global_state = None
+        self.reward_shaper.reset_episode()
 
     def set_training(self, training: bool) -> None:
         self.training = bool(training)
@@ -198,7 +235,13 @@ class MAPPOSharedPolicy(SharedPolicy):
             if advantages.numel() > 1:
                 advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
-        totals = {"policy_loss": 0.0, "value_loss": 0.0, "entropy": 0.0}
+        totals = {
+            "policy_loss": 0.0,
+            "value_loss": 0.0,
+            "entropy": 0.0,
+            "approx_kl": 0.0,
+            "clip_fraction": 0.0,
+        }
         updates = 0
         sample_count = observations.shape[0]
         for _ in range(self.config.update_epochs):
@@ -219,7 +262,16 @@ class MAPPOSharedPolicy(SharedPolicy):
                 predicted_values = self.network.critic_forward(
                     global_states[indices], observations[indices]
                 )
-                value_loss = torch.nn.functional.mse_loss(predicted_values, returns[indices])
+                clipped_values = old_values[indices] + torch.clamp(
+                    predicted_values - old_values[indices],
+                    -self.config.value_clip_ratio,
+                    self.config.value_clip_ratio,
+                )
+                value_losses = (predicted_values - returns[indices]).pow(2)
+                clipped_value_losses = (clipped_values - returns[indices]).pow(2)
+                value_loss = 0.5 * torch.maximum(
+                    value_losses, clipped_value_losses
+                ).mean()
                 loss = policy_loss + self.config.value_coef * value_loss - self.config.entropy_coef * entropy
 
                 self.optimizer.zero_grad()
@@ -229,6 +281,16 @@ class MAPPOSharedPolicy(SharedPolicy):
                 totals["policy_loss"] += float(policy_loss.item())
                 totals["value_loss"] += float(value_loss.item())
                 totals["entropy"] += float(entropy.item())
+                log_ratio = new_log_probs - old_log_probs[indices]
+                totals["approx_kl"] += float(
+                    ((ratio - 1.0) - log_ratio).mean().item()
+                )
+                totals["clip_fraction"] += float(
+                    (torch.abs(ratio - 1.0) > self.config.clip_ratio)
+                    .float()
+                    .mean()
+                    .item()
+                )
                 updates += 1
 
         self.update_count += 1
@@ -236,18 +298,38 @@ class MAPPOSharedPolicy(SharedPolicy):
             key: value / max(updates, 1) for key, value in totals.items()
         }
         self.last_metrics["samples"] = float(sample_count)
+        self.last_metrics["reward_mean"] = float(rewards.mean().item())
+        self.last_metrics["reward_std"] = float(rewards.std(unbiased=False).item())
+        return_variance = torch.var(returns, unbiased=False)
+        if return_variance > 1e-8:
+            explained_variance = 1.0 - torch.var(
+                returns - old_values, unbiased=False
+            ) / return_variance
+            self.last_metrics["explained_variance"] = float(
+                explained_variance.item()
+            )
+        else:
+            self.last_metrics["explained_variance"] = 0.0
         self._buffer.clear()
         return self.last_metrics
 
     def save(self, path: str) -> None:
-        torch.save({
+        if self.training and len(self._buffer) >= self.config.min_update_size:
+            self.update()
+        payload = {
             "algorithm": "mappo",
             "config": asdict(self.config),
             "network": self.network.state_dict(),
             "optimizer": self.optimizer.state_dict(),
             "update_count": self.update_count,
             "transition_count": self.transition_count,
-        }, path)
+            "last_metrics": self.last_metrics,
+        }
+        target = Path(path)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        temporary = target.with_name(f".{target.name}.tmp")
+        torch.save(payload, temporary)
+        temporary.replace(target)
 
     def load(self, path: str) -> None:
         checkpoint = torch.load(path, map_location=self.device, weights_only=False)
@@ -258,3 +340,4 @@ class MAPPOSharedPolicy(SharedPolicy):
             self.optimizer.load_state_dict(checkpoint["optimizer"])
         self.update_count = int(checkpoint.get("update_count", 0))
         self.transition_count = int(checkpoint.get("transition_count", 0))
+        self.last_metrics = dict(checkpoint.get("last_metrics", {}))

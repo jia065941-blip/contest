@@ -1,0 +1,84 @@
+{
+  "completed_seeds": 700,
+  "failed_seeds": 0,
+  "score": {
+    "mean": 78.84839852607709,
+    "sample_std": 13.045157928803185,
+    "standard_error": 0.49306062418822383,
+    "confidence_interval_95": [
+      77.88199970266817,
+      79.81479734948601
+    ],
+    "min": 39.08730158730158,
+    "p01": 48.19295634920635,
+    "p05": 55.46478174603175,
+    "p25": 68.20188492063494,
+    "median": 82.71329365079366,
+    "p75": 90.47619047619048,
+    "p95": 95.23809523809523,
+    "p99": 95.23809523809523,
+    "max": 95.23809523809523,
+    "histogram": {
+      "[0,10)": 0,
+      "[10,20)": 0,
+      "[20,30)": 0,
+      "[30,40)": 1,
+      "[40,50)": 11,
+      "[50,60)": 62,
+      "[60,70)": 115,
+      "[70,80)": 127,
+      "[80,90)": 185,
+      "[90,100]": 199
+    }
+  },
+  "complete_mission_rate": 0.0,
+  "red": {
+    "mean_alive": 21.825714285714287,
+    "mean_lost": 142.1742857142857
+  },
+  "objectives": {
+    "51": {
+      "damaged_rate": 1.0,
+      "destroyed_rate": 1.0,
+      "mean_damage_fraction": 1.0
+    },
+    "52": {
+      "damaged_rate": 0.9971428571428571,
+      "destroyed_rate": 0.5671428571428572,
+      "mean_damage_fraction": 0.8671339285714286
+    },
+    "53": {
+      "damaged_rate": 0.9214285714285714,
+      "destroyed_rate": 0.2642857142857143,
+      "mean_damage_fraction": 0.612127380952381
+    },
+    "54": {
+      "damaged_rate": 0.9871428571428571,
+      "destroyed_rate": 0.7628571428571429,
+      "mean_damage_fraction": 0.8794285714285714
+    },
+    "106": {
+      "damaged_rate": 0.9542857142857143,
+      "destroyed_rate": 0.6142857142857143,
+      "mean_damage_fraction": 0.7893571428571429
+    },
+    "168": {
+      "damaged_rate": 0.8514285714285714,
+      "destroyed_rate": 0.7971428571428572,
+      "mean_damage_fraction": 0.8242857142857143
+    },
+    "169": {
+      "damaged_rate": 0.0,
+      "destroyed_rate": 0.0,
+      "mean_damage_fraction": 0.0
+    }
+  },
+  "failures": [],
+  "scenario": "easy/E01",
+  "blue_policy": "b0_fixed_ratio_random",
+  "red_policy": "r9_hierarchical_learning",
+  "red_motion_policy": "ppo",
+  "red_learning_model": "models/r9_ppo_e01.pt",
+  "seed_start": 1,
+  "seed_count": 700
+}

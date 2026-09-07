@@ -288,11 +288,11 @@ def main():
         summary_path = run_summary.write(write_config.output_dir, summary, summary_filename)
         print("FINAL_SUMMARY " + json.dumps(summary, ensure_ascii=False))
         logging.info(f"[测试] 单局汇总已写入: {summary_path}")
-
-    if learning_training and learning_policy is not None and learning_model:
-        Path(learning_model).parent.mkdir(parents=True, exist_ok=True)
-        learning_policy.save(learning_model)
-        logging.info(f"[测试] 红方学习模型已保存: {learning_model}")
+        if learning_training and learning_policy is not None and learning_model:
+            learning_policy.save(learning_model)
+            logging.info(
+                f"[测试] 第 {i + 1} 轮红方学习模型已保存: {learning_model}"
+            )
 
     training_env.close()
     # 关闭写入器
