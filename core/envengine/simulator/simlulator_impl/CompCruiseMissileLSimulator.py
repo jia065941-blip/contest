@@ -1,6 +1,8 @@
 # -*-coding:utf-8 -*-
 import json
 import logging
+import math
+import os
 import time
 from copy import deepcopy
 from typing import Callable
@@ -37,6 +39,34 @@ class CompCruiseMissileLSimulator(ISimulator):
         self.ret = -1
         self.launch = -1
         self.damage_point = 1
+        # Training/evaluation diagnostic only.  This is never copied into an
+        # entity observation or communication message.
+        self.direct_9500_first_detection_step: dict[int, int] = {}
+        self.direct_9500_first_distance_m: dict[int, float] = {}
+        self.direct_9500_min_distance_m: dict[int, float] = {}
+        self.direct_9500_min_alive_distance_m: dict[int, float] = {}
+        self.direct_9500_detection_sample_count = 0
+        self.direct_9500_last_detection_step = -1
+        # Diagnostic only: distinguish route completion/timeout from an
+        # external kill.  None of these fields enters an observation.
+        self.search_termination_reason: str | None = None
+        self.search_termination_step = -1
+        self.search_destroyed_by_entity_id: int | None = None
+        self.search_destroyed_by_entity_type: int | None = None
+        self.search_commanded_target: dict[str, float] | None = None
+        self.search_termination_distance_m: float | None = None
+        monitor_entity_id = os.getenv("RED_SEARCH_MONITOR_ENTITY_ID")
+        try:
+            self.direct_9500_monitor_enabled = (
+                monitor_entity_id is not None
+                and int(monitor_entity_id) == int(entity_ext.entity.id)
+            )
+        except ValueError:
+            self.direct_9500_monitor_enabled = False
+        self.direct_9500_monitor_samples: list[dict] = []
+        # Diagnostic-only sensor footprints for team coverage credit. These
+        # samples contain only the L position and never objective coordinates.
+        self.sensor_footprint_samples: list[dict] = []
 
     @property
     def simulator_sim_step(self) -> float:
@@ -71,6 +101,36 @@ class CompCruiseMissileLSimulator(ISimulator):
             entity.stage = state.stage()
         else:
             if self.entity_ext.entity.isVisible:
+                if self.ret < 0:
+                    self.search_termination_reason = "timeout"
+                else:
+                    target = self.search_commanded_target
+                    if target is None:
+                        self.search_termination_reason = "model_completion"
+                    else:
+                        entity = self.entity_ext.entity
+                        mean_latitude = math.radians(
+                            (float(entity.lla.y) + target["lat"]) / 2.0
+                        )
+                        east_m = (
+                            target["lon"] - float(entity.lla.x)
+                        ) * 111_320.0 * math.cos(mean_latitude)
+                        north_m = (
+                            target["lat"] - float(entity.lla.y)
+                        ) * 110_570.0
+                        self.search_termination_distance_m = math.hypot(
+                            east_m, north_m
+                        )
+                        self.search_termination_reason = (
+                            "waypoint_completion"
+                            if self.search_termination_distance_m <= 5_000.0
+                            else "model_completion_away_from_waypoint"
+                        )
+                self.search_termination_step = int(getattr(
+                    self._simulator_factory,
+                    "_event_step",
+                    self.sim_time // 1000,
+                ))
                 if self.ret < 0:
                     logger.warning(f"无人机 '{self.entity_ext.entity.nameChn}' 飞行时间超时自爆")
 
@@ -147,20 +207,111 @@ class CompCruiseMissileLSimulator(ISimulator):
 
     def execute_detection(self):
         """
-        执行探测，低性能弹可以探测30KM范围内的无人船
+        执行探测，低性能弹可以探测30KM范围内的无人船，
+        在使用卫星期间，可以获取全部拦截弹
         :return:
         """
+
+        """
+        9500:  无人船
+        24000: 拦截弹
+        """
+
         ships: list[ISimulator] = self._simulator_factory.get_simulators_by_type(9500)
 
-        detected: list[ISimulator] = []
+        logical_step = int(getattr(
+            self._simulator_factory,
+            "_event_step",
+            self.sim_time // 1000,
+        ))
+        self.direct_9500_detection_sample_count += 1
+        self.direct_9500_last_detection_step = logical_step
+        sensor_entity = self.entity_ext.entity
+        if bool(sensor_entity.isVisible and sensor_entity.survivePoints > 0):
+            self.sensor_footprint_samples.append({
+                "step": logical_step,
+                "lon": float(sensor_entity.lla.x),
+                "lat": float(sensor_entity.lla.y),
+                "alt": float(sensor_entity.lla.z),
+            })
+        detected: list[tuple[ISimulator, bool]] = []
+        monitor_targets: list[dict] = []
         for sim in ships:
-            if (sim.entity_ext.entity.isVisible
-                    and sim.entity_ext.entity.survivePoints > 0
-                    and (self.is_using_satellite() or self._is_geometrically_visible(sim.entity_ext.entity.posEcf, self.entity_ext.entity.posEcf, 100*1000))):
-                detected.append(sim)
+            dx = (
+                sim.entity_ext.entity.posEcf.x
+                - self.entity_ext.entity.posEcf.x
+            )
+            dy = (
+                sim.entity_ext.entity.posEcf.y
+                - self.entity_ext.entity.posEcf.y
+            )
+            dz = (
+                sim.entity_ext.entity.posEcf.z
+                - self.entity_ext.entity.posEcf.z
+            )
+            distance_m = math.sqrt(dx * dx + dy * dy + dz * dz)
+            target_id = int(sim.entity_ext.entity.id)
+            self.direct_9500_first_distance_m.setdefault(
+                target_id,
+                distance_m,
+            )
+            self.direct_9500_min_distance_m[target_id] = min(
+                distance_m,
+                self.direct_9500_min_distance_m.get(target_id, math.inf),
+            )
+            target_alive = bool(
+                sim.entity_ext.entity.isVisible
+                and sim.entity_ext.entity.survivePoints > 0
+            )
+            if target_alive:
+                self.direct_9500_min_alive_distance_m[target_id] = min(
+                    distance_m,
+                    self.direct_9500_min_alive_distance_m.get(
+                        target_id, math.inf
+                    ),
+                )
+            within_normal_range = self._is_geometrically_visible(
+                sim.entity_ext.entity.posEcf,
+                self.entity_ext.entity.posEcf,
+                30 * 1000,
+            )
+            if self.direct_9500_monitor_enabled:
+                monitor_targets.append({
+                    "id": target_id,
+                    "distance_m": distance_m,
+                    "alive": target_alive,
+                    "health": float(sim.entity_ext.entity.survivePoints),
+                    "within_30km": bool(within_normal_range),
+                })
+            if target_alive and within_normal_range:
+                detected.append((sim, False))
+
+        if self.direct_9500_monitor_enabled:
+            entity = self.entity_ext.entity
+            self.direct_9500_monitor_samples.append({
+                "step": logical_step,
+                "sim_time": int(self.sim_time),
+                "l_alive": bool(entity.isVisible and entity.survivePoints > 0),
+                "l_health": float(entity.survivePoints),
+                "l_lla": {
+                    "lon": float(entity.lla.x),
+                    "lat": float(entity.lla.y),
+                    "alt": float(entity.lla.z),
+                },
+                "targets": monitor_targets,
+                "direct_detection_ids": [
+                    int(target.entity_ext.entity.id)
+                    for target, _ in detected
+                ],
+            })
 
         if not detected:
             return
+        for target, _ in detected:
+            self.direct_9500_first_detection_step.setdefault(
+                int(target.entity_ext.entity.id),
+                logical_step,
+            )
         # print("巡航弹探测到的目标：", detected)
         # 组装探测信息
         detect_info: dict[int, DetectInfo] = {
@@ -172,8 +323,12 @@ class CompCruiseMissileLSimulator(ISimulator):
                 nameChn=target.entity_ext.entity.nameChn,
                 lla=target.entity_ext.entity.lla,
                 pos_ecf=target.entity_ext.entity.posEcf,
-                vel_ecf=target.entity_ext.entity.velEcf
-            ) for target in detected}
+                vel_ecf=target.entity_ext.entity.velEcf,
+                health_remaining=float(target.entity_ext.entity.survivePoints),
+                health_max=float(target.entity_ext.entity.maxSurvivePoints),
+                health_observed=target.entity_ext.entity.entityType in {9400, 9500, 9600},
+                via_satellite=via_satellite,
+            ) for target, via_satellite in detected}
         # 更新自身探测信息
         self.handel_detect_info(detect_info)
 
@@ -185,6 +340,20 @@ class CompCruiseMissileLSimulator(ISimulator):
 
         self.ret = -1
         self.launch = -1
+        self.direct_9500_first_detection_step.clear()
+        self.direct_9500_first_distance_m.clear()
+        self.direct_9500_min_distance_m.clear()
+        self.direct_9500_min_alive_distance_m.clear()
+        self.direct_9500_detection_sample_count = 0
+        self.direct_9500_last_detection_step = -1
+        self.direct_9500_monitor_samples.clear()
+        self.sensor_footprint_samples.clear()
+        self.search_termination_reason = None
+        self.search_termination_step = -1
+        self.search_destroyed_by_entity_id = None
+        self.search_destroyed_by_entity_type = None
+        self.search_commanded_target = None
+        self.search_termination_distance_m = None
 
     def init_model(self):
         self.model = Missile()
@@ -227,6 +396,10 @@ class CompCruiseMissileLSimulator(ISimulator):
                 command.commandAttributes["target"]["y"],
                 command.commandAttributes["target"]["z"]
             ))
+            self.search_commanded_target = {
+                "lon": float(command.commandAttributes["target"]["x"]),
+                "lat": float(command.commandAttributes["target"]["y"]),
+            }
 
             self.launch = self.sim_time
         elif command.commandTypeId == SimmerCommandType.SET_DESIRED_ACC_Z:
@@ -243,5 +416,32 @@ class CompCruiseMissileLSimulator(ISimulator):
                 command.commandAttributes["target"]["z"]
             ))
             self.model.SetTargetEcf(Vector3D(pos.x(), pos.y(), pos.z()), Vector3D(0, 0, 0))
+            self.search_commanded_target = {
+                "lon": float(command.commandAttributes["target"]["x"]),
+                "lat": float(command.commandAttributes["target"]["y"]),
+            }
         else:
+            health_before = float(self.entity_ext.entity.survivePoints)
             super().command_received(command)
+            if (
+                command.commandTypeId in {
+                    SimmerCommandType.DAMAGE,
+                    SimmerCommandType.DESTROY,
+                }
+                and health_before > 0.0
+                and float(self.entity_ext.entity.survivePoints) <= 0.0
+                and self.search_termination_reason is None
+            ):
+                source_id = int(command.prevTriggerId)
+                source = self._simulator_factory.get_simulator_by_id(source_id)
+                self.search_termination_reason = "external_damage"
+                self.search_termination_step = int(getattr(
+                    self._simulator_factory,
+                    "_event_step",
+                    self.sim_time // 1000,
+                ))
+                self.search_destroyed_by_entity_id = source_id
+                self.search_destroyed_by_entity_type = (
+                    int(source.entity_ext.entity.entityType)
+                    if source is not None else None
+                )

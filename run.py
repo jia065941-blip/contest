@@ -39,13 +39,40 @@ RED_POLICY_CHOICES = (
     "r7_static_search",
     "r8_satellite_packages",
     "r9_hierarchical_learning",
+    "r10_bc_erca",
+    "r11_paos",
+    "r12_unified_mappo",
 )
 RED_MOTION_POLICY_CHOICES = (
     "straight",
     "reactive_evasion",
     "random_masked",
+    "ppo_baseline",
+    "ppo_custom",
     "ppo",
     "mappo",
+    "unified_mappo",
+)
+RED_TOP_HYPERPARAMETERS = (
+    ("hidden-dim", "RED_TOP_HIDDEN_DIM", int),
+    ("learning-rate", "RED_TOP_LEARNING_RATE", float),
+    ("gamma", "RED_TOP_GAMMA", float),
+    ("batch-size", "RED_TOP_BATCH_SIZE", int),
+    ("replay-size", "RED_TOP_REPLAY_SIZE", int),
+    ("warmup-transitions", "RED_TOP_WARMUP_TRANSITIONS", int),
+    ("train-interval", "RED_TOP_TRAIN_INTERVAL", int),
+    ("target-tau", "RED_TOP_TARGET_TAU", float),
+    ("regularization", "RED_TOP_REGULARIZATION", float),
+    ("rho", "RED_TOP_RHO", float),
+    ("eta", "RED_TOP_ETA", float),
+    ("kappa", "RED_TOP_KAPPA", float),
+    ("gumbel-temperature", "RED_TOP_GUMBEL_TEMPERATURE", float),
+    ("gumbel-min-temperature", "RED_TOP_GUMBEL_MIN_TEMPERATURE", float),
+    ("exploration-decay-decisions", "RED_TOP_EXPLORATION_DECAY_DECISIONS", int),
+    ("terminal-prior-hm", "RED_TOP_TERMINAL_PRIOR_HM", float),
+    ("terminal-prior-l", "RED_TOP_TERMINAL_PRIOR_L", float),
+    ("distance-weight", "RED_TOP_DISTANCE_WEIGHT", float),
+    ("release-fraction", "RED_TOP_RELEASE_FRACTION", float),
 )
 
 
@@ -83,16 +110,66 @@ def with_competition_step_limit(scenario: Path, core_args: list[str]) -> list[st
     return ["--max-steps", str(policy.max_steps), *core_args]
 
 
+def resolve_run_seeds(
+    args: argparse.Namespace,
+) -> tuple[int | None, int | None, int | None]:
+    """Resolve independently controllable seeds with legacy ``--seed`` fallback."""
+
+    return (
+        args.blue_seed if args.blue_seed is not None else args.seed,
+        args.red_seed if args.red_seed is not None else args.seed,
+        args.simulation_seed if args.simulation_seed is not None else args.seed,
+    )
+
+
 def cmd_run(args: argparse.Namespace) -> int:
-    if args.red_policy == "r9_hierarchical_learning" and args.red_motion_policy not in {
-        "random_masked", "ppo", "mappo",
+    if args.red_policy in {"r9_hierarchical_learning", "r10_bc_erca", "r11_paos"} and args.red_motion_policy not in {
+        "random_masked", "ppo_baseline", "ppo_custom", "ppo", "mappo",
     }:
         print(
-            "r9_hierarchical_learning requires --red-motion-policy "
-            "random_masked, ppo, or mappo",
+            f"{args.red_policy} requires --red-motion-policy "
+            "random_masked, ppo_baseline, ppo_custom, ppo, or mappo",
             file=sys.stderr,
         )
         return 2
+    if args.red_policy == "r10_bc_erca":
+        if not args.red_learning_model:
+            print("r10_bc_erca requires --red-learning-model", file=sys.stderr)
+            return 2
+        if not args.red_top_model:
+            print("r10_bc_erca requires --red-top-model", file=sys.stderr)
+            return 2
+        if args.red_learning_train:
+            print("r10_bc_erca freezes the low-level PPO; omit --red-learning-train", file=sys.stderr)
+            return 2
+        if not args.red_top_train and not Path(args.red_top_model).is_file():
+            print(
+                "R10 evaluation requires an existing --red-top-model checkpoint", file=sys.stderr
+            )
+            return 2
+    if args.red_policy == "r12_unified_mappo":
+        if args.red_motion_policy != "unified_mappo":
+            print("r12_unified_mappo requires --red-motion-policy unified_mappo", file=sys.stderr)
+            return 2
+        if not args.red_learning_model:
+            print("r12_unified_mappo requires --red-learning-model", file=sys.stderr)
+            return 2
+    if args.red_policy == "r11_paos":
+        if args.red_motion_policy != "ppo_custom":
+            print("r11_paos requires --red-motion-policy ppo_custom", file=sys.stderr)
+            return 2
+        if not args.red_learning_model or not args.red_top_model:
+            print("r11_paos requires --red-learning-model and --red-top-model", file=sys.stderr)
+            return 2
+        if args.red_learning_train or args.red_top_train:
+            print("r11_paos freezes both runtime policies; omit training flags", file=sys.stderr)
+            return 2
+        if args.red_paos_mode is None or args.red_paos_request is None:
+            print("r11_paos requires --red-paos-mode and --red-paos-request", file=sys.stderr)
+            return 2
+        if not Path(args.red_paos_request).is_file() or not Path(args.red_top_model).is_file():
+            print("r11_paos request/checkpoint does not exist", file=sys.stderr)
+            return 2
     try:
         scenario = scenario_path(args.scenario)
     except ValueError as error:
@@ -109,6 +186,9 @@ def cmd_run(args: argparse.Namespace) -> int:
     env["BLUE_POLICY"] = args.blue_policy
     env["RED_POLICY"] = args.red_policy
     env["RED_MOTION_POLICY"] = args.red_motion_policy
+    if args.red_motion_policy == "unified_mappo":
+        env["RED_REWARD_MODE"] = "weighted_damage_trajectory_counterfactual"
+        env["RED_UNIFIED_DYNAMIC_LIFECYCLE"] = "1"
     if args.blue_interceptor_ratio is not None:
         env["BLUE_INTERCEPTOR_RATIO"] = str(args.blue_interceptor_ratio)
     if args.blue_plan_delay is not None:
@@ -128,12 +208,26 @@ def cmd_run(args: argparse.Namespace) -> int:
         )
     if args.red_learning_model is not None:
         env["RED_LEARNING_MODEL"] = str(Path(args.red_learning_model).resolve())
-    if args.red_learning_train:
-        env["RED_LEARNING_TRAIN"] = "1"
-    if args.seed is not None:
-        env["BLUE_POLICY_SEED"] = str(args.seed)
-        env["RED_POLICY_SEED"] = str(args.seed)
-        env["SIMULATION_SEED"] = str(args.seed)
+    env["RED_LEARNING_TRAIN"] = "1" if args.red_learning_train else "0"
+    if args.red_top_model is not None:
+        env["RED_TOP_MODEL"] = str(Path(args.red_top_model).resolve())
+    env["RED_TOP_TRAIN"] = "1" if args.red_top_train else "0"
+    env["RED_TOP_STAGE"] = args.red_top_stage
+    for option_name, environment_name, _ in RED_TOP_HYPERPARAMETERS:
+        value = getattr(args, "red_top_" + option_name.replace("-", "_"))
+        if value is not None:
+            env[environment_name] = str(value)
+    if args.red_paos_mode is not None:
+        env["RED_PAOS_MODE"] = args.red_paos_mode
+    if args.red_paos_request is not None:
+        env["RED_PAOS_REQUEST"] = str(Path(args.red_paos_request).resolve())
+    blue_seed, red_seed, simulation_seed = resolve_run_seeds(args)
+    if blue_seed is not None:
+        env["BLUE_POLICY_SEED"] = str(blue_seed)
+    if red_seed is not None:
+        env["RED_POLICY_SEED"] = str(red_seed)
+    if simulation_seed is not None:
+        env["SIMULATION_SEED"] = str(simulation_seed)
     return subprocess.call(command, cwd=CORE, env=env)
 
 
@@ -191,6 +285,33 @@ def build_parser() -> argparse.ArgumentParser:
         help="Red post-launch motion policy (default: reactive_evasion)",
     )
     run_parser.add_argument(
+        "--red-top-model",
+        help="BC-ERCA top checkpoint path; input/output while top training is enabled",
+    )
+    run_parser.add_argument(
+        "--red-top-train",
+        action="store_true",
+        help="Train only the BC-ERCA task layer; the low-level PPO remains frozen",
+    )
+    run_parser.add_argument(
+        "--red-top-stage",
+        choices=("v_warmup", "double_q"),
+        default="double_q",
+        help="BC-ERCA training stage",
+    )
+    for option_name, _, value_type in RED_TOP_HYPERPARAMETERS:
+        run_parser.add_argument(
+            f"--red-top-{option_name}", type=value_type, default=None
+        )
+    run_parser.add_argument(
+        "--red-paos-mode", choices=("probe", "rollout"),
+        help="R11 PAOS lifecycle: no-step probe or immutable rollout",
+    )
+    run_parser.add_argument(
+        "--red-paos-request",
+        help="Strict r11_paos_request_v1 JSON from the external pipeline",
+    )
+    run_parser.add_argument(
         "--red-learning-model",
         help="PPO/MAPPO checkpoint path; required when --red-motion-policy is ppo or mappo",
     )
@@ -201,6 +322,18 @@ def build_parser() -> argparse.ArgumentParser:
     )
     run_parser.add_argument("--scenario", default="default", help="default or easy/E01 … hard/H03")
     run_parser.add_argument("--seed", type=int)
+    run_parser.add_argument(
+        "--blue-seed", type=int,
+        help="Blue policy seed; overrides --seed only for the blue policy",
+    )
+    run_parser.add_argument(
+        "--red-seed", type=int,
+        help="Red policy seed; overrides --seed only for the red policy",
+    )
+    run_parser.add_argument(
+        "--simulation-seed", type=int,
+        help="Simulator seed; overrides --seed only for simulator randomness",
+    )
     run_parser.add_argument("--run-id", default="manual")
     run_parser.add_argument("core_args", nargs=argparse.REMAINDER, help="Arguments forwarded to core/main.py")
     run_parser.set_defaults(handler=cmd_run)

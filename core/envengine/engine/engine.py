@@ -1,4 +1,5 @@
 # -*-coding:utf-8 -*-
+from dataclasses import replace
 import heapq
 import logging
 import time
@@ -53,28 +54,48 @@ class Engine:
         """
         if ai_commands is None:
             ai_commands = []
+        self.simulator_factory.set_event_context(
+            step=self.current_step + 1,
+            sim_time=self.sim_time,
+        )
         # 处理AI输入的指令
+        self.simulator_factory.update_sim_time(self.sim_time)
         self.simulator_factory.process_ai_commands(ai_commands)
-        t0 = time.perf_counter()
+
         start_time = time.time()  # 当前步开始时间
 
         # ===== 基于事件驱动的交替更新 =====
         event_heap = []  # 空队列
-        for simulator in self.simulator_factory.get_all_lived_simulators():
+        # 实体 ID 是跨进程稳定的；排序序号确保堆永远不会比较 Python 对象。
+        lived_simulators = sorted(
+            self.simulator_factory.get_all_lived_simulators(),
+            key=lambda simulator: int(simulator.entity_ext.entity.id),
+        )
+        for stable_sequence, simulator in enumerate(lived_simulators):
             # 获取步长
             internal_step = simulator.simulator_sim_step or self.sim_step
 
             # 把每个仿真器的第一次更新事件放入队列
-            # (时间, 唯一ID, 仿真器对象, 步长)
-            # 用id()确保即使时间相同也能区分不同仿真器
-            heapq.heappush(event_heap, (self.sim_time, id(simulator.entity_ext.entity), simulator, internal_step))
+            # (时间, 稳定实体ID, 稳定序号, 仿真器对象, 步长)
+            heapq.heappush(
+                event_heap,
+                (
+                    self.sim_time,
+                    int(simulator.entity_ext.entity.id),
+                    stable_sequence,
+                    simulator,
+                    internal_step,
+                ),
+            )
 
         # 结束时间
         end_time = self.sim_time + self.sim_step
 
         while event_heap:  # 队列不为空就继续
             # 取出队列中时间最早的事件
-            event_time, _, simulator, step = heapq.heappop(event_heap)
+            event_time, entity_id, stable_sequence, simulator, step = heapq.heappop(
+                event_heap
+            )
 
             # 如果这个事件的时间已经超过了结束时间，停止
             if event_time >= end_time:
@@ -89,16 +110,23 @@ class Engine:
 
             # 如果下次更新时间还没到结束时间，放回队列
             if next_time < end_time:
-                heapq.heappush(event_heap, (next_time, id(simulator), simulator, step))
+                heapq.heappush(
+                    event_heap, (next_time, entity_id, stable_sequence, simulator, step)
+                )
 
         # 弹间探测共享
         self.share_detect_between_missiles()
 
         # 处理指令
+        self.simulator_factory.set_event_context(
+            step=self.current_step + 1,
+            sim_time=end_time,
+        )
         self.simulator_factory.process_commands()
 
         self.current_step += 1
         self.sim_time += self.sim_step
+
         # 控制倍速
         if self.speed_multiplier > 0:
             elapsed = time.time() - start_time  # 计算当前步已经用了多久
@@ -223,16 +251,43 @@ class Engine:
     def fuse_cluster_detection(self, groups: Any) -> dict[int, dict[int, DetectInfo]]:
         """融合每个弹群内的探测数据"""
         fuse_result: dict[int, dict[int, DetectInfo]] = {}
+
+        # 卫星只向发起请求的实体所在通信簇提供航迹。
+        sta_detect_info:dict[int, DetectInfo] = {}
+        sta_sims = self.simulator_factory.get_simulators_by_type(9202)
+        for sta in sta_sims:
+            if sta.entity_ext.entity.sideId == 0 and sta.entity_ext.entity.detectInfo:
+                sta_detect_info.update(sta.entity_ext.entity.detectInfo)
+
         for idx, group in enumerate(groups):
-            if idx not in fuse_result:
-                fuse_result[idx] = {}
+            fuse_result[idx] = {}
+            active_requesters = sorted(
+                int(entity_id)
+                for entity_id in group
+                if self.simulator_factory.is_using_satellite(int(entity_id))
+            )
+            satellite_requester = (
+                active_requesters[0] if active_requesters else None
+            )
             for i in group:
                 # 获取弹
-                f: ISimulator = self.simulator_factory.get_simulator_by_id(i)
-                # 获取弹的探测信息
-                detect_info: dict[int, DetectInfo] = f.entity_ext.entity.detectInfo
+                f: ISimulator | None = self.simulator_factory.get_simulator_by_id(i)
+                if not f:
+                    continue
+
+                # 复制本实体探测，避免把卫星航迹写回并泄漏到其他通信簇。
+                detect_info: dict[int, DetectInfo] = dict(
+                    f.entity_ext.entity.detectInfo
+                )
+                if satellite_requester is not None:
+                    detect_info.update({
+                        target_id: replace(
+                            track, detect_from=satellite_requester
+                        )
+                        for target_id, track in sta_detect_info.items()
+                    })
                 for key, new_value in detect_info.items():
-                    old_value = fuse_result.get(idx).get(key)
+                    old_value = fuse_result.get(idx, {}).get(key)
                     # 如果不存在 或 新数据时间更新，则更新
                     if old_value is None or new_value.time > old_value.time:
                         fuse_result[idx][key] = new_value

@@ -1,0 +1,29 @@
+{
+  "status": "complete",
+  "episodes": 32,
+  "course_numeric_gates_decision": "PASS",
+  "cutoff_formula": "teacher_mean - 0.5 + t(0.95,31) * paired_standard_error",
+  "interpretation": "conditional on this sample paired standard error; not a universal score cutoff",
+  "mean_score_cutoffs": {
+    "e01_score_noninferiority": {
+      "actual_student_mean": 82.00641396604938,
+      "teacher_mean": 80.43016975308642,
+      "paired_standard_error": 0.5286947352230981,
+      "required_student_mean_given_observed_standard_error": 80.82658160689029,
+      "score_margin": 1.179832359159093,
+      "pass": true
+    },
+    "fixed_target_score_noninferiority": {
+      "actual_student_mean": 69.39067322530865,
+      "teacher_mean": 67.93016975308642,
+      "paired_standard_error": 0.5264165839265513,
+      "required_student_mean_given_observed_standard_error": 68.32271895857751,
+      "score_margin": 1.0679542667311352,
+      "pass": true
+    }
+  },
+  "formal_promotion": false,
+  "formal_promotion_min_episodes": 128,
+  "source_summary_sha256": "4388726e3e49c04ad07b8b91ec5b309c56e34620460d7d4c1ce17e05defc69fb",
+  "report_code_sha256": "252a0ce66e778a29569c648fba9754123f918f916726f40dce35e3289bfa0e1b"
+}

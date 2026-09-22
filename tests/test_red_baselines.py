@@ -99,7 +99,7 @@ class RedBaselineTests(unittest.TestCase):
         self.assertEqual(first, fixed.decide(BaselineObservation(50, platforms, observation().targets)))
         self.assertEqual(sorted({item.launch_step for item in first}), [0, 40, 80])
 
-    def test_track_fusion_updates_public_targets_and_admits_detected_ships(self) -> None:
+    def test_track_fusion_updates_and_discovers_legal_objectives(self) -> None:
         fusion = InitialCatalogueTrackFusion(observation().targets)
         changed = fusion.ingest({
             "self": {
@@ -112,56 +112,38 @@ class RedBaselineTests(unittest.TestCase):
         positions = {item.entity_id: item.position for item in fusion.targets}
         self.assertTrue(changed)
         self.assertEqual(positions[103], Position(122.0, 25.0, 0.0))
-        self.assertNotIn(999, positions)
+        self.assertEqual(positions[999], Position(1.0, 1.0, 0.0))
 
-    def test_r9_assigns_hidden_ship_only_after_legal_detection(self) -> None:
+    def test_r9_assigns_a_legally_discovered_9500_to_an_l_platform(self) -> None:
         commander = RedBaselineCommander(
-            targets=(TargetPrior(101, 9400, Position(120.0, 22.0)),),
+            targets=(TargetPrior(101, 9400, Position(120.0, 20.0), value=10.0),),
             policy_name="r9_hierarchical_learning",
         )
-        for platform_id in (1, 2, 3):
-            commander.register_platform(platform_id)
-
-        def report(platform_id: int, step: int, detect_info: dict | None = None) -> dict:
-            return {
-                "step": step,
-                "entity_id": platform_id,
-                "self": {
-                    "type": 21002,
-                    "health": 1.0,
-                    "isVisible": True,
-                    "position": {
-                        "lon": 118.0 + platform_id / 10.0,
-                        "lat": 22.0,
-                        "alt": 100.0,
+        commander.register_platform(1)
+        report = {
+            "step": 0,
+            "entity_id": 1,
+            "self": {
+                "type": 21002,
+                "health": 1,
+                "isVisible": True,
+                "position": {"lon": 119.9, "lat": 20.0, "alt": 0.0},
+                "detectInfo": {
+                    168: {
+                        "entity_id": 168,
+                        "entity_type": 9500,
+                        "lla": {"x": 119.91, "y": 20.0, "z": 0.0},
                     },
-                    "detectInfo": detect_info or {},
                 },
-            }
-
-        commander.begin_step(tuple(report(platform_id, 0) for platform_id in (1, 2, 3)))
-        commander.action_for(1, 0)
-        self.assertEqual([target.entity_id for target in commander.targets], [101])
-        self.assertNotEqual(commander.target_id_for(2), 950)
-
-        ship_track = {
-            950: {
-                "entity_id": 950,
-                "entity_type": 9500,
-                "lla": {"x": 118.6, "y": 22.0, "z": 0.0},
-            }
+            },
         }
-        commander.begin_step((
-            report(1, 5, ship_track),
-            report(2, 5),
-            report(3, 5),
-        ))
-        commander.action_for(1, 5)
 
-        targets = {target.entity_id: target for target in commander.targets}
-        self.assertEqual(targets[950].entity_type, 9500)
-        self.assertEqual(targets[950].position, Position(118.6, 22.0, 0.0))
-        self.assertEqual(commander.target_id_for(2), 950)
+        commander.begin_step((report,))
+        action = commander.action_for(1, 0)
+
+        self.assertIsNotNone(action)
+        self.assertEqual(commander.target_id_for(1), 168)
+        self.assertEqual(commander.diagnostics()["first_assignment_step"], {"168": 0})
 
     def test_r5_merges_events_until_its_replan_cooldown_expires(self) -> None:
         commander = RedBaselineCommander(

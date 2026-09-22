@@ -147,23 +147,33 @@ class CompCruiseMissileHSimulator(ISimulator):
     def execute_detection(self):
         """
         执行探测，高性能弹可以探测100KM范围内的无人船和拦截弹
-        如果是卫星探测期间，不再判断距离
         :return:
         """
+
+        """
+        9500:  无人船
+        24000: 拦截弹
+        """
+
         interceptors: list[ISimulator] = self._simulator_factory.get_simulators_by_type(24000)
         ships: list[ISimulator] = self._simulator_factory.get_simulators_by_type(9500)
 
-        detected: list[ISimulator] = []
+        detected: list[tuple[ISimulator, bool]] = []
         for sim in interceptors:
+            within_normal_range = self._is_geometrically_visible(
+                sim.entity_ext.entity.posEcf,
+                self.entity_ext.entity.posEcf,
+                100 * 1000,
+            )
             if (sim.entity_ext.entity.isVisible
                     and sim.entity_ext.entity.survivePoints > 0
-                    and (self.is_using_satellite() or self._is_geometrically_visible(sim.entity_ext.entity.posEcf, self.entity_ext.entity.posEcf, 100 * 1000))):
-                detected.append(sim)
+                    and within_normal_range):
+                detected.append((sim, False))
         for sim in ships:
             if (sim.entity_ext.entity.isVisible
                     and sim.entity_ext.entity.survivePoints > 0
                     and self._is_geometrically_visible(sim.entity_ext.entity.posEcf, self.entity_ext.entity.posEcf, 100*1000)):
-                detected.append(sim)
+                detected.append((sim, False))
 
         if not detected:
             return
@@ -178,8 +188,12 @@ class CompCruiseMissileHSimulator(ISimulator):
                 nameChn=target.entity_ext.entity.nameChn,
                 lla=target.entity_ext.entity.lla,
                 pos_ecf=target.entity_ext.entity.posEcf,
-                vel_ecf=target.entity_ext.entity.velEcf
-            ) for target in detected}
+                vel_ecf=target.entity_ext.entity.velEcf,
+                health_remaining=float(target.entity_ext.entity.survivePoints),
+                health_max=float(target.entity_ext.entity.maxSurvivePoints),
+                health_observed=target.entity_ext.entity.entityType in {9400, 9500, 9600},
+                via_satellite=via_satellite,
+            ) for target, via_satellite in detected}
         # 更新自身探测信息
         self.handel_detect_info(detect_info)
 

@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "source_is_b13": true,
+  "fixed_anchor_is_b9": true,
+  "same_training_batch_sha256": "ce5fa6b0b5b70df897b77b79a26e7f110385b2eaad07c612fcd1a473a26f2e13",
+  "accepted_updates": 48,
+  "target_tensors_changed": 36,
+  "non_target_tensors_changed": 0,
+  "cumulative_updates_from_b9": 240,
+  "adam_step": 48,
+  "learning_rate": 2e-05,
+  "probability_snapshots": 49,
+  "states_per_snapshot": 64,
+  "max_probability_sum_error": 2.421438694000244e-07,
+  "fresh_forward_metric_max_difference": 0.0,
+  "metric_absolute_tolerance": 1e-06,
+  "checkpoint_sha256": "4609add14e70a5e25df87ddb3377756c2e45b0d3fa136d4de66406f26ca2be6e",
+  "independent_e01_evaluation_performed": false
+}

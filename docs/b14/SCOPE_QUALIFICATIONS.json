@@ -1,0 +1,9 @@
+{
+  "created_utc": "2026-09-21T14:11:01.504387+00:00",
+  "protocol_immutable": true,
+  "protocol_sha256": "f10da2e08b9dfa1dba7a65a7ad772be90b0af0947baa6b3e788444710c10e333",
+  "selection_scope": "Current remaining-seed selection is independent of b14 branch outcomes. Upstream manifest retained teacher_score > 0 and used teacher-score order to assign targets. This is a curated historical validation pool, not a wholly unseen random test set.",
+  "selection_code": "/home/ubuntu/yuanlei/cz/competition-platform-env/tools/build_native_guidance_manifest.py:206-222",
+  "state_assurance": "Common live fork inheritance with physical-state and public Python/NumPy/Torch RNG digests. Full object graph identity_audit not enabled; do not claim separate proof for every private/native RNG.",
+  "protocol_wording_qualification": "no score filtering in protocol describes this b14 remaining-seed rule only; does not describe upstream manifest construction."
+}

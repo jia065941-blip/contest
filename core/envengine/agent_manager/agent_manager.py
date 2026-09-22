@@ -80,6 +80,8 @@ class AgentManager:
             if self_info["health"] > 0 and self_info["isVisible"]:
                 return {
                     "step": full_observation.get("step", 0),
+                    "sim_time": full_observation.get("sim_time"),
+                    "sim_step": full_observation.get("sim_step"),
                     "entity_id": entity_id,
                     "agent_id": agent_id,
                     "self": entities[entity_id]  # 只包含自己的信息
@@ -89,7 +91,12 @@ class AgentManager:
             # logger.warning(f"[智能体工厂] 实体 {entity_id} 不在观测中")
             return {}
 
-    def collect_actions_from_agents(self, agent_observations: Dict[int, dict]) -> list[np.array]:
+    def collect_actions_from_agents(
+        self,
+        agent_observations: Dict[int, dict],
+        *,
+        fail_fast: bool = False,
+    ) -> list[np.array]:
         """
         向所有智能体传递观测信息，并收集智能体的动作
         :param agent_observations: {agent_id: observation}
@@ -103,6 +110,8 @@ class AgentManager:
                     agent.set_observation(observation)
                 except Exception as e:
                     logger.error(f"[智能体工厂] 智能体 {agent_id} 输入观测信息错误: {e}")
+                    if fail_fast:
+                        raise
             else:
                 logger.warning(f"[智能体工厂] 智能体 {agent_id} 不存在")
 
@@ -115,6 +124,8 @@ class AgentManager:
                     actions.append(action)
                 except Exception as e:
                     logger.error(f"[智能体工厂] 智能体 {agent_id} 获取动作失败: {e}")
+                    if fail_fast:
+                        raise
             else:
                 logger.warning(f"[智能体工厂] 智能体 {agent_id} 不存在")
 

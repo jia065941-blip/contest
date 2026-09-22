@@ -3,9 +3,8 @@
 competition-platform-env/
 │
 ├── docs/                         # 描述文档
-│   ├── action_node.json.py         # 动作节点JSON定义
-│   ├── observation_example.json    # 观测示例
-│   └── observation_node.json       # 观测节点JSON定义
+│   ├── create_scenario_usage.md    # 想定创建说明
+│   └── main_usage.md               # 主入口使用说明
 │
 ├── envengine/                    # 核心仿真引擎包
 │   │

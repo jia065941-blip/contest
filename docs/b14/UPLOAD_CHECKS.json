@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "unit_tests": {
+    "passed": 83,
+    "failed": 0,
+    "runner": "pytest 8.4.2",
+    "scope": [
+      "target regret",
+      "gradient diagnostics",
+      "state identity",
+      "Transformer model",
+      "target isolation",
+      "temporal options",
+      "C0a contracts"
+    ]
+  },
+  "checkpoint_sha256": "4609add14e70a5e25df87ddb3377756c2e45b0d3fa136d4de66406f26ca2be6e",
+  "checkpoint_load_and_finite_inference": "PASS",
+  "core_main_help": "PASS",
+  "runtime_smoke": {
+    "scenario": "E01",
+    "max_steps": 1,
+    "checkpoint": "models/b14_c0a_goal.pt",
+    "policy": "r12_unified_mappo",
+    "purpose": "startup/dependency validation only; not score evaluation",
+    "final_summary_present": true
+  },
+  "not_rerun": "32 full paired E01 episodes; published evaluation files are original b14 evidence"
+}

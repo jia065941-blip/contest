@@ -26,6 +26,7 @@ class EntityType(IntEnum):
 	Weapon = 20000 # 武器
 	CruiseMissile = 21000 # 巡航弹
 	CruiseMissile2 = 21001 # 巡航弹v2
+	CruiseMissileWRJ = 21002 # 无人机
 	Painter = 21003 # 喷枪
 	Laser = 21004 # 激光器
 	NetCather = 21005 # 网捕器

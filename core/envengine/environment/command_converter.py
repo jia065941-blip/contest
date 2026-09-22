@@ -1,5 +1,6 @@
 from envengine.agent_manager.actions.aircraft_action import SetDesiredAccZ, MissileLaunchAction, ChangeTargetAction
 from envengine.agent_manager.actions.aircraft_action.use_satellite import UseSatelliteAction
+from envengine.agent_manager.actions.deploy_action import SetLLA
 from envengine.common import Vector3d
 
 
@@ -56,6 +57,20 @@ class CommandConverter:
                     actions_converted.append(
                         UseSatelliteAction(
                             executor_id=int(action_item[1]),
+                        ).to_dict()
+                    )
+
+                # 首次 LAUNCH 同帧设置进入场景坐标。TrainingEnv 在送入
+                # Engine 前直接执行并过滤该 DEPLOY 命令。
+                if action_item[0] == 4:
+                    actions_converted.append(
+                        SetLLA(
+                            executor_id=int(action_item[1]),
+                            lla=Vector3d(
+                                float(action_item[2]),
+                                float(action_item[3]),
+                                float(action_item[4]),
+                            ),
                         ).to_dict()
                     )
 

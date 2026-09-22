@@ -16,6 +16,28 @@ import numpy as np
 
 
 DEFAULT_TARGET_SLOTS = 5
+UNIFIED_TARGET_SLOTS = 25
+UNIFIED_AGENT_IDENTITY_SLOTS = 210
+UNIFIED_LOCAL_OBSERVATION_DIM = (
+    21 + UNIFIED_AGENT_IDENTITY_SLOTS + UNIFIED_TARGET_SLOTS * 15 + 4
+)
+UNIFIED_TEAM_CONTEXT_DIM = 15
+UNIFIED_TEAM_OBSERVATION_DIM = (
+    UNIFIED_LOCAL_OBSERVATION_DIM + UNIFIED_TEAM_CONTEXT_DIM
+)
+OBJECTIVE_ENTITY_TYPES = frozenset({9400, 9500, 9600})
+INTERCEPTOR_ENTITY_TYPE = 24000
+INTERCEPTOR_TRACK_COUNT_NORM = 148.0
+INTERCEPTOR_DISTANCE_NORM_M = 1_000_000.0
+_VECTOR_EPSILON = 1e-9
+
+
+def _is_objective(entity: Mapping[str, Any]) -> bool:
+    name = str(entity.get("nameChn", ""))
+    return (
+        int(entity.get("type", -1)) in OBJECTIVE_ENTITY_TYPES
+        or name.startswith(("目标", "拦截阵地", "无人船"))
+    )
 
 
 class HighLevelAction(IntEnum):
@@ -103,7 +125,9 @@ class ObservationEncoder:
     """将可变结构的原始观测编码为固定长度 float32 向量。"""
 
     SELF_FEATURES = 21
+    IDENTITY_FEATURES = UNIFIED_AGENT_IDENTITY_SLOTS
     TARGET_FEATURES = 12
+    TARGET_RUNTIME_FEATURES = 3
     DETECTION_FEATURES = 4
     TASK_FEATURES = 5
 
@@ -116,27 +140,467 @@ class ObservationEncoder:
         agent_id: int = 0,
         team_size: int = 58,
         hierarchical_task_context: bool = False,
+        locally_observed_target_types: Sequence[int] = (),
+        include_target_runtime_state: bool = False,
+        include_agent_identity: bool = False,
     ):
-        self.target_slots = target_slots
+        self.target_slots = int(target_slots)
         self.max_steps = max(1, max_steps)
         self.coordinate_scale = max(float(coordinate_scale), 1e-6)
         self.agent_id = int(agent_id)
         self.team_size = max(1, int(team_size))
         self.hierarchical_task_context = bool(hierarchical_task_context)
+        self.include_target_runtime_state = bool(include_target_runtime_state)
+        self.include_agent_identity = bool(include_agent_identity)
+        self.locally_observed_target_types = frozenset(
+            int(value) for value in locally_observed_target_types
+        )
+        self._local_target_memory: dict[int, tuple[float, float, int]] = {}
+        self._target_runtime_states: dict[int, tuple[float, float, float]] = {}
+        self.last_entity_type = -1
+        self.last_interceptor_track_count = 0
+        self.last_interceptor_satellite_source: int | None = None
+        self.last_target_coordinates = np.zeros(
+            (self.target_slots, 2), dtype=np.float32
+        )
+        self.last_target_valid_mask = np.zeros(
+            self.target_slots, dtype=np.bool_
+        )
         entities = init_observation.get("entities", {})
         self.targets = sorted(
-            (dict(value, entity_id=int(key)) for key, value in entities.items()),
+            (
+                dict(value, entity_id=int(key))
+                for key, value in entities.items()
+                if _is_objective(value)
+            ),
             key=lambda item: item["entity_id"],
         )[:target_slots]
+
+    @property
+    def target_feature_dim(self) -> int:
+        return self.TARGET_FEATURES + (
+            self.TARGET_RUNTIME_FEATURES
+            if self.include_target_runtime_state else 0
+        )
 
     @property
     def observation_dim(self) -> int:
         base_dim = (
             self.SELF_FEATURES
-            + self.target_slots * self.TARGET_FEATURES
+            + (self.IDENTITY_FEATURES if self.include_agent_identity else 0)
+            + self.target_slots * self.target_feature_dim
             + self.DETECTION_FEATURES
         )
         return base_dim + (self.TASK_FEATURES if self.hierarchical_task_context else 0)
+
+    @staticmethod
+    def _field(value: Any, name: str, default: Any) -> Any:
+        if isinstance(value, Mapping):
+            return value.get(name, default)
+        return getattr(value, name, default)
+
+    @classmethod
+    def _vector3(cls, value: Any) -> np.ndarray | None:
+        if value is None:
+            return None
+        components = (
+            cls._field(value, "x", None),
+            cls._field(value, "y", None),
+            cls._field(value, "z", None),
+        )
+        if any(component is None for component in components):
+            return None
+        vector = np.asarray(components, dtype=np.float64)
+        return vector if bool(np.isfinite(vector).all()) else None
+
+    @staticmethod
+    def _local_components(
+        vector_ecf: np.ndarray,
+        *,
+        lon: float,
+        lat: float,
+    ) -> tuple[float, float, float]:
+        longitude = np.radians(float(lon))
+        latitude = np.radians(float(lat))
+        sin_lon, cos_lon = np.sin(longitude), np.cos(longitude)
+        sin_lat, cos_lat = np.sin(latitude), np.cos(latitude)
+        x, y, z = (float(value) for value in vector_ecf)
+        east = -sin_lon * x + cos_lon * y
+        north = (
+            -sin_lat * cos_lon * x
+            - sin_lat * sin_lon * y
+            + cos_lat * z
+        )
+        up = (
+            cos_lat * cos_lon * x
+            + cos_lat * sin_lon * y
+            + sin_lat * z
+        )
+        return float(east), float(north), float(up)
+
+    @classmethod
+    def _self_motion(
+        cls,
+        self_info: Mapping[str, Any],
+        *,
+        lon: float,
+        lat: float,
+    ) -> tuple[float, float, float]:
+        velocity = self_info.get("velocity") or {}
+        speed = float(velocity.get("speed", 0.0))
+        vertical_speed = float(velocity.get("up", 0.0))
+        heading = float(velocity.get("heading", 0.0))
+        velocity_ecf = cls._vector3(self_info.get("vel_ecf"))
+        if velocity_ecf is None:
+            return speed, vertical_speed, heading
+        east, north, up = cls._local_components(
+            velocity_ecf,
+            lon=lon,
+            lat=lat,
+        )
+        speed = float(np.linalg.norm(velocity_ecf))
+        vertical_speed = up
+        if float(np.hypot(east, north)) > _VECTOR_EPSILON:
+            heading = float(np.arctan2(east, north))
+        return speed, vertical_speed, heading
+
+    @classmethod
+    def _track_age_steps(
+        cls,
+        detection: Any,
+        *,
+        step: int,
+        sim_time: Any,
+        sim_step: Any,
+    ) -> int:
+        detection_time = float(cls._field(detection, "time", 0.0))
+        elapsed = max(0.0, float(sim_time) - detection_time)
+        return max(0, int(np.ceil(elapsed / float(sim_step))) - 1)
+
+    def set_targets(self, targets: Sequence[Mapping[str, Any]]) -> None:
+        """Install a stable target catalogue without silently dropping slots."""
+
+        normalized = [dict(target) for target in targets]
+        if len(normalized) > self.target_slots:
+            raise ValueError(
+                f"目标数量 {len(normalized)} 超过固定容量 {self.target_slots}"
+            )
+        self.targets = normalized
+        valid_ids = {int(target["entity_id"]) for target in normalized}
+        self._local_target_memory = {
+            target_id: state
+            for target_id, state in self._local_target_memory.items()
+            if target_id in valid_ids
+        }
+        self._target_runtime_states = {
+            target_id: state
+            for target_id, state in self._target_runtime_states.items()
+            if target_id in valid_ids
+        }
+
+    def set_target_runtime_states(
+        self,
+        states: Mapping[int, Sequence[float]],
+    ) -> None:
+        """Install current state only for targets in the legal actor catalogue.
+
+        The caller may hold centralized simulator state, but this method drops
+        every entity that has not already passed the actor's discovery gate.
+        """
+
+        legal_ids = {
+            int(target["entity_id"])
+            for target in self.targets
+            if bool(target.get("actor_visible", True))
+            and not bool(target.get("slot_empty", False))
+        }
+        normalized: dict[int, tuple[float, float, float]] = {}
+        for raw_target_id, raw_state in states.items():
+            target_id = int(raw_target_id)
+            if target_id not in legal_ids:
+                continue
+            values = tuple(float(value) for value in raw_state)
+            if len(values) != 3:
+                raise ValueError(
+                    f"目标 {target_id} 的运行状态必须为 3 维，实际为 {len(values)}"
+                )
+            normalized[target_id] = (
+                float(np.clip(values[0], 0.0, 1.0)),
+                float(np.clip(values[1], 0.0, 1.0)),
+                float(bool(values[2])),
+            )
+        self._target_runtime_states = normalized
+
+    def reset_episode(self) -> None:
+        """Forget private tracks so discoveries never leak between episodes."""
+
+        self._local_target_memory.clear()
+        self._target_runtime_states.clear()
+        self.last_entity_type = -1
+        self.last_interceptor_track_count = 0
+        self.last_interceptor_satellite_source = None
+        self.last_target_coordinates.fill(0.0)
+        self.last_target_valid_mask.fill(False)
+
+    def _detection_position(
+        self,
+        detection: Any,
+        *,
+        step: int,
+        sim_time: Any = None,
+        sim_step: Any = None,
+    ) -> tuple[float, float, int] | None:
+        lla = self._field(detection, "lla", None)
+        if lla is not None:
+            raw_lon = self._field(lla, "x", None)
+            raw_lat = self._field(lla, "y", None)
+        else:
+            position = self._field(detection, "position", None)
+            raw_lon = (
+                self._field(position, "lon", None)
+                if position is not None else None
+            )
+            raw_lat = (
+                self._field(position, "lat", None)
+                if position is not None else None
+            )
+        if raw_lon is None or raw_lat is None:
+            return None
+        age_steps = self._track_age_steps(
+            detection,
+            step=step,
+            sim_time=sim_time,
+            sim_step=sim_step,
+        )
+        detection_step = max(0, int(step) - age_steps)
+        return float(raw_lon), float(raw_lat), detection_step
+
+    def _interceptor_threat_summary(
+        self,
+        observation: Mapping[str, Any],
+        *,
+        lon: float,
+        lat: float,
+        heading: float,
+    ) -> tuple[float, float, float, float]:
+        self_info = observation.get("self") or {}
+        self.last_interceptor_satellite_source = None
+        detect_info = self_info.get("detectInfo") or {}
+        interceptor_tracks = [
+            track
+            for track in detect_info.values()
+            if int(self._field(track, "entity_type", -1))
+            == INTERCEPTOR_ENTITY_TYPE
+        ]
+        self.last_interceptor_track_count = len(interceptor_tracks)
+        if not interceptor_tracks:
+            return 0.0, 0.0, 0.0, 0.0
+
+        own_position = self._vector3(self_info.get("pos_ecf"))
+        own_velocity = self._vector3(self_info.get("vel_ecf"))
+        candidates: list[
+            tuple[float | None, float | None, float | None, int | None]
+        ] = []
+        for track in interceptor_tracks:
+            track_position = self._vector3(
+                self._field(track, "pos_ecf", None)
+            )
+            track_velocity = self._vector3(
+                self._field(track, "vel_ecf", None)
+            )
+            relative_position = (
+                track_position - own_position
+                if track_position is not None and own_position is not None
+                else None
+            )
+            distance_m: float | None = None
+            bearing: float | None = None
+            closest_approach_time: float | None = None
+            if relative_position is not None:
+                distance_m = float(np.linalg.norm(relative_position))
+                east, north, _ = self._local_components(
+                    relative_position,
+                    lon=lon,
+                    lat=lat,
+                )
+                if float(np.hypot(east, north)) > _VECTOR_EPSILON:
+                    bearing = float(np.arctan2(east, north))
+                if own_velocity is not None and track_velocity is not None:
+                    relative_velocity = track_velocity - own_velocity
+                    speed_squared = float(
+                        np.dot(relative_velocity, relative_velocity)
+                    )
+                    closing_dot = float(
+                        np.dot(relative_position, relative_velocity)
+                    )
+                    if speed_squared > _VECTOR_EPSILON and closing_dot < 0.0:
+                        estimate = -closing_dot / speed_squared
+                        if np.isfinite(estimate) and estimate >= 0.0:
+                            closest_approach_time = float(estimate)
+            else:
+                track_lla = self._field(track, "lla", None)
+                track_lon = self._field(track_lla, "x", None)
+                track_lat = self._field(track_lla, "y", None)
+                if track_lon is not None and track_lat is not None:
+                    delta_lon = float(track_lon) - lon
+                    delta_lat = float(track_lat) - lat
+                    mean_latitude = np.radians((float(track_lat) + lat) / 2.0)
+                    east_km = delta_lon * 111.32 * np.cos(mean_latitude)
+                    north_km = delta_lat * 110.57
+                    distance_m = float(np.hypot(east_km, north_km) * 1000.0)
+                    if float(np.hypot(east_km, north_km)) > _VECTOR_EPSILON:
+                        bearing = float(np.arctan2(east_km, north_km))
+            satellite_source = (
+                int(self._field(track, "detect_from", -1))
+                if bool(self._field(track, "via_satellite", False))
+                else None
+            )
+            candidates.append((
+                closest_approach_time, distance_m, bearing, satellite_source
+            ))
+
+        approaching = [item for item in candidates if item[0] is not None]
+        if approaching:
+            selected = min(
+                approaching,
+                key=lambda item: (
+                    float(item[0]),
+                    float(item[1]) if item[1] is not None else float("inf"),
+                ),
+            )
+        else:
+            positioned = [item for item in candidates if item[1] is not None]
+            selected = (
+                min(positioned, key=lambda item: float(item[1]))
+                if positioned else None
+            )
+
+        count_feature = float(
+            np.clip(
+                len(interceptor_tracks) / INTERCEPTOR_TRACK_COUNT_NORM,
+                0.0,
+                1.0,
+            )
+        )
+        if selected is None:
+            return count_feature, 0.0, 0.0, 0.0
+        _, distance_m, bearing, satellite_source = selected
+        self.last_interceptor_satellite_source = satellite_source
+        distance_feature = float(
+            np.clip(
+                float(distance_m or 0.0) / INTERCEPTOR_DISTANCE_NORM_M,
+                0.0,
+                1.0,
+            )
+        )
+        if bearing is None:
+            return count_feature, distance_feature, 0.0, 0.0
+        relative_bearing = float(bearing) - float(heading)
+        return (
+            count_feature,
+            distance_feature,
+            float(np.sin(relative_bearing)),
+            float(np.cos(relative_bearing)),
+        )
+
+    def _target_states(
+        self,
+        observation: Mapping[str, Any],
+        current_target_index: int | None,
+    ) -> list[tuple[dict[str, float] | None, bool, int]]:
+        self_info = observation.get("self") or {}
+        step = int(observation.get("step", 0))
+        sim_step = max(1.0, float(observation.get("sim_step", 1.0)))
+        sim_time = float(observation.get("sim_time", step * sim_step))
+        observer_id = int(observation.get("entity_id", -1))
+        detect_info = self_info.get("detectInfo") or {}
+        detections = {
+            int(self._field(info, "entity_id", key)): info
+            for key, info in detect_info.items()
+        }
+        states: list[tuple[dict[str, float] | None, bool, int]] = []
+        coordinates = np.zeros((self.target_slots, 2), dtype=np.float32)
+        valid = np.zeros(self.target_slots, dtype=np.bool_)
+        for index, target in enumerate(self.targets):
+            if (
+                bool(target.get("slot_empty", False))
+                or not bool(target.get("actor_visible", True))
+            ):
+                states.append((None, False, self.max_steps))
+                continue
+            target_id = int(target["entity_id"])
+            target_type = int(target.get("type", -1))
+            detection = detections.get(target_id)
+            detected_position = (
+                self._detection_position(
+                    detection,
+                    step=step,
+                    sim_time=sim_time,
+                    sim_step=sim_step,
+                )
+                if detection is not None else None
+            )
+            if detected_position is not None:
+                self._local_target_memory[target_id] = detected_position
+
+            private = target_type in self.locally_observed_target_types
+            retained = (
+                private
+                and current_target_index == index
+                and target_id in self._local_target_memory
+            )
+            if private and detected_position is None and not retained:
+                # The team catalogue may own this slot, but an actor that did
+                # not receive the track sees the same zeros as an empty slot.
+                states.append((None, False, self.max_steps))
+                continue
+
+            memory = detected_position or self._local_target_memory.get(target_id)
+            if private:
+                assert memory is not None
+                target_position = {"lon": memory[0], "lat": memory[1]}
+                detection_age = max(0, step - memory[2])
+            elif detected_position is not None:
+                target_position = {
+                    "lon": detected_position[0],
+                    "lat": detected_position[1],
+                }
+                detection_age = max(0, step - detected_position[2])
+            else:
+                target_position = dict(target.get("position") or {})
+                detection_age = self.max_steps
+            if "lon" not in target_position or "lat" not in target_position:
+                states.append((None, False, self.max_steps))
+                continue
+            coordinates[index] = (
+                float(target_position["lon"]),
+                float(target_position["lat"]),
+            )
+            valid[index] = True
+            direct_detection = bool(
+                detection is not None
+                and detected_position is not None
+                and int(self._field(detection, "detect_from", -1))
+                == observer_id
+                and detection_age == 0
+            )
+            states.append((target_position, direct_detection, detection_age))
+
+        self.last_entity_type = int(self_info.get("type", -1))
+        self.last_target_coordinates = coordinates
+        self.last_target_valid_mask = valid
+        return states
+
+    def target_view(
+        self,
+        observation: Mapping[str, Any],
+        current_target_index: int | None = None,
+    ) -> tuple[np.ndarray, np.ndarray]:
+        self._target_states(observation, current_target_index)
+        return (
+            self.last_target_coordinates.copy(),
+            self.last_target_valid_mask.copy(),
+        )
 
     def encode(
         self,
@@ -157,10 +621,14 @@ class ObservationEncoder:
         step = int(observation.get("step", 0))
         entity_type = int(self_info.get("type", 0))
         elapsed = 0 if not launched else max(0, step - launch_step)
-        velocity = self_info.get("velocity") or {}
-        speed = float(velocity.get("speed", 0.0))
-        vertical_speed = float(velocity.get("up", 0.0))
-        heading = float(velocity.get("heading", 0.0))
+        speed, vertical_speed, heading = self._self_motion(
+            self_info,
+            lon=lon,
+            lat=lat,
+        )
+        satellite_active = bool(
+            self_info.get("is_using_satellite", satellite_used)
+        )
         agent_slot = np.clip(
             max(0, self.agent_id - 1) / max(self.team_size - 1, 1), 0.0, 1.0
         )
@@ -177,7 +645,7 @@ class ObservationEncoder:
             float(entity_type == 21002),
             float(launched),
             np.clip(elapsed / self.max_steps, 0.0, 1.0),
-            float(satellite_used),
+            float(satellite_active),
             np.clip(float(maneuver_state) / 2.0, -1.0, 1.0),
             np.clip(float(target_switch_elapsed) / 50.0, 0.0, 1.0),
             np.clip(speed / 1500.0, 0.0, 2.0),
@@ -189,30 +657,23 @@ class ObservationEncoder:
             float(role_index == 1),
             float(role_index == 2),
         ]
+        if self.include_agent_identity:
+            identity = [0.0] * self.IDENTITY_FEATURES
+            identity[self.agent_id - 1] = 1.0
+            features.extend(identity)
 
         detect_info = self_info.get("detectInfo") or {}
-        detections = {
-            int(getattr(info, "entity_id", key)): info
-            for key, info in detect_info.items()
-        }
+        target_states = self._target_states(observation, current_target_index)
 
         for index in range(self.target_slots):
             if index >= len(self.targets):
-                features.extend([0.0] * self.TARGET_FEATURES)
+                features.extend([0.0] * self.target_feature_dim)
                 continue
             target = self.targets[index]
-            target_id = int(target["entity_id"])
-            detection = detections.get(target_id)
-            if detection is not None:
-                lla = getattr(detection, "lla", None)
-                target_position = {
-                    "lon": getattr(lla, "x", target["position"]["lon"]),
-                    "lat": getattr(lla, "y", target["position"]["lat"]),
-                }
-                detection_age = max(0, step - int(getattr(detection, "time", step)))
-            else:
-                target_position = target["position"]
-                detection_age = self.max_steps
+            target_position, detected, detection_age = target_states[index]
+            if target_position is None:
+                features.extend([0.0] * self.target_feature_dim)
+                continue
             name = str(target.get("nameChn", ""))
             delta_lon = float(target_position["lon"]) - lon
             delta_lat = float(target_position["lat"]) - lat
@@ -222,13 +683,17 @@ class ObservationEncoder:
             distance_km = float(np.hypot(east_km, north_km))
             bearing = float(np.arctan2(east_km, north_km))
             relative_bearing = bearing - heading
+            health_ratio, damage_ratio, alive = self._target_runtime_states.get(
+                int(target["entity_id"]),
+                (0.0, 0.0, 0.0),
+            )
             features.extend([
                 np.clip(delta_lon / 10.0, -1.0, 1.0),
                 np.clip(delta_lat / 10.0, -1.0, 1.0),
                 np.clip(distance_km / 1000.0, 0.0, 1.0),
                 np.sin(bearing),
                 np.cos(bearing),
-                float(detection is not None),
+                float(detected),
                 np.clip(detection_age / self.max_steps, 0.0, 1.0),
                 float(name.startswith("目标")),
                 float(name.startswith("拦截阵地")),
@@ -236,15 +701,17 @@ class ObservationEncoder:
                 np.sin(relative_bearing),
                 np.cos(relative_bearing),
             ])
+            if self.include_target_runtime_state:
+                features.extend((health_ratio, damage_ratio, alive))
 
-        detected_names = [str(getattr(info, "nameChn", "")) for info in detect_info.values()]
-        comm_count = len(self_info.get("commRangeInfo") or [])
-        features.extend([
-            np.clip(len(detect_info) / 200.0, 0.0, 1.0),
-            np.clip(sum(name.startswith("标6") for name in detected_names) / 200.0, 0.0, 1.0),
-            np.clip(sum(name.startswith("无人船") for name in detected_names) / 10.0, 0.0, 1.0),
-            np.clip(comm_count / 64.0, 0.0, 1.0),
-        ])
+        features.extend(
+            self._interceptor_threat_summary(
+                observation,
+                lon=lon,
+                lat=lat,
+                heading=heading,
+            )
+        )
         if self.hierarchical_task_context:
             context = tuple(task_context or ())[:self.TASK_FEATURES]
             features.extend(context)
@@ -277,6 +744,17 @@ class GlobalStateEncoder:
     def _mean(items, getter):
         values = [float(getter(item)) for item in items]
         return float(np.mean(values)) if values else 0.0
+
+    @staticmethod
+    def _speed(entity: Mapping[str, Any]) -> float:
+        velocity = entity.get("velocity") or {}
+        if "speed" in velocity:
+            return float(velocity["speed"])
+        velocity_ecf = ObservationEncoder._vector3(entity.get("vel_ecf"))
+        return (
+            float(np.linalg.norm(velocity_ecf))
+            if velocity_ecf is not None else 0.0
+        )
 
     @staticmethod
     def _distance_km(first_position, second_position):
@@ -337,7 +815,7 @@ class GlobalStateEncoder:
             )
             for item in alive_red
         ] if key_targets else []
-        speeds = [float((item.get("velocity") or {}).get("speed", 0.0)) for item in alive_red]
+        speeds = [self._speed(item) for item in alive_red]
         longitudes = [float(item.get("position", {}).get("lon", 0.0)) for item in alive_red]
         latitudes = [float(item.get("position", {}).get("lat", 0.0)) for item in alive_red]
         altitudes = [float(item.get("position", {}).get("alt", 0.0)) for item in alive_red]
@@ -354,9 +832,13 @@ class GlobalStateEncoder:
         ])
 
         targets = sorted(
-            [item for item in entities if str(item.get("nameChn", "")).startswith(("目标", "拦截阵地"))],
+            [item for item in entities if _is_objective(item)],
             key=lambda item: item["entity_id"],
-        )[:self.target_slots]
+        )
+        if len(targets) > self.target_slots:
+            raise ValueError(
+                f"全局目标数量 {len(targets)} 超过 critic 容量 {self.target_slots}"
+            )
         for index in range(self.target_slots):
             if index >= len(targets):
                 features.extend([0.0] * 6)
@@ -382,7 +864,10 @@ class LearningActionAdapter:
     ACTION_LAUNCH = 1
 
     def __init__(self, targets: Sequence[Mapping[str, Any]], target_slots: int = DEFAULT_TARGET_SLOTS):
-        self.targets = list(targets)[:target_slots]
+        self.targets = sorted(
+            (dict(target) for target in targets if _is_objective(target)),
+            key=lambda item: int(item.get("entity_id", -1)),
+        )[:target_slots]
         self.target_slots = target_slots
 
     def build_action_mask(

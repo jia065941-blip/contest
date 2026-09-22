@@ -9,3 +9,4 @@ scipy>=1.11
 websockets==16.0
 numpy==2.4.6
 msgpack==1.2.1
+networkx>=3.2

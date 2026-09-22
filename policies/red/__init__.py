@@ -1,7 +1,8 @@
 """Partial-observation red planning contracts and future components."""
 
 from .baselines import RED_POLICY_CHOICES
-from .commander import RedBaselineCommander
+from .commander import RedBaselineCommander, build_red_commander
+from .paos_commander import PAOSCommander
 from .contracts import (
     PlanningAction,
     PlanningObservation,
@@ -24,7 +25,9 @@ __all__ = [
     "PlatformState",
     "Position",
     "RED_POLICY_CHOICES",
+    "PAOSCommander",
     "RedBaselineCommander",
+    "build_red_commander",
     "Retarget",
     "SearchArea",
     "SearchLaunch",

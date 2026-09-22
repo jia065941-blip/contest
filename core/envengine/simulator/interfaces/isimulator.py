@@ -27,16 +27,7 @@ class ISimulator(ABC):
 
     Attributes:
         _entity_ext : 保存实体
-        _satellite_use_end_time : 卫星使用结束时间（时间戳，毫秒）
-
-        RED_SAT_MAX_USE_COUNT : 卫星最大使用次数
-        SAT_USE_MINUTES: 卫星使用时间（分钟）
     """
-
-    RED_SAT_MAX_USE_COUNT = 0
-    SAT_USE_MINUTES = 0
-
-    RED_SAT_USE_COUNT = 0
 
     def __init__(self,
                  entity_ext: EntityExt,
@@ -52,12 +43,7 @@ class ISimulator(ABC):
         self._simulator_factory = simulator_factory
         self._send_commands = send_commands
         self._send_events = send_events
-        self._satellite_use_end_time = 0
         self.model = None
-
-        if self._simulator_factory and self._simulator_factory.profile and self._simulator_factory.profile.imagineProfile:
-            self.RED_SAT_MAX_USE_COUNT = max(0, self._simulator_factory.profile.imagineProfile.satelliteMaxUseCount)
-            self.SAT_USE_MINUTES = max(0, self._simulator_factory.profile.imagineProfile.satelliteUseMinutes)
 
     @property
     def sim_time(self) -> float:
@@ -109,8 +95,6 @@ class ISimulator(ABC):
         """重置仿真器"""
         self._entity_ext = deepcopy(self._initial_entity_ext)
         self._delivered_to = set()  # 已将探测信息送达的飞行器ID
-        self._satellite_use_end_time = 0
-        self.RED_SAT_USE_COUNT = 0
 
     @abstractmethod
     def init_model(self) -> None:
@@ -526,25 +510,8 @@ class ISimulator(ABC):
         elif command.commandTypeId == SimmerCommandType.DETECT_STATUS_UPDATE:
             detect_info = command.commandAttributes
             self.handel_detect_info(detect_info)
-        elif command.commandTypeId == SimmerCommandType.EXECUTE_SATELLITE_DETECTION:
-            if self.RED_SAT_USE_COUNT >= self.RED_SAT_MAX_USE_COUNT:
-                print(f"entity_id:{self.entity_ext.entity.id}, name:{self.entity_ext.entity.nameChn} 使用卫星次数已经超出最大使用次数")
-                return
-
-            logger.info(f"entity_id:{self.entity_ext.entity.id}, name:{self.entity_ext.entity.nameChn} 使用卫星")
-            self.RED_SAT_USE_COUNT += 1
-
-            # 每次指令可以使用卫星 Y 分钟
-            self._satellite_use_end_time = self.sim_time + self.SAT_USE_MINUTES * 60 * 1000 # Y分钟 * 60秒 * 1000毫秒
         else:
             logger.warning(f"未知指令：{command}, 系统将忽略该指令！")
-
-    def is_using_satellite(self) -> bool:
-        """
-        是否正在使用卫星
-        :return:
-        """
-        return self.sim_time < self._satellite_use_end_time
 
     def __str__(self) -> str:
         if self.entity_ext and self.entity_ext.entity:

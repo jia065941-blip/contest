@@ -143,27 +143,24 @@ class CompCruiseMissileMSimulator(ISimulator):
             # 指令转发
             self._send_commands(command_list)
 
-    def execute_detection(self, detect_point: Vector3d = None):
+    def execute_detection(self):
         """
-        执行探测
-        :param detect_point: 探测点
+        执行探测，中性能弹无自身探测能力
         :return:
         """
 
-        if not self.is_using_satellite():
-            return
+        """
+        9500:  无人船
+        24000: 拦截弹
+        """
 
-        ships: list[ISimulator] = self._simulator_factory.get_simulators_by_type(9500)
+        return
 
         detected: list[ISimulator] = []
-        for sim in ships:
-            if (sim.entity_ext.entity.isVisible
-                    and sim.entity_ext.entity.survivePoints > 0):
-                detected.append(sim)
 
         if not detected:
             return
-        # print("探测到的目标：", detected)
+
         # 组装探测信息
         detect_info: dict[int, DetectInfo] = {
             target.entity_ext.entity.id: DetectInfo(
@@ -174,7 +171,8 @@ class CompCruiseMissileMSimulator(ISimulator):
                 nameChn=target.entity_ext.entity.nameChn,
                 lla=target.entity_ext.entity.lla,
                 pos_ecf=target.entity_ext.entity.posEcf,
-                vel_ecf=target.entity_ext.entity.velEcf
+                vel_ecf=target.entity_ext.entity.velEcf,
+                via_satellite=True,
             ) for target in detected}
         # 更新自身探测信息
         self.handel_detect_info(detect_info)

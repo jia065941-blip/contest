@@ -11,7 +11,14 @@ from pathlib import Path
 from .red_policy import RandomMaskedPolicy, SharedPolicy
 
 
-LEARNING_MOTION_CHOICES = ("random_masked", "ppo", "mappo")
+LEARNING_MOTION_CHOICES = (
+    "random_masked",
+    "ppo_baseline",
+    "ppo_custom",
+    "ppo",
+    "mappo",
+    "unified_mappo",
+)
 
 
 def build_learning_motion_policy(
@@ -43,15 +50,24 @@ def build_learning_motion_policy(
         raise FileNotFoundError(f"Learning checkpoint does not exist: {model_path}")
 
     try:
-        if policy_name == "ppo":
-            from .ppo_policy import PPOConfig, PPOSharedPolicy
+        if policy_name == "ppo_baseline":
+            from .ppo_baseline_policy import (
+                PPOBaselineConfig,
+                PPOBaselineSharedPolicy,
+            )
 
-            policy = PPOSharedPolicy(PPOConfig(
+            policy = PPOBaselineSharedPolicy(PPOBaselineConfig(
                 seed=0 if seed is None else seed,
                 observation_dim=observation_dim,
-                max_steps=max_steps,
             ))
-        else:
+        elif policy_name in {"ppo", "ppo_custom"}:
+            from .ppo_policy import PPOCustomConfig, PPOCustomSharedPolicy
+
+            policy = PPOCustomSharedPolicy(PPOCustomConfig(
+                seed=0 if seed is None else seed,
+                observation_dim=observation_dim,
+            ))
+        elif policy_name == "mappo":
             from .mappo_policy import MAPPOConfig, MAPPOSharedPolicy
 
             policy = MAPPOSharedPolicy(
@@ -61,6 +77,16 @@ def build_learning_motion_policy(
                     observation_dim=observation_dim,
                 )
             )
+        else:
+            from .unified_mappo_policy import UnifiedMAPPOSharedPolicy
+
+            policy = UnifiedMAPPOSharedPolicy(
+                seed=0 if seed is None else seed,
+                max_steps=max_steps,
+                observation_dim=observation_dim,
+                training=training,
+                model_path=model_path,
+            )
     except ModuleNotFoundError as error:
         if error.name == "torch":
             raise RuntimeError(
@@ -69,7 +95,7 @@ def build_learning_motion_policy(
             ) from error
         raise
 
-    if model_path and Path(model_path).is_file():
+    if policy_name != "unified_mappo" and model_path and Path(model_path).is_file():
         policy.load(model_path)
     policy.set_training(training)
     return policy

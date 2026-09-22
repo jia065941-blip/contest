@@ -111,3 +111,15 @@ venv.bak/
 tests/test_low_missile_ship_damage.py
 tests/test_reward.py
 tests/test_scenario_compatibility.py
+
+# cz: local experiment outputs and caches
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+results/
+refine-logs/
+competition-platform-refine-logs/
+*.log
+*.pyc
+.env
+.venv/

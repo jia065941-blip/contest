@@ -1,4 +1,5 @@
 # -*-coding:utf-8 -*-
+from copy import deepcopy
 import json
 import logging
 import math
@@ -13,6 +14,7 @@ from ..common import SimmerCommandType
 from ..sdk.base_struct.Basic import Vector3d
 from ..sdk.writer import write_event
 
+logger = logging.getLogger(__name__)
 
 class SimulatorFactory:
     """
@@ -20,6 +22,10 @@ class SimulatorFactory:
     负责创建、管理和查询仿真器实例
 
     Attributes:
+        red_sat_max_use_count: 卫星最大使用次数
+        red_sat_use_count: 卫星已使用次数
+        sat_use_minutes: 卫星使用时间（分钟）
+        _satellite_use_end_time: 卫星当本次使用结束时间
     """
 
     def __init__(self, profile: Profile):
@@ -29,6 +35,7 @@ class SimulatorFactory:
         self._simulators_by_side: dict[int, list[ISimulator]] = {}  # 按作战方索引
         self._command_queue: list[Command] = []  # 存储待处理的指令
         self.sim_step = profile.imagineProfile.simStep  # 引擎仿真步长
+        self.sim_time = 0  # 当前仿真时间
 
         # 初始化所有仿真器
         self._initialize_simulators()
@@ -39,6 +46,22 @@ class SimulatorFactory:
         # 目标命中关系，记录击中每个目标的飞行器信息
         self.target_hit_relation:dict[int, list] = {}
 
+        # 卫星使用情况
+        self.red_sat_use_count = 0
+        self._satellite_use_end_time = 0
+        self._satellite_use_count_by_entity: dict[int, int] = {}
+        self._satellite_use_end_time_by_entity: dict[int, float] = {}
+        if self.profile and self.profile.imagineProfile:
+            self.red_sat_max_use_count = max(0, self.profile.imagineProfile.satelliteMaxUseCount)
+            self.sat_use_minutes = max(0, self.profile.imagineProfile.satelliteUseMinutes)
+
+        # 因果事件账本在回合内持久保留，消费游标仅影响增量读取。
+        self._causal_event_ledger: list[dict] = []
+        self._causal_event_sequence = 0
+        self._causal_event_consume_cursor = 0
+        self._event_step = 0
+        self._event_sim_time = float(profile.imagineProfile.simTime)
+
     @property
     def profile(self)->Profile:
         """当前想定"""
@@ -47,6 +70,159 @@ class SimulatorFactory:
     @property
     def command_queue(self):
         return self._command_queue
+
+    @property
+    def causal_event_ledger(self) -> tuple[dict, ...]:
+        """返回当前回合的完整因果事件账本快照。"""
+        return tuple(deepcopy(self._causal_event_ledger))
+
+    def consume_causal_events(self) -> tuple[dict, ...]:
+        """返回上次消费后新增的事件，并推进本消费者游标。"""
+        start = self._causal_event_consume_cursor
+        events = tuple(deepcopy(self._causal_event_ledger[start:]))
+        self._causal_event_consume_cursor = len(self._causal_event_ledger)
+        return events
+
+    def set_event_context(self, *, step: int, sim_time: float) -> None:
+        """设置随后分发命令所属的外层仿真步和逻辑时间。"""
+        self._event_step = int(step)
+        self._event_sim_time = float(sim_time)
+
+    def _append_causal_event(self, event_type: str, **payload) -> str:
+        self._causal_event_sequence += 1
+        event_id = f"{self.current_round}:{self._causal_event_sequence}"
+        event = {
+            "event_id": event_id,
+            "sequence": self._causal_event_sequence,
+            "round": self.current_round,
+            "step": self._event_step,
+            "sim_time": self._event_sim_time,
+            "event_type": event_type,
+        }
+        event.update(payload)
+        self._causal_event_ledger.append(event)
+        return event_id
+
+    @staticmethod
+    def _vector_snapshot(vector) -> dict[str, float] | None:
+        if vector is None:
+            return None
+
+        def component(name: str) -> float:
+            value = getattr(vector, name, 0.0)
+            return float(value() if callable(value) else value)
+
+        return {
+            "x": component("x"),
+            "y": component("y"),
+            "z": component("z"),
+        }
+
+    @staticmethod
+    def _command_attribute(command: Command, name: str):
+        attributes = command.commandAttributes
+        if isinstance(attributes, dict):
+            return attributes.get(name)
+        return getattr(attributes, name, None)
+
+    def _record_direct_hit(
+        self,
+        *,
+        attacking_simulator: ISimulator,
+        target_simulator: ISimulator,
+        actual_damage: float,
+        health_before: float,
+        health_after: float,
+    ) -> str | None:
+        if actual_damage <= 0.0:
+            return None
+
+        attacker = attacking_simulator.entity_ext.entity
+        target = target_simulator.entity_ext.entity
+        satellite_hit_rate_effect_entity_id = None
+        if (
+            int(attacker.entityType) == 21000
+            and int(target.entityType) in (9400, 9600)
+            and self.is_using_satellite(int(attacker.id))
+        ):
+            satellite_hit_rate_effect_entity_id = int(attacker.id)
+        return self._append_causal_event(
+            "direct_hit",
+            attacking_entity_id=int(attacker.id),
+            attacking_entity_type=int(attacker.entityType),
+            target_entity_id=int(target.id),
+            target_entity_type=int(target.entityType),
+            actual_damage=float(actual_damage),
+            target_health_before=float(health_before),
+            target_health_after=float(health_after),
+            source_sim_time=float(
+                getattr(attacking_simulator, "sim_time", self._event_sim_time)
+            ),
+            source_position=self._vector_snapshot(attacker.posEcf),
+            source_velocity=self._vector_snapshot(attacker.velEcf),
+            satellite_hit_rate_effect_entity_id=(
+                satellite_hit_rate_effect_entity_id
+            ),
+        )
+
+    def record_satellite_request_accepted(
+        self,
+        simulator: ISimulator,
+    ) -> str:
+        """记录一次已成功生效的卫星请求。"""
+        entity = simulator.entity_ext.entity
+        return self._append_causal_event(
+            "satellite_request_accepted",
+            entity_id=int(entity.id),
+            satellite_use_count=int(self.satellite_use_count(int(entity.id))),
+            satellite_use_end_time=float(
+                self.satellite_use_end_time(int(entity.id))
+            ),
+        )
+
+    def _deliver_interceptor_launch(
+        self,
+        interceptor_simulator: ISimulator,
+        command: Command,
+    ) -> None:
+        interceptor = interceptor_simulator.entity_ext.entity
+        launched_before = getattr(interceptor_simulator, "launched", None)
+        parent_before = getattr(interceptor, "parentId", -1)
+
+        interceptor_simulator.command_received(command)
+
+        launched_after = getattr(interceptor_simulator, "launched", None)
+        if launched_before != -1 or launched_after == -1:
+            return
+
+        intercepted_id = self._command_attribute(command, "targetId")
+        if intercepted_id is None:
+            intercepted_id = getattr(interceptor_simulator, "target_id", None)
+        if intercepted_id is None:
+            return
+
+        intercepted_id = int(intercepted_id)
+        intercepted_simulator = self.get_simulator_by_id(intercepted_id)
+        intercepted_type = None
+        if intercepted_simulator is not None:
+            intercepted_type = int(
+                intercepted_simulator.entity_ext.entity.entityType
+            )
+
+        self._append_causal_event(
+            "interceptor_launch",
+            interceptor_entity_id=int(interceptor.id),
+            interceptor_entity_type=int(interceptor.entityType),
+            intercepted_red_entity_id=intercepted_id,
+            intercepted_red_entity_type=intercepted_type,
+            attacking_entity_id=intercepted_id,
+            target_entity_id=intercepted_id,
+            defending_parent_entity_id=int(parent_before),
+            actual_damage=0.0,
+            source_sim_time=float(
+                getattr(interceptor_simulator, "sim_time", self._event_sim_time)
+            ),
+        )
 
     def _initialize_simulators(self):
         """初始化所有仿真器"""
@@ -73,8 +249,7 @@ class SimulatorFactory:
         :return: 仿真器类名
         """
         environment_profile: Profile.environmentProfile = self._profile.environmentProfile
-        dynamic_library_configs: list[
-            Profile.environmentProfile.dynamicLibraryConfigs] = environment_profile.dynamicLibraryConfigs
+        dynamic_library_configs: list[Profile.environmentProfile.dynamicLibraryConfigs] = environment_profile.dynamicLibraryConfigs
         for dynamic_library_config in dynamic_library_configs:
             if dynamic_library_config.entityType == entity_type:
                 class_name = dynamic_library_config.dynamicLibraryPath.rsplit("/")[-1].rsplit(".", 1)[0].rsplit("lib")[
@@ -128,18 +303,43 @@ class SimulatorFactory:
         for command in self._command_queue:
             target_sim = self.get_simulator_by_id(command.executorId)
             if target_sim:
+                if command.commandTypeId == SimmerCommandType.INTERCEPTOR_LAUNCH:
+                    self._deliver_interceptor_launch(target_sim, command)
+                    continue
                 if command.commandTypeId == SimmerCommandType.DAMAGE:
                     command = self.process_hit(command)
 
                     prev_trigger = self.get_simulator_by_id(command.prevTriggerId)
                     if prev_trigger:
-                        self.target_hit_relation.setdefault(command.executorId,[]).append({
+                        health_before = float(
+                            target_sim.entity_ext.entity.survivePoints
+                        )
+                        target_sim.command_received(command)
+                        health_after = float(
+                            target_sim.entity_ext.entity.survivePoints
+                        )
+                        damage_point = max(0.0, health_before - health_after)
+                        event_id = self._record_direct_hit(
+                            attacking_simulator=prev_trigger,
+                            target_simulator=target_sim,
+                            actual_damage=damage_point,
+                            health_before=health_before,
+                            health_after=health_after,
+                        )
+                        hit_event = {
                             "id":prev_trigger.entity_ext.entity.id,
                             "entity_type":prev_trigger.entity_ext.entity.entityType,
                             "sim_time":prev_trigger.sim_time,
+                            "damage_point":damage_point,
                             "velEcf":prev_trigger.entity_ext.entity.velEcf,
                             "posEcf":prev_trigger.entity_ext.entity.posEcf,
-                        })
+                        }
+                        if event_id is not None:
+                            hit_event["event_id"] = event_id
+                        self.target_hit_relation.setdefault(
+                            command.executorId, []
+                        ).append(hit_event)
+                        continue
                 target_sim.command_received(command)
                 # if command.commandTypeId == SimmerCommandType.DAMAGE:
                 #     print(command)
@@ -205,12 +405,17 @@ class SimulatorFactory:
         # 伤害来源
         prev_trigger_id = command.prevTriggerId
         prev_simulator = self.get_simulator_by_id(prev_trigger_id)
-        prev_simulator_type = prev_simulator._entity_ext.entity.entityType
+        if not prev_simulator:
+            return command
+
+        prev_simulator_type = prev_simulator.entity_ext.entity.entityType
 
         # 被击中的对象
         executor_id = command.executorId
         executor_simulator = self.get_simulator_by_id(executor_id)
-        executor_simulator_type = executor_simulator._entity_ext.entity.entityType
+        if not executor_simulator:
+            return command
+        executor_simulator_type = executor_simulator.entity_ext.entity.entityType
 
         # 获取命中率
         if prev_simulator_type not in hit_rate_table:
@@ -239,7 +444,9 @@ class SimulatorFactory:
         # 使用卫星期间，高性能飞行器对目标和阵地的命中率提升至 100%
         if (prev_simulator.entity_ext.entity.entityType == 21000
                 and executor_simulator.entity_ext.entity.entityType in [9400, 9600]
-                and prev_simulator.is_using_satellite()):
+                and self.is_using_satellite(
+                    int(prev_simulator.entity_ext.entity.id)
+                )):
             return 1
 
         # 命中率提升条件
@@ -365,8 +572,79 @@ class SimulatorFactory:
         """
         for ai_command in ai_commands:
             target_sim = self.get_simulator_by_id(ai_command.executorId)
-            if target_sim:
+            if not target_sim:
+                continue
+
+            if ai_command.commandTypeId == SimmerCommandType.EXECUTE_SATELLITE_DETECTION:
+                # 每个实体拥有独立的申请次数和生效窗口；不设并发连接上限。
+                self._process_missile_use_satellite(ai_command, target_sim)
+            elif ai_command.commandTypeId == SimmerCommandType.INTERCEPTOR_LAUNCH:
+                self._deliver_interceptor_launch(target_sim, ai_command)
+            else:
                 target_sim.command_received(ai_command)
+
+    def _process_missile_use_satellite(self, command: Command, target_simulator: ISimulator):
+        """
+        处理使用卫星的指令
+        :param command:
+        :return:
+        """
+
+        entity_id = int(target_simulator.entity_ext.entity.id)
+        used_count = self.satellite_use_count(entity_id)
+        if used_count >= self.red_sat_max_use_count:
+            logger.warning(f"使用卫星次数已经超出最大使用次数，来自【{target_simulator.entity_ext.entity.nameChn}】的卫星使用指令无效")
+            return
+        if self.is_using_satellite(entity_id):
+            logger.warning(
+                f"entity_id:{entity_id} 卫星仍在生效，重复申请指令无效"
+            )
+            return
+
+        used_count += 1
+        end_time = self.sim_time + self.sat_use_minutes * 60 * 1000
+        self._satellite_use_count_by_entity[entity_id] = used_count
+        self._satellite_use_end_time_by_entity[entity_id] = end_time
+        self.red_sat_use_count = sum(self._satellite_use_count_by_entity.values())
+        self._satellite_use_end_time = max(
+            self._satellite_use_end_time_by_entity.values(), default=0
+        )
+        logger.info(
+            f"entity_id:{entity_id}, name:{target_simulator.entity_ext.entity.nameChn} "
+            f"使用卫星，该实体剩余次数：{self.red_sat_max_use_count - used_count}"
+        )
+        self.record_satellite_request_accepted(target_simulator)
+
+    def satellite_use_count(self, entity_id: int | None = None) -> int:
+        """返回实体级卫星已用次数；无 entity_id 时返回兼容的总数。"""
+
+        if entity_id is None:
+            return int(sum(self._satellite_use_count_by_entity.values()))
+        return int(self._satellite_use_count_by_entity.get(int(entity_id), 0))
+
+    def satellite_use_end_time(self, entity_id: int | None = None) -> float:
+        """返回实体级卫星生效截止时间。"""
+
+        if entity_id is None:
+            return float(max(
+                self._satellite_use_end_time_by_entity.values(), default=0.0
+            ))
+        return float(
+            self._satellite_use_end_time_by_entity.get(int(entity_id), 0.0)
+        )
+
+    def satellite_remaining_uses(self, entity_id: int) -> int:
+        """返回实体可用的卫星申请次数。"""
+
+        return max(
+            0,
+            int(self.red_sat_max_use_count) - self.satellite_use_count(entity_id),
+        )
+
+    def is_using_satellite(self, entity_id: int | None = None) -> bool:
+        """查询实体级或兼容的全局卫星生效状态。"""
+
+        return self.sim_time < self.satellite_use_end_time(entity_id)
 
     def _send_events_callback(self, event: dict):
         """
@@ -428,6 +706,11 @@ class SimulatorFactory:
         """获取想定中的某种类型实体个数"""
         return sum(1 for e in self.profile.imagineProfile.entityList if e.entity.entityType == entity_type)
 
+    def update_sim_time(self, sim_time:float):
+        self.sim_time = sim_time
+        for simulator in self._simulators.values():
+            simulator.sim_time = sim_time
+
     def reset_all(self):
         """重置所有仿真器"""
 
@@ -441,6 +724,15 @@ class SimulatorFactory:
         self._command_queue.clear()
         self.current_round += 1
         self.target_hit_relation.clear()
+        self._satellite_use_end_time = 0
+        self.red_sat_use_count = 0
+        getattr(self, "_satellite_use_count_by_entity", {}).clear()
+        getattr(self, "_satellite_use_end_time_by_entity", {}).clear()
+        self._causal_event_ledger.clear()
+        self._causal_event_sequence = 0
+        self._causal_event_consume_cursor = 0
+        self._event_step = 0
+        self._event_sim_time = float(self.profile.imagineProfile.simTime)
         logging.info("[仿真器工厂] 所有仿真器已重置")
 
     def remove_simulator(self, id: int) -> bool:

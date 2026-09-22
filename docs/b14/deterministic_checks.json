@@ -1,0 +1,210 @@
+{
+  "status": "PASS",
+  "episodes": 32,
+  "fresh_student_episodes": 32,
+  "teacher_reference_branches": 32,
+  "exact_logits_checks": 32,
+  "legal_argmax_checks": 32,
+  "artifact_hash_checks": 192,
+  "branch_contract_checks": 64,
+  "immutable_code_hash_checks": 6,
+  "source_and_trace_hash_checks": 38,
+  "all_row_scalars_rebound_to_branch_artifacts": true,
+  "summary_reproduces": true,
+  "checkpoint_sha256": "4609add14e70a5e25df87ddb3377756c2e45b0d3fa136d4de66406f26ca2be6e",
+  "verifier_code_sha256": "bed7b721dd5f4c11330177e9d6728d033f1d6e038b96bac2b861df58d5f9244d",
+  "records": [
+    {
+      "seed": 1070,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2555
+    },
+    {
+      "seed": 1073,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2552
+    },
+    {
+      "seed": 1074,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2555
+    },
+    {
+      "seed": 1075,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": -100
+    },
+    {
+      "seed": 1076,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2555
+    },
+    {
+      "seed": 1078,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2552
+    },
+    {
+      "seed": 1079,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2552
+    },
+    {
+      "seed": 1080,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2552
+    },
+    {
+      "seed": 1081,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": -100
+    },
+    {
+      "seed": 1082,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2555
+    },
+    {
+      "seed": 1085,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2551
+    },
+    {
+      "seed": 1087,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": -100
+    },
+    {
+      "seed": 1090,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2552
+    },
+    {
+      "seed": 1091,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2551
+    },
+    {
+      "seed": 1092,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 51
+    },
+    {
+      "seed": 1094,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2561
+    },
+    {
+      "seed": 1098,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2552
+    },
+    {
+      "seed": 1099,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": -100
+    },
+    {
+      "seed": 1100,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2561
+    },
+    {
+      "seed": 1102,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2555
+    },
+    {
+      "seed": 1108,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2552
+    },
+    {
+      "seed": 1110,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": -100
+    },
+    {
+      "seed": 1111,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": -100
+    },
+    {
+      "seed": 1113,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2552
+    },
+    {
+      "seed": 1114,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2551
+    },
+    {
+      "seed": 1116,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2555
+    },
+    {
+      "seed": 1117,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": -100
+    },
+    {
+      "seed": 1119,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": -100
+    },
+    {
+      "seed": 1122,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2551
+    },
+    {
+      "seed": 1123,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2551
+    },
+    {
+      "seed": 1124,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": 2555
+    },
+    {
+      "seed": 1127,
+      "logits_exact": true,
+      "legal_argmax_exact": true,
+      "student_target_id": -100
+    }
+  ]
+}

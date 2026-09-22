@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import logging
 
 from .baselines import (
     BaselineObservation,
@@ -19,6 +20,7 @@ from .tracks import InitialCatalogueTrackFusion
 
 
 _KIND_BY_TYPE = {21000: "H", 21001: "M", 21002: "L"}
+logger = logging.getLogger(__name__)
 
 
 class RedBaselineCommander:
@@ -30,17 +32,37 @@ class RedBaselineCommander:
         policy_name: str,
         seed: int = 1,
         search_polygon: tuple[Position, ...] | None = None,
+        *,
+        top_model: str | None = None,
+        top_training: bool = False,
+        top_stage: str = "double_q",
+        top_max_steps: int = 1200,
     ) -> None:
         if policy_name not in RED_POLICY_CHOICES:
             raise ValueError(f"Unsupported red baseline '{policy_name}'")
         self.initial_targets = targets
+        self.initial_target_ids = frozenset(item.entity_id for item in targets)
         self.targets = targets
         self.track_fusion = InitialCatalogueTrackFusion(targets)
         self.policy_name = policy_name
         self.seed = seed
         self.search_polygon = search_polygon
         self.rules = BaselineRules()
-        self.policy = build_red_baseline(policy_name, self.rules, seed, search_polygon)
+        if policy_name == "r10_bc_erca":
+            from .learning.bc_erca_policy import BCERCAConfig, BCERCAHighLevelPolicy
+
+            self.policy = BCERCAHighLevelPolicy(
+                targets,
+                self.rules,
+                BCERCAConfig.from_env(max_steps=top_max_steps, seed=seed),
+                training=top_training,
+                stage=top_stage,
+                model_path=top_model,
+            )
+        else:
+            self.policy = build_red_baseline(
+                policy_name, self.rules, seed, search_polygon
+            )
         self.reports: dict[int, PlatformState] = {}
         self.expected_platform_ids: set[int] = set()
         self.launched_ids: set[int] = set()
@@ -52,6 +74,8 @@ class RedBaselineCommander:
         self.event_revision = 0
         self.planned_revision = -1
         self.tactical_metrics = TacticalMetrics()
+        self.first_discovery_step: dict[int, int] = {}
+        self.first_assignment_step: dict[int, int] = {}
 
     def register_platform(self, entity_id: int) -> None:
         self.expected_platform_ids.add(int(entity_id))
@@ -82,6 +106,19 @@ class RedBaselineCommander:
         self.tactical_metrics = self._build_tactical_metrics(observations)
         if state_changed:
             self.targets = self.track_fusion.targets
+            for target in self.targets:
+                if target.entity_id in self.initial_target_ids:
+                    continue
+                if target.entity_id not in self.first_discovery_step:
+                    self.first_discovery_step[target.entity_id] = int(
+                        observations[0].get("step", 0) if observations else 0
+                    )
+                    logger.info(
+                        "[R9 catalogue] legally discovered objective id=%s type=%s step=%s",
+                        target.entity_id,
+                        target.entity_type,
+                        self.first_discovery_step[target.entity_id],
+                    )
             self.event_revision += 1
             self.tactical_metrics = self._build_tactical_metrics(observations)
 
@@ -150,6 +187,12 @@ class RedBaselineCommander:
             return None
         _, lon, lat = due[0]
         self.launched_ids.add(int(entity_id))
+        if self.policy_name == "r10_bc_erca":
+            target_id = self.target_by_platform.get(int(entity_id))
+            target = next((item for item in self.targets if item.entity_id == target_id), None)
+            platform = self.reports.get(int(entity_id))
+            if target is not None and platform is not None:
+                self.policy.mark_launched(int(entity_id), target, platform.kind)
         return [1.0, float(entity_id), lon, lat]
 
     def _should_plan(self, step: int) -> bool:
@@ -163,6 +206,7 @@ class RedBaselineCommander:
             "r7_static_search",
             "r8_satellite_packages",
             "r9_hierarchical_learning",
+            "r10_bc_erca",
         }:
             return self.last_plan_step < 0 or step - self.last_plan_step >= self.rules.adaptive_replan_interval
         if self.policy_name == "r5_event_rolling":
@@ -218,6 +262,24 @@ class RedBaselineCommander:
             )
             self.assigned_by_target[assignment.target_id] = self.assigned_by_target.get(assignment.target_id, 0) + 1
             self.target_by_platform[assignment.platform_id] = assignment.target_id
+            if self.policy_name == "r10_bc_erca":
+                platform = next(
+                    (item for item in platforms if item.entity_id == assignment.platform_id),
+                    None,
+                )
+                if platform is not None:
+                    self.policy.on_assignment_accepted(assignment, platform)
+            if (
+                assignment.target_id not in self.initial_target_ids
+                and assignment.target_id not in self.first_assignment_step
+            ):
+                self.first_assignment_step[assignment.target_id] = int(step)
+                logger.info(
+                    "[R9 catalogue] assigned discovered objective id=%s platform=%s step=%s",
+                    assignment.target_id,
+                    assignment.platform_id,
+                    step,
+                )
             accepted += 1
         self.last_plan_step = step
         self.planned_revision = self.event_revision
@@ -293,6 +355,47 @@ class RedBaselineCommander:
             len(self.launched_ids) / max(1, len(self.expected_platform_ids)),
         )
 
+    def diagnostics(self) -> dict:
+        """Return legal catalogue diagnostics for experiment summaries."""
+
+        diagnostics = {
+            "initial_target_ids": sorted(self.initial_target_ids),
+            "current_target_ids": sorted(item.entity_id for item in self.targets),
+            "dynamic_target_ids": sorted(
+                item.entity_id
+                for item in self.targets
+                if item.entity_id not in self.initial_target_ids
+            ),
+            "first_discovery_step": {
+                str(entity_id): step
+                for entity_id, step in sorted(self.first_discovery_step.items())
+            },
+            "first_assignment_step": {
+                str(entity_id): step
+                for entity_id, step in sorted(self.first_assignment_step.items())
+            },
+        }
+        top_diagnostics = getattr(self.policy, "diagnostics", None)
+        if callable(top_diagnostics):
+            diagnostics["top_level"] = top_diagnostics()
+        return diagnostics
+
+    def observe_top_reward(self, reward: float) -> None:
+        observe = getattr(self.policy, "observe_reward", None)
+        if callable(observe):
+            observe(float(reward))
+
+    def finish_top_episode(self, *, terminal: bool = True) -> None:
+        finish = getattr(self.policy, "finish_episode", None)
+        if callable(finish):
+            finish(terminal=terminal)
+
+    def save_top(self, path: str) -> None:
+        save = getattr(self.policy, "save", None)
+        if not callable(save):
+            raise RuntimeError("Selected red policy has no trainable top checkpoint")
+        save(path)
+
     def reset(self) -> None:
         self.reports.clear()
         self.launched_ids.clear()
@@ -304,11 +407,68 @@ class RedBaselineCommander:
         self.event_revision = 0
         self.planned_revision = -1
         self.tactical_metrics = TacticalMetrics()
-        self.policy = build_red_baseline(
-            self.policy_name,
-            self.rules,
-            self.seed,
-            self.search_polygon,
-        )
+        self.first_discovery_step.clear()
+        self.first_assignment_step.clear()
+        reset_policy = getattr(self.policy, "reset_episode", None)
+        if self.policy_name == "r10_bc_erca" and callable(reset_policy):
+            reset_policy()
+        else:
+            self.policy = build_red_baseline(
+                self.policy_name,
+                self.rules,
+                self.seed,
+                self.search_polygon,
+            )
         self.targets = self.initial_targets
         self.track_fusion = InitialCatalogueTrackFusion(self.initial_targets)
+
+
+def build_red_commander(
+    targets: tuple[TargetPrior, ...],
+    policy_name: str,
+    seed: int = 1,
+    search_polygon: tuple[Position, ...] | None = None,
+    *,
+    top_model: str | None = None,
+    top_training: bool = False,
+    top_stage: str = "double_q",
+    top_max_steps: int = 1200,
+    paos_mode: str = "rollout",
+    paos_request: str | None = None,
+    bottom_model: str | None = None,
+):
+    """Construct the isolated R11 commander or unchanged R0--R10 path."""
+
+    if policy_name == "r12_unified_mappo":
+        from .unified_mappo_commander import UnifiedMAPPOCommander
+        return UnifiedMAPPOCommander(
+            targets,
+            max_steps=top_max_steps,
+            search_polygon=search_polygon,
+        )
+    if policy_name == "r11_paos":
+        if not top_model:
+            raise ValueError("r11_paos requires RED_TOP_MODEL")
+        if top_training:
+            raise ValueError("r11_paos is updated only by the external PAOS pipeline")
+        from .paos_commander import PAOSCommander
+        return PAOSCommander(
+            targets,
+            top_model=top_model,
+            max_steps=top_max_steps,
+            seed=seed,
+            mode=paos_mode,
+            request_path=paos_request,
+            bottom_model=bottom_model,
+            observation_dim=90,
+        )
+    return RedBaselineCommander(
+        targets,
+        policy_name=policy_name,
+        seed=seed,
+        search_polygon=search_polygon,
+        top_model=top_model,
+        top_training=top_training,
+        top_stage=top_stage,
+        top_max_steps=top_max_steps,
+    )

@@ -27,4 +27,11 @@ class DetectInfo:
     pos_ecf: Vector3d = field(default_factory=Vector3d)
     # ecf 速度
     vel_ecf: Vector3d = field(default_factory=Vector3d)
+    # 是否依赖卫星能力获得该航迹
+    via_satellite: bool = False
+    # Battle-damage assessment is legal only when carried by this observed
+    # track. Consumers must ignore the values unless health_observed is true.
+    health_remaining: float = 0.0
+    health_max: float = 0.0
+    health_observed: bool = False
 

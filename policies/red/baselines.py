@@ -22,6 +22,9 @@ RED_POLICY_CHOICES = (
     "r7_static_search",
     "r8_satellite_packages",
     "r9_hierarchical_learning",
+    "r10_bc_erca",
+    "r11_paos",
+    "r12_unified_mappo",
 )
 
 
@@ -506,6 +509,10 @@ class R9HierarchicalLearningPolicy(R8SatellitePackagePolicy):
     """
 
 
+class R10BCERCAFallbackPolicy(R8SatellitePackagePolicy):
+    """Fallback when R10 is built outside its trainable commander adapter."""
+
+
 def build_red_baseline(
     name: str,
     rules: BaselineRules,
@@ -538,4 +545,6 @@ def build_red_baseline(
         return R8SatellitePackagePolicy(rules)
     if name == "r9_hierarchical_learning":
         return R9HierarchicalLearningPolicy(rules)
+    if name == "r10_bc_erca":
+        return R10BCERCAFallbackPolicy(rules)
     raise ValueError(f"Unknown red baseline '{name}'")

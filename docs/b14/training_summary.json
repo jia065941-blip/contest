@@ -1,0 +1,85 @@
+{
+  "status": "complete",
+  "label": "b14",
+  "attempted_updates": 48,
+  "accepted_updates": 48,
+  "rollback_counts": {
+    "step_kl": 0,
+    "stage_kl": 0,
+    "score_probe": 0
+  },
+  "acceptance_gates": {
+    "step_kl": {
+      "enabled": false,
+      "threshold": null
+    },
+    "stage_kl": {
+      "enabled": false,
+      "threshold": null
+    },
+    "score_probe": {
+      "enabled": false,
+      "threshold": null
+    }
+  },
+  "before": {
+    "loss": 0.04200665667341822,
+    "expected_regret": 0.04077939793829769,
+    "expected_regret_score_points": 4.077939793829769,
+    "kl_anchor_to_current": 0.12272587418556213,
+    "weighted_kl_term": 0.0012272587418556214,
+    "stage_kl_max": 1.0744539499282837,
+    "stage_kl_p90": 0.5710664927959442,
+    "expected_suffix_return": 0.8392010829956427,
+    "greedy_suffix_return": 0.843074845679012,
+    "optimal_probability_mean": 0.1373518705368042,
+    "near_optimal_probability_mean": 0.1373518705368042,
+    "optimal_probability_informative_mean": 0.1373518705368042,
+    "near_optimal_probability_informative_mean": 0.1373518705368042,
+    "better_than_initial_greedy_probability_mean": 0.3353739082813263
+  },
+  "after": {
+    "loss": 0.04186914812173773,
+    "expected_regret": 0.040538176159902885,
+    "expected_regret_score_points": 4.053817615990289,
+    "kl_anchor_to_current": 0.13309720158576965,
+    "weighted_kl_term": 0.0013309720158576966,
+    "stage_kl_max": 1.1201355457305908,
+    "stage_kl_p90": 0.6755192458629611,
+    "expected_suffix_return": 0.839442300429566,
+    "greedy_suffix_return": 0.8426215277777775,
+    "optimal_probability_mean": 0.1412295550107956,
+    "near_optimal_probability_mean": 0.1412295550107956,
+    "optimal_probability_informative_mean": 0.1412295550107956,
+    "near_optimal_probability_informative_mean": 0.1412295550107956,
+    "better_than_initial_greedy_probability_mean": 0.33690646290779114
+  },
+  "gradient_ratio_first": 0.9840288141191346,
+  "gradient_ratio_last": 1.0078094682163257,
+  "gradient_ratio_min": 0.7839754053333439,
+  "gradient_ratio_max": 1.4721246959444008,
+  "gradient_cosine_last": -0.9995891079822669,
+  "weighted_kl_norm_exceeds_regret_steps": 25,
+  "negative_gradient_cosine_steps": 48,
+  "near_optimal_probability_states_increased": 38,
+  "near_optimal_probability_states_decreased": 26,
+  "greedy_target_changed_states": 5,
+  "optimizer_initial_step": 0,
+  "optimizer_final": {
+    "parameter_states": 36,
+    "min": 48,
+    "max": 48
+  },
+  "learning_rate_initial": 2e-05,
+  "learning_rate_final": [
+    2e-05
+  ],
+  "changed_target_tensors": 36,
+  "changed_frozen_tensors": [],
+  "replay_model_and_optimizer_exact": null,
+  "output_checkpoint": "/home/ubuntu/yuanlei/cz/python-machine-learning/competition-platform-refine-logs/target_transformer_main_20260914/runs/c0a_goal_b14_continuation_20260921/training/checkpoints/working.pt",
+  "output_sha256": "4609add14e70a5e25df87ddb3377756c2e45b0d3fa136d4de66406f26ca2be6e",
+  "output_model_sha256": "a00143312ffd200807a48a9adc7f4a1c66a2dec546d2572cf3e59c556bb69feb",
+  "elapsed_seconds": 4.155758642009459,
+  "independent_evaluation_performed": false
+}

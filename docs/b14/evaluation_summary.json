@@ -1,0 +1,88 @@
+{
+  "status": "complete",
+  "candidate": "b14",
+  "stage": "C0a_goal",
+  "student_episodes": 32,
+  "teacher_reference_branches": 32,
+  "score_mean": 82.00641396604938,
+  "score_std": 5.427631662615864,
+  "score_min": 70.95679012345678,
+  "score_max": 91.66666666666666,
+  "score_mean_95_ci": [
+    80.04954407515811,
+    83.96328385694065
+  ],
+  "course_numeric_gates_decision": "PASS",
+  "gates": {
+    "e01_score_noninferiority": {
+      "student_mean": 82.00641396604938,
+      "teacher_mean": 80.43016975308642,
+      "mean_delta": 1.5762442129629641,
+      "standard_error": 0.5286947352230981,
+      "one_sided_95_lower": 0.6798323591590886,
+      "required_lower": -0.5,
+      "degrees_of_freedom": 31,
+      "critical_value": 1.6955187825458649,
+      "pass": true
+    },
+    "fixed_target_score_noninferiority": {
+      "student_mean": 69.39067322530865,
+      "teacher_mean": 67.93016975308642,
+      "mean_delta": 1.4605034722222219,
+      "standard_error": 0.5264165839265513,
+      "one_sided_95_lower": 0.5679542667311225,
+      "required_lower": -0.5,
+      "degrees_of_freedom": 31,
+      "critical_value": 1.6955187825458649,
+      "pass": true
+    },
+    "suffix_return_ratio": {
+      "student_mean": 0.8200641396604935,
+      "teacher_mean": 0.8043016975308639,
+      "ratio": 1.0195976735819643,
+      "required_min": 0.8,
+      "pass": true
+    },
+    "target_legality": {
+      "illegal_samples": 0,
+      "controlled_decisions": 32,
+      "pass": true
+    },
+    "integrity": {
+      "unique_seeds": 32,
+      "training_seed_overlap": [],
+      "common_state_pairs": 32,
+      "common_rng_pairs": 32,
+      "pass": true
+    }
+  },
+  "score_outcomes": {
+    "wins": 16,
+    "ties": 11,
+    "losses": 5,
+    "mean_delta": 1.5762442129629641
+  },
+  "target_matches_teacher": 2,
+  "search_choices": 9,
+  "singleton_decisions": 9,
+  "teacher_targets_outside_student_mask": 9,
+  "reused_valid_episodes": 0,
+  "decision_groups": {
+    "search_only": {
+      "episodes": 9,
+      "student_mean": 82.56944444444444,
+      "teacher_mean": 81.95216049382717,
+      "mean_delta": 0.6172839506172841
+    },
+    "physical_target_choice": {
+      "episodes": 23,
+      "student_mean": 81.7860976918948,
+      "teacher_mean": 79.83460815888353,
+      "mean_delta": 1.9514895330112736
+    }
+  },
+  "formal_promotion": false,
+  "formal_promotion_reason": "32-episode requested assessment; project plan requires 128 independent paired episodes for formal promotion",
+  "checkpoint_sha256": "4609add14e70a5e25df87ddb3377756c2e45b0d3fa136d4de66406f26ca2be6e",
+  "scope": "one goal boundary per seed; frozen teacher controls all other actions; not full-team student deployment"
+}

@@ -1,0 +1,2198 @@
+{
+  "scenario_id": "E01",
+  "display_id": "E01",
+  "title": "单门扇形",
+  "difficulty": "easy",
+  "difficulty_name": "简单",
+  "mission_type": "comprehensive",
+  "mission_type_name": "综合任务",
+  "topology_id": "serial_double_gate",
+  "topology_name": "串联双闸",
+  "design_intent": "断墙控制中路，后续扇形支线给出直穿或上下绕行。",
+  "structural_features": [
+    "前沿—中段—末端层级",
+    "双深度覆盖识别",
+    "末端扇形分流"
+  ],
+  "difficulty_mechanism": "7个计分目标、2部雷达和148枚拦截弹；蓝方拦截弹/红方高中性能打击弹=2.0。",
+  "objective_ids": [
+    51,
+    52,
+    53,
+    2551,
+    2552,
+    54,
+    106,
+    2553,
+    2555,
+    2557,
+    2559,
+    2561,
+    2563,
+    2565,
+    2567,
+    168,
+    169,
+    2569,
+    2570,
+    2571,
+    2572,
+    2573,
+    2574,
+    2575
+  ],
+  "interceptor_counts": {
+    "54": 10,
+    "106": 10,
+    "2553": 10,
+    "2555": 10,
+    "2557": 10,
+    "2559": 10,
+    "2561": 10,
+    "2563": 10,
+    "2565": 10,
+    "2567": 10,
+    "168": 10,
+    "169": 10,
+    "2569": 10,
+    "2570": 10,
+    "2571": 10,
+    "2572": 10,
+    "2573": 10,
+    "2574": 10,
+    "2575": 9
+  },
+  "roots": [
+    {
+      "id": 51,
+      "kind": "target",
+      "lon": 124.23,
+      "lat": 20.314346190771953,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 52,
+      "kind": "target",
+      "lon": 126.54,
+      "lat": 21.0428058460204,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 53,
+      "kind": "target",
+      "lon": 126.39999999999999,
+      "lat": 23.761230419307754,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 2551,
+      "kind": "target",
+      "lon": 125.815,
+      "lat": 26.672913633606996,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 2552,
+      "kind": "target",
+      "lon": 126.265,
+      "lat": 26.986260915515714,
+      "hp": 16.0,
+      "interceptors": 0,
+      "objective": true,
+      "initial_information": "public"
+    },
+    {
+      "id": 54,
+      "kind": "site",
+      "lon": 119.54,
+      "lat": 20.169966733269877,
+      "hp": 12.0,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 55
+    },
+    {
+      "id": 106,
+      "kind": "site",
+      "lon": 119.81,
+      "lat": 21.303642630304417,
+      "hp": 12.0,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 107
+    },
+    {
+      "id": 2553,
+      "kind": "site",
+      "lon": 119.76,
+      "lat": 25.198657502192184,
+      "hp": 12.0,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 2554
+    },
+    {
+      "id": 2555,
+      "kind": "site",
+      "lon": 119.61,
+      "lat": 26.386079937617303,
+      "hp": 12.0,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 2556
+    },
+    {
+      "id": 2557,
+      "kind": "site",
+      "lon": 121.08666666666667,
+      "lat": 23.675603655584293,
+      "hp": 12.0,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 2558
+    },
+    {
+      "id": 2559,
+      "kind": "site",
+      "lon": 121.71,
+      "lat": 24.706232861435062,
+      "hp": 12.0,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 2560
+    },
+    {
+      "id": 2561,
+      "kind": "site",
+      "lon": 123.81333333333332,
+      "lat": 25.458296916967694,
+      "hp": 12.0,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 2562
+    },
+    {
+      "id": 2563,
+      "kind": "site",
+      "lon": 120.79666666666667,
+      "lat": 22.76252664727774,
+      "hp": 12.0,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 2564
+    },
+    {
+      "id": 2565,
+      "kind": "site",
+      "lon": 121.78,
+      "lat": 21.662467702395286,
+      "hp": 12.0,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 2566
+    },
+    {
+      "id": 2567,
+      "kind": "site",
+      "lon": 123.92333333333333,
+      "lat": 20.974787888655122,
+      "hp": 12.0,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "public",
+      "radar_id": 2568
+    },
+    {
+      "id": 168,
+      "kind": "ship",
+      "lon": 120.194731489933,
+      "lat": 26.313208621063072,
+      "hp": 0.8,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "hidden"
+    },
+    {
+      "id": 169,
+      "kind": "ship",
+      "lon": 121.63419446979901,
+      "lat": 25.337555055889467,
+      "hp": 0.8,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "hidden"
+    },
+    {
+      "id": 2569,
+      "kind": "ship",
+      "lon": 123.55419883983879,
+      "lat": 25.940013053526393,
+      "hp": 0.8,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "hidden"
+    },
+    {
+      "id": 2570,
+      "kind": "ship",
+      "lon": 120.42651338970839,
+      "lat": 20.183941191860043,
+      "hp": 0.8,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "hidden"
+    },
+    {
+      "id": 2571,
+      "kind": "ship",
+      "lon": 122.69110078055712,
+      "lat": 20.69798211811193,
+      "hp": 0.8,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "hidden"
+    },
+    {
+      "id": 2572,
+      "kind": "ship",
+      "lon": 124.97703359351904,
+      "lat": 20.285423071887312,
+      "hp": 0.8,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "hidden"
+    },
+    {
+      "id": 2573,
+      "kind": "ship",
+      "lon": 121.61666666666666,
+      "lat": 23.162876614819428,
+      "hp": 0.8,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "hidden"
+    },
+    {
+      "id": 2574,
+      "kind": "ship",
+      "lon": 123.44,
+      "lat": 23.525377999702197,
+      "hp": 0.8,
+      "interceptors": 10,
+      "objective": true,
+      "initial_information": "hidden"
+    },
+    {
+      "id": 2575,
+      "kind": "ship",
+      "lon": 124.67333333333333,
+      "lat": 23.791693260780185,
+      "hp": 0.8,
+      "interceptors": 9,
+      "objective": true,
+      "initial_information": "hidden"
+    }
+  ],
+  "scenario_sha256": "62657df96e62a08adf6e58355d8e8ba784e96b0c30e4cbf7d23fe66a94c4ca0e",
+  "entity_total": 435,
+  "blue_entity_total": 223,
+  "blue_root_total": 24,
+  "root_counts": {
+    "target": 5,
+    "site": 10,
+    "ship": 9
+  },
+  "radar_total": 10,
+  "interceptor_total": 189,
+  "objective_total": 24,
+  "public_objective_ids": [
+    51,
+    52,
+    53,
+    2551,
+    2552,
+    54,
+    106,
+    2553,
+    2555,
+    2557,
+    2559,
+    2561,
+    2563,
+    2565,
+    2567
+  ],
+  "hidden_objective_ids": [
+    168,
+    169,
+    2569,
+    2570,
+    2571,
+    2572,
+    2573,
+    2574,
+    2575
+  ],
+  "max_steps": 3000,
+  "red_missile_counts": {
+    "high": 35,
+    "medium": 49,
+    "low": 126
+  },
+  "blue_hp_by_kind": {
+    "target": 16.0,
+    "site": 12.0,
+    "ship": 0.8
+  },
+  "entity_template_case": "E01",
+  "topology_model": "role_layered_paths_v2",
+  "placement_variation": {
+    "model": "fixed_offset_table",
+    "experiment_seed_dependent": false,
+    "maximum_coordinate_offset_degrees": {
+      "longitude": 0.17,
+      "latitude": 0.16
+    },
+    "cross_layer_fraction": {
+      "site": 0.15,
+      "target": 0.2
+    }
+  },
+  "expected_route_options": [
+    "中央破门",
+    "北翼外绕",
+    "南翼外绕"
+  ],
+  "placement_paths": {
+    "site": [
+      [
+        [
+          119.7,
+          19.4
+        ],
+        [
+          119.7,
+          22.1
+        ]
+      ],
+      [
+        [
+          119.7,
+          24.3
+        ],
+        [
+          119.7,
+          27.2
+        ]
+      ],
+      [
+        [
+          120.5,
+          23.2
+        ],
+        [
+          123.0,
+          26.0
+        ]
+      ],
+      [
+        [
+          120.5,
+          23.2
+        ],
+        [
+          123.0,
+          20.4
+        ]
+      ]
+    ],
+    "ship": [
+      [
+        [
+          119.2,
+          26.8
+        ],
+        [
+          121.7,
+          25.2
+        ],
+        [
+          124.3,
+          26.5
+        ]
+      ],
+      [
+        [
+          119.5,
+          19.6
+        ],
+        [
+          122.3,
+          21.0
+        ],
+        [
+          126.0,
+          19.8
+        ]
+      ],
+      [
+        [
+          121.0,
+          23.1
+        ],
+        [
+          125.6,
+          23.8
+        ]
+      ]
+    ],
+    "target": [
+      [
+        [
+          125.4,
+          20.2
+        ],
+        [
+          126.8,
+          21.2
+        ]
+      ],
+      [
+        [
+          126.0,
+          23.4
+        ],
+        [
+          127.1,
+          24.2
+        ]
+      ],
+      [
+        [
+          125.3,
+          26.5
+        ],
+        [
+          126.8,
+          27.0
+        ]
+      ]
+    ]
+  },
+  "red_launch_markers": [
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.093125,
+      "lat": 23.954222222
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.10625,
+      "lat": 23.406666667
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.1325,
+      "lat": 24.228
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.15875,
+      "lat": 22.585333333
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.185,
+      "lat": 22.996
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.21125,
+      "lat": 23.817333333
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.2375,
+      "lat": 22.174666667
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.26375,
+      "lat": 22.722222222
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.29,
+      "lat": 23.612
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.303125,
+      "lat": 23.338222222
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.31625,
+      "lat": 21.969333333
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.3425,
+      "lat": 22.790666667
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.36875,
+      "lat": 24.433333333
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.395,
+      "lat": 22.38
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.42125,
+      "lat": 23.201333333
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.4475,
+      "lat": 24.022666667
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.47375,
+      "lat": 22.106222222
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.5,
+      "lat": 22.688
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.513125,
+      "lat": 22.414222222
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.52625,
+      "lat": 24.330666667
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.5525,
+      "lat": 21.866666667
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.57875,
+      "lat": 23.509333333
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.605,
+      "lat": 23.92
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.63125,
+      "lat": 22.277333333
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.6575,
+      "lat": 23.098666667
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.68375,
+      "lat": 23.646222222
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.71,
+      "lat": 22.072
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.723125,
+      "lat": 24.262222222
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.73625,
+      "lat": 22.893333333
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.7625,
+      "lat": 23.714666667
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.78875,
+      "lat": 21.798222222
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.815,
+      "lat": 23.304
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.84125,
+      "lat": 24.125333333
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.8675,
+      "lat": 22.482666667
+    },
+    {
+      "roles": [
+        "high"
+      ],
+      "label": "高",
+      "lon": 116.89375,
+      "lat": 23.030222222
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.0996875,
+      "lat": 22.494074074
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.1128125,
+      "lat": 24.501777778
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.1259375,
+      "lat": 23.04162963
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.1390625,
+      "lat": 22.037777778
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.1521875,
+      "lat": 24.136740741
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.1653125,
+      "lat": 23.315407407
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.2046875,
+      "lat": 22.904740741
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.2178125,
+      "lat": 22.083407407
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.2309375,
+      "lat": 24.27362963
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.2440625,
+      "lat": 23.269777778
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.2571875,
+      "lat": 21.80962963
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.2703125,
+      "lat": 23.726074074
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.3096875,
+      "lat": 24.342074074
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.3228125,
+      "lat": 22.699407407
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.3359375,
+      "lat": 22.42562963
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.3490625,
+      "lat": 23.885777778
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.3621875,
+      "lat": 23.520740741
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.3753125,
+      "lat": 21.878074074
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.4146875,
+      "lat": 22.288740741
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.4278125,
+      "lat": 23.931407407
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.4409375,
+      "lat": 22.836296296
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.4540625,
+      "lat": 22.653777778
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.4671875,
+      "lat": 23.65762963
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.4803125,
+      "lat": 23.110074074
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.5196875,
+      "lat": 23.418074074
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.5328125,
+      "lat": 21.775407407
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.5459375,
+      "lat": 23.96562963
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.5590625,
+      "lat": 22.961777778
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.5721875,
+      "lat": 22.596740741
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.5853125,
+      "lat": 24.239407407
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.6246875,
+      "lat": 23.828740741
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.6378125,
+      "lat": 23.007407407
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.6509375,
+      "lat": 21.912296296
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.6640625,
+      "lat": 24.193777778
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.6771875,
+      "lat": 22.73362963
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.6903125,
+      "lat": 22.186074074
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.7296875,
+      "lat": 21.980740741
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.7428125,
+      "lat": 23.623407407
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.7559375,
+      "lat": 23.34962963
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.7690625,
+      "lat": 22.345777778
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.7821875,
+      "lat": 24.444740741
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.7953125,
+      "lat": 22.802074074
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.8215625,
+      "lat": 24.399111111
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.8346875,
+      "lat": 23.212740741
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.8478125,
+      "lat": 22.391407407
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.8609375,
+      "lat": 23.760296296
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.8740625,
+      "lat": 23.577777778
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.8871875,
+      "lat": 22.11762963
+    },
+    {
+      "roles": [
+        "medium"
+      ],
+      "label": "中",
+      "lon": 116.9003125,
+      "lat": 24.034074074
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.081344,
+      "lat": 24.325877551
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.08672,
+      "lat": 23.517714286
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.09344,
+      "lat": 22.168081633
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.10016,
+      "lat": 23.921795918
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.10688,
+      "lat": 22.572163265
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.1136,
+      "lat": 23.744
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.12032,
+      "lat": 22.782285714
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.12704,
+      "lat": 24.148081633
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.13376,
+      "lat": 23.186367347
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.14048,
+      "lat": 21.836734694
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.1472,
+      "lat": 23.008571429
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.15392,
+      "lat": 22.046857143
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.16064,
+      "lat": 23.412653061
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.16736,
+      "lat": 22.450938776
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.17408,
+      "lat": 23.816734694
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.1808,
+      "lat": 22.273142857
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.18752,
+      "lat": 24.026857143
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.19424,
+      "lat": 22.67722449
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.20096,
+      "lat": 24.430938776
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.20768,
+      "lat": 23.081306122
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.2144,
+      "lat": 24.253142857
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.22112,
+      "lat": 23.291428571
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.22784,
+      "lat": 21.941795918
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.23456,
+      "lat": 23.695510204
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.24128,
+      "lat": 22.345877551
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.248,
+      "lat": 22.16
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.249344,
+      "lat": 22.00644898
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.25472,
+      "lat": 23.913714286
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.26144,
+      "lat": 22.564081633
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.26816,
+      "lat": 24.317795918
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.27488,
+      "lat": 22.968163265
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.2816,
+      "lat": 24.14
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.28832,
+      "lat": 23.178285714
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.29504,
+      "lat": 21.828653061
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.30176,
+      "lat": 23.582367347
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.30848,
+      "lat": 22.232734694
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.3152,
+      "lat": 23.404571429
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.32192,
+      "lat": 22.442857143
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.32864,
+      "lat": 23.808653061
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.33536,
+      "lat": 22.846938776
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.34208,
+      "lat": 24.212734694
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.3488,
+      "lat": 22.669142857
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.35552,
+      "lat": 24.422857143
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.36224,
+      "lat": 23.07322449
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.36896,
+      "lat": 22.111510204
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.37568,
+      "lat": 23.477306122
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.3824,
+      "lat": 21.933714286
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.38912,
+      "lat": 23.687428571
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.39584,
+      "lat": 22.337795918
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.40256,
+      "lat": 24.091510204
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.40928,
+      "lat": 22.741877551
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.416,
+      "lat": 22.556
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.42272,
+      "lat": 24.309714286
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.42944,
+      "lat": 22.960081633
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.43616,
+      "lat": 21.998367347
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.44288,
+      "lat": 23.364163265
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.4496,
+      "lat": 21.820571429
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.45632,
+      "lat": 23.574285714
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.46304,
+      "lat": 22.224653061
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.46976,
+      "lat": 23.978367347
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.47648,
+      "lat": 22.628734694
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.4832,
+      "lat": 23.800571429
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.48992,
+      "lat": 22.838857143
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.49664,
+      "lat": 24.204653061
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.50336,
+      "lat": 23.242938776
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.51008,
+      "lat": 21.893306122
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.5168,
+      "lat": 23.065142857
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.52352,
+      "lat": 22.103428571
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.53024,
+      "lat": 23.46922449
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.53696,
+      "lat": 22.507510204
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.54368,
+      "lat": 23.873306122
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.5504,
+      "lat": 22.329714286
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.55712,
+      "lat": 24.083428571
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.56384,
+      "lat": 22.733795918
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.57056,
+      "lat": 24.487510204
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.57728,
+      "lat": 23.137877551
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.584,
+      "lat": 22.952
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.59072,
+      "lat": 21.990285714
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.59744,
+      "lat": 23.356081633
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.60416,
+      "lat": 22.394367347
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.61088,
+      "lat": 23.760163265
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.6176,
+      "lat": 22.216571429
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.62432,
+      "lat": 23.970285714
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.63104,
+      "lat": 22.620653061
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.63776,
+      "lat": 24.374367347
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.64448,
+      "lat": 23.024734694
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.6512,
+      "lat": 24.196571429
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.65792,
+      "lat": 23.234857143
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.66464,
+      "lat": 21.88522449
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.67136,
+      "lat": 23.638938776
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.67808,
+      "lat": 22.289306122
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.6848,
+      "lat": 23.461142857
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.69152,
+      "lat": 22.499428571
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.69824,
+      "lat": 23.86522449
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.70496,
+      "lat": 22.903510204
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.71168,
+      "lat": 24.269306122
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.7184,
+      "lat": 22.725714286
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.72512,
+      "lat": 24.479428571
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.73184,
+      "lat": 23.129795918
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.73856,
+      "lat": 21.780163265
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.74528,
+      "lat": 23.533877551
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.752,
+      "lat": 23.348
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.75872,
+      "lat": 22.386285714
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.76544,
+      "lat": 23.752081633
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.77216,
+      "lat": 22.790367347
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.77888,
+      "lat": 24.156163265
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.7856,
+      "lat": 22.612571429
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.79232,
+      "lat": 24.366285714
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.79904,
+      "lat": 23.016653061
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.80576,
+      "lat": 22.054938776
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.81248,
+      "lat": 23.420734694
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.8192,
+      "lat": 21.877142857
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.82592,
+      "lat": 23.630857143
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.83264,
+      "lat": 22.28122449
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.83936,
+      "lat": 24.034938776
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.84608,
+      "lat": 22.685306122
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.8528,
+      "lat": 23.857142857
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.85952,
+      "lat": 22.895428571
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.86624,
+      "lat": 24.26122449
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.87296,
+      "lat": 23.299510204
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.87968,
+      "lat": 21.949877551
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.8864,
+      "lat": 23.121714286
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.89312,
+      "lat": 21.772081633
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.89984,
+      "lat": 23.525795918
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.90656,
+      "lat": 22.176163265
+    },
+    {
+      "roles": [
+        "low"
+      ],
+      "label": "低",
+      "lon": 118.91328,
+      "lat": 23.929877551
+    }
+  ],
+  "map_area": {
+    "lonMin": 115.8,
+    "lonMax": 128.2,
+    "latMin": 18.4,
+    "latMax": 28.2
+  },
+  "blue_root_health_total": 207.2,
+  "red_nominal_damage_total": 1071.0,
+  "blue_health_to_red_nominal_damage_ratio": 0.19346405228758168,
+  "building_health_total": 200.0,
+  "interceptor_to_high_medium_ratio": 2.25,
+  "interceptor_to_low_ratio": 1.5,
+  "farthest_blue_root_from_red_launch_centre_km": 963.9643573119289
+}

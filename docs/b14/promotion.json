@@ -1,0 +1,19 @@
+{
+  "promoted": true,
+  "from_stage": "C0a_goal",
+  "to_stage": "C0a_position",
+  "candidate": "b14",
+  "checkpoint": "/home/ubuntu/yuanlei/cz/python-machine-learning/competition-platform-refine-logs/target_transformer_main_20260914/runs/c0a_goal_b14_continuation_20260921/training/checkpoints/working.pt",
+  "checkpoint_sha256": "4609add14e70a5e25df87ddb3377756c2e45b0d3fa136d4de66406f26ca2be6e",
+  "promotion_mode": "explicit_user_override",
+  "user_instruction": "直接晋级并且开始下一个课程训练任务",
+  "authorized_utc": "2026-09-21T15:57:45.422686+00:00",
+  "standard_128_episode_requirement_satisfied": false,
+  "waived_requirement": "128 independent paired episodes for C0a_goal promotion only",
+  "completed_paired_episodes": 32,
+  "numeric_gates": "PASS",
+  "evaluation_summary": "/home/ubuntu/yuanlei/cz/python-machine-learning/competition-platform-refine-logs/target_transformer_main_20260914/validations/b14_e01_new32_20260921/evaluation_summary.json",
+  "evaluation_summary_sha256": "4388726e3e49c04ad07b8b91ec5b309c56e34620460d7d4c1ce17e05defc69fb",
+  "scope": "one launch boundary per episode; historical curated validation pool",
+  "next_training_candidate": "b15"
+}

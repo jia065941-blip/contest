@@ -7,6 +7,10 @@ from enum import IntEnum
 
 
 class SimmerCommandType(IntEnum):
+    """
+    Attributes:
+        ATTACK_COMMANDER_START: 进攻指控装订
+    """
     MISSILE_LAUNCH = 200  # 进攻弹发射
     INTERCEPTOR_LAUNCH = 201  # 拦截弹发射
     MISSILE_GUIDANCE = 202  # 进攻弹制导
