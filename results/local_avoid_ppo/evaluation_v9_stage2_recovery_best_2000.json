@@ -1,0 +1,67 @@
+{
+  "model": "models/local_avoid_ppo_stage3_selected.pt",
+  "checkpoint_stage": 3,
+  "episodes_per_stage": 2000,
+  "stages": {
+    "2": {
+      "ppo": {
+        "episodes": 2000.0,
+        "evade_success_rate": 0.9813568099430346,
+        "hit_rate": 0.018,
+        "arrival_rate": 0.0345,
+        "mean_extra_path_length_m": 14923.60281508484,
+        "mean_extra_time_s": 7.46180140754242,
+        "mean_recovery_time_s": 2.8425,
+        "mean_heading_deviation_deg": 4.7820866607187105,
+        "oscillation_rate": 0.013184066735308652,
+        "left_action_ratio": 0.17369791666666667,
+        "straight_action_ratio": 0.7075334821428572,
+        "right_action_ratio": 0.11876860119047619
+      },
+      "straight": {
+        "episodes": 2000.0,
+        "evade_success_rate": 0.6543450064850843,
+        "hit_rate": 0.2665,
+        "arrival_rate": 0.24,
+        "mean_extra_path_length_m": 8176.004502070563,
+        "mean_extra_time_s": 4.088002251035282,
+        "mean_recovery_time_s": 1.514,
+        "mean_heading_deviation_deg": 0.0,
+        "oscillation_rate": 0.0,
+        "left_action_ratio": 0.0,
+        "straight_action_ratio": 1.0,
+        "right_action_ratio": 0.0
+      }
+    },
+    "3": {
+      "ppo": {
+        "episodes": 2000.0,
+        "evade_success_rate": 0.8329853862212944,
+        "hit_rate": 0.16,
+        "arrival_rate": 0.041,
+        "mean_extra_path_length_m": 17693.02503995303,
+        "mean_extra_time_s": 8.846512519976518,
+        "mean_recovery_time_s": 2.5355,
+        "mean_heading_deviation_deg": 6.500487699037723,
+        "oscillation_rate": 0.0059858365396498,
+        "left_action_ratio": 0.3885243580060423,
+        "straight_action_ratio": 0.5870232250755287,
+        "right_action_ratio": 0.024452416918429004
+      },
+      "straight": {
+        "episodes": 2000.0,
+        "evade_success_rate": 0.47267441860465115,
+        "hit_rate": 0.4535,
+        "arrival_rate": 0.145,
+        "mean_extra_path_length_m": 4093.0180975698067,
+        "mean_extra_time_s": 2.0465090487849036,
+        "mean_recovery_time_s": 1.274,
+        "mean_heading_deviation_deg": 0.0,
+        "oscillation_rate": 0.0,
+        "left_action_ratio": 0.0,
+        "straight_action_ratio": 1.0,
+        "right_action_ratio": 0.0
+      }
+    }
+  }
+}
