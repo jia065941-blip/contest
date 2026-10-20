@@ -161,8 +161,11 @@ class RedBaselineCommander:
             "r6_frontload_decoy",
             "r7_strike_packages",
             "r7_static_search",
+            "r7_grid_sweep",
             "r8_satellite_packages",
             "r9_hierarchical_learning",
+            "r9_grid_sweep",
+            "r9_search_enhanced",
         }:
             return self.last_plan_step < 0 or step - self.last_plan_step >= self.rules.adaptive_replan_interval
         if self.policy_name == "r5_event_rolling":
@@ -202,8 +205,11 @@ class RedBaselineCommander:
                     "r6_frontload_decoy",
                     "r7_strike_packages",
                     "r7_static_search",
+                    "r7_grid_sweep",
                     "r8_satellite_packages",
                     "r9_hierarchical_learning",
+                    "r9_grid_sweep",
+                    "r9_search_enhanced",
                 }:
                     continue
                 self._drop_pending(assignment.platform_id)

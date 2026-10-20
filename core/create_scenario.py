@@ -18,15 +18,15 @@ class ScenarioGenerator:
 
     # 模型类型映射
     MODEL_TYPES = {
-        21000: {"name": "高性能飞行器", "type_id": 21000001},
-        21001: {"name": "巡航弹v2", "type_id": 21001001},
-        21002: {"name": "低性能巡航弹", "type_id": 21002001},
-        9202: {"name": "卫星", "type_id": 9202001},
-        9400: {"name": "目标", "type_id": 9400001},
-        9500: {"name": "无人船", "type_id": 9500001},
-        9600: {"name": "拦截阵地", "type_id": 9600001},
-        24000: {"name": "拦截弹", "type_id": 24000001},
-        44000: {"name": "普通雷达", "type_id": 44000001},
+        21000: {"name": "毁灭者", "type_id": 21000001},
+        21001: {"name": "突击者", "type_id": 21001001},
+        21002: {"name": "清道夫", "type_id": 21002001},
+        9202: {"name": "天眼", "type_id": 9202001},
+        9400: {"name": "母巢", "type_id": 9400001},
+        9500: {"name": "暗巢", "type_id": 9500001},
+        9600: {"name": "哨卫巢", "type_id": 9600001},
+        24000: {"name": "自爆虫群", "type_id": 24000001},
+        44000: {"name": "视野塔", "type_id": 44000001},
         35000: {"name": "拦截指控", "type_id": 35000001},
     }
 
@@ -97,7 +97,7 @@ class ScenarioGenerator:
             name_en = custom_en_name if custom_en_name else custom_name.replace(' ', '_')
         else:
             name_chn = f"{model_info['name']}_{type_id}_{entity_id:03d}"
-            name_en = f"{model_info['name'].replace('飞行器', 'Cruise').replace('巡航弹', 'CruiseMissile').replace('无人机', 'UAV').replace('拦截弹', 'Interceptor').replace('拦截指控', 'DefendCommander')}_{entity_id:03d}"
+            name_en = f"{model_info['name'].replace('毁灭者', 'Cruise').replace('毁灭者', 'CruiseMissile').replace('清道夫', 'UAV').replace('自爆虫群', 'Interceptor').replace('拦截指控', 'DefendCommander')}_{entity_id:03d}"
 
         if name_prefix and not custom_name:
             name_chn = f"{name_prefix}_{name_chn}"
@@ -270,14 +270,14 @@ class ScenarioGenerator:
         config 字段:
             - type:       实体类型
             - x, y:       实体的具体坐标 (必须提供, 不再支持范围随机)
-            - interceptors: 挂载拦截弹数量
-            - radar_type:   挂载雷达类型
+            - interceptors: 挂载自爆虫群数量
+            - radar_type:   挂载视野塔类型
             - survive_points / threat_level / is_visible / custom_name / custom_en_name
         说明:
-            雷达、拦截弹等子节点坐标与父节点完全一致 (不再加随机偏移)。
+            视野塔、自爆虫群等子节点坐标与父节点完全一致 (不再加随机偏移)。
         """
         blue_entities = []
-        interceptor_counter = 1  # 拦截弹全局计数器
+        interceptor_counter = 1  # 自爆虫群全局计数器
 
         for config in blue_config:
             entity_type = config["type"]
@@ -308,10 +308,10 @@ class ScenarioGenerator:
             blue_entities.append(entity)
             self.profile.imagineProfile.entityList.append(entity)
 
-            # 挂载拦截弹 (24000) - 命名格式: 拦截弹-id-父节点id, 坐标与父节点一致
+            # 挂载自爆虫群 (24000) - 命名格式: 自爆虫群-id-父节点id, 坐标与父节点一致
             if interceptors:
                 for i in range(interceptors):
-                    interceptor_name = f"拦截弹-{interceptor_counter}-{entity.entity.id}"
+                    interceptor_name = f"自爆虫群-{interceptor_counter}-{entity.entity.id}"
                     interceptor_counter += 1
 
                     interceptor = self.create_entity(
@@ -328,17 +328,17 @@ class ScenarioGenerator:
                     entity.entity.childrenId.append(interceptor.entity.id)
                     self.profile.imagineProfile.entityList.append(interceptor)
 
-            # 挂载雷达 (44000) - 坐标与父节点一致
+            # 挂载视野塔 (44000) - 坐标与父节点一致
             if radar_type and radar_type in self.MODEL_TYPES:
                 radar = self.create_entity(
                     radar_type,
                     x, y,
-                    "蓝方_雷达",
+                    "蓝方_视野塔",
                     side_id=1,
                     parent_id=entity.entity.id,
                     survive_points=1500,
                     is_visible=False,
-                    custom_name=config.get("radar_name", f"普通雷达_{radar_type}_{entity.entity.id}"),
+                    custom_name=config.get("radar_name", f"普通视野塔_{radar_type}_{entity.entity.id}"),
                     custom_en_name=config.get("radar_en_name", f"NormalRadar_{radar_type}_{entity.entity.id}")
                 )
                 radar.external = '{"raderExternal":{"range":{"x":0,"y":0,"z":0},"distance":350000,"scanSpeed":5}}'
@@ -408,9 +408,9 @@ class ScenarioGenerator:
 
 
 # ==================== 用户配置区域 ====================
-# mapArea 整体范围: 经度[-4, 4], 纬度[-2, 2]
-# 红方在左半边 (经度 -4 到 -0.5)
-# 蓝方在右半边 (经度 0.5 到 4)
+# mapArea 整体范围: X 坐标[-4, 4], Y 坐标[-2, 2]
+# 红方在左半边 (X 坐标 -4 到 -0.5)
+# 蓝方在右半边 (X 坐标 0.5 到 4)
 
 LAND_AREA = {
     "x_min": -3.8,
@@ -420,7 +420,7 @@ LAND_AREA = {
 }
 
 RED_CONFIG = [
-    # 高性能飞行器 (21000) - 左侧区域 (将保存到 redArea.coordinatesHM)
+    # 毁灭者 (21000) - 左侧区域 (将保存到 redArea.coordinatesHM)
     {
         "type": 21000,
         "count": 1,
@@ -428,7 +428,7 @@ RED_CONFIG = [
         "threat_level": 0,
         "area": LAND_AREA
     },
-    # 低性能飞行器 (21001) - 左侧区域 (将保存到 redArea.coordinatesHM)
+    # 突击者 (21001) - 左侧区域 (将保存到 redArea.coordinatesHM)
     {
         "type": 21001,
         "count": 0,
@@ -436,7 +436,7 @@ RED_CONFIG = [
         "threat_level": 0,
         "area": LAND_AREA
     },
-    # 无人机 (21002) - 左半边偏右区域 (将保存到 redArea.coordinates)
+    # 清道夫 (21002) - 左半边偏右区域 (将保存到 redArea.coordinates)
     {
         "type": 21002,
         "count": 0,
@@ -449,7 +449,7 @@ RED_CONFIG = [
             "y_max": 1.5
         }
     },
-    # 卫星 (9202)
+    # 天眼 (9202)
     {
         "type": 9202,
         "count": 1,
@@ -465,9 +465,9 @@ RED_CONFIG = [
     },
 ]
 
-# 蓝方配置 - 在右半边 (经度 0.5 到 3.8)
+# 蓝方配置 - 在右半边 (X 坐标 0.5 到 3.8)
 BLUE_CONFIG = [
-    # 拦截阵地1 - 挂载50枚拦截弹和雷达
+    # 哨卫巢1 - 挂载50个自爆虫群和视野塔
     {
         "type": 9600,
         "x": 1.8,
@@ -477,7 +477,7 @@ BLUE_CONFIG = [
         "interceptors": 50,
         "radar_type": 44000,
     },
-    # 拦截阵地2 - 挂载50枚拦截弹和雷达
+    # 哨卫巢2 - 挂载50自爆虫群和视野塔
     {
         "type": 9600,
         "x": 2.2,
@@ -487,7 +487,7 @@ BLUE_CONFIG = [
         "interceptors": 50,
         "radar_type": 44000,
     },
-    # 目标1
+    # 母巢1
     {
         "type": 9400,
         "x": 1.9,
@@ -497,7 +497,7 @@ BLUE_CONFIG = [
         "interceptors": None,
         "radar_type": None,
     },
-    # 目标2
+    # 母巢2
     {
         "type": 9400,
         "x": 2.6,
@@ -507,7 +507,7 @@ BLUE_CONFIG = [
         "interceptors": None,
         "radar_type": None,
     },
-    # 目标3
+    # 母巢3
     {
         "type": 9400,
         "x": 2.3,
@@ -517,7 +517,7 @@ BLUE_CONFIG = [
         "interceptors": None,
         "radar_type": None,
     },
-    # 无人船1 - 挂载50枚拦截弹
+    # 暗巢1 - 挂载50自爆虫群
     {
         "type": 9500,
         "x": 1.7,
@@ -527,7 +527,7 @@ BLUE_CONFIG = [
         "interceptors": 50,
         "radar_type": None,
     },
-    # 无人船2 - 挂载50枚拦截弹
+    # 暗巢2 - 挂载50枚自爆虫群
     {
         "type": 9500,
         "x": 3.1,
@@ -545,24 +545,24 @@ def generate_blue_config() -> List[Dict]:
     生成标准蓝方配置 (独立函数, 与 ScenarioGenerator 解耦)
 
     返回一份 blue_config 列表, 每一项对应一个实体。每项都带有具体的坐标 x/y
-    (而非范围), generate_blue_entities() 会直接使用该坐标, 且挂载的雷达/拦截弹
+    (而非范围), generate_blue_entities() 会直接使用该坐标, 且挂载的视野塔/自爆虫群
     坐标与父节点完全一致。
 
-    部署计划 (右半边 经度 0.5~4.0, 纬度 -2.0~2.0):
-        - 上区域 (拦截阵地 9600): 20 个, 各带 1 部雷达 (44000) 50 个拦截弹
-        - 下区域 (拦截阵地 9600): 20 个, 各带 1 部雷达 (44000) 50 个拦截弹
-        - 左边区域 (无人船 9500): 50 个, 各带 1 部雷达 (44000) 50 个拦截弹
-        - 中间区域 (目标 9400):   10 个, 无雷达
+    部署计划 (右半边 X 坐标 0.5~4.0, Y 坐标 -2.0~2.0):
+        - 上区域 (哨卫巢 9600): 20 个, 各带 1 部视野塔 (44000) 50 个自爆虫群
+        - 下区域 (哨卫巢 9600): 20 个, 各带 1 部视野塔 (44000) 50 个自爆虫群
+        - 左边区域 (暗巢 9500): 50 个, 各带 1 部视野塔 (44000) 50 个自爆虫群
+        - 中间区域 (母巢 9400):   10 个, 无视野塔
 
     区域划分:
-        - 上区域:   纬度  0.2~1.8, 经度 0.8~3.8
-        - 下区域:   纬度 -1.8~-0.2, 经度 0.8~3.8
-        - 左边区域: 经度  0.5~1.8 (靠近中线), 纬度 -1.8~1.8
-        - 中间区域: 经度  1.8~3.0, 纬度 -0.8~0.8
+        - 上区域:   Y 坐标  0.2~1.8, X 坐标 0.8~3.8
+        - 下区域:   Y 坐标 -1.8~-0.2, X 坐标 0.8~3.8
+        - 左边区域: X 坐标  0.5~1.8 (靠近中线), Y 坐标 -1.8~1.8
+        - 中间区域: X 坐标  1.8~3.0, Y 坐标 -0.8~0.8
     """
     blue_config = []
 
-    # 上区域拦截阵地 20 个 (每个各带雷达, 拦截弹共 25 枚: 其中 5 个带 2 枚, 15 个带 1 枚)
+    # 上区域哨卫巢 20 个 (每个各带视野塔, 自爆虫群共 25 枚: 其中 5 个带 2 枚, 15 个带 1 枚)
     for i in range(20):
         blue_config.append({
             "type": 9600,
@@ -574,7 +574,7 @@ def generate_blue_config() -> List[Dict]:
             "radar_type": 44000,
         })
 
-    # 下区域拦截阵地 20 个 (同上, 拦截弹共 25 枚)
+    # 下区域哨卫巢 20 个 (同上, 自爆虫群共 25 枚)
     for i in range(20):
         blue_config.append({
             "type": 9600,
@@ -586,7 +586,7 @@ def generate_blue_config() -> List[Dict]:
             "radar_type": 44000,
         })
 
-    # 左边区域无人船 50 个 (每个各带雷达, 带拦截弹)
+    # 左边区域暗巢 50 个 (每个各带视野塔, 带自爆虫群)
     for _ in range(50):
         blue_config.append({
             "type": 9500,
@@ -598,7 +598,7 @@ def generate_blue_config() -> List[Dict]:
             "radar_type": 44000,
         })
 
-    # 中间目标 10 个 (无雷达、无拦截弹)
+    # 中间母巢 10 个 (无视野塔、无自爆虫群)
     for _ in range(10):
         blue_config.append({
             "type": 9400,
@@ -623,7 +623,7 @@ def main():
     generator = ScenarioGenerator()
 
     # ===== 蓝方配置开关 =====
-    # 取消注释下一行 -> 启用自动生成的标准蓝方配置 (覆盖下方原 BLUE_CONFIG)
+    # 取消注释下一行   -> 启用自动生成的标准蓝方配置 (覆盖下方原 BLUE_CONFIG)
     # 注释掉下一行     -> 保留原 BLUE_CONFIG 手动配置
     # BLUE_CONFIG = generate_blue_config()
 
@@ -631,9 +631,9 @@ def main():
     print("=" * 60)
     print("想定生成器")
     print("=" * 60)
-    print("\nmapArea 整体范围: 经度[-4, 4], 纬度[-2, 2]")
-    print("红方区域: 左半边 (经度 -4 到 -0.5)")
-    print("蓝方区域: 右半边 (经度 0.5 到 4)")
+    print("\nmapArea 整体范围: X 坐标[-4, 4], Y 坐标[-2, 2]")
+    print("红方区域: 左半边 (X 坐标 -4 到 -0.5)")
+    print("蓝方区域: 右半边 (X 坐标 0.5 到 4)")
     print("拦截指控: 位于 (0, 0)")
     print("=" * 60)
 
@@ -646,17 +646,16 @@ def main():
     for config in RED_CONFIG:
         model_name = generator.MODEL_TYPES[config["type"]]["name"]
         area = config.get("area", {})
-        print(f"  - {model_name}: {config['count']} 个 (经度[{area.get('x_min', 0):.1f}, {area.get('x_max', 0):.1f}])")
+        print(f"  - {model_name}: {config['count']} 个 (X 坐标[{area.get('x_min', 0):.1f}, {area.get('x_max', 0):.1f}])")
 
     print(f"\n蓝方实体总数: {blue_total}")
     for config in BLUE_CONFIG:
         model_name = generator.MODEL_TYPES[config["type"]]["name"]
         interceptors = config.get("interceptors", 0) or 0
-        radar = "有雷达" if config.get("radar_type") else "无雷达"
-        print(
-            f"  - {model_name}: 经度[{config['x']:.1f}, {config['x']:.1f}], 拦截弹 {interceptors} 枚, {radar}")
+        radar = "有视野塔" if config.get("radar_type") else "无视野塔"
+        print(f"  - {model_name}: X 坐标[{config['x']:.1f}, {config['x']:.1f}], 自爆虫群 {interceptors} 枚, {radar}")
 
-    print(f"\n拦截弹总数: {interceptor_total}")
+    print(f"\n自爆虫群总数: {interceptor_total}")
     print(f"拦截指控: 1 个")
     print("=" * 60)
 

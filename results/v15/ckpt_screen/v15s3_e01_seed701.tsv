@@ -1,0 +1,2 @@
+label	scenario	seed	score	destroyed_weight	total_weight	steps	termination	run_id
+it3_e01	E01	701	98.8506	28.0	29.0	1801	environment_done	screen_v15s3_e01_it3_e01_E01_701
