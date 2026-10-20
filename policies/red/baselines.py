@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-import random
 import math
+import os
+import random
 from dataclasses import dataclass, field
 from math import cos, hypot, radians
 
@@ -20,8 +21,11 @@ RED_POLICY_CHOICES = (
     "r6_frontload_decoy",
     "r7_strike_packages",
     "r7_static_search",
+    "r7_grid_sweep",
     "r8_satellite_packages",
     "r9_hierarchical_learning",
+    "r9_grid_sweep",
+    "r9_search_enhanced",
 )
 
 
@@ -111,11 +115,11 @@ class BaselineRules:
     wave_count: int = 3
     wave_interval: int = 40
     static_search_group_size: int = 3
-    static_search_group_spacing_km: float = 50.0
+    static_search_group_spacing_km: float = 5.0
     static_search_low_fraction: float = 0.06
     static_search_min_platforms: int = 9
-    static_search_max_range_km: float = 480.0
-    static_search_danger_radius_km: float = 200.0
+    static_search_max_range_km: float = 48.0
+    static_search_danger_radius_km: float = 20.0
     # Policy time is the TrainingEnv step index; final24 uses one second/step.
     static_search_lead_steps: int = 700
 
@@ -503,7 +507,84 @@ class R9HierarchicalLearningPolicy(R8SatellitePackagePolicy):
     This class intentionally keeps target allocation deterministic.  The R9
     learning actor operates beneath it, choosing only each assigned platform's
     lateral maneuver from isolated observations plus this task context.
+
+    Setting ``R9_GRID_SWEEP_PLATFORMS`` (or ``enable_grid_sweep``) prepends the
+    eastbound lane sweep used by ``r7_grid_sweep``: a wall of L platforms flies
+    due east to find hidden 9500 ships, while the learned evasion policy keeps
+    them alive underneath.  The sweep only changes allocation and destinations,
+    never the motion stack.
+
+    The named baselines ``r9_grid_sweep`` (mechanism name) and
+    ``r9_search_enhanced`` (delivery name) pass ``enable_grid_sweep=True`` so the
+    sweep is on by default (85 lanes), while plain ``r9_hierarchical_learning``
+    stays bit-exact with the upstream baseline and only sweeps when the
+    environment variable asks for it.
     """
+
+    DEFAULT_SWEEP_PLATFORMS = 85
+    DEFAULT_SWEEP_LEAD_STEPS = 240
+    DEFAULT_SWEEP_CLAIMS_PER_SHIP = 3
+
+    def __init__(
+        self,
+        rules: BaselineRules,
+        search_polygon: tuple[Position, ...] | None = None,
+        enable_grid_sweep: bool | int | None = None,
+    ) -> None:
+        super().__init__(rules)
+        self.layer = None
+        if enable_grid_sweep is True:
+            platforms = int(
+                os.environ.get("R9_GRID_SWEEP_PLATFORMS", str(self.DEFAULT_SWEEP_PLATFORMS))
+            )
+        elif enable_grid_sweep is not None:
+            platforms = int(enable_grid_sweep)
+        else:
+            platforms = int(os.environ.get("R9_GRID_SWEEP_PLATFORMS", "0"))
+        if platforms <= 0:
+            return
+        if search_polygon is None:
+            raise ValueError("r9 grid sweep requires a public search polygon")
+        from .r7_grid_sweep import GridSweepLayer
+
+        self.layer = GridSweepLayer(
+            search_polygon,
+            sweep_platform_target=platforms,
+            sweep_lead_steps=int(
+                os.environ.get("R9_GRID_SWEEP_LEAD", str(self.DEFAULT_SWEEP_LEAD_STEPS))
+            ),
+            max_claims_per_ship=int(
+                os.environ.get(
+                    "R9_GRID_SWEEP_SHIP_CLAIMS", str(self.DEFAULT_SWEEP_CLAIMS_PER_SHIP)
+                )
+            ),
+        )
+
+    def decide(self, observation: BaselineObservation) -> tuple[Assignment, ...]:
+        if self.layer is not None:
+            if not self.layer.planned:
+                lane_platforms, east_lon = self.layer.lane_plan(observation)
+                base = self._priority_assignments(observation, lane_platforms, len(lane_platforms))
+                assignments = self.layer.decorate(base, lane_platforms, east_lon)
+                self.layer.mark_planned(observation.step, assignments)
+                return assignments
+            if self.layer.holding(observation):
+                return ()
+        return super().decide(observation)
+
+    def claim_retarget(self, platform, observed_targets):
+        if self.layer is not None:
+            target = self.layer.claim(platform, observed_targets)
+            if target is not None:
+                return target
+        return super().claim_retarget(platform, observed_targets)
+
+    def _best_target(self, platform, targets, counts):
+        if self.layer is not None:
+            ship = self.layer.preferred_ship(platform, targets, counts)
+            if ship is not None:
+                return ship
+        return super()._best_target(platform, targets, counts)
 
 
 def build_red_baseline(
@@ -534,8 +615,20 @@ def build_red_baseline(
         from .r7_static_search import R7StaticSearchPolicy
 
         return R7StaticSearchPolicy(rules, search_polygon)
+    if name == "r7_grid_sweep":
+        if search_polygon is None:
+            raise ValueError("r7_grid_sweep requires a public search polygon")
+        from .r7_grid_sweep import R7GridSweepPolicy
+
+        return R7GridSweepPolicy(rules, search_polygon)
     if name == "r8_satellite_packages":
         return R8SatellitePackagePolicy(rules)
     if name == "r9_hierarchical_learning":
-        return R9HierarchicalLearningPolicy(rules)
+        return R9HierarchicalLearningPolicy(rules, search_polygon)
+    if name in {"r9_grid_sweep", "r9_search_enhanced"}:
+        # ``r9_search_enhanced`` is the delivery-facing name for the same policy;
+        # ``r9_grid_sweep`` stays as the mechanism/experiment name.
+        if search_polygon is None:
+            raise ValueError(f"{name} requires a public search polygon")
+        return R9HierarchicalLearningPolicy(rules, search_polygon, enable_grid_sweep=True)
     raise ValueError(f"Unknown red baseline '{name}'")

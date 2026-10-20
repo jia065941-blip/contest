@@ -51,7 +51,7 @@ class CommandConverter:
                         ).to_dict()
                     )
 
-                # 使用卫星
+                # 使用天眼
                 if action_item[0] == 3:
                     actions_converted.append(
                         UseSatelliteAction(

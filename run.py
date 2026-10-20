@@ -37,8 +37,11 @@ RED_POLICY_CHOICES = (
     "r6_frontload_decoy",
     "r7_strike_packages",
     "r7_static_search",
+    "r7_grid_sweep",
     "r8_satellite_packages",
     "r9_hierarchical_learning",
+    "r9_grid_sweep",
+    "r9_search_enhanced",
 )
 RED_MOTION_POLICY_CHOICES = (
     "straight",
@@ -85,7 +88,7 @@ def with_competition_step_limit(scenario: Path, core_args: list[str]) -> list[st
 
 
 def cmd_run(args: argparse.Namespace) -> int:
-    if args.red_policy == "r9_hierarchical_learning" and args.red_motion_policy not in {
+    if args.red_policy in {"r9_hierarchical_learning", "r9_grid_sweep", "r9_search_enhanced"} and args.red_motion_policy not in {
         "straight", "random_masked", "ppo", "mappo", "local_avoid_s3",
     }:
         print(
