@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "staggered-deployment-skill"
+version = "0.1.0"
+description = "Deterministic staggered H/M/L deployment geometry"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["skill-generation==0.1.0"]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

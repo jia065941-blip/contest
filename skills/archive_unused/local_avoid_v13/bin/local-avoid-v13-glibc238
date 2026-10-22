@@ -1,0 +1,29 @@
+#!/bin/sh
+set -eu
+
+unset LD_LIBRARY_PATH LD_PRELOAD LD_AUDIT LD_DEBUG LD_DEBUG_OUTPUT \
+    LD_PROFILE LD_PROFILE_OUTPUT LD_SHOW_AUXV LD_TRACE_LOADED_OBJECTS \
+    LD_ORIGIN_PATH LD_HWCAP_MASK LD_PREFER_MAP_32BIT_EXEC GLIBC_TUNABLES
+
+SKILL_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+FRAMEWORK_ROOT=$(CDPATH= cd -- "$SKILL_ROOT/../.." && pwd)
+GLIBC_ROOT=/home/amax/ry/competition/glibc-2.38
+CONDA_ROOT=/home/amax/miniconda3/envs/competition
+COMPETITION_ROOT=/home/amax/ry/competition/competition_envs
+LOADER="$GLIBC_ROOT/sysroot/lib64/ld-linux-x86-64.so.2"
+NATIVE_LIB="$COMPETITION_ROOT/core/envengine/simulator/models/HXDMissileModel"
+
+if [ ! -x "$LOADER" ] || [ ! -x "$CONDA_ROOT/bin/python3.11" ]; then
+    printf '%s\n' "Missing private glibc loader or competition Python." >&2
+    exit 1
+fi
+
+PYTHONPATH="$FRAMEWORK_ROOT/src:$SKILL_ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
+export PYTHONPATH
+LOCAL_AVOID_V13_PRIVATE_GLIBC=1
+export LOCAL_AVOID_V13_PRIVATE_GLIBC
+
+exec "$LOADER" \
+    --argv0 "$0" \
+    --library-path "$GLIBC_ROOT/sysroot/lib64:$GLIBC_ROOT/sysroot/usr/lib64:$CONDA_ROOT/lib:$NATIVE_LIB:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu" \
+    "$CONDA_ROOT/bin/python3.11" -m local_avoid_v13_skill.official_entry "$@"

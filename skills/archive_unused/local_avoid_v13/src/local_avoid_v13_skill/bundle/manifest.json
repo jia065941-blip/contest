@@ -1,0 +1,53 @@
+{
+  "artifacts": [
+    {
+      "name": "actor_parameters",
+      "path": "artifacts/actor_parameters.npz",
+      "sha256": "90bd81310b581fd6fcbb792c917cb15a630944077807005a46bbf4c9d82884d4"
+    },
+    {
+      "name": "environment_config",
+      "path": "artifacts/environment_config.json",
+      "sha256": "aa19b7948bc220726cd378cc599fca4e547804ef5a127fa70a5bea9bc01ea025"
+    }
+  ],
+  "backend": {
+    "id": "local-avoid-v13-torch",
+    "interface_version": "1"
+  },
+  "contract_version": "local-avoid-v13-logits-v1",
+  "dependencies": {
+    "numpy": "2.4.6",
+    "torch": "2.6.0+cpu"
+  },
+  "format_version": 1,
+  "inputs": [
+    {
+      "dtype": "float32",
+      "finite": true,
+      "name": "observation",
+      "shape": [
+        33
+      ]
+    }
+  ],
+  "model_format": "local-avoid-v13-actor-npz-v1",
+  "model_id": "local-avoid-v13",
+  "outputs": [
+    {
+      "dtype": "float32",
+      "finite": true,
+      "name": "logits",
+      "shape": [
+        3
+      ]
+    }
+  ],
+  "preprocessing": {
+    "artifact": "actor_parameters",
+    "required": true,
+    "version": "running-mean-std-v1"
+  },
+  "source": "Actor-only safe conversion of V13 checkpoint SHA-256 632662d47fb35edfdb10d680a359cced03fab75af09cff666631a97f0ccf87f3",
+  "version": "13.0.0"
+}

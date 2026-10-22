@@ -1,0 +1,45 @@
+{
+  "format_version": 1,
+  "model_id": "harmless-affine",
+  "version": "1.0.0",
+  "backend": {
+    "id": "numpy-affine",
+    "interface_version": "1"
+  },
+  "artifacts": [
+    {
+      "name": "parameters",
+      "path": "artifacts/parameters.npz",
+      "sha256": "35eadbce05a18cc365a5f28c557c975fd941afa7179f365b9e03e756a39028b8"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "x",
+      "dtype": "float64",
+      "shape": [
+        2
+      ],
+      "finite": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "y",
+      "dtype": "float64",
+      "shape": [
+        2
+      ],
+      "finite": true
+    }
+  ],
+  "contract_version": "affine-v1",
+  "preprocessing": {
+    "required": false
+  },
+  "model_format": "numpy-affine-npz-v1",
+  "dependencies": {
+    "numpy": "2.5.4"
+  },
+  "source": "Locally generated deterministic arithmetic fixture; no task model."
+}

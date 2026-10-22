@@ -1,0 +1,17 @@
+{
+  "prediction_horizon_seconds": 45.0,
+  "cpa_distance_metres": 3000.0,
+  "emergency_range_metres": 750.0,
+  "terminal_goal_distance_metres": 12000.0,
+  "terminal_risk_scale": 0.65,
+  "minimum_closing_speed_mps": 50.0,
+  "minimum_own_speed_mps": 10.0,
+  "goal_deadband_degrees": 4.0,
+  "break_steps": 2,
+  "settle_steps": 1,
+  "recovery_steps": 1,
+  "cooldown_steps": 4,
+  "side_lock_steps": 8,
+  "maximum_breaks": 2,
+  "escape_direction": "geometry"
+}

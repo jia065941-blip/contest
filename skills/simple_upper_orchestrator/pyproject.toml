@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "simple-upper-orchestrator-skill"
+version = "0.1.0"
+description = "Official-release adapter for the simple staggered H/M/L upper layer"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=1.26,<3",
+  "skill-generation==0.1.0",
+  "staggered-deployment-skill==0.1.0",
+  "l-satellite-strike-packages-skill==0.1.0",
+  "hm-public-strike-packages-skill==0.1.0",
+  "local-avoidance-skill==0.1.0",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10"]
+
+[project.scripts]
+simple-upper-release = "simple_upper_orchestrator_skill.release_launcher:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

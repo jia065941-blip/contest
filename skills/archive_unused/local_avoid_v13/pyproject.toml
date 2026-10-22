@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "local-avoid-v13-skill"
+version = "0.1.0"
+description = "V13 local avoidance Actor for skill-generation"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "skill-generation==0.1.0",
+  "numpy>=2.4,<3",
+  "torch>=2.6,<2.7",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10"]
+
+[project.scripts]
+local-avoid-v13 = "local_avoid_v13_skill.launcher:main"
+local-avoid-v13-plan = "local_avoid_v13_skill.plan_launcher:main"
+local-avoid-external-r9 = "local_avoid_v13_skill.release_r9_launcher:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+local_avoid_v13_skill = ["bundle/**/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

@@ -1,0 +1,6 @@
+# Versions verified together on CPython 3.13.9. Package metadata keeps wider
+# compatibility ranges; use this file to reproduce the recorded environment.
+numpy==2.5.4
+pytest==9.1.1
+setuptools==84.0.0
+wheel==0.48.0

@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "h-single-maneuver-skill"
+version = "0.1.0"
+description = "Rule-based single-H-missile maneuver composite"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=1.26,<3",
+  "skill-generation==0.1.0",
+  "turn-left-skill==0.1.0",
+  "turn-right-skill==0.1.0",
+  "stop-turning-skill==0.1.0",
+  "three-missile-joint-skill==0.1.0",
+  "l-search-coordination-skill==0.1.0",
+  "l-response-package-skill==0.1.0",
+  "target-damage-belief-skill==0.1.0",
+  "mission-replan-skill==0.1.0",
+  "m-strike-package-skill==0.1.0",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10"]
+
+[project.scripts]
+h-single-maneuver-plan = "h_single_maneuver_skill.plan_launcher:main"
+h-single-maneuver-r9 = "h_single_maneuver_skill.r9_launcher:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+h_single_maneuver_skill = ["profiles/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

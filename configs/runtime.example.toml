@@ -1,0 +1,6 @@
+# Illustrative application settings; no automatic config loading or discovery.
+bundle_dir = "models/harmless-affine/1.0.0"
+backend_id = "numpy-affine"
+monitor_enabled = true
+jsonl_path = "logs/inference.jsonl"
+max_error_history = 100
