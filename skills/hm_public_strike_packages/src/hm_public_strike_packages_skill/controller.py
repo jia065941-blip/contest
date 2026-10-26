@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from math import ceil, isfinite
+from math import ceil, comb, fsum, isfinite
 from typing import Sequence
 
 
@@ -18,6 +18,11 @@ _EPSILON = 1e-12
 def _nonnegative_int(value: object, name: str) -> None:
     if isinstance(value, bool) or not isinstance(value, int) or value < 0:
         raise ValueError(f"{name} must be a nonnegative integer")
+
+
+def _positive_int(value: object, name: str) -> None:
+    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+        raise ValueError(f"{name} must be a positive integer")
 
 
 def _positive_finite(value: object, name: str) -> None:
@@ -93,6 +98,18 @@ class PublicStrikeConfig:
     reserve_h: int = 0
     reserve_m: int = 0
     lock_assignments: bool = True
+    allocation_mode: str = "full_coverage_mixed"
+    target_kill_probability: float = 0.85
+    min_h_per_mother: int = 2
+    min_m_per_mother: int = 0
+    min_h_per_sentry: int = 1
+    max_h_per_mother: int = 2
+    h_per_sentry_package: int = 2
+    m_per_h_mixed_package: int = 2
+    m_only_sentry_package: int = 6
+    target_priority_axis: str = "east"
+    m_target_policy: str = "complete_h_sentries"
+    allow_m_only_sentry_packages: bool = False
 
     def __post_init__(self) -> None:
         for name in (
@@ -104,10 +121,50 @@ class PublicStrikeConfig:
             _positive_finite(getattr(self, name), name)
             if float(getattr(self, name)) > 1.0:
                 raise ValueError(f"{name} must be in (0, 1]")
+        if not isinstance(self.allocation_mode, str) or self.allocation_mode not in (
+            "full_coverage_mixed", "deterministic_thresholds", "threshold_packages",
+            "kill_probability", "expected_damage",
+        ):
+            raise ValueError(
+                "allocation_mode must be 'full_coverage_mixed', "
+                "'deterministic_thresholds', 'threshold_packages', "
+                "'kill_probability', or 'expected_damage'"
+            )
+        _positive_finite(self.target_kill_probability, "target_kill_probability")
+        if float(self.target_kill_probability) > 1.0:
+            raise ValueError("target_kill_probability must be in (0, 1]")
         _nonnegative_int(self.reserve_h, "reserve_h")
         _nonnegative_int(self.reserve_m, "reserve_m")
+        _nonnegative_int(self.min_h_per_mother, "min_h_per_mother")
+        _nonnegative_int(self.min_m_per_mother, "min_m_per_mother")
+        _nonnegative_int(self.min_h_per_sentry, "min_h_per_sentry")
+        _nonnegative_int(self.max_h_per_mother, "max_h_per_mother")
+        _positive_int(self.h_per_sentry_package, "h_per_sentry_package")
+        _positive_int(self.m_per_h_mixed_package, "m_per_h_mixed_package")
+        _positive_int(self.m_only_sentry_package, "m_only_sentry_package")
+        if (
+            self.allocation_mode not in {
+                "full_coverage_mixed", "deterministic_thresholds",
+                "threshold_packages",
+            }
+            and self.min_h_per_mother > self.max_h_per_mother
+        ):
+            raise ValueError("min_h_per_mother cannot exceed max_h_per_mother")
+        if self.target_priority_axis not in {"east", "west", "north", "south", "none"}:
+            raise ValueError(
+                "target_priority_axis must be east, west, north, south, or none"
+            )
+        if not isinstance(self.m_target_policy, str) or self.m_target_policy not in {
+            "complete_h_sentries", "incomplete_h_sentries", "mothers",
+        }:
+            raise ValueError(
+                "m_target_policy must be 'complete_h_sentries', "
+                "'incomplete_h_sentries', or 'mothers'"
+            )
         if not isinstance(self.lock_assignments, bool):
             raise ValueError("lock_assignments must be a boolean")
+        if not isinstance(self.allow_m_only_sentry_packages, bool):
+            raise ValueError("allow_m_only_sentry_packages must be a boolean")
 
     def default_health(self, target_type: int) -> float:
         _validate_target_type(target_type)
@@ -127,6 +184,9 @@ class PublicStrikePackage:
     member_ids: tuple[int, ...]
     required_damage: float
     expected_damage: float
+    kill_probability: float = 0.0
+    nominal_applied_damage: float = 0.0
+    threshold_satisfied: bool = False
 
 
 @dataclass(frozen=True)
@@ -166,6 +226,53 @@ def expected_effective_damage(
     damage = settings.h_damage if missile_type == H_MISSILE_TYPE else settings.m_damage
     hit_rate = settings.hit_rate_9400 if target_type == 9400 else settings.hit_rate_9600
     return float(damage * hit_rate)
+
+
+def kill_probability(
+    h_count: int,
+    m_count: int,
+    target_type: int,
+    config: PublicStrikeConfig | None = None,
+) -> float:
+    """Return exact P(total discrete H/M hit damage >= target health)."""
+    _nonnegative_int(h_count, "h_count")
+    _nonnegative_int(m_count, "m_count")
+    _validate_target_type(target_type)
+    if config is not None and not isinstance(config, PublicStrikeConfig):
+        raise ValueError("config must be a PublicStrikeConfig")
+    settings = config or PublicStrikeConfig()
+    return _kill_probability_for_health(
+        h_count,
+        m_count,
+        target_type,
+        settings.default_health(target_type),
+        settings,
+    )
+
+
+def _kill_probability_for_health(
+    h_count: int,
+    m_count: int,
+    target_type: int,
+    health: float,
+    config: PublicStrikeConfig,
+) -> float:
+    if h_count * config.h_damage + m_count * config.m_damage < health:
+        return 0.0
+    hit_rate = config.hit_rate_9400 if target_type == 9400 else config.hit_rate_9600
+    miss_rate = 1.0 - hit_rate
+    probability = fsum(
+        comb(h_count, h_hits)
+        * hit_rate ** h_hits
+        * miss_rate ** (h_count - h_hits)
+        * comb(m_count, m_hits)
+        * hit_rate ** m_hits
+        * miss_rate ** (m_count - m_hits)
+        for h_hits in range(h_count + 1)
+        for m_hits in range(m_count + 1)
+        if h_hits * config.h_damage + m_hits * config.m_damage >= health
+    )
+    return min(1.0, max(0.0, probability))
 
 
 class HMPublicStrikePackagesSkill:
@@ -297,6 +404,19 @@ class HMPublicStrikePackagesSkill:
     def _allocate(
         self, active: tuple[HMMissileSnapshot, ...],
     ) -> tuple[dict[int, int], dict[int, int]]:
+        if self.config.allocation_mode == "full_coverage_mixed":
+            return self._allocate_by_full_coverage_mixed(active)
+        if self.config.allocation_mode == "deterministic_thresholds":
+            return self._allocate_by_deterministic_thresholds(active)
+        if self.config.allocation_mode == "threshold_packages":
+            return self._allocate_by_threshold_packages(active)
+        if self.config.allocation_mode == "kill_probability":
+            return self._allocate_by_kill_probability(active)
+        return self._allocate_by_expected_damage(active)
+
+    def _available_by_type(
+        self, active: tuple[HMMissileSnapshot, ...],
+    ) -> dict[int, list[HMMissileSnapshot]]:
         by_type = {
             missile_type: [item for item in active if item.missile_type == missile_type]
             for missile_type in (H_MISSILE_TYPE, M_MISSILE_TYPE)
@@ -308,6 +428,521 @@ class HMPublicStrikePackagesSkill:
         ):
             keep = max(0, len(by_type[missile_type]) - reserve)
             available[missile_type] = by_type[missile_type][:keep]
+        return available
+
+    def _allocate_by_full_coverage_mixed(
+        self, active: tuple[HMMissileSnapshot, ...],
+    ) -> tuple[dict[int, int], dict[int, int]]:
+        available = self._available_by_type(active)
+        targets = tuple(sorted(self._targets.values(), key=lambda item: item.target_id))
+        mothers = tuple(sorted(
+            (target for target in targets if target.target_type == 9400),
+            key=lambda target: (-float(target.value), target.target_id),
+        ))
+        sentries = tuple(sorted(
+            (target for target in targets if target.target_type == 9600),
+            key=lambda target: (self._target_priority(target), target.target_id),
+        ))
+        assignments: dict[int, int] = {}
+        member_types: dict[int, int] = {}
+        counts = {target.target_id: [0, 0] for target in targets}
+
+        def assign_next(missile_type: int, target: PublicTargetTrack) -> bool:
+            if not available[missile_type]:
+                return False
+            item = available[missile_type].pop(0)
+            assignments[item.entity_id] = target.target_id
+            member_types[item.entity_id] = item.missile_type
+            count_index = 0 if missile_type == H_MISSILE_TYPE else 1
+            counts[target.target_id][count_index] += 1
+            return True
+
+        def assign_count(
+            missile_type: int, target: PublicTargetTrack, count: int,
+        ) -> None:
+            for _ in range(count):
+                if not assign_next(missile_type, target):
+                    break
+
+        # Preserve scarce-H fairness: finish each allocation round before any
+        # target receives its next H missile.
+        for _ in range(self.config.min_h_per_mother):
+            for mother in mothers:
+                if not assign_next(H_MISSILE_TYPE, mother):
+                    break
+
+        for sentry in sentries:
+            if not assign_next(H_MISSILE_TYPE, sentry):
+                break
+
+        # Upgrade the highest-priority one-H sentries only after every sentry
+        # has had the opportunity to receive its coverage seed.
+        for sentry in sentries:
+            if not available[H_MISSILE_TYPE]:
+                break
+            if counts[sentry.target_id][0] == 1:
+                assign_next(H_MISSILE_TYPE, sentry)
+
+        # Inventories beyond full 2H coverage remain deterministic redundancy.
+        h_redundancy_targets = sentries or mothers
+        while available[H_MISSILE_TYPE] and h_redundancy_targets:
+            target = min(
+                h_redundancy_targets,
+                key=lambda item: (
+                    counts[item.target_id][0],
+                    self._target_priority(item)
+                    if item.target_type == 9600
+                    else -float(item.value),
+                    item.target_id,
+                ),
+            )
+            assign_next(H_MISSILE_TYPE, target)
+
+        one_h_sentries = tuple(
+            sentry for sentry in sentries if counts[sentry.target_id][0] == 1
+        )
+        zero_h_sentries = tuple(
+            sentry for sentry in sentries if counts[sentry.target_id][0] == 0
+        )
+
+        # A 1H+2M package applies exactly 12+6 damage to a standard 9600.
+        # Complete as many such packages as possible before spending six M on
+        # an M-only package; this maximizes deterministic target coverage.
+        for sentry in one_h_sentries:
+            assign_count(
+                M_MISSILE_TYPE,
+                sentry,
+                min(
+                    self.config.m_per_h_mixed_package,
+                    len(available[M_MISSILE_TYPE]),
+                ),
+            )
+
+        m_only_sentries: list[PublicTargetTrack] = []
+        for sentry in zero_h_sentries:
+            if len(available[M_MISSILE_TYPE]) < self.config.m_only_sentry_package:
+                break
+            assign_count(
+                M_MISSILE_TYPE, sentry, self.config.m_only_sentry_package,
+            )
+            m_only_sentries.append(sentry)
+
+        # M redundancy must not dilute the coverage-first plan. When 1H
+        # sentries exist, only they receive the tail; with universal 2H
+        # coverage, M is explicitly redundant and balanced across sentries.
+        if one_h_sentries:
+            m_redundancy_targets = one_h_sentries
+        elif sentries and all(
+            counts[sentry.target_id][0] >= self.config.h_per_sentry_package
+            for sentry in sentries
+        ):
+            m_redundancy_targets = sentries
+        elif m_only_sentries:
+            m_redundancy_targets = tuple(m_only_sentries)
+        else:
+            m_redundancy_targets = sentries or mothers
+
+        while available[M_MISSILE_TYPE] and m_redundancy_targets:
+            target = min(
+                m_redundancy_targets,
+                key=lambda item: (
+                    counts[item.target_id][1],
+                    self._target_priority(item)
+                    if item.target_type == 9600
+                    else -float(item.value),
+                    item.target_id,
+                ),
+            )
+            assign_next(M_MISSILE_TYPE, target)
+
+        return assignments, member_types
+
+    def _allocate_by_deterministic_thresholds(
+        self, active: tuple[HMMissileSnapshot, ...],
+    ) -> tuple[dict[int, int], dict[int, int]]:
+        available = self._available_by_type(active)
+        targets = tuple(sorted(self._targets.values(), key=lambda item: item.target_id))
+        mothers = tuple(sorted(
+            (target for target in targets if target.target_type == 9400),
+            key=lambda target: (-float(target.value), target.target_id),
+        ))
+        sentries = tuple(sorted(
+            (target for target in targets if target.target_type == 9600),
+            key=lambda target: (self._target_priority(target), target.target_id),
+        ))
+        assignments: dict[int, int] = {}
+        member_types: dict[int, int] = {}
+        counts = {target.target_id: [0, 0] for target in targets}
+
+        def assign_next(missile_type: int, target: PublicTargetTrack) -> bool:
+            if not available[missile_type]:
+                return False
+            item = available[missile_type].pop(0)
+            assignments[item.entity_id] = target.target_id
+            member_types[item.entity_id] = item.missile_type
+            count_index = 0 if missile_type == H_MISSILE_TYPE else 1
+            counts[target.target_id][count_index] += 1
+            return True
+
+        def assign_count(
+            missile_type: int, target: PublicTargetTrack, count: int,
+        ) -> None:
+            for _ in range(count):
+                if not assign_next(missile_type, target):
+                    break
+
+        def threshold_satisfied(target: PublicTargetTrack) -> bool:
+            h_count, m_count = counts[target.target_id]
+            nominal = (
+                h_count * expected_effective_damage(
+                    H_MISSILE_TYPE, target.target_type, self.config,
+                )
+                + m_count * expected_effective_damage(
+                    M_MISSILE_TYPE, target.target_type, self.config,
+                )
+            )
+            return nominal + _EPSILON >= target.initial_health
+
+        # The environment-specific launch scripts choose two H per mother for
+        # V12 and three for V13. M missiles are never assigned to mothers.
+        for _ in range(self.config.min_h_per_mother):
+            for mother in mothers:
+                if not assign_next(H_MISSILE_TYPE, mother):
+                    break
+
+        next_sentry = 0
+        package_size = self.config.h_per_sentry_package
+        h_package_sentry_ids: set[int] = set()
+        while (
+            next_sentry < len(sentries)
+            and len(available[H_MISSILE_TYPE]) >= package_size
+        ):
+            target = sentries[next_sentry]
+            assign_count(H_MISSILE_TYPE, target, package_size)
+            h_package_sentry_ids.add(target.target_id)
+            next_sentry += 1
+
+        mixed_sentry_id: int | None = None
+        if (
+            next_sentry < len(sentries)
+            and available[H_MISSILE_TYPE]
+            and len(available[M_MISSILE_TYPE])
+            >= self.config.m_per_h_mixed_package
+        ):
+            target = sentries[next_sentry]
+            assign_next(H_MISSILE_TYPE, target)
+            assign_count(
+                M_MISSILE_TYPE, target, self.config.m_per_h_mixed_package,
+            )
+            mixed_sentry_id = target.target_id
+            next_sentry += 1
+
+        if self.config.allow_m_only_sentry_packages:
+            while (
+                next_sentry < len(sentries)
+                and len(available[M_MISSILE_TYPE])
+                >= self.config.m_only_sentry_package
+            ):
+                assign_count(
+                    M_MISSILE_TYPE,
+                    sentries[next_sentry],
+                    self.config.m_only_sentry_package,
+                )
+                next_sentry += 1
+
+        complete_sentries = tuple(
+            target for target in sentries if threshold_satisfied(target)
+        )
+        complete_mothers = tuple(
+            target for target in mothers if threshold_satisfied(target)
+        )
+
+        # Tail inventory is redundancy, not another claimed coverage target.
+        # Prefer the last complete sentry so the priority-axis coverage prefix
+        # remains visible and deterministic in package diagnostics.
+        h_redundancy_target = (
+            complete_sentries[-1]
+            if complete_sentries
+            else complete_mothers[-1]
+            if complete_mothers
+            else sentries[0]
+            if sentries
+            else mothers[0]
+            if mothers
+            else None
+        )
+        while available[H_MISSILE_TYPE] and h_redundancy_target is not None:
+            assign_next(H_MISSILE_TYPE, h_redundancy_target)
+
+        if self.config.allow_m_only_sentry_packages:
+            # v0.7 compatibility: M-only packages and their tail remain on the
+            # last complete sentry (or the first sentry when none is complete).
+            m_redundancy_target = (
+                complete_sentries[-1]
+                if complete_sentries
+                else sentries[0]
+                if sentries
+                else None
+            )
+            while available[M_MISSILE_TYPE] and m_redundancy_target is not None:
+                assign_next(M_MISSILE_TYPE, m_redundancy_target)
+        else:
+            h_led_sentries = tuple(
+                target for target in sentries if counts[target.target_id][0] > 0
+            )
+            while available[M_MISSILE_TYPE] and h_led_sentries:
+                target = min(
+                    h_led_sentries,
+                    key=lambda item: (
+                        counts[item.target_id][1],
+                        0
+                        if item.target_id == mixed_sentry_id
+                        else 1
+                        if item.target_id in h_package_sentry_ids
+                        else 2,
+                        self._target_priority(item),
+                        item.target_id,
+                    ),
+                )
+                assign_next(M_MISSILE_TYPE, target)
+
+        return assignments, member_types
+
+    def _allocate_by_threshold_packages(
+        self, active: tuple[HMMissileSnapshot, ...],
+    ) -> tuple[dict[int, int], dict[int, int]]:
+        available = self._available_by_type(active)
+        targets = tuple(sorted(self._targets.values(), key=lambda item: item.target_id))
+        mothers = tuple(sorted(
+            (target for target in targets if target.target_type == 9400),
+            key=lambda target: (-float(target.value), target.target_id),
+        ))
+        sentries = tuple(sorted(
+            (target for target in targets if target.target_type == 9600),
+            key=lambda target: (self._target_priority(target), target.target_id),
+        ))
+        assignments: dict[int, int] = {}
+        member_types: dict[int, int] = {}
+        counts = {target.target_id: [0, 0] for target in targets}
+
+        def assign_next(missile_type: int, target: PublicTargetTrack) -> bool:
+            if not available[missile_type]:
+                return False
+            item = available[missile_type].pop(0)
+            assignments[item.entity_id] = target.target_id
+            member_types[item.entity_id] = item.missile_type
+            count_index = 0 if missile_type == H_MISSILE_TYPE else 1
+            counts[target.target_id][count_index] += 1
+            return True
+
+        # Round-based seeding is deterministic and keeps scarce H inventory fair.
+        for _ in range(self.config.min_h_per_mother):
+            for mother in mothers:
+                if not assign_next(H_MISSILE_TYPE, mother):
+                    break
+
+        package_size = self.config.h_per_sentry_package
+        for sentry in sentries:
+            if len(available[H_MISSILE_TYPE]) < package_size:
+                break
+            for _ in range(package_size):
+                assign_next(H_MISSILE_TYPE, sentry)
+
+        incomplete_sentries = tuple(
+            sentry for sentry in sentries
+            if counts[sentry.target_id][0] < package_size
+        )
+        if incomplete_sentries:
+            partial_target = incomplete_sentries[0]
+            while available[H_MISSILE_TYPE]:
+                assign_next(H_MISSILE_TYPE, partial_target)
+
+        # Inventories above the one-package threshold are still fully consumed.
+        h_fallback = sentries or mothers
+        while available[H_MISSILE_TYPE] and h_fallback:
+            target = min(
+                h_fallback,
+                key=lambda item: (
+                    counts[item.target_id][0],
+                    self._target_priority(item) if item.target_type == 9600 else -float(item.value),
+                    item.target_id,
+                ),
+            )
+            assign_next(H_MISSILE_TYPE, target)
+
+        complete_sentries = tuple(
+            sentry for sentry in sentries
+            if counts[sentry.target_id][0] >= package_size
+        )
+        incomplete_sentries = tuple(
+            sentry for sentry in sentries
+            if counts[sentry.target_id][0] < package_size
+        )
+        if self.config.m_target_policy == "complete_h_sentries":
+            partial_sentries = tuple(
+                sentry for sentry in sentries
+                if 0 < counts[sentry.target_id][0] < package_size
+            )
+            uncovered_sentries = tuple(
+                sentry for sentry in sentries
+                if counts[sentry.target_id][0] == 0
+            )
+            m_targets = (
+                complete_sentries
+                or partial_sentries
+                or uncovered_sentries
+                or mothers
+            )
+        elif self.config.m_target_policy == "incomplete_h_sentries":
+            # v0.5 compatibility: prefer every sentry below the H threshold.
+            if incomplete_sentries:
+                m_targets = incomplete_sentries
+            elif mothers:
+                m_targets = mothers
+            else:
+                m_targets = sentries
+        else:
+            m_targets = mothers or sentries
+
+        while available[M_MISSILE_TYPE] and m_targets:
+            target = min(
+                m_targets,
+                key=lambda item: (
+                    counts[item.target_id][1],
+                    counts[item.target_id][0]
+                    if self.config.m_target_policy == "incomplete_h_sentries"
+                    else 0,
+                    self._target_priority(item) if item.target_type == 9600 else -float(item.value),
+                    item.target_id,
+                ),
+            )
+            assign_next(M_MISSILE_TYPE, target)
+
+        return assignments, member_types
+
+    def _allocate_by_kill_probability(
+        self, active: tuple[HMMissileSnapshot, ...],
+    ) -> tuple[dict[int, int], dict[int, int]]:
+        available = self._available_by_type(active)
+        targets = tuple(sorted(self._targets.values(), key=lambda item: item.target_id))
+        assignments: dict[int, int] = {}
+        member_types: dict[int, int] = {}
+        counts = {target.target_id: [0, 0] for target in targets}
+
+        mothers = tuple(target for target in targets if target.target_type == 9400)
+        sentries = tuple(target for target in targets if target.target_type == 9600)
+
+        def assign_core(target_group, missile_type: int, count: int) -> None:
+            count_index = 0 if missile_type == H_MISSILE_TYPE else 1
+            for _ in range(count):
+                for target in target_group:
+                    if not available[missile_type]:
+                        return
+                    item = available[missile_type].pop(0)
+                    assignments[item.entity_id] = target.target_id
+                    member_types[item.entity_id] = item.missile_type
+                    counts[target.target_id][count_index] += 1
+
+        # Bundle-level seeding avoids the zero single-missile marginal that
+        # previously starved every mother of H missiles.
+        assign_core(mothers, H_MISSILE_TYPE, self.config.min_h_per_mother)
+        assign_core(mothers, M_MISSILE_TYPE, self.config.min_m_per_mother)
+        assign_core(sentries, H_MISSILE_TYPE, self.config.min_h_per_sentry)
+
+        # A few isolated M missiles have zero discrete kill-probability gain on
+        # an H-covered 9600. Keep all remaining M in balanced mother packages
+        # instead of relying on a one-missile greedy step to discover a
+        # four-or-more-M complementary bundle.
+        if mothers:
+            while available[M_MISSILE_TYPE]:
+                target = min(
+                    mothers,
+                    key=lambda item: (counts[item.target_id][1], item.target_id),
+                )
+                item = available[M_MISSILE_TYPE].pop(0)
+                assignments[item.entity_id] = target.target_id
+                member_types[item.entity_id] = item.missile_type
+                counts[target.target_id][1] += 1
+
+        pool = sorted(
+            available[H_MISSILE_TYPE] + available[M_MISSILE_TYPE],
+            key=lambda item: item.entity_id,
+        )
+        current_probability = {
+            target.target_id: _kill_probability_for_health(
+                *counts[target.target_id],
+                target.target_type,
+                target.initial_health,
+                self.config,
+            )
+            for target in targets
+        }
+
+        while pool:
+            best: tuple[
+                tuple[int, float, float, float, int, int],
+                HMMissileSnapshot,
+                PublicTargetTrack,
+                float,
+            ] | None = None
+            for item in pool:
+                count_index = 0 if item.missile_type == H_MISSILE_TYPE else 1
+                for target in targets:
+                    target_counts = counts[target.target_id]
+                    if (
+                        item.missile_type == H_MISSILE_TYPE
+                        and target.target_type == 9400
+                        and target_counts[0] >= self.config.max_h_per_mother
+                    ):
+                        continue
+                    next_counts = target_counts.copy()
+                    next_counts[count_index] += 1
+                    next_probability = _kill_probability_for_health(
+                        *next_counts,
+                        target.target_type,
+                        target.initial_health,
+                        self.config,
+                    )
+                    probability = current_probability[target.target_id]
+                    marginal_gain = max(0.0, next_probability - probability)
+                    key = (
+                        int(probability >= self.config.target_kill_probability),
+                        -float(target.value) * marginal_gain,
+                        probability,
+                        self._target_priority(target),
+                        target.target_id,
+                        item.entity_id,
+                    )
+                    if best is None or key < best[0]:
+                        best = (key, item, target, next_probability)
+            if best is None:
+                break
+            _, item, target, next_probability = best
+            pool.remove(item)
+            assignments[item.entity_id] = target.target_id
+            member_types[item.entity_id] = item.missile_type
+            count_index = 0 if item.missile_type == H_MISSILE_TYPE else 1
+            counts[target.target_id][count_index] += 1
+            current_probability[target.target_id] = next_probability
+
+        return assignments, member_types
+
+    def _target_priority(self, target: PublicTargetTrack) -> float:
+        axis = self.config.target_priority_axis
+        if axis == "east":
+            return -target.lon
+        if axis == "west":
+            return target.lon
+        if axis == "north":
+            return -target.lat
+        if axis == "south":
+            return target.lat
+        return 0.0
+
+    def _allocate_by_expected_damage(
+        self, active: tuple[HMMissileSnapshot, ...],
+    ) -> tuple[dict[int, int], dict[int, int]]:
+        available = self._available_by_type(active)
 
         targets = tuple(sorted(self._targets.values(), key=lambda item: item.target_id))
         plan = self._coverage_plan(
@@ -501,11 +1136,26 @@ class HMPublicStrikePackagesSkill:
                 expected_effective_damage(self._member_types[member_id], target.target_type, self.config)
                 for member_id in member_ids
             )
+            h_count = sum(
+                self._member_types[member_id] == H_MISSILE_TYPE for member_id in member_ids
+            )
+            m_count = len(member_ids) - h_count
             packages.append(PublicStrikePackage(
                 target=target,
                 member_ids=member_ids,
                 required_damage=self._required(target),
                 expected_damage=expected,
+                kill_probability=_kill_probability_for_health(
+                    h_count,
+                    m_count,
+                    target.target_type,
+                    target.initial_health,
+                    self.config,
+                ),
+                nominal_applied_damage=expected,
+                threshold_satisfied=(
+                    expected + _EPSILON >= target.initial_health
+                ),
             ))
         return tuple(packages)
 

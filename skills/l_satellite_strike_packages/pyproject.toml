@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "l-satellite-strike-packages-skill"
-version = "0.1.0"
+version = "0.2.0"
 description = "Satellite-led deterministic L missile packages for hidden nests"
 readme = "README.md"
 requires-python = ">=3.11"

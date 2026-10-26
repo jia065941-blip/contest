@@ -1,4 +1,4 @@
-"""Deterministic staggered deployment for launch20 H/M/L platforms."""
+"""Deterministic two-wave staggered deployment for launch20 H/M/L platforms."""
 
 from .controller import (
     DeploymentBounds,
@@ -8,6 +8,7 @@ from .controller import (
     L_PLATFORM_TYPE,
     M_PLATFORM_TYPE,
     PlatformDeploymentRequest,
+    PUBLIC_TARGET_TYPES,
     SUPPORTED_PLATFORM_TYPES,
     StaggeredDeploymentConfig,
     StaggeredDeploymentSkill,
@@ -27,10 +28,11 @@ __all__ = [
     "L_PLATFORM_TYPE",
     "M_PLATFORM_TYPE",
     "PlatformDeploymentRequest",
+    "PUBLIC_TARGET_TYPES",
     "SUPPORTED_PLATFORM_TYPES",
     "StaggeredDeploymentConfig",
     "StaggeredDeploymentSkill",
     "route_deployment_actions",
     "to_deployment_actions",
 ]
-__version__ = "0.1.0"
+__version__ = "0.8.0"

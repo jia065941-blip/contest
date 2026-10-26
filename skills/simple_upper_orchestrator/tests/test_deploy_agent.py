@@ -1,9 +1,14 @@
 import numpy as np
 import pytest
 
+from hm_public_strike_packages_skill import PublicStrikeConfig, PublicTargetTrack
 from staggered_deployment_skill import StaggeredDeploymentConfig
 
-from simple_upper_orchestrator_skill.deploy_agent import StaggeredDeployAgent, rectangle_bounds
+from simple_upper_orchestrator_skill.deploy_agent import (
+    PreMissionPlan,
+    StaggeredDeployAgent,
+    rectangle_bounds,
+)
 
 
 RECTANGLE = [[[0, 0], [1, 0], [1, 1], [0, 1]]]
@@ -36,3 +41,152 @@ def test_deployment_geometry_fails_closed():
             RECTANGLE, [[[0, 0], [2, 0], [2, 1], [0, 1]]],
             config=StaggeredDeploymentConfig(), batch_size=10, launch_altitude=1000,
         )
+
+
+def test_deploy_reports_two_l_waves_and_target_aligns_hm():
+    plans = []
+    targets = (
+        PublicTargetTrack(901, 9400, 0.8, 0.8, 0, 24, 5),
+        PublicTargetTrack(902, 9600, 0.8, 0.2, 0, 18, 2),
+    )
+    agent = StaggeredDeployAgent(
+        RECTANGLE, RECTANGLE,
+        config=StaggeredDeploymentConfig(
+            deployment_gap_km=1, l_depth_km=1, hm_depth_km=1,
+            l_first_wave_fraction=0.5,
+        ),
+        batch_size=20,
+        launch_altitude=1000,
+        on_plan=plans.append,
+        public_targets=targets,
+        hm_config=PublicStrikeConfig(),
+    )
+    entities = {
+        **{index: {"type": 21000, "position": {"alt": 1000}} for index in range(1, 5)},
+        **{100 + index: {"type": 21002, "position": {"alt": 1000}} for index in range(4)},
+    }
+    agent.set_observation({"entities": entities})
+
+    rows = agent.get_action()
+
+    assert rows.shape == (8, 5)
+    assert len(plans) == 1
+    l_bands = [point.band for point in plans[0].points if point.entity_type == 21002]
+    assert l_bands.count("front") == 2
+    assert l_bands.count("second") == 2
+    assert all(point.band == "rear" for point in plans[0].points if point.entity_type == 21000)
+
+
+def test_mission_callback_is_first_immutable_and_survives_reset():
+    events = []
+    targets = (
+        PublicTargetTrack(901, 9400, 0.8, 0.8, 0, 24, 5),
+        PublicTargetTrack(902, 9600, 0.8, 0.2, 0, 18, 2),
+    )
+    agent = StaggeredDeployAgent(
+        RECTANGLE,
+        RECTANGLE,
+        config=StaggeredDeploymentConfig(
+            deployment_gap_km=1,
+            l_depth_km=1,
+            hm_depth_km=1,
+        ),
+        batch_size=20,
+        launch_altitude=1000,
+        on_mission_plan=lambda plan: events.append(("mission", plan)),
+        on_plan=lambda plan: events.append(("deployment", plan)),
+        public_targets=targets,
+        hm_config=PublicStrikeConfig(),
+    )
+    observation = {"entities": {
+        1: {"type": 21000, "position": {"alt": 1000}},
+        2: {"type": 21000, "position": {"alt": 1000}},
+        3: {"type": 21001, "position": {"alt": 1000}},
+        4: {"type": 21002, "position": {"alt": 1000}},
+        5: {"type": 21002, "position": {"alt": 1000}},
+    }}
+    agent.set_observation(observation)
+
+    agent.get_action()
+
+    assert [event for event, _ in events] == ["mission", "deployment"]
+    mission = events[0][1]
+    assert isinstance(mission, PreMissionPlan)
+    assert mission.entity_types == {
+        1: 21000, 2: 21000, 3: 21001, 4: 21002, 5: 21002,
+    }
+    assert mission.l_roster == (4, 5)
+    assert set(mission.hm_assignments) <= {1, 2, 3}
+    with pytest.raises(TypeError):
+        mission.hm_assignments[1] = 901
+    with pytest.raises(TypeError):
+        mission.entity_core[1]["type"] = 21002
+
+    agent.reset()
+    agent.set_observation({"entities": {
+        entity_id: {
+            **entity,
+            "position": {**entity["position"], "lon": float(entity_id)},
+        }
+        for entity_id, entity in observation["entities"].items()
+    }})
+    agent.get_action()
+
+    assert [event for event, _ in events] == [
+        "mission", "deployment", "mission", "deployment",
+    ]
+    assert events[2][1] is mission
+
+
+def test_easy_style_h_reserve_two_is_staged_by_latitude_region():
+    missions = []
+    plans = []
+    targets = tuple(
+        PublicTargetTrack(
+            900 + index,
+            9400 if index < 4 else 9600,
+            0.8,
+            0.05 + index * 0.08,
+            0,
+            24 if index < 4 else 18,
+            5 if index < 4 else 2,
+        )
+        for index in range(11)
+    )
+    agent = StaggeredDeployAgent(
+        RECTANGLE,
+        RECTANGLE,
+        config=StaggeredDeploymentConfig(
+            deployment_gap_km=1,
+            l_depth_km=1,
+            hm_depth_km=1,
+        ),
+        batch_size=20,
+        launch_altitude=1000,
+        on_mission_plan=missions.append,
+        on_plan=plans.append,
+        public_targets=targets,
+        hm_config=PublicStrikeConfig(reserve_h=2),
+    )
+    agent.set_observation({"entities": {
+        entity_id: {"type": 21000, "position": {"alt": 1000}}
+        for entity_id in range(1, 7)
+    }})
+
+    agent.get_action()
+
+    mission = missions[0]
+    assert len(mission.reserve_packages) == 2
+    assert {package.responsibility_region for package in mission.reserve_packages} == {
+        "north", "south",
+    }
+    assert all(package.state == "STAGING" for package in mission.reserve_packages)
+    reserve_ids = {
+        member_id
+        for package in mission.reserve_packages
+        for member_id in package.member_ids
+    }
+    assert reserve_ids == {5, 6}
+    assert reserve_ids.isdisjoint(mission.hm_assignments)
+    points = {point.entity_id: point for point in plans[0].points}
+    assert all(points[member_id].target_id is None for member_id in reserve_ids)

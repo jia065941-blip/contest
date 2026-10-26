@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from dataclasses import replace
 
 from local_avoidance_skill import load_external_policy
 
@@ -24,6 +25,7 @@ class SimpleUpperFactory:
             self.config.runtime_root, self.config.checkpoint, max_steps=self.config.max_steps,
         )
         self._created = False
+        self._coordinator = None
         self.instances.append(self)
 
     def close(self) -> None:
@@ -38,6 +40,7 @@ class SimpleUpperFactory:
         self._created = True
         members = tuple((int(agent), int(entity)) for agent, entity in platforms)
         coordinator = TeamCoordinator(members, public_observation, self.policy, self.config)
+        self._coordinator = coordinator
         for agent_id, entity_id in members:
             self.policy.register_agent(agent_id, entity_id, self.config.max_steps)
         return [
@@ -49,7 +52,20 @@ class SimpleUpperFactory:
         del entities
         if plan_path is not None:
             raise ValueError("simple upper orchestrator does not use preset deployment plans")
+        if self._coordinator is None:
+            raise RuntimeError("create_agents must run before create_deploy_agent")
         return StaggeredDeployAgent(
             coordinates, coordinates_hm, config=self.config.deployment,
             batch_size=self.config.deployment_batch_size, launch_altitude=launch_altitude,
+            on_plan=self._coordinator.set_deployment_plan,
+            on_mission_plan=self._coordinator.set_mission_plan,
+            public_targets=self._coordinator.public_targets,
+            hm_config=replace(
+                self.config.hm_strike,
+                reserve_h=(
+                    self.config.reserve_h_count
+                    or self.config.hm_strike.reserve_h
+                ),
+                reserve_m=0,
+            ),
         )

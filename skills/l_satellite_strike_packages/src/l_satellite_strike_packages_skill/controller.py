@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from math import floor, isfinite
+from math import asin, cos, floor, isfinite, radians, sin, sqrt
 from typing import Sequence
 
 
@@ -20,12 +20,19 @@ class LMissileSnapshot:
     alive: bool = True
     launched: bool = True
     baseline_action: int = 1
+    lon: float = 0.0
+    lat: float = 0.0
+    wave: int = 1
 
     def __post_init__(self) -> None:
         if self.entity_id < 0:
             raise ValueError("L missile entity_id must be nonnegative")
         if self.baseline_action not in (0, 1, 2):
             raise ValueError("baseline_action must be LEFT=0, STOP=1, or RIGHT=2")
+        if not all(isfinite(value) for value in (self.lon, self.lat)):
+            raise ValueError("L missile lon and lat must be finite")
+        if self.wave not in (1, 2):
+            raise ValueError("L missile wave must be 1 or 2")
 
 
 @dataclass(frozen=True)
@@ -46,7 +53,7 @@ class DarkNestTrack:
 class SatelliteStrikeConfig:
     satellite_trigger_step: int = 1
     satellite_leader_id: int | None = None
-    allocation_mode: str = "equal"
+    allocation_mode: str = "distance_balanced"
     package_size: int | None = None
     package_count: int | None = None
     reserve_count: int = 0
@@ -62,8 +69,10 @@ class SatelliteStrikeConfig:
             raise ValueError("satellite_trigger_step must be nonnegative")
         if self.satellite_leader_id is not None and self.satellite_leader_id < 0:
             raise ValueError("satellite_leader_id must be nonnegative")
-        if self.allocation_mode not in {"equal", "fixed_size"}:
-            raise ValueError("allocation_mode must be 'equal' or 'fixed_size'")
+        if self.allocation_mode not in {"distance_balanced", "equal", "fixed_size"}:
+            raise ValueError(
+                "allocation_mode must be 'distance_balanced', 'equal', or 'fixed_size'"
+            )
         if self.allocation_mode == "fixed_size" and self.package_size is None:
             raise ValueError("fixed_size allocation requires package_size")
         if self.package_size is not None and self.package_size <= 0:
@@ -167,7 +176,7 @@ class LSatelliteStrikePackagesSkill:
                 ) or set(self._tracks) != {item.target.target_id for item in self._packages}
             if should_allocate:
                 previous = dict(self._assignments)
-                self._packages, unassigned = self._allocate(alive_ids)
+                self._packages, unassigned = self._allocate(active)
                 self._assignments = {
                     member_id: package.target.target_id
                     for package in self._packages
@@ -228,12 +237,15 @@ class LSatelliteStrikePackagesSkill:
         expected = self.config.expected_target_count
         return bool(self._tracks) and (expected is None or len(self._tracks) >= expected)
 
-    def _allocate(self, alive_ids: tuple[int, ...]) -> tuple[tuple[StrikePackage, ...], tuple[int, ...]]:
+    def _allocate(
+        self, active: tuple[LMissileSnapshot, ...],
+    ) -> tuple[tuple[StrikePackage, ...], tuple[int, ...]]:
+        alive_ids = tuple(item.entity_id for item in active)
         reserve = self.config.reserve_count
         if self.config.reserve_fraction:
             reserve = floor(len(alive_ids) * self.config.reserve_fraction)
         reserve = min(reserve, len(alive_ids))
-        available = alive_ids[:len(alive_ids) - reserve] if reserve else alive_ids
+        available = active[:len(active) - reserve] if reserve else active
         targets = tuple(sorted(self._tracks.values(), key=lambda item: item.target_id))
         if self.config.package_count is not None:
             targets = targets[:self.config.package_count]
@@ -241,10 +253,17 @@ class LSatelliteStrikePackagesSkill:
             return (), alive_ids
 
         sizes = self._package_sizes(len(available), len(targets))
+        assignable = available[:sum(sizes)]
+        if self.config.allocation_mode == "distance_balanced":
+            packages = self._distance_balanced_packages(assignable, targets, sizes)
+            assigned = frozenset(member for package in packages for member in package.member_ids)
+            unassigned = tuple(entity_id for entity_id in alive_ids if entity_id not in assigned)
+            return packages, unassigned
+
         packages = []
         cursor = 0
         for target, size in zip(targets, sizes, strict=True):
-            member_ids = available[cursor:cursor + size]
+            member_ids = tuple(item.entity_id for item in assignable[cursor:cursor + size])
             cursor += size
             if member_ids:
                 packages.append(StrikePackage(target, member_ids))
@@ -278,3 +297,141 @@ class LSatelliteStrikePackagesSkill:
         if maximum is not None:
             sizes = [min(size, maximum) for size in sizes]
         return tuple(int(size) for size in sizes)
+
+    def _distance_balanced_packages(
+        self,
+        members: tuple[LMissileSnapshot, ...],
+        targets: tuple[DarkNestTrack, ...],
+        sizes: tuple[int, ...],
+    ) -> tuple[StrikePackage, ...]:
+        wave1 = tuple(item for item in members if item.wave == 1)
+        wave2 = tuple(item for item in members if item.wave == 2)
+        wave1_quotas, wave2_quotas = self._wave_quotas(sizes, len(wave1))
+        target_members: list[list[int]] = [[] for _ in targets]
+        for wave_members, quotas in ((wave1, wave1_quotas), (wave2, wave2_quotas)):
+            for member, target_index in self._minimum_cost_assignment(
+                wave_members, targets, quotas,
+            ):
+                target_members[target_index].append(member.entity_id)
+        return tuple(
+            StrikePackage(target, tuple(sorted(member_ids)))
+            for target, member_ids in zip(targets, target_members, strict=True)
+            if member_ids
+        )
+
+    @staticmethod
+    def _wave_quotas(
+        sizes: tuple[int, ...], wave1_count: int,
+    ) -> tuple[tuple[int, ...], tuple[int, ...]]:
+        """Split balanced total quotas into balanced per-wave quotas."""
+        target_count = len(sizes)
+        assigned = sum(sizes)
+        wave2_count = assigned - wave1_count
+        wave1_base, wave1_extra_count = divmod(wave1_count, target_count)
+        wave2_base, wave2_extra_count = divmod(wave2_count, target_count)
+        total_extra_count = assigned % target_count
+
+        wave1_extras = set(range(wave1_extra_count))
+        if wave1_extra_count + wave2_extra_count < target_count:
+            wave2_extras = set(range(wave1_extra_count, wave1_extra_count + wave2_extra_count))
+        else:
+            wave2_extras = set(range(total_extra_count))
+            wave2_extras.update(range(wave1_extra_count, target_count))
+
+        wave1_quotas = tuple(
+            wave1_base + int(index in wave1_extras) for index in range(target_count)
+        )
+        wave2_quotas = tuple(
+            wave2_base + int(index in wave2_extras) for index in range(target_count)
+        )
+        if tuple(first + second for first, second in zip(
+            wave1_quotas, wave2_quotas, strict=True,
+        )) != sizes:
+            raise RuntimeError("Unable to construct balanced per-wave target quotas")
+        return wave1_quotas, wave2_quotas
+
+    @staticmethod
+    def _minimum_cost_assignment(
+        members: tuple[LMissileSnapshot, ...],
+        targets: tuple[DarkNestTrack, ...],
+        quotas: tuple[int, ...],
+    ) -> tuple[tuple[LMissileSnapshot, int], ...]:
+        """Solve a deterministic minimum-distance assignment to target slots."""
+        slots = tuple(
+            target_index
+            for target_index, quota in enumerate(quotas)
+            for _ in range(quota)
+        )
+        if not members:
+            return ()
+        if len(members) != len(slots):
+            raise RuntimeError("Wave members and target quotas must have equal size")
+
+        costs = tuple(
+            tuple(_wgs84_distance(member, targets[target_index]) for target_index in slots)
+            for member in members
+        )
+        size = len(members)
+        row_potential = [0.0] * (size + 1)
+        column_potential = [0.0] * (size + 1)
+        matched_row = [0] * (size + 1)
+        previous_column = [0] * (size + 1)
+
+        # Hungarian assignment is O(n^3), which is small for the 214-member limit.
+        for row in range(1, size + 1):
+            matched_row[0] = row
+            minimum = [float("inf")] * (size + 1)
+            used = [False] * (size + 1)
+            column = 0
+            while True:
+                used[column] = True
+                current_row = matched_row[column]
+                delta = float("inf")
+                next_column = 0
+                for candidate in range(1, size + 1):
+                    if used[candidate]:
+                        continue
+                    reduced = (
+                        costs[current_row - 1][candidate - 1]
+                        - row_potential[current_row]
+                        - column_potential[candidate]
+                    )
+                    if reduced < minimum[candidate]:
+                        minimum[candidate] = reduced
+                        previous_column[candidate] = column
+                    choice = (minimum[candidate], matched_row[candidate] != 0, candidate)
+                    if choice < (delta, matched_row[next_column] != 0, next_column):
+                        delta = minimum[candidate]
+                        next_column = candidate
+                for candidate in range(size + 1):
+                    if used[candidate]:
+                        row_potential[matched_row[candidate]] += delta
+                        column_potential[candidate] -= delta
+                    else:
+                        minimum[candidate] -= delta
+                column = next_column
+                if matched_row[column] == 0:
+                    break
+            while True:
+                previous = previous_column[column]
+                matched_row[column] = matched_row[previous]
+                column = previous
+                if column == 0:
+                    break
+
+        target_by_row = [0] * size
+        for column in range(1, size + 1):
+            target_by_row[matched_row[column] - 1] = slots[column - 1]
+        return tuple(zip(members, target_by_row, strict=True))
+
+
+def _wgs84_distance(member: LMissileSnapshot, target: DarkNestTrack) -> float:
+    """Approximate WGS84 surface distance with a mean-radius haversine."""
+    mean_radius_m = 6_371_008.8
+    member_lat = radians(member.lat)
+    target_lat = radians(target.lat)
+    longitude_delta = ((target.lon - member.lon + 180.0) % 360.0) - 180.0
+    sin_lat = sin(target_lat / 2.0 - member_lat / 2.0)
+    sin_lon = sin(radians(longitude_delta) / 2.0)
+    haversine = sin_lat * sin_lat + cos(member_lat) * cos(target_lat) * sin_lon * sin_lon
+    return 2.0 * mean_radius_m * asin(sqrt(min(1.0, max(0.0, haversine))))

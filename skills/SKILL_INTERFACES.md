@@ -7,6 +7,10 @@ The active stack is deliberately split by lifecycle and authority.
 | `staggered_deployment` | Pre-combat deployment | H/M/L initial coordinates only |
 | `l_satellite_strike_packages` | Combat planning | One satellite request and L-to-9500 assignments |
 | `hm_public_strike_packages` | Combat planning | H/M-to-public-9400/9600 assignments |
+| `target_damage_probability` | Combat evidence | Delivered/projected public-target destruction probabilities |
+| `dynamic_retarget` | Combat replanning | Bounded semantic H/M retarget requests inside one communication group |
+| `terminal_guidance_override` | Terminal motion | Optional M-only straight override after local avoidance |
+| `reserve_echelon` | Reserve dispatch | STAGING/DISPATCHED/FALLBACK H-only and L reserve packages |
 | `local_avoidance` | Combat motion | Caller-supplied three-action local policy |
 | `simple_upper_orchestrator` | Official runtime adapter | Owner routing and lifecycle composition |
 

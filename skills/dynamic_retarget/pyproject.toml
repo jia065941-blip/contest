@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dynamic-retarget-skill"
+version = "0.3.0"
+description = "Deterministic semantic retargeting for flexible H/M missiles"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["target-damage-probability-skill==0.2.0"]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

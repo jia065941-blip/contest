@@ -4,17 +4,22 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "simple-upper-orchestrator-skill"
-version = "0.1.0"
+version = "2.2.0"
 description = "Official-release adapter for the simple staggered H/M/L upper layer"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
   "numpy>=1.26,<3",
   "skill-generation==0.1.0",
-  "staggered-deployment-skill==0.1.0",
-  "l-satellite-strike-packages-skill==0.1.0",
-  "hm-public-strike-packages-skill==0.1.0",
+  "staggered-deployment-skill==0.8.0",
+  "l-satellite-strike-packages-skill==0.2.0",
+  "hm-public-strike-packages-skill==0.9.0",
+  "target-damage-probability-skill==0.3.0",
+  "dynamic-retarget-skill==0.3.0",
   "local-avoidance-skill==0.1.0",
+  "terminal-guidance-override-skill==0.3.0",
+  "reserve-echelon-skill==0.2.0",
+  "reserve-holding-maneuver-skill==0.1.0",
 ]
 
 [project.optional-dependencies]

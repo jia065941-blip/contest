@@ -6,7 +6,6 @@ import argparse
 from contextlib import contextmanager
 import importlib
 import json
-import os
 from pathlib import Path
 import sys
 
@@ -33,19 +32,122 @@ def _add_arguments(parser: argparse.ArgumentParser) -> None:
     group.add_argument("--output-root", type=Path)
     group.add_argument("--run-id")
     group.add_argument("--deploy-front-axis", choices=("east", "west", "north", "south"), default="east")
-    group.add_argument("--deploy-gap-km", type=float, default=30.0)
+    group.add_argument("--deploy-gap-km", type=float, default=15.0)
     group.add_argument("--deploy-l-depth-km", type=float, default=5.0)
     group.add_argument("--deploy-hm-depth-km", type=float, default=10.0)
+    group.add_argument("--deploy-h-depth-km", type=float, default=5.0)
+    group.add_argument("--deploy-m-depth-km", type=float, default=10.0)
+    group.add_argument("--deploy-hm-follow-gap-km", type=float, default=0.0)
+    group.add_argument("--deploy-mother-crossfire-angle", type=float, default=35.0)
+    group.add_argument("--deploy-mother-crossfire-max-offset-km", type=float, default=35.0)
+    group.add_argument("--deploy-sentry-m-lead-km", type=float, default=7.5)
+    group.add_argument(
+        "--deploy-sentry-rendezvous-mode",
+        choices=("adaptive", "fixed"),
+        default="adaptive",
+    )
+    group.add_argument("--deploy-h-speed", type=float, default=200.0)
+    group.add_argument("--deploy-m-speed", type=float, default=120.0)
+    group.add_argument("--deploy-m-arrival-lead-seconds", type=float, default=5.0)
+    group.add_argument("--deploy-min-m-lead", type=float, default=10.0)
+    group.add_argument("--deploy-max-m-lead", type=float)
     group.add_argument("--deploy-spacing-km", type=float, default=1.0)
+    group.add_argument("--deploy-l-first-wave-fraction", type=float, default=0.70)
     group.add_argument("--deploy-batch-size", type=int, default=10)
     group.add_argument("--l-satellite-trigger-step", type=int, default=1)
+    group.add_argument(
+        "--l-allocation-mode",
+        choices=("distance_balanced", "equal", "fixed_size"),
+        default="distance_balanced",
+    )
     group.add_argument("--l-package-size", type=int)
     group.add_argument("--l-package-count", type=int)
     group.add_argument("--l-reserve-count", type=int, default=0)
     group.add_argument("--l-expected-target-count", type=int)
     group.add_argument("--hm-safety-factor", type=float, default=1.25)
+    group.add_argument(
+        "--hm-allocation-mode",
+        choices=(
+            "full_coverage_mixed", "deterministic_thresholds", "threshold_packages",
+            "kill_probability", "expected_damage",
+        ),
+        default="full_coverage_mixed",
+    )
+    group.add_argument("--hm-target-kill-probability", type=float, default=0.85)
+    group.add_argument("--hm-min-h-per-mother", type=int, default=2)
+    group.add_argument("--hm-min-m-per-mother", type=int, default=0)
+    group.add_argument("--hm-min-h-per-sentry", type=int, default=1)
+    group.add_argument("--hm-max-h-per-mother", type=int, default=2)
+    group.add_argument("--hm-h-per-sentry-package", type=int, default=2)
+    group.add_argument("--hm-m-per-h-mixed-package", type=int, default=2)
+    group.add_argument("--hm-m-only-sentry-package", type=int, default=6)
+    group.add_argument("--hm-allow-m-only-sentry-packages", action="store_true")
+    group.add_argument(
+        "--hm-m-target-policy",
+        choices=("complete_h_sentries", "incomplete_h_sentries", "mothers"),
+        default="complete_h_sentries",
+    )
+    group.add_argument(
+        "--hm-target-priority-axis",
+        choices=("east", "west", "north", "south", "none"),
+        default="east",
+    )
     group.add_argument("--hm-reserve-h", type=int, default=0)
     group.add_argument("--hm-reserve-m", type=int, default=0)
+    group.add_argument("--reserve-h-count", type=int, default=0)
+    group.add_argument("--l-first-wave-per-target", type=int, default=0)
+    group.add_argument("--reserve-deadline-step", type=int, default=300)
+    group.add_argument("--reserve-max-stage", type=int)
+    group.add_argument("--reserve-h-max-distance", type=float, default=80.0)
+    group.add_argument("--reserve-l-max-distance", type=float, default=100.0)
+    group.add_argument("--reserve-h-max-turn", type=float, default=60.0)
+    group.add_argument("--reserve-l-max-turn", type=float, default=75.0)
+    group.add_argument("--reserve-holding-half-width", type=float, default=6.0)
+    group.add_argument("--reserve-holding-heading-offset", type=float, default=35.0)
+    group.add_argument("--reserve-holding-max-turn-steps", type=int, default=6)
+    group.add_argument("--reserve-holding-straight-steps", type=int, default=2)
+    group.add_argument("--dynamic-retarget-threshold", type=float, default=0.70)
+    group.add_argument("--dynamic-retarget-max-stage", type=int, default=3)
+    group.add_argument("--dynamic-retarget-min-distance", type=float, default=15.0)
+    group.add_argument("--dynamic-retarget-cooldown", type=int, default=25)
+    group.add_argument("--dynamic-retarget-max-retarget", type=int, default=1)
+    group.add_argument("--dynamic-retarget-max-fraction", type=float, default=0.20)
+    group.add_argument("--dynamic-retarget-distance-weight", type=float, default=0.05)
+    group.add_argument("--dynamic-retarget-track-max-age", type=float, default=3)
+    group.add_argument(
+        "--dynamic-retarget-max-target-separation", type=float, default=10.0,
+    )
+    group.add_argument("--dynamic-retarget-max-turn-angle", type=float, default=45.0)
+    group.add_argument(
+        "--dynamic-retarget-max-candidate-distance", type=float, default=30.0,
+    )
+    group.add_argument("--dynamic-retarget-max-per-old-target", type=int, default=1)
+    group.add_argument("--disable-dynamic-retarget", action="store_true")
+    group.add_argument("--enable-dynamic-retarget", action="store_true")
+    group.add_argument("--disable-terminal-guidance", action="store_true")
+    group.add_argument("--terminal-min-stage", type=int, default=4)
+    group.add_argument("--terminal-enter-distance", type=float)
+    group.add_argument("--terminal-capture-distance", type=float, default=2000.0)
+    group.add_argument("--terminal-final-straight-distance", type=float, default=300.0)
+    group.add_argument("--terminal-straight-distance", type=float)
+    group.add_argument("--terminal-exit-distance", type=float, default=3500.0)
+    group.add_argument("--terminal-max-track-age", type=int, default=5)
+    group.add_argument("--terminal-stale-grace-age", type=int, default=8)
+    group.add_argument("--terminal-threat-distance", type=float, default=3000.0)
+    group.add_argument("--terminal-heading-enter", type=float, default=6.0)
+    group.add_argument("--terminal-heading-exit", type=float, default=10.0)
+    group.add_argument("--terminal-heading-deadband", type=float)
+    group.add_argument("--terminal-predicted-miss", type=float, default=80.0)
+    group.add_argument("--terminal-turn-pulse-steps", type=int, default=1)
+    group.add_argument("--terminal-straight-recovery-steps", type=int, default=2)
+    group.add_argument("--terminal-no-improvement-limit", type=int, default=3)
+    group.add_argument("--terminal-respect-interceptors-after-latch", action="store_true")
+    group.add_argument("--disable-retarget-audit", action="store_true")
+    group.add_argument("--formation-audit-interval", type=int, default=25)
+    group.add_argument("--missile-trace-interval", type=int, default=0)
+    group.add_argument("--missile-terminal-history", type=int, default=20)
+    group.add_argument("--seconds-per-step", type=float, default=1.0)
+    group.add_argument("--velocity-window-steps", type=int, default=5)
 
 
 def build_parser(competition_root: Path = DEFAULT_COMPETITION_ROOT) -> argparse.ArgumentParser:
@@ -59,18 +161,44 @@ def build_parser(competition_root: Path = DEFAULT_COMPETITION_ROOT) -> argparse.
 
 
 def _config(args) -> OrchestratorConfig:
+    if args.enable_dynamic_retarget and args.disable_dynamic_retarget:
+        raise ValueError(
+            "--enable-dynamic-retarget and --disable-dynamic-retarget are mutually exclusive"
+        )
+    if args.reserve_h_count and args.hm_reserve_h:
+        raise ValueError(
+            "--reserve-h-count and legacy --hm-reserve-h cannot both be nonzero"
+        )
+    if args.hm_reserve_m:
+        raise ValueError("reserve echelon 0.2.0 does not support M reserves")
+    reserve_h_count = args.reserve_h_count or args.hm_reserve_h
+    from dynamic_retarget_skill import DynamicRetargetConfig
     from hm_public_strike_packages_skill import PublicStrikeConfig
     from l_satellite_strike_packages_skill import SatelliteStrikeConfig
     from staggered_deployment_skill import StaggeredDeploymentConfig
+    from terminal_guidance_override_skill import TerminalGuidanceConfig
 
-    allocation_mode = "fixed_size" if args.l_package_size is not None else "equal"
+    allocation_mode = "fixed_size" if args.l_package_size is not None else args.l_allocation_mode
     return OrchestratorConfig(
         runtime_root=args.runtime_root.expanduser().resolve(strict=True),
         checkpoint=args.checkpoint.expanduser().resolve(strict=True), max_steps=args.max_steps,
         deployment=StaggeredDeploymentConfig(
             front_axis=args.deploy_front_axis, deployment_gap_km=args.deploy_gap_km,
             l_depth_km=args.deploy_l_depth_km, hm_depth_km=args.deploy_hm_depth_km,
+            h_depth_km=args.deploy_h_depth_km,
+            m_depth_km=args.deploy_m_depth_km,
+            hm_follow_gap_km=args.deploy_hm_follow_gap_km,
+            mother_crossfire_angle_degrees=args.deploy_mother_crossfire_angle,
+            mother_crossfire_max_offset_km=args.deploy_mother_crossfire_max_offset_km,
+            sentry_m_lead_km=args.deploy_sentry_m_lead_km,
+            sentry_rendezvous_mode=args.deploy_sentry_rendezvous_mode,
+            h_speed_mps=args.deploy_h_speed,
+            m_speed_mps=args.deploy_m_speed,
+            desired_m_arrival_lead_seconds=args.deploy_m_arrival_lead_seconds,
+            min_sentry_m_lead_km=args.deploy_min_m_lead,
+            max_sentry_m_lead_km=args.deploy_max_m_lead,
             lateral_spacing_km=args.deploy_spacing_km,
+            l_first_wave_fraction=args.deploy_l_first_wave_fraction,
         ),
         deployment_batch_size=args.deploy_batch_size,
         l_strike=SatelliteStrikeConfig(
@@ -81,8 +209,81 @@ def _config(args) -> OrchestratorConfig:
         ),
         hm_strike=PublicStrikeConfig(
             safety_factor=args.hm_safety_factor,
-            reserve_h=args.hm_reserve_h, reserve_m=args.hm_reserve_m,
+            reserve_h=reserve_h_count, reserve_m=0,
+            allocation_mode=args.hm_allocation_mode,
+            target_kill_probability=args.hm_target_kill_probability,
+            min_h_per_mother=args.hm_min_h_per_mother,
+            min_m_per_mother=args.hm_min_m_per_mother,
+            min_h_per_sentry=args.hm_min_h_per_sentry,
+            max_h_per_mother=args.hm_max_h_per_mother,
+            h_per_sentry_package=args.hm_h_per_sentry_package,
+            m_per_h_mixed_package=args.hm_m_per_h_mixed_package,
+            m_only_sentry_package=args.hm_m_only_sentry_package,
+            allow_m_only_sentry_packages=args.hm_allow_m_only_sentry_packages,
+            m_target_policy=args.hm_m_target_policy,
+            target_priority_axis=args.hm_target_priority_axis,
         ),
+        reserve_h_count=reserve_h_count,
+        l_first_wave_per_target=args.l_first_wave_per_target,
+        reserve_deadline_step=args.reserve_deadline_step,
+        reserve_max_stage=args.reserve_max_stage,
+        reserve_h_max_distance_km=args.reserve_h_max_distance,
+        reserve_l_max_distance_km=args.reserve_l_max_distance,
+        reserve_h_max_turn_angle_degrees=args.reserve_h_max_turn,
+        reserve_l_max_turn_angle_degrees=args.reserve_l_max_turn,
+        reserve_holding_half_width_km=args.reserve_holding_half_width,
+        reserve_holding_heading_offset_degrees=args.reserve_holding_heading_offset,
+        reserve_holding_max_turn_steps=args.reserve_holding_max_turn_steps,
+        reserve_holding_straight_steps=args.reserve_holding_straight_steps,
+        dynamic_retarget=DynamicRetargetConfig(
+            destruction_threshold=args.dynamic_retarget_threshold,
+            max_stage=args.dynamic_retarget_max_stage,
+            min_current_distance_km=args.dynamic_retarget_min_distance,
+            cooldown_steps=args.dynamic_retarget_cooldown,
+            max_retargets=args.dynamic_retarget_max_retarget,
+            max_fraction_per_step=args.dynamic_retarget_max_fraction,
+            distance_weight=args.dynamic_retarget_distance_weight,
+            max_target_separation_km=args.dynamic_retarget_max_target_separation,
+            max_turn_angle_degrees=args.dynamic_retarget_max_turn_angle,
+            max_candidate_distance_km=args.dynamic_retarget_max_candidate_distance,
+            max_per_old_target_per_step=args.dynamic_retarget_max_per_old_target,
+        ),
+        terminal_guidance=TerminalGuidanceConfig(
+            min_stage=args.terminal_min_stage,
+            capture_distance=args.terminal_capture_distance,
+            final_straight_distance=args.terminal_final_straight_distance,
+            max_track_age=args.terminal_max_track_age,
+            stale_grace_age=args.terminal_stale_grace_age,
+            heading_enter_straight_deg=args.terminal_heading_enter,
+            heading_exit_straight_deg=args.terminal_heading_exit,
+            predicted_miss_threshold_m=args.terminal_predicted_miss,
+            turn_pulse_steps=args.terminal_turn_pulse_steps,
+            straight_recovery_steps=args.terminal_straight_recovery_steps,
+            no_improvement_limit=args.terminal_no_improvement_limit,
+            enter_distance_m=args.terminal_enter_distance,
+            straight_distance_m=args.terminal_straight_distance,
+            exit_distance_m=args.terminal_exit_distance,
+            threat_distance_m=args.terminal_threat_distance,
+            heading_deadband_degrees=args.terminal_heading_deadband,
+            ignore_interceptors_after_latch=(
+                not args.terminal_respect_interceptors_after_latch
+            ),
+        ),
+        retarget_track_max_age_steps=args.dynamic_retarget_track_max_age,
+        dynamic_retarget_enabled=(
+            args.enable_dynamic_retarget and not args.disable_dynamic_retarget
+        ),
+        terminal_guidance_enabled=not args.disable_terminal_guidance,
+        audit_path=(
+            None
+            if args.disable_retarget_audit
+            else args.output_dir / "retarget_audit.jsonl"
+        ),
+        formation_audit_interval_steps=args.formation_audit_interval,
+        missile_trace_interval_steps=args.missile_trace_interval,
+        missile_terminal_history=args.missile_terminal_history,
+        seconds_per_step=args.seconds_per_step,
+        velocity_window_steps=args.velocity_window_steps,
     )
 
 
@@ -168,7 +369,6 @@ def main(argv: list[str] | None = None) -> int:
         official = importlib.import_module("main")
         bundle = official.prepare_run(args)
         config = _config(args)
-        os.environ["LOCAL_AVOID_GATE_MODE"] = "none"
         with patched_runtime(config, official):
             official.run_simulation(args, bundle)
     except (ValueError, OSError) as error:

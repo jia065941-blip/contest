@@ -50,7 +50,7 @@ def test_requests_satellite_once_and_preserves_local_actions() -> None:
 
 
 def test_equal_allocation_is_deterministic_and_targets_only_hidden_nests() -> None:
-    skill = LSatelliteStrikePackagesSkill()
+    skill = LSatelliteStrikePackagesSkill(SatelliteStrikeConfig(allocation_mode="equal"))
     tracks = (
         (903, 9500, 12.3, 2.3, 2),
         (901, 9500, 12.1, 2.1, 2),
@@ -153,6 +153,149 @@ def test_rejects_invalid_local_action_and_invalid_config() -> None:
         LMissileSnapshot(100, baseline_action=4)
     with pytest.raises(ValueError, match="requires package_size"):
         SatelliteStrikeConfig(allocation_mode="fixed_size")
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    (("lon", float("nan")), ("lat", float("inf"))),
+)
+def test_rejects_nonfinite_member_coordinates(field, value) -> None:
+    with pytest.raises(ValueError, match="finite"):
+        LMissileSnapshot(100, **{field: value})
+
+
+@pytest.mark.parametrize("wave", (0, 3))
+def test_rejects_invalid_member_wave(wave) -> None:
+    with pytest.raises(ValueError, match="wave must be 1 or 2"):
+        LMissileSnapshot(100, wave=wave)
+
+
+def test_default_distance_allocation_matches_northern_members_to_northern_target() -> None:
+    skill = LSatelliteStrikePackagesSkill()
+    local_members = (
+        LMissileSnapshot(100, lon=10.0, lat=60.0),
+        LMissileSnapshot(101, lon=10.0, lat=-60.0),
+        LMissileSnapshot(102, lon=11.0, lat=61.0),
+        LMissileSnapshot(103, lon=11.0, lat=-61.0),
+    )
+    tracks = (
+        (901, 9500, 10.0, 60.0, 2),
+        (902, 9500, 10.0, -60.0, 2),
+    )
+
+    decision = skill.decide(
+        step=2,
+        members=local_members,
+        tracks=tracks_from_isolated_observations({100: observation(100, tracks)}, step=2),
+    )
+
+    assert [package.member_ids for package in decision.packages] == [(100, 102), (101, 103)]
+
+
+def test_distance_allocation_balances_each_wave_for_every_target() -> None:
+    skill = LSatelliteStrikePackagesSkill()
+    tracks = tuple(
+        (901 + index, 9500, float(index * 10), 0.0, 2)
+        for index in range(3)
+    )
+    local_members = tuple(
+        LMissileSnapshot(
+            100 + index,
+            lon=float((index % 3) * 10),
+            lat=float(index % 2),
+            wave=1 if index < 6 else 2,
+        )
+        for index in range(12)
+    )
+
+    decision = skill.decide(
+        step=2,
+        members=local_members,
+        tracks=tracks_from_isolated_observations({100: observation(100, tracks)}, step=2),
+    )
+    waves = {member.entity_id: member.wave for member in local_members}
+
+    assert [len(package.member_ids) for package in decision.packages] == [4, 4, 4]
+    assert [
+        sum(waves[member_id] == 1 for member_id in package.member_ids)
+        for package in decision.packages
+    ] == [2, 2, 2]
+    assert [
+        sum(waves[member_id] == 2 for member_id in package.member_ids)
+        for package in decision.packages
+    ] == [2, 2, 2]
+
+
+def test_distance_allocation_is_independent_of_input_order() -> None:
+    tracks = (
+        (903, 9500, 20.0, 0.0, 2),
+        (901, 9500, 0.0, 0.0, 2),
+        (902, 9500, 10.0, 0.0, 2),
+    )
+    local_members = tuple(
+        LMissileSnapshot(
+            100 + index,
+            lon=float((index % 3) * 10),
+            lat=float(index),
+            wave=1 if index % 2 == 0 else 2,
+        )
+        for index in range(9)
+    )
+
+    forward = LSatelliteStrikePackagesSkill().decide(
+        step=2,
+        members=local_members,
+        tracks=tracks_from_isolated_observations({100: observation(100, tracks)}, step=2),
+    )
+    reversed_order = LSatelliteStrikePackagesSkill().decide(
+        step=2,
+        members=tuple(reversed(local_members)),
+        tracks=tracks_from_isolated_observations(
+            {100: observation(100, tuple(reversed(tracks)))}, step=2,
+        ),
+    )
+
+    assert forward.packages == reversed_order.packages
+    assert forward.attack_actions == reversed_order.attack_actions
+
+
+def test_distance_allocation_handles_214_members_and_20_targets() -> None:
+    target_count = 20
+    tracks = tuple(
+        (901 + index, 9500, float(index), 0.0, 2)
+        for index in range(target_count)
+    )
+    local_members = tuple(
+        LMissileSnapshot(
+            100 + index,
+            lon=float(index % target_count),
+            lat=float(index % 3),
+            wave=1 if index % 2 == 0 else 2,
+        )
+        for index in range(214)
+    )
+
+    decision = LSatelliteStrikePackagesSkill().decide(
+        step=2,
+        members=local_members,
+        tracks=tracks_from_isolated_observations({100: observation(100, tracks)}, step=2),
+    )
+    waves = {member.entity_id: member.wave for member in local_members}
+    sizes = [len(package.member_ids) for package in decision.packages]
+    wave1_sizes = [
+        sum(waves[member_id] == 1 for member_id in package.member_ids)
+        for package in decision.packages
+    ]
+    wave2_sizes = [
+        sum(waves[member_id] == 2 for member_id in package.member_ids)
+        for package in decision.packages
+    ]
+
+    assert len(decision.packages) == target_count
+    assert sum(sizes) == 214
+    assert max(sizes) - min(sizes) <= 1
+    assert max(wave1_sizes) - min(wave1_sizes) <= 1
+    assert max(wave2_sizes) - min(wave2_sizes) <= 1
 
 
 def test_observation_adapter_rejects_non_l_observations() -> None:

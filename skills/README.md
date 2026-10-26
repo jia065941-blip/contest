@@ -24,6 +24,14 @@ Current packages:
   the front band and H/M in a separated rear band.
 - `hm_public_strike_packages`: expected-damage H/M allocation over public
   9400/9600 targets with legal same-ID coordinate refreshes.
+- `target_damage_probability`: evidence-only delivered and projected target
+  destruction probabilities with replayable immutable snapshots.
+- `dynamic_retarget`: bounded communication-domain H/M retarget decisions for
+  flexible missiles after a delivered destruction threshold is met.
+- `terminal_guidance_override`: owner-local M terminal straightening layered
+  after the external avoidance policy with fresh-track and threat gates.
+- `reserve_echelon`: group-local H/L reserve package state machine for early
+  commitment-loss supplementation and deterministic fallback.
 - `simple_upper_orchestrator`: official release adapter combining staggered
   deployment, L/HM planning and a caller-supplied local avoidance network.
 

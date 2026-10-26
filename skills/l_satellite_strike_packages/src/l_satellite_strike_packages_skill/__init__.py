@@ -25,4 +25,4 @@ __all__ = [
     "materialize_engine_actions",
     "tracks_from_isolated_observations",
 ]
-__version__ = "0.1.0"
+__version__ = "0.2.0"

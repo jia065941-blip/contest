@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hm-public-strike-packages-skill"
-version = "0.1.0"
+version = "0.9.0"
 description = "Deterministic H/M strike packages for public targets"
 readme = "README.md"
 requires-python = ">=3.11"
