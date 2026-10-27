@@ -1,6 +1,6 @@
 # -*-coding:utf-8 -*-
 
-import copy
+from envengine.fastcopy import deepcopy
 import json
 import logging
 import os
@@ -262,7 +262,7 @@ class TrainingEnv:
                 if not deploy_completed_flag:
                     if self.record_native_trajectory:
                         self.native_deployment_actions.append(
-                            copy.deepcopy(action_item)
+                            deepcopy(action_item)
                         )
                     # 将AI动作数据写入文件
                     write_ai_action(action_item, str(self.current_round) + ".json")
@@ -291,7 +291,7 @@ class TrainingEnv:
         """Replay deployment commands produced by this simulator."""
 
         if self.record_native_trajectory:
-            self.native_deployment_actions.extend(copy.deepcopy(actions))
+            self.native_deployment_actions.extend(deepcopy(actions))
         for action in actions:
             self.engine.simulator_factory.modify_simulator_position(
                 int(action["executor_id"]),
@@ -312,10 +312,10 @@ class TrainingEnv:
         }
         teacher_prefix = native_actions is not None and not guided_student_entity_ids
         if teacher_prefix:
-            action = copy.deepcopy(native_actions)
+            action = deepcopy(native_actions)
             self.last_decision_events = ()
         elif native_actions is not None:
-            action = copy.deepcopy(native_actions)
+            action = deepcopy(native_actions)
         else:
             action = self._generate_actions_from_agents()
             self._apply_teacher_target_override(action)
@@ -350,8 +350,8 @@ class TrainingEnv:
         if self.record_native_trajectory:
             self.native_trajectory_steps.append({
                 "step": int(self.current_step),
-                "actions": copy.deepcopy(action),
-                "causal_events": copy.deepcopy(list(self.last_causal_events)),
+                "actions": deepcopy(action),
+                "causal_events": deepcopy(list(self.last_causal_events)),
             })
 
         # 获取观测
@@ -722,7 +722,7 @@ class TrainingEnv:
                 command_type = int(command.get("commandType_id", -1))
                 if command_type not in {200, 3014}:
                     continue
-                command["target"] = copy.deepcopy(partial_target_commands[
+                command["target"] = deepcopy(partial_target_commands[
                     (int(command["executor_id"]), command_type)
                 ])
 
@@ -745,7 +745,7 @@ class TrainingEnv:
                 int(SimmerCommandType.DEPLOY),
             })
         merged = [
-            copy.deepcopy(command)
+            deepcopy(command)
             for command in native_actions
             if (
                 (
@@ -761,7 +761,7 @@ class TrainingEnv:
                 )
             )
         ]
-        merged.extend(copy.deepcopy(student_lifecycle))
+        merged.extend(deepcopy(student_lifecycle))
         self.last_decision_events = self._consume_commander_decision_events()
 
         overrides = []
@@ -781,7 +781,7 @@ class TrainingEnv:
         for unit in controlled_units:
             entity_id = int(unit["executor_id"])
             student_actions = [
-                copy.deepcopy(command)
+                deepcopy(command)
                 for command in student_lifecycle
                 if int(command.get("executor_id", -1)) == entity_id
             ]
@@ -790,7 +790,7 @@ class TrainingEnv:
                 "timestep": int(unit["timestep"]),
                 "executor_id": entity_id,
                 "teacher_command_type": int(unit["command_type"]),
-                "actions": copy.deepcopy(student_actions),
+                "actions": deepcopy(student_actions),
             }
             if target_head_counterfactual:
                 student_target_id = (
@@ -809,13 +809,13 @@ class TrainingEnv:
                             include_search=False,
                         )
                     ):
-                        actions = copy.deepcopy(student_actions)
+                        actions = deepcopy(student_actions)
                         for command in actions:
                             if int(command.get("commandType_id", -1)) not in {
                                 200, 3014
                             }:
                                 continue
-                            command["target"] = copy.deepcopy(candidate["target"])
+                            command["target"] = deepcopy(candidate["target"])
                         sampled_rows.append({
                             "sample_index": int(candidate["sample_index"]),
                             "target_index": int(candidate["target_index"]),
@@ -832,13 +832,13 @@ class TrainingEnv:
                     )
                     if teacher_command is None or "target" not in teacher_command:
                         raise RuntimeError("目标头反事实缺少教师目标命令")
-                    counterfactual_actions = copy.deepcopy(student_actions)
+                    counterfactual_actions = deepcopy(student_actions)
                     for command in counterfactual_actions:
                         if int(command.get("commandType_id", -1)) not in {
                             200, 3014
                         }:
                             continue
-                        command["target"] = copy.deepcopy(
+                        command["target"] = deepcopy(
                             teacher_command["target"]
                         )
                     override["counterfactual_actions"] = counterfactual_actions
@@ -850,13 +850,13 @@ class TrainingEnv:
                             include_search=False,
                         )
                     ):
-                        actions = copy.deepcopy(student_actions)
+                        actions = deepcopy(student_actions)
                         for command in actions:
                             if int(command.get("commandType_id", -1)) not in {
                                 200, 3014
                             }:
                                 continue
-                            command["target"] = copy.deepcopy(candidate["target"])
+                            command["target"] = deepcopy(candidate["target"])
                         candidate_actions[str(candidate["target_id"])] = actions
                     override["counterfactual_actions_by_target"] = candidate_actions
             if persistent_option_control:
@@ -882,7 +882,7 @@ class TrainingEnv:
                         persistent_command_types
                     ),
                     "actions": [
-                        copy.deepcopy(command)
+                        deepcopy(command)
                         for command in student_lifecycle
                         if int(command.get("executor_id", -1)) == entity_id
                     ],

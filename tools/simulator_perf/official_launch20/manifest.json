@@ -1,0 +1,30 @@
+{
+  "base_sdk_commit": "74dc796390985bfb52341aabde9a7c47833d866e",
+  "files": {
+    "envengine/agent_manager/agent_manager.py": {
+      "before": "9e9eaaea6fcd1c5af9eaabf045899b098f56bb48539fcd69417b122f110c1d6a",
+      "after": "480d36c1542254bb2aa6b4a2cb899f04720404807a1ea529c01a6486c4190be0"
+    },
+    "envengine/environment/training_env.py": {
+      "before": "d0f40beaeadb51172c2814cba987797571964c4a6baed135edf5c2e4501431bb",
+      "after": "ecf2016ab35d332456165ca2b67303d945e6523b6f722b4d7ae9b6c161ce3006"
+    },
+    "envengine/engine/engine.py": {
+      "before": "1b3b5ac68449c5a28d01cf0e75ef5ba62b208726bae4e172d89450ea7e5ebed9",
+      "after": "2d3620d01fbfe80290d956cf1fed28aa908be858bd1ddb46eaab58da79c793cd"
+    },
+    "envengine/simulator/interfaces/isimulator.py": {
+      "before": "d7cffcf529d0557273b23f92d249e6d84ed32a979e8ebc2cb15a906f5f19f10a",
+      "after": "3f874e73dcb66e2b72af1ce44aa13212faf7e4e9202cc37d7c34e34a1f03ffbd"
+    },
+    "envengine/fastcopy.py": {
+      "before": null,
+      "after": "9bc970d1cba20e5fafe1b892a8c475b431b3e6ed64bde837b677ca90d944929e"
+    }
+  },
+  "runtime_files": {
+    "copy_core.c": "521a3321d10e36a4c529191d3fc8e13a370ee8492813327983ffd27678b9dbcb",
+    "ownership.py": "1ef18660fd3d8de3b9f691659dc3e4cd90a72c8ac6c3eeb8e52686dc5cf9c400",
+    "communication_copy.py": "47e808c5c1199868e0ef0f0e8fd84b080c0cb169efebdafac22295d41e9464df"
+  }
+}

@@ -1,5 +1,5 @@
 # -*-coding:utf-8 -*-
-from copy import deepcopy
+from envengine.fastcopy import deepcopy
 import json
 import logging
 import math

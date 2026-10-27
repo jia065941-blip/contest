@@ -4,7 +4,7 @@ import json
 import logging
 import time
 from abc import ABC, abstractmethod
-from copy import deepcopy
+from envengine.fastcopy import deepcopy
 from typing import Optional, Callable, Any, TYPE_CHECKING
 
 from envengine.common import *

@@ -1,5 +1,7 @@
 > **cz 分支：当前课程实现与 b14 模型见 [docs/b14/README.md](docs/b14/README.md)。**
 
+> 仿真复制加速、C 扩展编译及官方 launch20 加速包：见 [tools/simulator_perf/README.txt](tools/simulator_perf/README.txt)。
+
 # Competition Platform All
 
 本项目用于运行红蓝对抗仿真。入口是 `run.py`，Windows 下建议通过 `run_local.cmd` 调用。运行链路使用标准 CPython 3.11 x64。红方可选择 R0--R9 基线，蓝方可选择四种拦截策略，场景内置九张竞赛地图。
