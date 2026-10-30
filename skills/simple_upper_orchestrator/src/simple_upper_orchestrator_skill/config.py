@@ -24,12 +24,16 @@ class OrchestratorConfig:
     hm_strike: PublicStrikeConfig = field(default_factory=PublicStrikeConfig)
     reserve_h_count: int = 0
     l_first_wave_per_target: int = 0
-    reserve_deadline_step: int = 300
+    reserve_deadline_step: int = 450
+    reserve_l_deadline_step: int = 250
     reserve_max_stage: int | None = None
     reserve_h_max_distance_km: float = 80.0
     reserve_l_max_distance_km: float = 100.0
-    reserve_h_max_turn_angle_degrees: float = 60.0
-    reserve_l_max_turn_angle_degrees: float = 75.0
+    reserve_h_max_turn_angle_degrees: float | None = None
+    reserve_l_max_turn_angle_degrees: float | None = None
+    reserve_h_turn_rate_degrees_per_second: float = 20.0
+    reserve_l_turn_rate_degrees_per_second: float = 15.0
+    reserve_turn_safety_seconds: float = 5.0
     reserve_holding_half_width_km: float = 6.0
     reserve_holding_heading_offset_degrees: float = 35.0
     reserve_holding_max_turn_steps: int = 6
@@ -40,7 +44,7 @@ class OrchestratorConfig:
     )
     retarget_track_max_age_steps: float = 5
     dynamic_retarget_enabled: bool = True
-    terminal_guidance_enabled: bool = True
+    terminal_guidance_enabled: bool = False
     audit_path: Path | None = None
     formation_audit_interval_steps: int = 25
     missile_trace_interval_steps: int = 0
@@ -57,6 +61,7 @@ class OrchestratorConfig:
             "reserve_h_count",
             "l_first_wave_per_target",
             "reserve_deadline_step",
+            "reserve_l_deadline_step",
         ):
             value = getattr(self, name)
             if isinstance(value, bool) or not isinstance(value, int) or value < 0:
@@ -70,8 +75,8 @@ class OrchestratorConfig:
         for name in (
             "reserve_h_max_distance_km",
             "reserve_l_max_distance_km",
-            "reserve_h_max_turn_angle_degrees",
-            "reserve_l_max_turn_angle_degrees",
+            "reserve_h_turn_rate_degrees_per_second",
+            "reserve_l_turn_rate_degrees_per_second",
             "reserve_holding_half_width_km",
             "reserve_holding_heading_offset_degrees",
         ):
@@ -83,10 +88,28 @@ class OrchestratorConfig:
                 or value <= 0
             ):
                 raise ValueError(f"{name} must be positive and finite")
-        if self.reserve_h_max_turn_angle_degrees > 180:
-            raise ValueError("reserve_h_max_turn_angle_degrees must be at most 180")
-        if self.reserve_l_max_turn_angle_degrees > 180:
-            raise ValueError("reserve_l_max_turn_angle_degrees must be at most 180")
+        for name in (
+            "reserve_h_max_turn_angle_degrees",
+            "reserve_l_max_turn_angle_degrees",
+        ):
+            value = getattr(self, name)
+            if value is None:
+                continue
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not math.isfinite(float(value))
+                or value <= 0
+                or value > 180
+            ):
+                raise ValueError(f"{name} must be in (0, 180] or None")
+        if (
+            isinstance(self.reserve_turn_safety_seconds, bool)
+            or not isinstance(self.reserve_turn_safety_seconds, (int, float))
+            or not math.isfinite(float(self.reserve_turn_safety_seconds))
+            or self.reserve_turn_safety_seconds < 0
+        ):
+            raise ValueError("reserve_turn_safety_seconds must be nonnegative and finite")
         if self.reserve_holding_heading_offset_degrees >= 90:
             raise ValueError("reserve_holding_heading_offset_degrees must be below 90")
         for name in (
@@ -97,7 +120,7 @@ class OrchestratorConfig:
             if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
                 raise ValueError(f"{name} must be a positive integer")
         if self.hm_strike.reserve_m != 0:
-            raise ValueError("reserve echelon 0.2.0 does not support M reserves")
+            raise ValueError("reserve echelon 0.4.0 does not support M reserves")
         if (
             self.reserve_h_count
             and self.hm_strike.reserve_h not in (0, self.reserve_h_count)

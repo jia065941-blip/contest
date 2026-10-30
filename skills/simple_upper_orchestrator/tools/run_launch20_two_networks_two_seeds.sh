@@ -37,9 +37,9 @@ xargs -P "$MAX_JOBS" -n 4 bash -c '
   case_id="${scenario##*/}"
   difficulty="$(basename "$(dirname "$scenario")")"
   case "$difficulty" in
-    easy) dark_nests=10 ;;
-    medium) dark_nests=15 ;;
-    hard) dark_nests=20 ;;
+    easy) dark_nests=10; l_first=7 ;;
+    medium) dark_nests=15; l_first=7 ;;
+    hard) dark_nests=20; l_first=9 ;;
     *) printf "Unknown difficulty: %s\n" "$difficulty" >&2; exit 2 ;;
   esac
   if [ "$label" = "v13" ]; then mother_h=3; else mother_h=2; fi
@@ -71,13 +71,15 @@ xargs -P "$MAX_JOBS" -n 4 bash -c '
     --deploy-m-arrival-lead-seconds 5 \
     --deploy-min-m-lead 10 \
     --deploy-spacing-km 1 \
-    --deploy-l-first-wave-fraction 0.70 \
+    --deploy-l-first-wave-fraction 1 \
     --deploy-batch-size 10 \
     --l-satellite-trigger-step 1 \
     --l-allocation-mode distance_balanced \
     --l-package-count "$dark_nests" \
     --l-expected-target-count "$dark_nests" \
+    --l-first-wave-per-target "$l_first" \
     --l-reserve-count 0 \
+    --reserve-l-deadline-step 250 \
     --hm-allocation-mode deterministic_thresholds \
     --hm-target-kill-probability 0.85 \
     --hm-min-h-per-mother "$mother_h" \
@@ -114,6 +116,7 @@ xargs -P "$MAX_JOBS" -n 4 bash -c '
     --terminal-turn-pulse-steps 1 \
     --terminal-straight-recovery-steps 2 \
     --terminal-no-improvement-limit 3 \
+    --enable-terminal-guidance \
     --velocity-window-steps 5 \
     --seconds-per-step 1 \
     --hm-reserve-h 0 \

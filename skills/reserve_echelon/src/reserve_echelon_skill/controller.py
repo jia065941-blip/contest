@@ -162,6 +162,8 @@ class ReservePackageSnapshot:
     responsibility_region: Hashable
     dispatch_count: int
     fallback_position: tuple[float, float] | None = None
+    target_id: int | None = None
+    retarget_count: int = 0
 
     def __post_init__(self) -> None:
         _identifier(self.package_id, "package_id")
@@ -189,10 +191,39 @@ class ReservePackageSnapshot:
         _nonnegative_int(self.dispatch_count, "dispatch_count")
         if self.fallback_position is not None:
             _position(self.fallback_position, "fallback_position")
+        if self.target_id is not None:
+            _identifier(self.target_id, "target_id")
+        _nonnegative_int(self.retarget_count, "retarget_count")
         if self.state == "STAGING" and self.dispatch_count != 0:
             raise ValueError("STAGING packages must have dispatch_count=0")
         if self.state != "STAGING" and self.dispatch_count == 0:
             raise ValueError("terminal packages must have a positive dispatch_count")
+        if self.state == "STAGING" and self.target_id is not None:
+            raise ValueError("STAGING packages must not have target_id")
+
+
+@dataclass(frozen=True)
+class ReachabilityDiagnostics:
+    """Conservative per-package reachability timing, in km/degrees/seconds."""
+
+    distance: float
+    turn_angle: float | None
+    turn_time: float | None
+    travel_time: float
+    total_eta: float | None
+    remaining_time: float | None
+
+    def __post_init__(self) -> None:
+        _finite_number(self.distance, "distance", minimum=0.0)
+        _finite_number(self.travel_time, "travel_time", minimum=0.0)
+        for name in ("turn_angle", "turn_time", "total_eta", "remaining_time"):
+            value = getattr(self, name)
+            if value is not None:
+                _finite_number(value, name, minimum=0.0)
+        if (self.turn_angle is None) != (self.turn_time is None):
+            raise ValueError("turn_angle and turn_time must both be set or both be None")
+        if (self.turn_time is None) != (self.total_eta is None):
+            raise ValueError("turn_time and total_eta must both be set or both be None")
 
 
 @dataclass(frozen=True)
@@ -204,6 +235,7 @@ class ReserveDispatchRequest:
     new_target_id: int
     reason: str
     deficit: TargetDeficitSnapshot | None
+    diagnostics: ReachabilityDiagnostics
 
     def __post_init__(self) -> None:
         _unique_ids(self.member_ids, "member_ids", allow_empty=False)
@@ -217,6 +249,8 @@ class ReserveDispatchRequest:
             self.deficit, TargetDeficitSnapshot
         ):
             raise ValueError("deficit must be a TargetDeficitSnapshot or None")
+        if not isinstance(self.diagnostics, ReachabilityDiagnostics):
+            raise ValueError("diagnostics must be ReachabilityDiagnostics")
 
 
 @dataclass(frozen=True)
@@ -226,6 +260,7 @@ class Decision:
     requests: tuple[ReserveDispatchRequest, ...]
     packages: tuple[ReservePackageSnapshot, ...]
     rejected_reasons: Mapping[int, str] = field(default_factory=dict)
+    diagnostics: Mapping[int, ReachabilityDiagnostics] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if not isinstance(self.requests, tuple) or any(
@@ -243,7 +278,17 @@ class Decision:
             _identifier(package_id, "rejected package_id")
             if not isinstance(reason, str) or not reason:
                 raise ValueError("rejected reason must be a nonempty string")
+        if not isinstance(self.diagnostics, Mapping):
+            raise ValueError("diagnostics must be a mapping")
+        diagnostics = dict(self.diagnostics)
+        for package_id, item in diagnostics.items():
+            _identifier(package_id, "diagnostic package_id")
+            if not isinstance(item, ReachabilityDiagnostics):
+                raise ValueError(
+                    "diagnostics values must be ReachabilityDiagnostics"
+                )
         object.__setattr__(self, "rejected_reasons", MappingProxyType(reasons))
+        object.__setattr__(self, "diagnostics", MappingProxyType(diagnostics))
 
 
 ReserveDecision = Decision
@@ -258,11 +303,14 @@ class ReserveEchelonConfig:
     max_target_distance_km: float | None = None
     h_max_distance_km: float = 80.0
     l_max_distance_km: float = 100.0
-    h_max_turn_angle_degrees: float = 60.0
-    l_max_turn_angle_degrees: float = 75.0
+    h_max_turn_angle_degrees: float | None = None
+    l_max_turn_angle_degrees: float | None = None
     seconds_per_step: float = 1.0
     h_nominal_speed_mps: float = 200.0
     l_nominal_speed_mps: float = 100.0
+    h_nominal_turn_rate_deg_s: float = 20.0
+    l_nominal_turn_rate_deg_s: float = 15.0
+    turn_safety_seconds: float = 5.0
 
     def __post_init__(self) -> None:
         if self.max_dispatch_stage is not None:
@@ -280,17 +328,28 @@ class ReserveEchelonConfig:
         for name in (
             "h_max_distance_km",
             "l_max_distance_km",
-            "h_max_turn_angle_degrees",
-            "l_max_turn_angle_degrees",
             "seconds_per_step",
             "h_nominal_speed_mps",
             "l_nominal_speed_mps",
+            "h_nominal_turn_rate_deg_s",
+            "l_nominal_turn_rate_deg_s",
         ):
             _finite_number(getattr(self, name), name, positive=True)
-        if float(self.h_max_turn_angle_degrees) > 180.0:
-            raise ValueError("h_max_turn_angle_degrees must be at most 180")
-        if float(self.l_max_turn_angle_degrees) > 180.0:
-            raise ValueError("l_max_turn_angle_degrees must be at most 180")
+        for name in (
+            "h_max_turn_angle_degrees",
+            "l_max_turn_angle_degrees",
+        ):
+            value = getattr(self, name)
+            if value is None:
+                continue
+            _finite_number(value, name, positive=True)
+            if float(value) > 180.0:
+                raise ValueError(f"{name} must be at most 180")
+        _finite_number(
+            self.turn_safety_seconds,
+            "turn_safety_seconds",
+            minimum=0.0,
+        )
 
 
 Config = ReserveEchelonConfig
@@ -337,11 +396,17 @@ class ReserveEchelonSkill:
 
         requests: list[ReserveDispatchRequest] = []
         rejected: dict[int, str] = {}
+        diagnostics: dict[int, ReachabilityDiagnostics] = {}
         for supplied in ordered_packages:
             package = self._packages[supplied.package_id]
             package_members = tuple(
-                members_by_id[member_id] for member_id in package.member_ids
+                members_by_id[member_id]
+                for member_id in package.member_ids
+                if member_id in members_by_id
             )
+            if not package_members:
+                rejected[package.package_id] = "no_surviving_members"
+                continue
             if package.state == "DISPATCHED":
                 rejected[package.package_id] = "already_dispatched"
                 continue
@@ -371,78 +436,91 @@ class ReserveEchelonSkill:
                     members_by_id,
                 )
             )
-            candidates = tuple(
-                deficit
-                for deficit in logical_candidates
-                if self._reachability_reason(
-                    package_members,
-                    deficit.position,
+            assessed_candidates = tuple(
+                (
+                    deficit,
+                    *self._reachability_assessment(
+                        package_members,
+                        deficit.position,
+                    ),
                 )
-                is None
+                for deficit in logical_candidates
+            )
+            candidates = tuple(
+                (deficit, diagnostic)
+                for deficit, reason, diagnostic in assessed_candidates
+                if reason is None
             )
             if candidates:
-                chosen = min(
+                chosen, diagnostic = min(
                     candidates,
-                    key=lambda deficit: self._candidate_key(
-                        package_members, deficit
+                    key=lambda item: self._candidate_key(
+                        package_members, item[0]
                     ),
                 )
                 request = ReserveDispatchRequest(
-                    member_ids=package.member_ids,
+                    member_ids=tuple(member.id for member in package_members),
                     old_target_id=package.provisional_target_id,
                     new_target_id=chosen.target_id,
                     reason="target_deficit",
                     deficit=chosen,
+                    diagnostics=diagnostic,
                 )
+                diagnostics[package.package_id] = diagnostic
                 self._packages[package.package_id] = replace(
                     package,
                     state="DISPATCHED",
                     dispatch_count=package.dispatch_count + 1,
+                    target_id=chosen.target_id,
                 )
                 requests.append(request)
                 continue
 
             if step >= self.config.deadline_step:
-                fallback_reason = self._fallback_reachability_reason(
-                    package,
-                    package_members,
-                    ordered_deficits,
+                (
+                    fallback_reason,
+                    diagnostic,
+                ) = self._fallback_reachability_assessment(
+                    package, package_members, ordered_deficits
                 )
                 if fallback_reason is not None:
                     rejected[package.package_id] = fallback_reason
+                    if diagnostic is not None:
+                        diagnostics[package.package_id] = diagnostic
                     continue
+                assert diagnostic is not None
                 request = ReserveDispatchRequest(
-                    member_ids=package.member_ids,
+                    member_ids=tuple(member.id for member in package_members),
                     old_target_id=package.provisional_target_id,
                     new_target_id=package.fallback_target_id,
                     reason="deadline_no_deficit_fallback",
                     deficit=None,
+                    diagnostics=diagnostic,
                 )
+                diagnostics[package.package_id] = diagnostic
                 self._packages[package.package_id] = replace(
                     package,
                     state="FALLBACK",
                     dispatch_count=package.dispatch_count + 1,
+                    target_id=package.fallback_target_id,
                 )
                 requests.append(request)
             elif logical_candidates:
-                chosen = min(
-                    logical_candidates,
-                    key=lambda deficit: self._candidate_key(
-                        package_members, deficit
+                _, reason, diagnostic = min(
+                    assessed_candidates,
+                    key=lambda item: self._candidate_key(
+                        package_members, item[0]
                     ),
-                )
-                reason = self._reachability_reason(
-                    package_members,
-                    chosen.position,
                 )
                 assert reason is not None
                 rejected[package.package_id] = reason
+                diagnostics[package.package_id] = diagnostic
             elif ordered_deficits:
                 rejected[package.package_id] = "no_eligible_deficit"
             else:
                 rejected[package.package_id] = "no_deficit"
 
-        return Decision(tuple(requests), self.state, rejected)
+        return Decision(tuple(requests), self.state, rejected, diagnostics)
 
     @staticmethod
     def _materialize(values: object, name: str) -> tuple[object, ...]:
@@ -528,16 +606,20 @@ class ReserveEchelonSkill:
         members_by_id: Mapping[int, ReserveMemberSnapshot],
     ) -> None:
         for package in packages:
-            try:
-                members = tuple(
-                    members_by_id[member_id] for member_id in package.member_ids
-                )
-            except KeyError as exc:
-                raise ValueError(
-                    f"package {package.package_id} references an unknown member"
-                ) from exc
+            members = tuple(
+                members_by_id[member_id]
+                for member_id in package.member_ids
+                if member_id in members_by_id
+            )
+            if not members:
+                continue
+            expected_types = dict(zip(
+                package.member_ids, package.member_types, strict=True
+            ))
             actual_types = tuple(member.type for member in members)
-            if actual_types != package.member_types:
+            if any(
+                member.type != expected_types[member.id] for member in members
+            ):
                 raise ValueError(
                     f"package {package.package_id} member_types do not match members"
                 )
@@ -547,7 +629,7 @@ class ReserveEchelonSkill:
                 frozenset((L_MISSILE_TYPE,)),
             ):
                 raise ValueError(
-                    "version 0.2 supports only H-only and L-only packages"
+                    "version 0.4 supports only H-only and L-only packages"
                 )
             groups = {member.group for member in members}
             if len(groups) != 1:
@@ -599,12 +681,12 @@ class ReserveEchelonSkill:
                 return False
         return True
 
-    def _fallback_reachability_reason(
+    def _fallback_reachability_assessment(
         self,
         package: ReservePackageSnapshot,
         members: tuple[ReserveMemberSnapshot, ...],
         deficits: tuple[TargetDeficitSnapshot, ...],
-    ) -> str | None:
+    ) -> tuple[str | None, ReachabilityDiagnostics | None]:
         position = package.fallback_position
         if position is None:
             position = next(
@@ -616,76 +698,158 @@ class ReserveEchelonSkill:
                 None,
             )
         if position is None:
-            return "fallback_position_unavailable"
-        return self._reachability_reason(members, position)
+            return "fallback_position_unavailable", None
+        return self._reachability_assessment(members, position)
 
-    def _reachability_reason(
+    def _reachability_assessment(
         self,
         members: tuple[ReserveMemberSnapshot, ...],
         target_position: tuple[float, float],
-    ) -> str | None:
-        distances = tuple(
-            hypot(
-                float(target_position[0]) - float(member.position[0]),
-                float(target_position[1]) - float(member.position[1]),
+    ) -> tuple[str | None, ReachabilityDiagnostics]:
+        assessed = tuple(
+            (
+                member,
+                self._member_reachability_diagnostics(member, target_position),
             )
             for member in members
         )
-        for member, distance in zip(members, distances, strict=True):
+
+        distance_failures = []
+        for member, diagnostic in assessed:
             distance_limit = self._distance_limit_km(member.type)
             if self.config.max_target_distance_km is not None:
                 distance_limit = min(
                     distance_limit,
                     float(self.config.max_target_distance_km),
                 )
-            if distance > distance_limit:
-                return "distance_exceeded"
+            if diagnostic.distance > distance_limit:
+                distance_failures.append(
+                    (diagnostic.distance - distance_limit, diagnostic)
+                )
+        if distance_failures:
+            return (
+                "distance_exceeded",
+                max(distance_failures, key=lambda item: item[0])[1],
+            )
 
-        for member, distance in zip(members, distances, strict=True):
-            if distance <= 1e-12:
-                continue
-            if member.heading_east is None or member.heading_north is None:
-                return "missing_heading"
+        missing_heading = tuple(
+            diagnostic
+            for _, diagnostic in assessed
+            if diagnostic.turn_angle is None
+        )
+        if missing_heading:
+            return "missing_heading", missing_heading[0]
+
+        turn_failures = []
+        for member, diagnostic in assessed:
+            turn_limit = self._turn_limit_degrees(member.type)
+            if (
+                turn_limit is not None
+                and diagnostic.turn_angle is not None
+                and diagnostic.turn_angle > turn_limit
+            ):
+                turn_failures.append(
+                    (diagnostic.turn_angle - turn_limit, diagnostic)
+                )
+        if turn_failures:
+            return (
+                "turn_angle_exceeded",
+                max(turn_failures, key=lambda item: item[0])[1],
+            )
+
+        time_failures = tuple(
+            (
+                diagnostic.total_eta - diagnostic.remaining_time,
+                diagnostic,
+            )
+            for _, diagnostic in assessed
+            if diagnostic.total_eta is not None
+            and diagnostic.remaining_time is not None
+            and diagnostic.total_eta > diagnostic.remaining_time
+        )
+        if time_failures:
+            return (
+                "insufficient_time",
+                max(time_failures, key=lambda item: item[0])[1],
+            )
+
+        return None, max(
+            (diagnostic for _, diagnostic in assessed),
+            key=lambda diagnostic: (
+                -1.0 if diagnostic.total_eta is None else diagnostic.total_eta
+            ),
+        )
+
+    def _member_reachability_diagnostics(
+        self,
+        member: ReserveMemberSnapshot,
+        target_position: tuple[float, float],
+    ) -> ReachabilityDiagnostics:
+        direction_east = float(target_position[0]) - float(member.position[0])
+        direction_north = float(target_position[1]) - float(member.position[1])
+        distance = hypot(direction_east, direction_north)
+        travel_time = distance * 1000.0 / self._nominal_speed_mps(member.type)
+        remaining_time = (
+            None
+            if member.remaining_steps is None
+            else member.remaining_steps * float(self.config.seconds_per_step)
+        )
+
+        if distance <= 1e-12:
+            turn_angle = 0.0
+        elif member.heading_east is None or member.heading_north is None:
+            turn_angle = None
+        else:
             heading_norm = hypot(member.heading_east, member.heading_north)
             if heading_norm <= 1e-12:
-                return "missing_heading"
-            direction_east = float(target_position[0]) - float(member.position[0])
-            direction_north = float(target_position[1]) - float(member.position[1])
-            cosine = (
-                member.heading_east * direction_east
-                + member.heading_north * direction_north
-            ) / (heading_norm * distance)
-            angle = degrees(acos(min(1.0, max(-1.0, cosine))))
-            if angle > self._turn_limit_degrees(member.type):
-                return "turn_angle_exceeded"
+                turn_angle = None
+            else:
+                cosine = (
+                    member.heading_east * direction_east
+                    + member.heading_north * direction_north
+                ) / (heading_norm * distance)
+                turn_angle = degrees(acos(min(1.0, max(-1.0, cosine))))
 
-        for member, distance in zip(members, distances, strict=True):
-            if member.remaining_steps is None:
-                continue
-            travel_steps = (
-                distance
-                * 1000.0
-                / self._nominal_speed_mps(member.type)
-                / float(self.config.seconds_per_step)
-            )
-            if travel_steps > member.remaining_steps:
-                return "insufficient_time"
-        return None
+        turn_time = (
+            None
+            if turn_angle is None
+            else abs(turn_angle) / self._nominal_turn_rate_deg_s(member.type)
+        )
+        total_eta = (
+            None
+            if turn_time is None
+            else turn_time + travel_time + float(self.config.turn_safety_seconds)
+        )
+        return ReachabilityDiagnostics(
+            distance=distance,
+            turn_angle=turn_angle,
+            turn_time=turn_time,
+            travel_time=travel_time,
+            total_eta=total_eta,
+            remaining_time=remaining_time,
+        )
 
     def _distance_limit_km(self, member_type: int) -> float:
         if member_type == H_MISSILE_TYPE:
             return float(self.config.h_max_distance_km)
         return float(self.config.l_max_distance_km)
 
-    def _turn_limit_degrees(self, member_type: int) -> float:
+    def _turn_limit_degrees(self, member_type: int) -> float | None:
         if member_type == H_MISSILE_TYPE:
-            return float(self.config.h_max_turn_angle_degrees)
-        return float(self.config.l_max_turn_angle_degrees)
+            value = self.config.h_max_turn_angle_degrees
+        else:
+            value = self.config.l_max_turn_angle_degrees
+        return None if value is None else float(value)
 
     def _nominal_speed_mps(self, member_type: int) -> float:
         if member_type == H_MISSILE_TYPE:
             return float(self.config.h_nominal_speed_mps)
         return float(self.config.l_nominal_speed_mps)
+
+    def _nominal_turn_rate_deg_s(self, member_type: int) -> float:
+        if member_type == H_MISSILE_TYPE:
+            return float(self.config.h_nominal_turn_rate_deg_s)
+        return float(self.config.l_nominal_turn_rate_deg_s)
 
     @staticmethod
     def _distance_to_deficit(

@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "terminal-guidance-override-skill"
-version = "0.3.0"
-description = "Deterministic pulse terminal guidance override for M missiles"
+version = "0.4.0"
+description = "Profiled deterministic pulse terminal guidance override"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["skill-generation==0.1.0"]

@@ -58,6 +58,7 @@ def request(
     target_lat=None,
     target_id=None,
     target_type=None,
+    deployment_role="core",
 ):
     return PlatformDeploymentRequest(
         entity_id,
@@ -66,6 +67,7 @@ def request(
         target_lat,
         target_id,
         target_type,
+        deployment_role,
     )
 
 
@@ -480,6 +482,133 @@ def test_easy_e01_actual_target_packages_keep_hm_centroids_and_reserved_grid(axi
     assert len({(point.longitude, point.latitude) for point in plan.points}) == len(
         plan.points
     )
+
+
+def test_easy_e01_reserve_h_is_rearmost_and_all_l_are_front():
+    requests = easy_e01_requests() + (
+        request(
+            2593,
+            21000,
+            *EASY_E01_SENTRIES[0],
+            deployment_role="reserve_h",
+        ),
+    )
+    plan = StaggeredDeploymentSkill(
+        StaggeredDeploymentConfig(l_first_wave_fraction=1.0)
+    ).plan(EASY_E01_BOUNDS, requests)
+    reserve = next(
+        point for point in plan.points if point.deployment_role == "reserve_h"
+    )
+    core_hm = [
+        point
+        for point in plan.points
+        if point.entity_type in (21000, 21001)
+        and point.deployment_role == "core"
+    ]
+    l_points = [point for point in plan.points if point.entity_type == 21002]
+
+    assert reserve.forward_km < min(point.forward_km for point in core_hm)
+    assert reserve.target_id is reserve.target_type is None
+    assert len(l_points) == 85
+    assert {point.band for point in l_points} == {"front"}
+    assert {point.wave_role for point in l_points} == {"front"}
+    assert all(point.deployment_role == "core" for point in core_hm + l_points)
+    assert len({(point.longitude, point.latitude) for point in plan.points}) == len(
+        plan.points
+    )
+
+
+@pytest.mark.parametrize("axis", ("east", "west", "north", "south"))
+@pytest.mark.parametrize(
+    ("difficulty", "axis_length", "core_count", "reserve_count"),
+    (
+        ("Easy", 40.0, 70, 15),
+        ("Medium", 60.0, 105, 23),
+        ("Hard", 80.0, 180, 34),
+    ),
+)
+def test_explicit_l_echelons_stay_near_front_on_all_axes(
+    axis, difficulty, axis_length, core_count, reserve_count
+):
+    area = bounds(width_km=axis_length, height_km=80.0)
+    hm = (request(10_000, 21000), request(10_001, 21001))
+    requests = (
+        tuple(request(index, 21002) for index in range(core_count))
+        + tuple(
+            request(core_count + index, 21002, deployment_role="reserve_l")
+            for index in range(reserve_count)
+        )
+        + hm
+    )
+    skill = StaggeredDeploymentSkill(
+        StaggeredDeploymentConfig(front_axis=axis)
+    )
+    plan = skill.plan(area, requests)
+    hm_only = skill.plan(area, hm)
+    core = [
+        point for point in plan.points
+        if point.entity_type == 21002 and point.deployment_role == "core"
+    ]
+    reserve = [
+        point for point in plan.points
+        if point.deployment_role == "reserve_l"
+    ]
+    rear = [point for point in plan.points if point.entity_type != 21002]
+    mean_gap = (
+        sum(point.forward_km for point in core) / len(core)
+        - sum(point.forward_km for point in reserve) / len(reserve)
+    )
+
+    assert difficulty in {"Easy", "Medium", "Hard"}
+    assert len(core) == core_count
+    assert len(reserve) == reserve_count
+    assert {point.band for point in core} == {"front"}
+    assert {point.wave_role for point in core} == {"front"}
+    assert {point.band for point in reserve} == {"second"}
+    assert {point.wave_role for point in reserve} == {"reserve_l"}
+    assert mean_gap == pytest.approx(plan.config.l_reserve_gap_km, abs=2.0)
+    assert min(point.forward_km for point in reserve) > max(
+        point.forward_km for point in rear
+    )
+    assert {
+        point.entity_id: (point.forward_km, point.lateral_km)
+        for point in rear
+    } == {
+        point.entity_id: (point.forward_km, point.lateral_km)
+        for point in hm_only.points
+    }
+    assert len({(point.longitude, point.latitude) for point in plan.points}) == len(
+        plan.points
+    )
+
+
+@pytest.mark.parametrize("axis", ("east", "west", "north", "south"))
+def test_reserve_h_uses_provisional_target_lateral_on_every_axis(axis):
+    area = bounds(width_km=60.0, height_km=60.0)
+    target = (
+        area.lon_min + (area.lon_max - area.lon_min) * 0.25,
+        area.lat_min + (area.lat_max - area.lat_min) * 0.75,
+    )
+    plan = StaggeredDeploymentSkill(
+        StaggeredDeploymentConfig(front_axis=axis, l_first_wave_fraction=1.0)
+    ).plan(
+        area,
+        (
+            request(1, 21000, *target, deployment_role="reserve_h"),
+            request(2, 21000),
+            request(3, 21001),
+            request(4, 21002),
+        ),
+    )
+    reserve = next(point for point in plan.points if point.entity_id == 1)
+    core_hm = [point for point in plan.points if point.entity_id in (2, 3)]
+    _target_forward, target_lateral = target_local(area, axis, target)
+
+    assert reserve.deployment_role == "reserve_h"
+    assert 0.0 <= reserve.forward_km <= 5.0
+    assert reserve.lateral_km == pytest.approx(target_lateral, abs=0.5)
+    assert reserve.forward_km < min(point.forward_km for point in core_hm)
+    assert len({(point.longitude, point.latitude) for point in plan.points}) == 4
 
 
 @pytest.mark.parametrize("axis", ("east", "west", "north", "south"))
@@ -1175,6 +1304,27 @@ def test_only_h_m_l_types_are_accepted(entity_type):
         PlatformDeploymentRequest(1, entity_type)
 
 
+@pytest.mark.parametrize(
+    "factory",
+    (
+        lambda: request(1, 21000, deployment_role="reserve"),
+        lambda: request(1, 21001, deployment_role="reserve_h"),
+        lambda: request(
+            1,
+            21000,
+            120.0,
+            30.0,
+            target_id=9401,
+            target_type=9400,
+            deployment_role="reserve_h",
+        ),
+    ),
+)
+def test_deployment_role_is_strictly_validated(factory):
+    with pytest.raises(ValueError, match="deployment_role|reserve_h|provisional"):
+        factory()
+
+
 def test_duplicate_ids_are_rejected():
     with pytest.raises(ValueError, match="unique"):
         StaggeredDeploymentSkill().plan(
@@ -1201,7 +1351,7 @@ def test_runtime_actions_have_expected_shape_ids_and_owner_routes():
     routed = route_deployment_actions(plan, {2: "west", 5: "west", 8: "front"})
     assert tuple(action[1] for action in routed["west"]) == (2, 5)
     assert tuple(action[1] for action in routed["front"]) == (8,)
-    assert __version__ == "0.8.0"
+    assert __version__ == "0.10.0"
 
 
 def test_missing_runtime_owner_is_rejected():

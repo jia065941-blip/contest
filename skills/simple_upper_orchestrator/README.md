@@ -12,11 +12,11 @@ complete friendly roster and public 9400/9600 directory. It runs
 `HMPublicStrikePackagesSkill` once and publishes an immutable pre-mission plan:
 the H/M assignment map, frozen entity core attributes/types, sorted complete L
 roster, and any H reserve packages. Reserve H packages start in `STAGING` with
-public provisional/fallback targets and a latitude responsibility region. In
-2.2, provisional targets remain package metadata and reserve members are absent
+public provisional/fallback metadata and a latitude responsibility region. In
+2.5, provisional targets remain package metadata and reserve members are absent
 from both the core H/M assignment map and target-aware deployment requests. They
 do not enter runtime assignments, goals, or type-4 actions while `STAGING`.
-Only a successfully applied deficit dispatch or deadline fallback creates the
+Only a confirmed deficit dispatch or dynamic deadline fallback creates the
 runtime assignment and action. Core H/M behavior is unchanged. The combat
 coordinator never calls the global H/M allocator and does not redistribute core
 H/M from current observations. Each core H/M owner emits type 4 for its fixed
@@ -130,8 +130,9 @@ simple-upper-release \
   --reserve-deadline-step 300 \
   --reserve-h-max-distance 80 \
   --reserve-l-max-distance 100 \
-  --reserve-h-max-turn 60 \
-  --reserve-l-max-turn 75 \
+  --reserve-h-turn-rate 20 \
+  --reserve-l-turn-rate 15 \
+  --reserve-turn-safety-seconds 5 \
   --reserve-holding-half-width 6 \
   --reserve-holding-heading-offset 35 \
   --reserve-holding-max-turn-steps 6 \
@@ -148,9 +149,14 @@ simple-upper-release \
   --dynamic-retarget-max-turn-angle 45 \
   --dynamic-retarget-max-candidate-distance 30 \
   --dynamic-retarget-max-per-old-target 1 \
+  --enable-terminal-guidance \
   --terminal-min-stage 4 \
-  --terminal-capture-distance 2000 \
-  --terminal-final-straight-distance 300 \
+  --terminal-h-capture300 300 \
+  --terminal-h-final150 150 \
+  --terminal-m-capture600 600 \
+  --terminal-m-final200 200 \
+  --terminal-l-capture600 600 \
+  --terminal-l-final200 200 \
   --terminal-max-track-age 5 \
   --terminal-stale-grace-age 8 \
   --terminal-threat-distance 3000 \
@@ -180,21 +186,45 @@ isolation and audit output remain active while retargeting is disabled.
 `--reserve-h-count` is the canonical H reserve control and defaults to zero. The
 legacy `--hm-reserve-h` remains accepted when the canonical option is zero;
 setting both nonzero is rejected. M reserves are not supported by
-`reserve-echelon-skill==0.2.0`, so a nonzero `--hm-reserve-m` fails closed.
+`reserve-echelon-skill==0.4.0`, so a nonzero `--hm-reserve-m` fails closed.
 `--reserve-max-stage` is optional and defaults to no stage limit. Supplying a
-nonnegative integer restores an explicit stage gate. At
-`--reserve-deadline-step` (default `300`), a still-staged package with no legal
-ledger-authorized deficit checks its fallback target. Both deficit dispatch and
-deadline fallback must pass `reserve-echelon-skill==0.2.0` physical reachability
-for every package member. H defaults are an 80 km distance and 60 degree turn;
-L defaults are 100 km and 75 degrees. The remaining time budget is
-`max_steps - step`, evaluated at nominal H/L speeds of 200/100 m/s and the
-configured `--seconds-per-step`. Configure the geometry with
-`--reserve-h-max-distance`, `--reserve-l-max-distance`,
-`--reserve-h-max-turn`, and `--reserve-l-max-turn`. Negative pre-launch stages
-normalize to zero. A physically reachable deadline fallback produces its
-request and owner-routed type-4 action even at stage 3 or 4 under the default
-unlimited stage setting.
+nonnegative integer restores an explicit stage gate. Both deficit dispatch and
+deadline selection must pass `reserve-echelon-skill==0.4.0` physical
+reachability for every package member. H/L distance defaults remain 80/100 km.
+The `--reserve-h-max-turn` and `--reserve-l-max-turn` risk caps now default to
+`None`; supplying `60`/`75` explicitly restores the old hard angle limits.
+Otherwise any angle is eligible when its turn-aware ETA fits. ETA uses nominal
+H/L speeds of 200/100 m/s, turn rates from `--reserve-h-turn-rate` (default
+`20` deg/s) and `--reserve-l-turn-rate` (default `15` deg/s), plus
+`--reserve-turn-safety-seconds` (default `5`). The remaining budget is
+`(max_steps - step) * --seconds-per-step`. Negative pre-launch stages normalize
+to zero.
+
+A deficit is keyed by current communication group and target. Its first complete
+step creates `PendingDeficit(first_step, evidence_signature, missing_damage)` and
+emits `reserve_pending(status=pending)` without dispatch. The same legal target
+and evidence must survive into a later step before it becomes `confirmed` and is
+submitted to Reserve Echelon. Changed or vanished evidence emits `cancelled` and
+cannot produce action 4. Terminal evidence and group damage beliefs are fully
+merged before this update. Delivered destruction probability at least `0.9`
+cancels a public-target deficit. A confirmed deficit may commit the package's
+provisional target ID directly even though `STAGING` itself has no assignment.
+Confirmation and the final action 4 both revalidate the current group track,
+delivered probability, active core commitments, and Reserve/core ETA. A target
+at `0.9` is audited as `reserve_target_satisfied`; a previously fresh target
+that expires after high-confidence close core delivery is audited as
+`reserve_target_stale_cancel`. Neither path reads target health.
+
+At `--reserve-deadline-step` (default `300`), the adapter does not blindly use
+the package's fixed fallback metadata. It scores the current group's legal
+targets from delivered destruction probability, current/confirmed deficit,
+target weight, distance, and active core commitment coverage. Targets at or
+above `0.9` delivered probability are excluded, confirmed deficits rank first,
+and sufficient active core commitments carry a penalty. Candidates are tried in
+score order through 0.4 reachability. Fresh moving tracks rank ahead of static
+coordinates, and the score compares core completion ETA with Reserve ETA. The selected target's current legal
+position is passed into that ETA check. This reduces selection of a target likely
+to be destroyed by core missiles before the reserve arrives.
 
 While an H reserve remains `STAGING` and unassigned, the external local policy
 still runs first. `reserve-holding-maneuver-skill==0.1.0` may then replace its
@@ -206,7 +236,12 @@ consecutive turn steps, and two straight transition steps; configure them with
 `--reserve-holding-half-width`, `--reserve-holding-heading-offset`,
 `--reserve-holding-max-turn-steps`, and
 `--reserve-holding-straight-steps`. L reserves use only the local-policy
-baseline. Dispatch/fallback stops and resets holding in the same planning step
+baseline. During a pending warning, a matching H reserve enters READY: holding
+is stopped, the local policy still owns the motion category, and only its
+temporary `goal_position` changes to the pending target's public coordinate for
+pre-alignment. READY emits `reserve_ready_align` but never action 4. A cancelled
+pending warning restores normal holding. Dispatch/fallback stops and resets
+holding in the same planning step
 before type 4 is emitted. A reserve not yet exposed by the environment remains
 staged without any scoring target command.
 
@@ -215,7 +250,8 @@ minimum target distance remains above `10 km`, or when delivery probability is
 at most `0.15`. Core L tracks its real stage, position, fixed assigned dark nest,
 and minimum distance; disappearance is an early loss only at `stage <= 3` and
 above `5 km`. Deficits are rebuilt for each current communication group from
-visible unique early-loss events. Target health is `24/18/1.2` for
+visible unique early-loss events after the current step's terminal/belief merge.
+Target health is `24/18/1.2` for
 9400/9600/9500; initial core nominal commitment is reduced by the visible lost
 nominal damage (`H=16/12`, `M=4/3`, `L=0.8`) before missing damage is computed.
 Evidence is assigned a unique event ID, explicitly audited, and written to the
@@ -223,16 +259,24 @@ legal ledgers of the lost owner's last communication-group recipients. Current
 out-of-group reserves cannot consume that evidence. A reserve member is eligible
 only while current, within the stage gate, and with the requested target in its
 owner-local legal catalogue; action 4 is always routed under and audited for
-that member's owner ID. Reserve terminal evidence is audited and its package is
-removed as `TERMINATED`, but it never creates a second core deficit.
+that member's owner ID. A multi-member package owner is its lowest current
+surviving ID. Losing that owner emits `reserve_owner_changed` and preserves the
+state, target, and assignments; only loss of every member emits `TERMINATED`.
+After H Reserve action 4, a completed or qualifying stale target may switch once
+to a reachable confirmed deficit or dynamic fallback. `reserve_retarget` updates
+the package `target_id` and `retarget_count`; Core and M/L behavior is unchanged.
 
-Terminal guidance is enabled by default. After the external local policy has
-produced each owner's baseline `0/1/2` category, the adapter passes an
-owner-local snapshot to `terminal-guidance-override-skill==0.3.0` and maps its
-final category back to `acc_z = category - 1`. The snapshot uses only the
-owner's current assigned-target goal, that owner's current target fix, its own
-position, and legal type-24000 positions in its current `detectInfo`. Missing
-or invalid goal, position, or target fix fails closed to the baseline category.
+Terminal guidance is disabled by default and requires
+`--enable-terminal-guidance`. After the external local policy has produced each
+owner's baseline `0/1/2` category, the adapter passes an owner-local snapshot to
+`terminal-guidance-override-skill==0.4.0` and maps its final category back to
+`acc_z = category - 1`. H, M, and L all use the profiled controller. H/M require
+their assigned public target's fresh fix from that owner's current `detectInfo`.
+L requires the assigned legal type-9500 fix from its own current `detectInfo`;
+because dark nests are stationary, an unchanged stale fix remains eligible.
+The detected fix, not a public-directory or cross-owner coordinate, is the
+snapshot aimpoint. Missing or invalid assignment, position, fix, or aimpoint
+fails closed to the baseline category.
 Velocity is selected strictly from that same owner's isolated observation:
 finite official ECF `x/y/z` is converted to local east/north first, finite
 `speed/heading` is second, and an owner-local bounded position-window estimate
@@ -247,30 +291,29 @@ starts a new position window without replacing it. The first position-only
 sample has no velocity and therefore fails closed. It never reads simulator
 state, another owner's observation, or another owner's history.
 
-The 0.3 controller restricts capture to M missiles and re-evaluates its
-owner-local state every step. Defaults are a `2000` m capture distance, `300` m
-final-straight distance, fresh-track age `5`, stale grace through age `8`,
+The 0.4 defaults are H `300/150` m, M `600/200` m, and L `600/200` m for
+capture/final-straight distance. H/M fixes must be fresh with maximum age `5`;
+L permits a stale legal detect fix. All profiles otherwise inherit stage `4`,
 heading hysteresis at `6`/`10` degrees, predicted miss threshold `80` m, a
 one-step turn pulse, two straight-recovery steps, and a three-sample
-no-improvement limit. Configure these with `--terminal-capture-distance`,
-`--terminal-final-straight-distance`, `--terminal-max-track-age`,
-`--terminal-stale-grace-age`, `--terminal-heading-enter`,
-`--terminal-heading-exit`, `--terminal-predicted-miss`,
-`--terminal-turn-pulse-steps`, `--terminal-straight-recovery-steps`, and
-`--terminal-no-improvement-limit`. Interceptor threat is diagnostic only. The
-legacy `--terminal-enter-distance`, `--terminal-straight-distance`,
-`--terminal-exit-distance`, and `--terminal-heading-deadband` options remain
-accepted; omitted straight/deadband aliases use the new 0.3 defaults. H and L
-categories pass through unchanged. Use `--disable-terminal-guidance` to disable
-the controller.
+no-improvement limit. Override type distances with
+`--terminal-h-capture300`/`--terminal-h-final150`,
+`--terminal-m-capture600`/`--terminal-m-final200`, and
+`--terminal-l-capture600`/`--terminal-l-final200`; the shorter aliases without
+the numeric suffix are also accepted. The generic
+`--terminal-capture-distance`, `--terminal-final-straight-distance`, and all
+legacy terminal flags remain compatible with the 0.4 global/M settings.
+Interceptor threat remains diagnostic only. `--disable-terminal-guidance`
+remains accepted for compatibility but explicit enablement is required.
 
 The pre-mission plan is immutable and retained across episode resets. Reset
 clears observations, actions, goals, target refresh versions, dynamic evidence,
 satellite state, and other battle history, then restores only the fixed H/M
 core assignments and their initial owner-local commitment records. Staged reserve
 members return without runtime assignments. Terminal-guidance
-latches, position/velocity histories, and audit de-duplication state are also
-cleared. Reserve-holding phases and first-position anchors are cleared on
+latches, position/velocity histories, pending/confirmed deficits, READY targets,
+and audit de-duplication state are also cleared. Reserve-holding phases and
+first-position anchors are cleared on
 terminal state and episode reset. Terminal owners also have their
 position/velocity history removed. A missing plan
 fails closed: the coordinator may still produce owner-local motion, but it emits
@@ -315,21 +358,33 @@ Every line is a JSON object serialized with sorted keys and contains at least
 | `initial_reserve` / `reserve_staging` | `package`, `members`, `types`, `provisional_target`, `fallback_target`, `responsibility_region`, `source`; staging also records `state=STAGING`, `committed=false` |
 | `reserve_early_loss` | `owner`, `target`, `type`, `target_type`, `nominal_damage`, `stage`, `min_distance_m`, `probability`, `last_group`, `recipients`, `event_id` |
 | `reserve_deficit` | `package`, `owners`, `group`, `target`, `type`, `missing`, `target_health`, `initial_core_nominal`, `early_lost_nominal`, `responsibility_region`, `evidence_ids`, `event_ids` |
-| `reserve_rejected` | `package`, `members`, `reason`, plus applicable group or unavailable-member context; physical rejection also records `target`, `distance_km`, `max_distance_km`, `turn_angle_degrees`, `max_turn_angle_degrees`, `travel_steps`, and `remaining_steps` |
-| `reserve_dispatch` | `package`, `members`, `old_target`, `new_target`, `reason`, `group`, `evidence_ids`, `evidence_event_ids`, `missing`, `event_id` |
-| `reserve_fallback` | `package`, `members`, `old_target`, `new_target`, `reason`, `group`, `event_id` |
+| `reserve_pending` | `status` (`pending`, `confirmed`, or `cancelled`), `group`, `target`, `first_step`, `evidence_signature`, `missing`, plus package/responsibility or cancellation reason when applicable |
+| `reserve_rejected` | `package`, `members`, `reason`, plus applicable group or unavailable-member context; unchanged rejection states are not repeated |
+| `reserve_dispatch` | `package`, `members`, `old_target`, `new_target`, `reason`, `group`, `evidence_ids`, `evidence_event_ids`, `missing`, `event_id`, and 0.3 reachability fields |
+| `reserve_fallback` | `package`, `members`, `old_target`, `new_target`, `reason`, `group`, `event_id`, and 0.3 reachability fields |
+| `reserve_fallback_candidate` | `package`, `group`, `target`, `position`, `score`, `confirmed_deficit`, `missing`, `weight`, `distance_km`, `delivered_probability`, `active_core_ids`, `active_core_damage`, `active_core_coverage`, `eligible`, `excluded_reason`, `selected`, `reachability_reason` |
 | `reserve_action4` | `package`, `owner`, `target`, `action_type`, `reason`, `event_id` |
+| `reserve_owner_changed` | `package`, `old_owner`, `new_owner`, `surviving_members`, `state`, `target`, `reason`, `group` |
+| `reserve_target_satisfied` / `reserve_target_stale_cancel` | `package`, `owner`, `members`, `group`, `target`, delivered probability, track freshness, core delivery and ETA fields |
+| `reserve_retarget` | `package`, `owner`, `members`, `old_target`, `new_target`, `retarget_count`, `group`, `reason`, `event_id`, and reachability fields |
 | `reserve_terminal` | `package`, `members`, `owner`, `previous_state`, `status`, `reason`, `group` |
 | `reserve_holding` | `package`, `owner`, `phase`, `cross_track`, `progress`, `baseline`, `final`, `overridden`, `reason`, plus owner-local velocity and axis provenance when available |
+| `reserve_ready_align` | `package`, `owner`, `target`, public `goal`, local-policy `baseline`/`final`, `holding_paused=true`, `action4=false` |
 | `terminal_evidence` | `owner`, `type`, `target`, `last_stage`, `min_distance_m`, `source`, `age`, `forced_low_confidence`, `last_group`, `delivery_probability`, `evidence_recorded`, `terminal_reason`, `missile_terminal_event_id`, `event_id` |
 | `belief_change` | `group`, `target`, `type`, `delivered_probability`, `projected_probability`, `committed_ids`, `delivery_ids` |
 | `retarget_status` | `owner`, `type`, `current_target`, `delivered_probability`, `threshold`, `stage`, `distance_km`, `group`, `retarget_count`, `last_retarget_step`, `fresh_target_ids`, `velocity_x`, `velocity_y`, `max_target_separation_km`, `max_turn_angle_degrees`, `max_candidate_distance_km`, `max_per_old_target_per_step`, `reason` |
 | `retarget_request` / `retarget_applied` | `owner`, `type`, `old_target`, `new_target`, `probability`, `group`, `stage`, `distance_km`, `candidate_position`, `candidate_position_source`, `reason`, `event_id` |
 | `formation_status` | `m_id`, `target_id`, `m_stage`, `m_lon`, `m_lat`, `m_track_source`, `m_track_age`, `h_ids`, `nearest_h_id`, `separation_km`, `lateral_km`, `forward_km`, `same_communication_group`, `group`, `movement`, `velocity`; `reason=no_active_h_lead` when no active same-target H exists |
-| `terminal_guidance` | `owner`, `type`, `baseline`, `final`, `stage`, `distance_m`, `track_source`, `track_age`, `nearest_interceptor_distance_m`, `threat`, `latched`, `overridden`, `reason`, `predicted_miss_distance`, `control_state`, `no_improvement_count`, `heading_error`, `velocity_source`, `velocity_east`, `velocity_north`; guided decisions also retain compatible `mode`, `heading_error_degrees`, and optional `turn_direction` |
-| `missile_trace` | `id`, `type`, `stage`, `position`, `velocity`, `velocity_source`, `velocity_east`, `velocity_north`, `current_target_id`, `aimpoint`, `track_source`, `track_fingerprint`, `track_age`, `aimpoint_distance_km`, `comm_group`, `same_target_active_h_ids`, `nearest_h_id`, `nearest_h_separation_km`, `same_group`, `launch_step`, `steps_since_launch`, `maneuver_state`, `progress_step`, `minimum_aimpoint_distance_m`, `retarget_count`, `last_retarget_step`, `baseline_action`, `final_action`, `override_reason`, `predicted_miss_distance`, `control_state`, `no_improvement_count`, `heading_error` |
+| `terminal_guidance` | `owner`, `type`, `profile`, `profile_capture_distance`, `profile_final_straight_distance`, `baseline`, `final`, `stage`, `distance_m`, `track_source`, `track_age`, `nearest_interceptor_distance_m`, `threat`, `latched`, `overridden`, `reason`, `mode`, `error`, `predicted_miss_distance`, `control_state`, `no_improvement_count`, `heading_error`, `velocity_source`, `velocity_east`, `velocity_north`; guided decisions also retain compatible `heading_error_degrees` and optional `turn_direction` |
+| `missile_trace` | `id`, `type`, `profile`, `profile_capture_distance`, `profile_final_straight_distance`, `stage`, `position`, `velocity`, `velocity_source`, `velocity_east`, `velocity_north`, `current_target_id`, `aimpoint`, `track_source`, `track_fingerprint`, `track_age`, `aimpoint_distance_km`, `comm_group`, `same_target_active_h_ids`, `nearest_h_id`, `nearest_h_separation_km`, `same_group`, `launch_step`, `steps_since_launch`, `maneuver_state`, `progress_step`, `minimum_aimpoint_distance_m`, `retarget_count`, `last_retarget_step`, `baseline_action`, `final_action`, `override_reason`, `mode`, `error`, `predicted_miss_distance`, `control_state`, `no_improvement_count`, `heading_error` |
 | `missile_terminal` | `id`, `type`, `current_target_id`, `terminal_reason`, `last_sample`, `history`, `history_length`, `event_id`, `terminal_evidence_event_id` |
 | `reset` | `owner` |
+
+The 0.4 Reserve reachability fields are `distance`, `turn_angle`, `turn_time`,
+`travel_time`, `total_eta`, and `remaining_time`. Unit-explicit aliases use
+`distance_km`, `turn_angle_degrees`, and the corresponding `*_seconds` names;
+the configured maximums are also recorded. `travel_steps` and `remaining_steps`
+remain as compatibility aliases.
 
 Belief rows are emitted only when a probability or missile-ID set changes for
 that communication group and target. Status rows are emitted when any audited
@@ -398,13 +453,14 @@ different networks. For a caller-provided JSON profile, legacy
 `"commRangeInfo": []` values are migrated into a generated copy under the run
 output directory; the source and official checkout are never modified.
 
-The `staggered-deployment-skill==0.7.0` planner places 70% of L missiles in the
-front band and mixes the remaining second-wave L missiles with the
-target-aligned H/M rear band. Sentry rendezvous can be `adaptive` or `fixed`.
+The `staggered-deployment-skill==0.9.0` planner supports a rearmost 5 km
+`reserve_h` role while retaining target-aligned core H/M geometry. Release
+scripts pass `l_first_wave_fraction=1`, so all L missiles use the front band.
+Sentry rendezvous can be `adaptive` or `fixed`.
 Adaptive mode uses H/M speed, desired M arrival lead, and minimum/optional
 maximum M lead parameters. Deployment-time H/M allocation is fixed for the
 episode; post-discovery L distribution comes solely from the deterministic
-roster-rank rule above.
+deployment spatial-rank rule above, with owner-local targets ordered laterally.
 
 ## Batch scripts
 

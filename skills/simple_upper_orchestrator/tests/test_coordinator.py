@@ -1,5 +1,6 @@
 import json
 from collections import Counter
+import math
 from pathlib import Path
 
 import numpy as np
@@ -17,15 +18,40 @@ from simple_upper_orchestrator_skill.deploy_agent import PreMissionPlan
 
 
 class Point:
-    def __init__(self, entity_id, entity_type, band):
+    def __init__(
+        self,
+        entity_id,
+        entity_type,
+        band,
+        *,
+        lateral_km=None,
+        longitude=None,
+        latitude=None,
+        deployment_role="core",
+        target_id=None,
+    ):
         self.entity_id = entity_id
         self.entity_type = entity_type
         self.band = band
+        self.wave_role = band
+        self.lateral_km = float(
+            entity_id if lateral_km is None else lateral_km
+        )
+        self.longitude = float(
+            entity_id if longitude is None else longitude
+        )
+        self.latitude = float(
+            entity_id if latitude is None else latitude
+        )
+        self.forward_km = 0.0
+        self.deployment_role = deployment_role
+        self.target_id = target_id
 
 
 class Plan:
-    def __init__(self, points):
+    def __init__(self, points, front_axis="east"):
         self.points = points
+        self.config = type("DeploymentConfig", (), {"front_axis": front_axis})()
 
 
 class Policy:
@@ -101,8 +127,13 @@ def observation(
     }
 
 
-def hidden(target_id, lon=9.0):
-    return {"entity_id": target_id, "entity_type": 9500, "lla": {"x": lon, "y": 2.0}, "time": 1}
+def hidden(target_id, lon=9.0, lat=2.0):
+    return {
+        "entity_id": target_id,
+        "entity_type": 9500,
+        "lla": {"x": lon, "y": lat},
+        "time": 1,
+    }
 
 
 def dynamic_public_targets():
@@ -251,20 +282,21 @@ def test_terminal_guidance_overrides_fresh_safe_stage4_m_to_straight():
 
     assert len(policy.encode_calls) == 1
     assert next(row for row in rows if row[0] == 0) == (0, 13, 0.0, 0)
-    assert coordinator._motion_guidance[13] == {
-        "step": 1,
-        "baseline_action": 2,
-        "final_action": 1,
-        "override_reason": "predicted_miss_straight",
-        "predicted_miss_distance": pytest.approx(0.0, abs=1e-6),
-        "control_state": "STRAIGHT",
-        "no_improvement_count": 0,
-        "heading_error": pytest.approx(0.0, abs=1e-6),
-        "velocity_source": "observed",
-    }
+    motion = coordinator._motion_guidance[13]
+    assert motion["type"] == 21001
+    assert motion["profile"] == "M"
+    assert motion["profile_capture_distance"] == 600.0
+    assert motion["profile_final_straight_distance"] == 200.0
+    assert motion["baseline_action"] == 2
+    assert motion["final_action"] == 1
+    assert motion["override_reason"] == "predicted_miss_straight"
+    assert motion["predicted_miss_distance"] == pytest.approx(0.0, abs=1e-6)
+    assert motion["mode"] == "straight"
+    assert motion["error"] == pytest.approx(0.0, abs=1e-6)
+    assert motion["velocity_source"] == "observed"
 
 
-def test_terminal_guidance_threat_and_stale_track_pass_baseline_through():
+def test_terminal_guidance_threat_is_diagnostic_and_stale_m_track_passes_through():
     policy = Policy(action=2)
     coordinator = TeamCoordinator(
         ((1, 13),), dynamic_public_targets(), policy,
@@ -302,13 +334,13 @@ def test_terminal_guidance_threat_and_stale_track_pass_baseline_through():
     ))
     stale = coordinator.actions_for(13, 0, 0)
 
-    assert next(row for row in stale if row[0] == 0) == (0, 13, 0.0, 0)
-    assert coordinator._motion_guidance[13]["override_reason"] == "stale_grace"
-    assert coordinator._motion_guidance[13]["control_state"] == "STALE_GRACE"
+    assert next(row for row in stale if row[0] == 0) == (0, 13, 1.0, 0)
+    assert coordinator._motion_guidance[13]["override_reason"] == "track_stale"
+    assert coordinator._motion_guidance[13]["control_state"] == "PASSTHROUGH"
 
 
 @pytest.mark.parametrize("kind", (21000, 21002))
-def test_terminal_guidance_leaves_h_and_l_policy_categories_unchanged(kind):
+def test_terminal_guidance_no_longer_passes_h_and_l_through_by_type(kind):
     policy = Policy(action=0)
     public = dynamic_public_targets() if kind == 21000 else {"entities": {}}
     coordinator = TeamCoordinator(
@@ -323,22 +355,201 @@ def test_terminal_guidance_leaves_h_and_l_policy_categories_unchanged(kind):
     tracks = (
         {9401: public_track(9401, 9400, 0.0, 1)}
         if kind == 21000
-        else {9501: hidden(9501, lon=0.0)}
+        else {9501: hidden(9501, lon=0.0, lat=0.0)}
     )
     coordinator.submit(11, observation(
         1,
         11,
         kind,
         tracks=tracks,
-        position={"lon": 0.01, "lat": 0.0},
+        position={"lon": 0.001, "lat": 0.0},
         stage=4,
+        velocity={"speed": 120.0, "heading": 270.0},
+    ))
+
+    rows = coordinator.actions_for(11, 0, 0)
+
+    assert next(row for row in rows if row[0] == 0) == (0, 11, 0.0, 0)
+    assert coordinator._motion_guidance[11]["override_reason"] == "final_straight"
+    assert coordinator._motion_guidance[11]["profile"] == (
+        "H" if kind == 21000 else "L"
+    )
+
+
+@pytest.mark.parametrize(
+    ("kind", "capture_distance", "target_id"),
+    ((21000, 300.0, 9401), (21001, 600.0, 9401), (21002, 600.0, 9501)),
+)
+def test_terminal_guidance_profile_capture_boundaries(
+    kind, capture_distance, target_id,
+):
+    public = dynamic_public_targets() if kind != 21002 else {"entities": {}}
+    coordinator = TeamCoordinator(
+        ((1, 11),), public, Policy(action=2),
+        config(
+            dynamic_enabled=False,
+            satellite_trigger_step=99,
+            expected_target_count=1 if kind == 21002 else None,
+        ),
+    )
+    register_plan(coordinator, {11: kind})
+    longitude = math.degrees(capture_distance / 6_371_008.8)
+    tracks = {
+        target_id: (
+                hidden(target_id, lon=0.0, lat=0.0)
+            if kind == 21002
+            else public_track(target_id, 9400, 0.0, 1)
+        )
+    }
+    coordinator.submit(11, observation(
+        1, 11, kind, tracks=tracks,
+        position={"lon": longitude, "lat": 0.0}, stage=4,
+        velocity={"speed": 120.0, "heading": 270.0},
+    ))
+
+    rows = coordinator.actions_for(11, 0, 0)
+    motion = coordinator._motion_guidance[11]
+
+    assert next(row for row in rows if row[0] == 0) == (0, 11, 0.0, 0)
+    assert motion["override_reason"] != "outside_capture_distance"
+    assert motion["profile_capture_distance"] == capture_distance
+
+
+def test_terminal_guidance_l_accepts_stale_owner_local_9500_fix():
+    coordinator = TeamCoordinator(
+        ((1, 11),), {"entities": {}}, Policy(action=2),
+        config(
+            dynamic_enabled=False,
+            satellite_trigger_step=99,
+            expected_target_count=1,
+        ),
+    )
+    register_plan(coordinator, {11: 21002})
+    track = {9501: hidden(9501, lon=0.0, lat=0.0)}
+    for step in (1, 7):
+        coordinator.submit(11, observation(
+            step, 11, 21002, tracks=track,
+            position={"lon": 0.005, "lat": 0.0}, stage=4,
+            velocity={"speed": 120.0, "heading": 270.0},
+        ))
+        rows = coordinator.actions_for(11, 0, 0)
+
+    assert next(row for row in rows if row[0] == 0) == (0, 11, 0.0, 0)
+    assert coordinator._motion_guidance[11]["profile"] == "L"
+    assert coordinator._motion_guidance[11]["override_reason"] == (
+        "predicted_miss_straight"
+    )
+    assert coordinator._terminal_target_track(11, 7, 9501, 21002).source == (
+        "detect_stale"
+    )
+
+
+@pytest.mark.parametrize("kind", (21000, 21001, 21002))
+def test_terminal_guidance_without_owner_track_passes_through(kind):
+    public = dynamic_public_targets() if kind != 21002 else {"entities": {}}
+    coordinator = TeamCoordinator(
+        ((1, 11),), public, Policy(action=2),
+        config(dynamic_enabled=False, satellite_trigger_step=99),
+    )
+    register_plan(coordinator, {11: kind})
+    if kind == 21002:
+        coordinator._assignments[11] = 9501
+    coordinator.submit(11, observation(
+        1, 11, kind, tracks={}, position={"lon": 0.001, "lat": 0.0},
+        stage=4, velocity={"speed": 120.0, "heading": 270.0},
+    ))
+
+    rows = coordinator.actions_for(11, 0, 0)
+
+    assert next(row for row in rows if row[0] == 0) == (0, 11, 1.0, 0)
+    assert coordinator._motion_guidance[11]["override_reason"] == (
+        "missing_owner_target_fix"
+    )
+
+
+def test_terminal_guidance_never_uses_another_owners_target_fix():
+    coordinator = TeamCoordinator(
+        ((1, 11), (2, 12)), dynamic_public_targets(), Policy(action=2),
+        config(dynamic_enabled=False),
+    )
+    register_plan(coordinator, {11: 21000, 12: 21000})
+    coordinator.submit(11, observation(
+        1, 11, 21000,
+        tracks={9401: public_track(9401, 9400, 0.0, 1)},
+        position={"lon": 0.001, "lat": 0.0}, stage=4,
+        velocity={"speed": 120.0, "heading": 270.0},
+    ))
+    coordinator.submit(12, observation(
+        1, 12, 21000, tracks={},
+        position={"lon": 0.001, "lat": 0.0}, stage=4,
+        velocity={"speed": 120.0, "heading": 270.0},
+    ))
+
+    rows11 = coordinator.actions_for(11, 0, 0)
+    rows12 = coordinator.actions_for(12, 0, 0)
+
+    assert next(row for row in rows11 if row[0] == 0) == (0, 11, 0.0, 0)
+    assert next(row for row in rows12 if row[0] == 0) == (0, 12, 1.0, 0)
+    assert coordinator._motion_guidance[12]["override_reason"] == (
+        "missing_owner_target_fix"
+    )
+
+
+@pytest.mark.parametrize("kind", (21000, 21001, 21002))
+def test_terminal_guidance_velocity_window_covers_all_missile_types(kind):
+    public = dynamic_public_targets() if kind != 21002 else {"entities": {}}
+    coordinator = TeamCoordinator(
+        ((1, 11),), public, Policy(action=2),
+        config(
+            dynamic_enabled=False,
+            satellite_trigger_step=99,
+            expected_target_count=1 if kind == 21002 else None,
+        ),
+    )
+    register_plan(coordinator, {11: kind})
+    for step, longitude in ((1, 0.002), (2, 0.001)):
+        tracks = {
+            (9501 if kind == 21002 else 9401): (
+                hidden(9501, lon=0.0, lat=0.0)
+                if kind == 21002
+                else public_track(9401, 9400, 0.0, step)
+            )
+        }
+        coordinator.submit(11, observation(
+            step, 11, kind, tracks=tracks,
+            position={"lon": longitude, "lat": 0.0}, stage=4,
+        ))
+        rows = coordinator.actions_for(11, 0, 0)
+        if step == 1:
+            assert next(row for row in rows if row[0] == 0) == (0, 11, 1.0, 0)
+            assert coordinator._motion_guidance[11]["override_reason"] == (
+                "missing_owner_velocity"
+            )
+
+    assert next(row for row in rows if row[0] == 0) == (0, 11, 0.0, 0)
+    assert coordinator._motion_guidance[11]["velocity_source"] == (
+        "estimated_window"
+    )
+
+
+def test_terminal_guidance_disable_keeps_baseline():
+    coordinator = TeamCoordinator(
+        ((1, 11),), dynamic_public_targets(), Policy(action=0),
+        config(dynamic_enabled=False, terminal_enabled=False),
+    )
+    register_plan(coordinator, {11: 21000})
+    coordinator.submit(11, observation(
+        1, 11, 21000,
+        tracks={9401: public_track(9401, 9400, 0.0, 1)},
+        position={"lon": 0.001, "lat": 0.0}, stage=4,
+        velocity={"speed": 120.0, "heading": 270.0},
     ))
 
     rows = coordinator.actions_for(11, 0, 0)
 
     assert next(row for row in rows if row[0] == 0) == (0, 11, -1.0, 0)
     assert coordinator._motion_guidance[11]["override_reason"] == (
-        "missile_type_passthrough"
+        "terminal_guidance_disabled"
     )
 
 
@@ -454,6 +665,9 @@ def test_terminal_guidance_audit_trace_and_reset_latch(tmp_path):
         "step": 1,
         "owner": 13,
         "type": 21001,
+        "profile": "M",
+        "profile_capture_distance": 600.0,
+        "profile_final_straight_distance": 200.0,
         "baseline": 2,
         "final": 1,
         "stage": 4,
@@ -469,6 +683,7 @@ def test_terminal_guidance_audit_trace_and_reset_latch(tmp_path):
         "velocity_east": pytest.approx(-120.0),
         "velocity_north": pytest.approx(0.0, abs=1e-10),
         "mode": "straight",
+        "error": pytest.approx(0.0, abs=1e-6),
         "heading_error_degrees": pytest.approx(0.0, abs=1e-6),
         "heading_error": pytest.approx(0.0, abs=1e-6),
         "predicted_miss_distance": pytest.approx(0.0, abs=1e-6),
@@ -478,6 +693,12 @@ def test_terminal_guidance_audit_trace_and_reset_latch(tmp_path):
     assert traces[-1]["baseline_action"] == 2
     assert traces[-1]["final_action"] == 1
     assert traces[-1]["override_reason"] == "predicted_miss_straight"
+    assert traces[-1]["type"] == 21001
+    assert traces[-1]["profile"] == "M"
+    assert traces[-1]["profile_capture_distance"] == 600.0
+    assert traces[-1]["profile_final_straight_distance"] == 200.0
+    assert traces[-1]["mode"] == "straight"
+    assert traces[-1]["error"] == pytest.approx(0.0, abs=1e-6)
     assert traces[-1]["velocity_source"] == "observed"
     assert traces[-1]["velocity_east"] == pytest.approx(-120.0)
     assert traces[-1]["velocity_north"] == pytest.approx(0.0, abs=1e-10)
@@ -523,7 +744,7 @@ def test_terminal_guidance_state_transitions_are_audited_in_guidance_and_trace(
             13,
             21001,
             tracks={9401: public_track(9401, 9400, 0.0, step)},
-            position={"lon": 0.01, "lat": 0.0},
+            position={"lon": 0.005, "lat": 0.0},
             stage=4,
             velocity={"speed": 120.0, "heading": heading},
         ))
@@ -904,6 +1125,21 @@ def test_deployment_plan_sets_l_wave_for_distance_allocator():
     assert coordinator._deployment_waves == {11: 1, 12: 2}
 
 
+def test_deployment_plan_builds_l_spatial_rank_from_lateral_coordinate():
+    coordinator = TeamCoordinator(
+        ((1, 11), (2, 12), (3, 13)), {"entities": {}}, Policy(),
+        config(satellite_trigger_step=99),
+    )
+    register_plan(coordinator, {11: 21002, 12: 21002, 13: 21002})
+    coordinator.set_deployment_plan(Plan((
+        Point(11, 21002, "front", lateral_km=20.0),
+        Point(12, 21002, "front", lateral_km=5.0),
+        Point(13, 21002, "front", lateral_km=12.0),
+    )))
+
+    assert coordinator._l_rank == {12: 0, 13: 1, 11: 2}
+
+
 def test_owner_local_hidden_track_is_not_promoted_to_fleet_information():
     policy = Policy()
     coordinator = TeamCoordinator(
@@ -943,6 +1179,10 @@ def test_l_mapping_ignores_another_l_position_and_tracks() -> None:
             config(satellite_trigger_step=99, expected_target_count=2),
         )
         register_plan(coordinator, {11: 21002, 12: 21002})
+        coordinator.set_deployment_plan(Plan((
+            Point(11, 21002, "front", lateral_km=10.0),
+            Point(12, 21002, "front", lateral_km=0.0),
+        )))
         coordinator.submit(11, observation(
             1, 11, 21002,
             tracks={9501: hidden(9501), 9502: hidden(9502)},
@@ -960,7 +1200,116 @@ def test_l_mapping_ignores_another_l_position_and_tracks() -> None:
     ) == owner_target(
         {9510: hidden(9510), 9520: hidden(9520)},
         {"lon": 100.0, "lat": 50.0},
-    ) == 9501
+    ) == 9502
+
+
+def test_l_spatial_rank_matches_south_to_north_target_order():
+    owners = (101, 102, 103, 104)
+    coordinator = TeamCoordinator(
+        tuple(enumerate(owners, start=1)), {"entities": {}}, Policy(),
+        config(satellite_trigger_step=0, expected_target_count=2),
+    )
+    register_plan(coordinator, {owner: 21002 for owner in owners})
+    coordinator.set_deployment_plan(Plan((
+        Point(101, 21002, "front", lateral_km=30.0, latitude=3.0),
+        Point(102, 21002, "front", lateral_km=0.0, latitude=0.0),
+        Point(103, 21002, "front", lateral_km=20.0, latitude=2.0),
+        Point(104, 21002, "front", lateral_km=10.0, latitude=1.0),
+    )))
+    tracks = {
+        9502: hidden(9502, lon=8.0, lat=4.0),
+        9501: hidden(9501, lon=9.0, lat=-4.0),
+    }
+    for owner in owners:
+        coordinator.submit(owner, observation(1, owner, 21002, tracks=tracks))
+
+    coordinator.actions_for(101, 0, 0)
+
+    assert coordinator._l_rank == {102: 0, 104: 1, 103: 2, 101: 3}
+    assert coordinator._assignments == {
+        101: 9502,
+        102: 9501,
+        103: 9501,
+        104: 9502,
+    }
+
+
+def test_l_spatial_mapping_survives_shared_reset():
+    owners = (101, 102)
+    policy = Policy()
+    coordinator = TeamCoordinator(
+        tuple(enumerate(owners, start=1)), {"entities": {}}, policy,
+        config(satellite_trigger_step=99, expected_target_count=2),
+    )
+    register_plan(coordinator, {owner: 21002 for owner in owners})
+    coordinator.set_deployment_plan(Plan((
+        Point(101, 21002, "front", lateral_km=20.0),
+        Point(102, 21002, "front", lateral_km=0.0),
+    )))
+    tracks = {
+        9501: hidden(9501, lat=-2.0),
+        9502: hidden(9502, lat=2.0),
+    }
+    for owner in owners:
+        coordinator.submit(owner, observation(1, owner, 21002, tracks=tracks))
+    coordinator.actions_for(101, 0, 0)
+    first = dict(coordinator._assignments)
+
+    for owner in owners:
+        coordinator.reset_member(owner)
+    for owner in owners:
+        coordinator.submit(owner, observation(1, owner, 21002, tracks=tracks))
+    coordinator.actions_for(101, 0, 0)
+
+    assert coordinator._l_rank == {102: 0, 101: 1}
+    assert coordinator._assignments == first == {101: 9502, 102: 9501}
+    assert policy.reset_calls == 1
+
+
+def test_initial_deployment_and_l_assignment_audit_spatial_semantics(tmp_path):
+    path = tmp_path / "spatial-audit.jsonl"
+    coordinator = TeamCoordinator(
+        ((1, 101),), {"entities": {}}, Policy(),
+        config(
+            audit_path=path,
+            satellite_trigger_step=0,
+            expected_target_count=1,
+        ),
+    )
+    register_plan(coordinator, {101: 21002})
+    coordinator.set_deployment_plan(Plan((
+        Point(
+            101,
+            21002,
+            "front",
+            lateral_km=0.0,
+            longitude=0.0,
+            latitude=0.0,
+        ),
+    )))
+    coordinator.submit(101, observation(
+        1,
+        101,
+        21002,
+        tracks={9501: hidden(9501, lon=0.1, lat=0.0)},
+        position={"lon": 0.0, "lat": 0.0},
+    ))
+
+    coordinator.actions_for(101, 0, 0)
+
+    records = audit_rows(path)
+    deployment = next(
+        row for row in records if row["event"] == "initial_deployment"
+    )
+    assignment = next(
+        row for row in records if row["event"] == "initial_l_assignment"
+    )
+    assert deployment["role"] == "core"
+    assert deployment["l_spatial_rank"] == 0
+    assert assignment["role"] == "core"
+    assert assignment["l_spatial_rank"] == 0
+    assert assignment["target_rank"] == 0
+    assert assignment["predicted_l_eta"] == pytest.approx(111.195, rel=1e-4)
 
 
 def test_l_roster_rank_mapping_is_balanced() -> None:

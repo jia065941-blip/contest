@@ -8,12 +8,32 @@ baseline action passes through. The fixed action mapping is:
 - `1 = STRAIGHT`
 - `2 = RIGHT`
 
-## V0.3 pulse guidance
+## V0.4 type profiles
 
-An M missile (`21001`) may enter capture at stage 4 or later when it has an
-aimpoint, a `detect_fresh` track no more than five steps old, and range at or
-below 2000 m. Capture is owner-local and latched by default. Interceptor threats
-remain available as diagnostics but never change capture or guidance.
+V0.4 selects an independent `TerminalTypeProfile` from the snapshot's
+`missile_type`. A type without a profile passes through. The default profiles
+are:
+
+| Type | Capture | Final straight | Fresh detect required | Maximum track age |
+| --- | ---: | ---: | --- | ---: |
+| H `21000` | 300 m | 150 m | Yes | 5 |
+| M `21001` | 600 m | 200 m | Yes | 5 |
+| L `21002` | 600 m | 200 m | No | None |
+
+`max_track_age=None` permits a detect track of any age. It does not permit a
+missing or non-detect track: L still requires an aimpoint and a track whose
+source is `detect_fresh` or `detect_stale`. H and M require `detect_fresh` to
+enter capture and reject tracks older than five steps. A latched finite-age
+profile may use the inherited stale grace through age eight; after that it
+releases and passes through.
+
+All three default types use the same pulse tracking state machine. State is
+isolated by `(missile_type, entity_id)`, so the same entity ID in two type
+profiles has independent pulse, recovery, hysteresis, and latch state.
+`reset(entity_id)` clears that owner in every type; `reset()` clears all state.
+Interceptor proximity remains diagnostic and cannot interrupt a latch.
+
+## Pulse guidance
 
 The controller projects the aimpoint line of sight and missile velocity into
 the local horizontal plane. It reports signed heading error and the constant-
@@ -23,64 +43,79 @@ separation as the predicted miss.
 
 Control is evaluated again on every snapshot in this order:
 
-1. A latched track older than 5 and no older than 8 steps commands `STRAIGHT`
-   with control state `STALE_GRACE`. A track older than 8 releases capture and
-   passes through.
-2. Range at or below 300 m commands `FINAL_STRAIGHT`.
-3. A heading-error sign crossing clears the pending turn and begins two
-   `STRAIGHT_RECOVERY` steps. An opposite turn is never emitted without a
-   straight transition.
-4. Predicted miss at or below 80 m commands `STRAIGHT`.
-5. Heading error at or below 6 degrees enters straight hysteresis. It remains
-   straight until heading error reaches 10 degrees.
-6. Three consecutive observations whose absolute heading error does not improve
-   restart straight recovery.
-7. Otherwise the controller emits a one-step `TURN_PULSE`, followed by two
-   `STRAIGHT_RECOVERY` steps before another pulse can be selected.
+1. A finite-age profile in latched stale grace commands `STRAIGHT` with control
+   state `STALE_GRACE`; an expired track releases capture.
+2. Range at or below the profile's final-straight distance commands
+   `FINAL_STRAIGHT`.
+3. A heading-error sign crossing clears the pending turn and begins the
+   configured `STRAIGHT_RECOVERY` period. An opposite turn is never emitted
+   without a straight transition.
+4. Predicted miss at or below the configured threshold commands `STRAIGHT`.
+5. Heading error at or below the enter threshold starts straight hysteresis;
+   it remains straight until the exit threshold is reached.
+6. The configured number of non-improving heading observations restarts
+   straight recovery.
+7. Otherwise the controller emits a `TURN_PULSE`, followed by straight recovery
+   before another pulse is selected.
 
-Per-owner state contains `mode`, `previous_error`, `error_sign`,
-`no_improvement`, `pulse_remaining`, `recovery_remaining`,
-`straight_hysteresis`, and `turn_direction`. `reset(entity_id)` clears one
-owner; `reset()` clears all owners.
-
-`TerminalGuidanceDecision` retains the v0.2 fields and adds
-`predicted_miss_distance`, `control_state`, `no_improvement_count`, and
-`velocity_source`. Control states are `PASSTHROUGH`, `TURN_PULSE`,
-`STRAIGHT_RECOVERY`, `STRAIGHT`, `STALE_GRACE`, and `FINAL_STRAIGHT`.
+The global state-machine defaults remain: stage 4, stale grace age 8, heading
+enter/exit thresholds 6/10 degrees, predicted miss threshold 80 m, one pulse
+step, two recovery steps, three non-improving observations, and latch enabled.
 
 ## Configuration
 
-The v0.3 defaults are:
+`TerminalTypeProfile` is a frozen DTO. Core distance/freshness settings and the
+following state-machine settings may be overridden per type:
 
-| Field | Default |
-| --- | ---: |
-| `capture_distance` | `2000` |
-| `final_straight_distance` | `300` |
-| `max_track_age` | `5` |
-| `stale_grace_age` | `8` |
-| `heading_enter_straight_deg` | `6` |
-| `heading_exit_straight_deg` | `10` |
-| `predicted_miss_threshold_m` | `80` |
-| `turn_pulse_steps` | `1` |
-| `straight_recovery_steps` | `2` |
-| `no_improvement_limit` | `3` |
-| `latch` | `True` |
+- `min_stage`
+- `stale_grace_age`
+- `heading_enter_straight_deg`
+- `heading_exit_straight_deg`
+- `predicted_miss_threshold_m`
+- `turn_pulse_steps`
+- `straight_recovery_steps`
+- `no_improvement_limit`
+- `latch`
 
-The following v0.1/v0.2 fields remain accepted for source compatibility but
-are deprecated:
+For profile fields other than `max_track_age`, `None` inherits the global
+`TerminalGuidanceConfig` value. `max_track_age="inherit"` inherits the global
+value, while `max_track_age=None` explicitly allows tracks of any age.
 
-| Deprecated field | V0.3 behavior |
-| --- | --- |
-| `capture_distance_m`, `enter_distance_m` | Alias `capture_distance` |
-| `straight_distance_m` | Alias `final_straight_distance` |
-| `max_track_age_steps` | Alias `max_track_age` |
-| `heading_deadband_degrees` | Sets both v0.3 heading thresholds |
-| `exit_distance_m` | Validated and exposed, but does not release a latch |
-| `threat_distance_m` | Only defines the `threat` diagnostic threshold |
-| `ignore_interceptors_after_latch` | Validated and exposed, but threats are always ignored |
-| `straight_action` | Accepted only as the fixed compatible value `1` |
+`profiles` accepts either a mapping or a tuple of `(missile_type, profile)`
+pairs:
 
-Conflicting old and new values are rejected.
+```python
+from terminal_guidance_override_skill import (
+    TerminalGuidanceConfig,
+    TerminalGuidanceSkill,
+    TerminalTypeProfile,
+)
+
+config = TerminalGuidanceConfig(profiles={
+    21001: TerminalTypeProfile(
+        capture_distance=750,
+        final_straight_distance=225,
+        max_track_age=5,
+        require_fresh_track=True,
+    ),
+    21002: TerminalTypeProfile(
+        capture_distance=650,
+        final_straight_distance=200,
+        max_track_age=None,
+        require_fresh_track=False,
+    ),
+})
+skill = TerminalGuidanceSkill(config)
+```
+
+The v0.1-v0.3 single-profile API remains accepted. Supplying
+`enabled_types=(21001,)` with global thresholds constructs one M profile. The
+deprecated aliases `capture_distance_m`, `enter_distance_m`,
+`straight_distance_m`, `max_track_age_steps`, and
+`heading_deadband_degrees` still map to their current fields. Conflicting old
+and new values are rejected. `exit_distance_m`, `threat_distance_m`,
+`ignore_interceptors_after_latch`, and `straight_action` retain their v0.3
+compatibility behavior.
 
 ## Snapshot geometry
 
@@ -95,31 +130,6 @@ Longitude/latitude range uses great-circle distance; ranges involving ECEF use
 three-dimensional Euclidean distance. An unavailable aimpoint is represented
 by leaving both aimpoint forms `None`. Only one representation of each
 available value may be supplied.
-
-```python
-from terminal_guidance_override_skill import (
-    TerminalGuidanceSkill,
-    TerminalGuidanceSnapshot,
-)
-
-skill = TerminalGuidanceSkill()
-decision = skill.decide(TerminalGuidanceSnapshot(
-    entity_id=17,
-    missile_type=21001,
-    stage=4,
-    baseline_action=1,
-    aimpoint_lon=120.01,
-    aimpoint_lat=30.0,
-    track_source="detect_fresh",
-    track_age=0,
-    step=100,
-    position_lon=120.0,
-    position_lat=30.0,
-    velocity_east_mps=0.0,
-    velocity_north_mps=300.0,
-    velocity_source="observed_heading",
-))
-```
 
 This package does not load a model, inspect a simulator, or read simulator
 state. Geometry, freshness, stage, velocity, aimpoint, and baseline action are

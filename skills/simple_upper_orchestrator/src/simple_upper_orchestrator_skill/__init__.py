@@ -4,7 +4,7 @@ from .config import OrchestratorConfig
 
 __all__ = ["OrchestratorConfig", "PreMissionPlan"]
 
-__version__ = "2.2.0"
+__version__ = "2.7.0"
 
 
 def __getattr__(name):

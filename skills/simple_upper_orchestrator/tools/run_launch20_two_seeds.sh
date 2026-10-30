@@ -27,9 +27,9 @@ xargs -P "$MAX_JOBS" -n 2 bash -c '
   case_id="${scenario##*/}"
   difficulty="$(basename "$(dirname "$scenario")")"
   case "$difficulty" in
-    easy) dark_nests=10 ;;
-    medium) dark_nests=15 ;;
-    hard) dark_nests=20 ;;
+    easy) dark_nests=10; l_first=7 ;;
+    medium) dark_nests=15; l_first=7 ;;
+    hard) dark_nests=20; l_first=9 ;;
     *) printf "Unknown difficulty: %s\n" "$difficulty" >&2; exit 2 ;;
   esac
   run_id="launch20_${difficulty}_${case_id}_simple_upper_s${seed}"
@@ -49,11 +49,14 @@ xargs -P "$MAX_JOBS" -n 2 bash -c '
     --deploy-l-depth-km 5 \
     --deploy-hm-depth-km 10 \
     --deploy-spacing-km 1 \
+    --deploy-l-first-wave-fraction 1 \
     --deploy-batch-size 10 \
     --l-satellite-trigger-step 1 \
     --l-package-count "$dark_nests" \
     --l-expected-target-count "$dark_nests" \
+    --l-first-wave-per-target "$l_first" \
     --l-reserve-count 0 \
+    --reserve-l-deadline-step 250 \
     --hm-safety-factor 1.25 \
     --hm-reserve-h 0 \
     --hm-reserve-m 0 \

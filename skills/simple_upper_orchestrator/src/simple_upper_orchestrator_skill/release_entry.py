@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager
+from dataclasses import replace
 import importlib
 import json
 from pathlib import Path
@@ -34,6 +35,8 @@ def _add_arguments(parser: argparse.ArgumentParser) -> None:
     group.add_argument("--deploy-front-axis", choices=("east", "west", "north", "south"), default="east")
     group.add_argument("--deploy-gap-km", type=float, default=15.0)
     group.add_argument("--deploy-l-depth-km", type=float, default=5.0)
+    group.add_argument("--deploy-l-reserve-gap-km", type=float, default=8.0)
+    group.add_argument("--deploy-l-reserve-depth-km", type=float, default=5.0)
     group.add_argument("--deploy-hm-depth-km", type=float, default=10.0)
     group.add_argument("--deploy-h-depth-km", type=float, default=5.0)
     group.add_argument("--deploy-m-depth-km", type=float, default=10.0)
@@ -96,12 +99,16 @@ def _add_arguments(parser: argparse.ArgumentParser) -> None:
     group.add_argument("--hm-reserve-m", type=int, default=0)
     group.add_argument("--reserve-h-count", type=int, default=0)
     group.add_argument("--l-first-wave-per-target", type=int, default=0)
-    group.add_argument("--reserve-deadline-step", type=int, default=300)
+    group.add_argument("--reserve-deadline-step", type=int, default=450)
+    group.add_argument("--reserve-l-deadline-step", type=int, default=250)
     group.add_argument("--reserve-max-stage", type=int)
     group.add_argument("--reserve-h-max-distance", type=float, default=80.0)
     group.add_argument("--reserve-l-max-distance", type=float, default=100.0)
-    group.add_argument("--reserve-h-max-turn", type=float, default=60.0)
-    group.add_argument("--reserve-l-max-turn", type=float, default=75.0)
+    group.add_argument("--reserve-h-max-turn", type=float)
+    group.add_argument("--reserve-l-max-turn", type=float)
+    group.add_argument("--reserve-h-turn-rate", type=float, default=20.0)
+    group.add_argument("--reserve-l-turn-rate", type=float, default=15.0)
+    group.add_argument("--reserve-turn-safety-seconds", type=float, default=5.0)
     group.add_argument("--reserve-holding-half-width", type=float, default=6.0)
     group.add_argument("--reserve-holding-heading-offset", type=float, default=35.0)
     group.add_argument("--reserve-holding-max-turn-steps", type=int, default=6)
@@ -125,10 +132,39 @@ def _add_arguments(parser: argparse.ArgumentParser) -> None:
     group.add_argument("--disable-dynamic-retarget", action="store_true")
     group.add_argument("--enable-dynamic-retarget", action="store_true")
     group.add_argument("--disable-terminal-guidance", action="store_true")
+    group.add_argument("--enable-terminal-guidance", action="store_true")
+    group.add_argument(
+        "--terminal-types", default="H,M,L",
+        help="Comma-separated terminal-guidance profiles: H,M,L",
+    )
     group.add_argument("--terminal-min-stage", type=int, default=4)
     group.add_argument("--terminal-enter-distance", type=float)
-    group.add_argument("--terminal-capture-distance", type=float, default=2000.0)
-    group.add_argument("--terminal-final-straight-distance", type=float, default=300.0)
+    group.add_argument("--terminal-capture-distance", type=float, default=600.0)
+    group.add_argument("--terminal-final-straight-distance", type=float, default=200.0)
+    group.add_argument(
+        "--terminal-h-capture", "--terminal-h-capture300",
+        dest="terminal_h_capture", type=float,
+    )
+    group.add_argument(
+        "--terminal-h-final", "--terminal-h-final150",
+        dest="terminal_h_final", type=float,
+    )
+    group.add_argument(
+        "--terminal-m-capture", "--terminal-m-capture600",
+        dest="terminal_m_capture", type=float,
+    )
+    group.add_argument(
+        "--terminal-m-final", "--terminal-m-final200",
+        dest="terminal_m_final", type=float,
+    )
+    group.add_argument(
+        "--terminal-l-capture", "--terminal-l-capture600",
+        dest="terminal_l_capture", type=float,
+    )
+    group.add_argument(
+        "--terminal-l-final", "--terminal-l-final200",
+        dest="terminal_l_final", type=float,
+    )
     group.add_argument("--terminal-straight-distance", type=float)
     group.add_argument("--terminal-exit-distance", type=float, default=3500.0)
     group.add_argument("--terminal-max-track-age", type=int, default=5)
@@ -165,12 +201,16 @@ def _config(args) -> OrchestratorConfig:
         raise ValueError(
             "--enable-dynamic-retarget and --disable-dynamic-retarget are mutually exclusive"
         )
+    if args.enable_terminal_guidance and args.disable_terminal_guidance:
+        raise ValueError(
+            "--enable-terminal-guidance and --disable-terminal-guidance are mutually exclusive"
+        )
     if args.reserve_h_count and args.hm_reserve_h:
         raise ValueError(
             "--reserve-h-count and legacy --hm-reserve-h cannot both be nonzero"
         )
     if args.hm_reserve_m:
-        raise ValueError("reserve echelon 0.2.0 does not support M reserves")
+        raise ValueError("reserve echelon 0.4.0 does not support M reserves")
     reserve_h_count = args.reserve_h_count or args.hm_reserve_h
     from dynamic_retarget_skill import DynamicRetargetConfig
     from hm_public_strike_packages_skill import PublicStrikeConfig
@@ -179,12 +219,79 @@ def _config(args) -> OrchestratorConfig:
     from terminal_guidance_override_skill import TerminalGuidanceConfig
 
     allocation_mode = "fixed_size" if args.l_package_size is not None else args.l_allocation_mode
+    terminal_kwargs = {
+        "min_stage": args.terminal_min_stage,
+        "capture_distance": args.terminal_capture_distance,
+        "final_straight_distance": args.terminal_final_straight_distance,
+        "max_track_age": args.terminal_max_track_age,
+        "stale_grace_age": args.terminal_stale_grace_age,
+        "heading_enter_straight_deg": args.terminal_heading_enter,
+        "heading_exit_straight_deg": args.terminal_heading_exit,
+        "predicted_miss_threshold_m": args.terminal_predicted_miss,
+        "turn_pulse_steps": args.terminal_turn_pulse_steps,
+        "straight_recovery_steps": args.terminal_straight_recovery_steps,
+        "no_improvement_limit": args.terminal_no_improvement_limit,
+        "enter_distance_m": args.terminal_enter_distance,
+        "straight_distance_m": args.terminal_straight_distance,
+        "exit_distance_m": args.terminal_exit_distance,
+        "threat_distance_m": args.terminal_threat_distance,
+        "heading_deadband_degrees": args.terminal_heading_deadband,
+        "ignore_interceptors_after_latch": (
+            not args.terminal_respect_interceptors_after_latch
+        ),
+    }
+    terminal_guidance = TerminalGuidanceConfig(**terminal_kwargs)
+    profile_overrides = {
+        21000: (args.terminal_h_capture, args.terminal_h_final),
+        21001: (args.terminal_m_capture, args.terminal_m_final),
+        21002: (args.terminal_l_capture, args.terminal_l_final),
+    }
+    if any(value is not None for values in profile_overrides.values() for value in values):
+        profiles = {}
+        for missile_type, profile in terminal_guidance.profiles:
+            capture, final = profile_overrides[missile_type]
+            profiles[missile_type] = replace(
+                profile,
+                capture_distance=(
+                    profile.capture_distance if capture is None else capture
+                ),
+                final_straight_distance=(
+                    profile.final_straight_distance if final is None else final
+                ),
+            )
+        terminal_guidance = TerminalGuidanceConfig(
+            **terminal_kwargs, profiles=profiles,
+        )
+    type_names = {"H": 21000, "M": 21001, "L": 21002}
+    requested_type_names = tuple(
+        item.strip().upper()
+        for item in args.terminal_types.split(",")
+        if item.strip()
+    )
+    unknown_type_names = set(requested_type_names) - set(type_names)
+    if unknown_type_names:
+        raise ValueError(
+            "--terminal-types accepts only H,M,L; got "
+            + ",".join(sorted(unknown_type_names))
+        )
+    enabled_type_ids = {type_names[name] for name in requested_type_names}
+    terminal_guidance = TerminalGuidanceConfig(
+        **terminal_kwargs,
+        profiles={
+            missile_type: profile
+            for missile_type, profile in terminal_guidance.profiles
+            if missile_type in enabled_type_ids
+        },
+    )
+
     return OrchestratorConfig(
         runtime_root=args.runtime_root.expanduser().resolve(strict=True),
         checkpoint=args.checkpoint.expanduser().resolve(strict=True), max_steps=args.max_steps,
         deployment=StaggeredDeploymentConfig(
             front_axis=args.deploy_front_axis, deployment_gap_km=args.deploy_gap_km,
             l_depth_km=args.deploy_l_depth_km, hm_depth_km=args.deploy_hm_depth_km,
+            l_reserve_gap_km=args.deploy_l_reserve_gap_km,
+            l_reserve_depth_km=args.deploy_l_reserve_depth_km,
             h_depth_km=args.deploy_h_depth_km,
             m_depth_km=args.deploy_m_depth_km,
             hm_follow_gap_km=args.deploy_hm_follow_gap_km,
@@ -226,11 +333,15 @@ def _config(args) -> OrchestratorConfig:
         reserve_h_count=reserve_h_count,
         l_first_wave_per_target=args.l_first_wave_per_target,
         reserve_deadline_step=args.reserve_deadline_step,
+        reserve_l_deadline_step=args.reserve_l_deadline_step,
         reserve_max_stage=args.reserve_max_stage,
         reserve_h_max_distance_km=args.reserve_h_max_distance,
         reserve_l_max_distance_km=args.reserve_l_max_distance,
         reserve_h_max_turn_angle_degrees=args.reserve_h_max_turn,
         reserve_l_max_turn_angle_degrees=args.reserve_l_max_turn,
+        reserve_h_turn_rate_degrees_per_second=args.reserve_h_turn_rate,
+        reserve_l_turn_rate_degrees_per_second=args.reserve_l_turn_rate,
+        reserve_turn_safety_seconds=args.reserve_turn_safety_seconds,
         reserve_holding_half_width_km=args.reserve_holding_half_width,
         reserve_holding_heading_offset_degrees=args.reserve_holding_heading_offset,
         reserve_holding_max_turn_steps=args.reserve_holding_max_turn_steps,
@@ -248,32 +359,14 @@ def _config(args) -> OrchestratorConfig:
             max_candidate_distance_km=args.dynamic_retarget_max_candidate_distance,
             max_per_old_target_per_step=args.dynamic_retarget_max_per_old_target,
         ),
-        terminal_guidance=TerminalGuidanceConfig(
-            min_stage=args.terminal_min_stage,
-            capture_distance=args.terminal_capture_distance,
-            final_straight_distance=args.terminal_final_straight_distance,
-            max_track_age=args.terminal_max_track_age,
-            stale_grace_age=args.terminal_stale_grace_age,
-            heading_enter_straight_deg=args.terminal_heading_enter,
-            heading_exit_straight_deg=args.terminal_heading_exit,
-            predicted_miss_threshold_m=args.terminal_predicted_miss,
-            turn_pulse_steps=args.terminal_turn_pulse_steps,
-            straight_recovery_steps=args.terminal_straight_recovery_steps,
-            no_improvement_limit=args.terminal_no_improvement_limit,
-            enter_distance_m=args.terminal_enter_distance,
-            straight_distance_m=args.terminal_straight_distance,
-            exit_distance_m=args.terminal_exit_distance,
-            threat_distance_m=args.terminal_threat_distance,
-            heading_deadband_degrees=args.terminal_heading_deadband,
-            ignore_interceptors_after_latch=(
-                not args.terminal_respect_interceptors_after_latch
-            ),
-        ),
+        terminal_guidance=terminal_guidance,
         retarget_track_max_age_steps=args.dynamic_retarget_track_max_age,
         dynamic_retarget_enabled=(
             args.enable_dynamic_retarget and not args.disable_dynamic_retarget
         ),
-        terminal_guidance_enabled=not args.disable_terminal_guidance,
+        terminal_guidance_enabled=(
+            args.enable_terminal_guidance and not args.disable_terminal_guidance
+        ),
         audit_path=(
             None
             if args.disable_retarget_audit

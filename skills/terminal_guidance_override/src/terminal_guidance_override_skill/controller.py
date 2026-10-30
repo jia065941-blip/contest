@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Literal
 import math
 
 
+H_MISSILE_TYPE = 21000
 M_MISSILE_TYPE = 21001
+L_MISSILE_TYPE = 21002
 FRESH_DETECT_SOURCE = "detect_fresh"
+STALE_DETECT_SOURCE = "detect_stale"
 
 LEFT = 0
 STRAIGHT = 1
@@ -17,11 +21,12 @@ RIGHT = 2
 _EARTH_MEAN_RADIUS_M = 6_371_008.8
 _WGS84_SEMI_MAJOR_AXIS_M = 6_378_137.0
 _WGS84_ECCENTRICITY_SQUARED = 6.69437999014e-3
-_DEFAULT_CAPTURE_DISTANCE = 2000.0
-_DEFAULT_FINAL_STRAIGHT_DISTANCE = 300.0
+_DEFAULT_CAPTURE_DISTANCE = 600.0
+_DEFAULT_FINAL_STRAIGHT_DISTANCE = 200.0
 _DEFAULT_MAX_TRACK_AGE = 5
 _DEFAULT_HEADING_ENTER_STRAIGHT_DEG = 6.0
 _DEFAULT_HEADING_EXIT_STRAIGHT_DEG = 10.0
+_DEFAULT_ENABLED_TYPES = (H_MISSILE_TYPE, M_MISSILE_TYPE, L_MISSILE_TYPE)
 
 GuidanceMode = Literal["capture", "straight", "passthrough"]
 ControlState = Literal[
@@ -202,14 +207,110 @@ class TerminalGuidanceSnapshot:
 
 
 @dataclass(frozen=True)
-class TerminalGuidanceConfig:
-    """Thresholds and counters for pulse terminal guidance."""
+class TerminalTypeProfile:
+    """Per-missile terminal guidance overrides.
 
-    enabled_types: tuple[int, ...] = (M_MISSILE_TYPE,)
+    ``None`` inherits the corresponding global setting, except for
+    ``max_track_age`` where ``None`` explicitly permits tracks of any age and
+    ``"inherit"`` selects the global maximum.
+    """
+
+    capture_distance: float | None = None
+    final_straight_distance: float | None = None
+    max_track_age: int | None | Literal["inherit"] = "inherit"
+    require_fresh_track: bool | None = None
+    min_stage: int | None = None
+    stale_grace_age: int | None = None
+    heading_enter_straight_deg: float | None = None
+    heading_exit_straight_deg: float | None = None
+    predicted_miss_threshold_m: float | None = None
+    turn_pulse_steps: int | None = None
+    straight_recovery_steps: int | None = None
+    no_improvement_limit: int | None = None
+    latch: bool | None = None
+
+    def __post_init__(self) -> None:
+        for name in ("capture_distance", "final_straight_distance"):
+            value = getattr(self, name)
+            if value is not None:
+                object.__setattr__(self, name, _nonnegative_finite(value, name))
+
+        if self.max_track_age not in (None, "inherit"):
+            _nonnegative_int(self.max_track_age, "max_track_age")
+        if self.require_fresh_track is not None and not isinstance(
+            self.require_fresh_track, bool
+        ):
+            raise ValueError("require_fresh_track must be a boolean or None")
+        if self.min_stage is not None:
+            _nonnegative_int(self.min_stage, "min_stage")
+        if self.stale_grace_age is not None:
+            _nonnegative_int(self.stale_grace_age, "stale_grace_age")
+
+        for name in (
+            "heading_enter_straight_deg",
+            "heading_exit_straight_deg",
+            "predicted_miss_threshold_m",
+        ):
+            value = getattr(self, name)
+            if value is not None:
+                object.__setattr__(self, name, _nonnegative_finite(value, name))
+        if (
+            self.heading_enter_straight_deg is not None
+            and self.heading_exit_straight_deg is not None
+            and self.heading_enter_straight_deg > self.heading_exit_straight_deg
+        ):
+            raise ValueError(
+                "heading_enter_straight_deg must not exceed "
+                "heading_exit_straight_deg"
+            )
+        if (
+            self.heading_enter_straight_deg is not None
+            and self.heading_enter_straight_deg > 180.0
+        ) or (
+            self.heading_exit_straight_deg is not None
+            and self.heading_exit_straight_deg > 180.0
+        ):
+            raise ValueError("heading thresholds must not exceed 180")
+
+        for name in (
+            "turn_pulse_steps",
+            "straight_recovery_steps",
+            "no_improvement_limit",
+        ):
+            value = getattr(self, name)
+            if value is not None:
+                _positive_int(value, name)
+        if self.latch is not None and not isinstance(self.latch, bool):
+            raise ValueError("latch must be a boolean or None")
+
+
+@dataclass(frozen=True)
+class _ResolvedTerminalTypeProfile:
+    capture_distance: float
+    final_straight_distance: float
+    max_track_age: int | None
+    require_fresh_track: bool
+    min_stage: int
+    stale_grace_age: int
+    heading_enter_straight_deg: float
+    heading_exit_straight_deg: float
+    predicted_miss_threshold_m: float
+    turn_pulse_steps: int
+    straight_recovery_steps: int
+    no_improvement_limit: int
+    latch: bool
+
+
+@dataclass(frozen=True)
+class TerminalGuidanceConfig:
+    """Global defaults and per-type profiles for pulse terminal guidance."""
+
+    enabled_types: tuple[int, ...] = _DEFAULT_ENABLED_TYPES
     min_stage: int = 4
     capture_distance: float = _DEFAULT_CAPTURE_DISTANCE
     final_straight_distance: float = _DEFAULT_FINAL_STRAIGHT_DISTANCE
     max_track_age: int = _DEFAULT_MAX_TRACK_AGE
+    require_fresh_track: bool = True
     stale_grace_age: int = 8
     heading_enter_straight_deg: float = _DEFAULT_HEADING_ENTER_STRAIGHT_DEG
     heading_exit_straight_deg: float = _DEFAULT_HEADING_EXIT_STRAIGHT_DEG
@@ -228,10 +329,19 @@ class TerminalGuidanceConfig:
     enter_distance_m: float | None = None
     threat_distance_m: float = 3000.0
     straight_action: int = STRAIGHT
+    profiles: (
+        Mapping[int, TerminalTypeProfile]
+        | tuple[tuple[int, TerminalTypeProfile], ...]
+        | None
+    ) = None
 
     def __post_init__(self) -> None:
-        if self.enabled_types != (M_MISSILE_TYPE,):
-            raise ValueError("enabled_types must contain only the M missile type 21001")
+        if not isinstance(self.enabled_types, tuple):
+            raise ValueError("enabled_types must be a tuple")
+        if len(set(self.enabled_types)) != len(self.enabled_types):
+            raise ValueError("enabled_types must not contain duplicates")
+        for missile_type in self.enabled_types:
+            _nonnegative_int(missile_type, "enabled missile type")
         _nonnegative_int(self.min_stage, "min_stage")
 
         capture = _nonnegative_finite(self.capture_distance, "capture_distance")
@@ -316,6 +426,8 @@ class TerminalGuidanceConfig:
             raise ValueError("stale_grace_age must be at least max_track_age")
         object.__setattr__(self, "max_track_age", max_track_age)
         object.__setattr__(self, "max_track_age_steps", max_track_age)
+        if not isinstance(self.require_fresh_track, bool):
+            raise ValueError("require_fresh_track must be a boolean")
 
         heading_enter = _nonnegative_finite(
             self.heading_enter_straight_deg, "heading_enter_straight_deg"
@@ -371,6 +483,161 @@ class TerminalGuidanceConfig:
         if self.straight_action != STRAIGHT or type(self.straight_action) is not int:
             raise ValueError("straight_action must be STRAIGHT=1")
 
+        if self.profiles is None:
+            if self.enabled_types == _DEFAULT_ENABLED_TYPES:
+                profile_entries = (
+                    (
+                        H_MISSILE_TYPE,
+                        TerminalTypeProfile(
+                            capture_distance=300.0,
+                            final_straight_distance=150.0,
+                            max_track_age=5,
+                            require_fresh_track=True,
+                        ),
+                    ),
+                    (
+                        M_MISSILE_TYPE,
+                        TerminalTypeProfile(
+                            capture_distance=capture,
+                            final_straight_distance=final_straight,
+                            max_track_age=max_track_age,
+                            require_fresh_track=self.require_fresh_track,
+                        ),
+                    ),
+                    (
+                        L_MISSILE_TYPE,
+                        TerminalTypeProfile(
+                            capture_distance=600.0,
+                            final_straight_distance=200.0,
+                            max_track_age=None,
+                            require_fresh_track=False,
+                        ),
+                    ),
+                )
+            else:
+                profile_entries = tuple(
+                    (
+                        missile_type,
+                        TerminalTypeProfile(
+                            capture_distance=capture,
+                            final_straight_distance=final_straight,
+                            max_track_age=max_track_age,
+                            require_fresh_track=self.require_fresh_track,
+                        ),
+                    )
+                    for missile_type in self.enabled_types
+                )
+        elif isinstance(self.profiles, Mapping):
+            profile_entries = tuple(self.profiles.items())
+        elif isinstance(self.profiles, tuple):
+            profile_entries = self.profiles
+        else:
+            raise ValueError("profiles must be a mapping or tuple")
+
+        normalized_profiles: list[tuple[int, TerminalTypeProfile]] = []
+        seen_types: set[int] = set()
+        for entry in profile_entries:
+            if not isinstance(entry, tuple) or len(entry) != 2:
+                raise ValueError("profiles tuple entries must be (missile_type, profile)")
+            missile_type, profile = entry
+            _nonnegative_int(missile_type, "profile missile type")
+            if missile_type in seen_types:
+                raise ValueError("profiles must not contain duplicate missile types")
+            if not isinstance(profile, TerminalTypeProfile):
+                raise ValueError("profile values must be TerminalTypeProfile instances")
+            _resolve_profile(profile, self)
+            seen_types.add(missile_type)
+            normalized_profiles.append((missile_type, profile))
+        normalized_profiles.sort(key=lambda item: item[0])
+        canonical_profiles = tuple(normalized_profiles)
+        object.__setattr__(self, "profiles", canonical_profiles)
+        object.__setattr__(
+            self, "enabled_types", tuple(item[0] for item in canonical_profiles)
+        )
+
+
+def _resolve_profile(
+    profile: TerminalTypeProfile, config: TerminalGuidanceConfig
+) -> _ResolvedTerminalTypeProfile:
+    capture_distance = (
+        config.capture_distance
+        if profile.capture_distance is None
+        else profile.capture_distance
+    )
+    final_straight_distance = (
+        config.final_straight_distance
+        if profile.final_straight_distance is None
+        else profile.final_straight_distance
+    )
+    if final_straight_distance > capture_distance:
+        raise ValueError("final_straight_distance must not exceed capture_distance")
+
+    max_track_age = (
+        config.max_track_age
+        if profile.max_track_age == "inherit"
+        else profile.max_track_age
+    )
+    stale_grace_age = (
+        config.stale_grace_age
+        if profile.stale_grace_age is None
+        else profile.stale_grace_age
+    )
+    if max_track_age is not None and stale_grace_age < max_track_age:
+        raise ValueError("stale_grace_age must be at least max_track_age")
+
+    heading_enter = (
+        config.heading_enter_straight_deg
+        if profile.heading_enter_straight_deg is None
+        else profile.heading_enter_straight_deg
+    )
+    heading_exit = (
+        config.heading_exit_straight_deg
+        if profile.heading_exit_straight_deg is None
+        else profile.heading_exit_straight_deg
+    )
+    if heading_enter > heading_exit:
+        raise ValueError(
+            "heading_enter_straight_deg must not exceed heading_exit_straight_deg"
+        )
+    if heading_exit > 180.0:
+        raise ValueError("heading thresholds must not exceed 180")
+
+    return _ResolvedTerminalTypeProfile(
+        capture_distance=capture_distance,
+        final_straight_distance=final_straight_distance,
+        max_track_age=max_track_age,
+        require_fresh_track=(
+            config.require_fresh_track
+            if profile.require_fresh_track is None
+            else profile.require_fresh_track
+        ),
+        min_stage=config.min_stage if profile.min_stage is None else profile.min_stage,
+        stale_grace_age=stale_grace_age,
+        heading_enter_straight_deg=heading_enter,
+        heading_exit_straight_deg=heading_exit,
+        predicted_miss_threshold_m=(
+            config.predicted_miss_threshold_m
+            if profile.predicted_miss_threshold_m is None
+            else profile.predicted_miss_threshold_m
+        ),
+        turn_pulse_steps=(
+            config.turn_pulse_steps
+            if profile.turn_pulse_steps is None
+            else profile.turn_pulse_steps
+        ),
+        straight_recovery_steps=(
+            config.straight_recovery_steps
+            if profile.straight_recovery_steps is None
+            else profile.straight_recovery_steps
+        ),
+        no_improvement_limit=(
+            config.no_improvement_limit
+            if profile.no_improvement_limit is None
+            else profile.no_improvement_limit
+        ),
+        latch=config.latch if profile.latch is None else profile.latch,
+    )
+
 
 @dataclass(frozen=True)
 class TerminalGuidanceDecision:
@@ -405,13 +672,18 @@ class _OwnerState:
 
 
 class TerminalGuidanceSkill:
-    """Capture an M missile and guide it with turn pulses and re-estimation."""
+    """Capture configured missile types with turn pulses and re-estimation."""
 
     def __init__(self, config: TerminalGuidanceConfig | None = None) -> None:
         if config is not None and not isinstance(config, TerminalGuidanceConfig):
             raise ValueError("config must be a TerminalGuidanceConfig")
         self.config = config or TerminalGuidanceConfig()
-        self._owner_states: dict[int, _OwnerState] = {}
+        assert isinstance(self.config.profiles, tuple)
+        self._profiles = {
+            missile_type: _resolve_profile(profile, self.config)
+            for missile_type, profile in self.config.profiles
+        }
+        self._owner_states: dict[tuple[int, int], _OwnerState] = {}
 
     def decide(self, snapshot: TerminalGuidanceSnapshot) -> TerminalGuidanceDecision:
         if not isinstance(snapshot, TerminalGuidanceSnapshot):
@@ -427,23 +699,36 @@ class TerminalGuidanceSkill:
             and snapshot.nearest_interceptor_distance_m
             <= self.config.threat_distance_m
         )
-        owner = snapshot.entity_id
-        state = self._owner_states.get(owner)
-        was_latched = state is not None and self.config.latch
-
-        if snapshot.missile_type != M_MISSILE_TYPE:
+        profile = self._profiles.get(snapshot.missile_type)
+        if profile is None:
             return self._passthrough(
                 snapshot, None, threat, "missile_type_passthrough"
             )
+
+        state_key = (snapshot.missile_type, snapshot.entity_id)
+        state = self._owner_states.get(state_key)
+        was_latched = state is not None and profile.latch
         if not snapshot.has_aimpoint:
             return self._passthrough(snapshot, None, threat, "aimpoint_missing")
-        if snapshot.track_age > self.config.stale_grace_age:
+        if not _is_detect_track(snapshot.track_source):
             return self._passthrough(snapshot, None, threat, "track_stale")
 
-        stale_grace = snapshot.track_age > self.config.max_track_age
+        stale_grace = (
+            profile.max_track_age is not None
+            and snapshot.track_age > profile.max_track_age
+        )
+        if (
+            profile.max_track_age is not None
+            and snapshot.track_age > profile.stale_grace_age
+        ):
+            return self._passthrough(snapshot, None, threat, "track_stale")
         if stale_grace and not was_latched:
             return self._passthrough(snapshot, None, threat, "track_stale")
-        if not stale_grace and snapshot.track_source != FRESH_DETECT_SOURCE:
+        if (
+            not stale_grace
+            and profile.require_fresh_track
+            and snapshot.track_source != FRESH_DETECT_SOURCE
+        ):
             return self._passthrough(snapshot, None, threat, "track_stale")
 
         distance, los_east, los_north, velocity_east, velocity_north = (
@@ -467,6 +752,8 @@ class TerminalGuidanceSkill:
                 heading_error,
                 predicted_miss,
                 state,
+                profile,
+                state_key,
                 STRAIGHT,
                 "stale_grace",
                 "STALE_GRACE",
@@ -474,7 +761,7 @@ class TerminalGuidanceSkill:
 
         entered = state is None
         if not was_latched:
-            if snapshot.stage < self.config.min_stage:
+            if snapshot.stage < profile.min_stage:
                 return self._passthrough(
                     snapshot,
                     distance,
@@ -483,7 +770,9 @@ class TerminalGuidanceSkill:
                     heading_error,
                     predicted_miss,
                 )
-            if distance > self.config.capture_distance:
+            if distance > profile.capture_distance and not math.isclose(
+                distance, profile.capture_distance, abs_tol=1e-3
+            ):
                 return self._passthrough(
                     snapshot,
                     distance,
@@ -495,7 +784,7 @@ class TerminalGuidanceSkill:
 
         if state is None:
             state = _OwnerState()
-            self._owner_states[owner] = state
+            self._owner_states[state_key] = state
         return self._guidance(
             snapshot,
             distance,
@@ -503,6 +792,8 @@ class TerminalGuidanceSkill:
             heading_error,
             predicted_miss,
             state,
+            profile,
+            state_key,
             entered,
         )
 
@@ -512,7 +803,9 @@ class TerminalGuidanceSkill:
             self._owner_states.clear()
             return
         _nonnegative_int(entity_id, "entity_id")
-        self._owner_states.pop(entity_id, None)
+        for state_key in tuple(self._owner_states):
+            if state_key[1] == entity_id:
+                self._owner_states.pop(state_key)
 
     def _passthrough(
         self,
@@ -523,7 +816,7 @@ class TerminalGuidanceSkill:
         heading_error: float | None = None,
         predicted_miss: float | None = None,
     ) -> TerminalGuidanceDecision:
-        self._owner_states.pop(snapshot.entity_id, None)
+        self._owner_states.pop((snapshot.missile_type, snapshot.entity_id), None)
         return TerminalGuidanceDecision(
             baseline=snapshot.baseline_action,
             final=snapshot.baseline_action,
@@ -549,6 +842,8 @@ class TerminalGuidanceSkill:
         heading_error: float,
         predicted_miss: float,
         state: _OwnerState,
+        profile: _ResolvedTerminalTypeProfile,
+        state_key: tuple[int, int],
         entered: bool,
     ) -> TerminalGuidanceDecision:
         crossed, observed_no_improvement = self._observe_error(
@@ -556,21 +851,21 @@ class TerminalGuidanceSkill:
         )
         absolute_error = abs(heading_error)
         if state.straight_hysteresis:
-            if absolute_error >= self.config.heading_exit_straight_deg or math.isclose(
+            if absolute_error >= profile.heading_exit_straight_deg or math.isclose(
                 absolute_error,
-                self.config.heading_exit_straight_deg,
+                profile.heading_exit_straight_deg,
                 abs_tol=1e-9,
             ):
                 state.straight_hysteresis = False
-        elif absolute_error <= self.config.heading_enter_straight_deg or math.isclose(
+        elif absolute_error <= profile.heading_enter_straight_deg or math.isclose(
             absolute_error,
-            self.config.heading_enter_straight_deg,
+            profile.heading_enter_straight_deg,
             abs_tol=1e-9,
         ):
             state.straight_hysteresis = True
 
-        if distance <= self.config.final_straight_distance or math.isclose(
-            distance, self.config.final_straight_distance, abs_tol=1e-6
+        if distance <= profile.final_straight_distance or math.isclose(
+            distance, profile.final_straight_distance, abs_tol=1e-6
         ):
             self._clear_turn_cycle(state)
             state.no_improvement = 0
@@ -582,6 +877,8 @@ class TerminalGuidanceSkill:
                 heading_error,
                 predicted_miss,
                 state,
+                profile,
+                state_key,
                 STRAIGHT,
                 "final_straight",
                 "FINAL_STRAIGHT",
@@ -596,13 +893,15 @@ class TerminalGuidanceSkill:
                 heading_error,
                 predicted_miss,
                 state,
+                profile,
+                state_key,
                 "heading_sign_cross",
                 observed_no_improvement,
             )
 
-        if predicted_miss <= self.config.predicted_miss_threshold_m or math.isclose(
+        if predicted_miss <= profile.predicted_miss_threshold_m or math.isclose(
             predicted_miss,
-            self.config.predicted_miss_threshold_m,
+            profile.predicted_miss_threshold_m,
             abs_tol=1e-6,
         ):
             self._clear_turn_cycle(state)
@@ -615,6 +914,8 @@ class TerminalGuidanceSkill:
                 heading_error,
                 predicted_miss,
                 state,
+                profile,
+                state_key,
                 STRAIGHT,
                 "predicted_miss_straight",
                 "STRAIGHT",
@@ -631,12 +932,14 @@ class TerminalGuidanceSkill:
                 heading_error,
                 predicted_miss,
                 state,
+                profile,
+                state_key,
                 STRAIGHT,
                 "heading_hysteresis_straight",
                 "STRAIGHT",
             )
 
-        if observed_no_improvement >= self.config.no_improvement_limit:
+        if observed_no_improvement >= profile.no_improvement_limit:
             return self._start_recovery(
                 snapshot,
                 distance,
@@ -644,6 +947,8 @@ class TerminalGuidanceSkill:
                 heading_error,
                 predicted_miss,
                 state,
+                profile,
+                state_key,
                 "no_improvement",
                 observed_no_improvement,
             )
@@ -656,6 +961,8 @@ class TerminalGuidanceSkill:
                 heading_error,
                 predicted_miss,
                 state,
+                profile,
+                state_key,
                 "straight_recovery",
                 observed_no_improvement,
             )
@@ -668,6 +975,8 @@ class TerminalGuidanceSkill:
                 heading_error,
                 predicted_miss,
                 state,
+                profile,
+                state_key,
                 observed_no_improvement,
             )
 
@@ -686,12 +995,14 @@ class TerminalGuidanceSkill:
                 heading_error,
                 predicted_miss,
                 state,
+                profile,
+                state_key,
                 "turn_reversal_guard",
                 observed_no_improvement,
             )
 
         state.turn_direction = desired_direction
-        state.pulse_remaining = self.config.turn_pulse_steps
+        state.pulse_remaining = profile.turn_pulse_steps
         return self._emit_turn(
             snapshot,
             distance,
@@ -699,6 +1010,8 @@ class TerminalGuidanceSkill:
             heading_error,
             predicted_miss,
             state,
+            profile,
+            state_key,
             observed_no_improvement,
             entered=entered,
         )
@@ -729,11 +1042,13 @@ class TerminalGuidanceSkill:
         heading_error: float,
         predicted_miss: float,
         state: _OwnerState,
+        profile: _ResolvedTerminalTypeProfile,
+        state_key: tuple[int, int],
         reason: str,
         reported_no_improvement: int,
     ) -> TerminalGuidanceDecision:
         state.pulse_remaining = 0
-        state.recovery_remaining = self.config.straight_recovery_steps
+        state.recovery_remaining = profile.straight_recovery_steps
         state.no_improvement = 0
         return self._emit_recovery(
             snapshot,
@@ -742,6 +1057,8 @@ class TerminalGuidanceSkill:
             heading_error,
             predicted_miss,
             state,
+            profile,
+            state_key,
             reason,
             reported_no_improvement,
         )
@@ -754,6 +1071,8 @@ class TerminalGuidanceSkill:
         heading_error: float,
         predicted_miss: float,
         state: _OwnerState,
+        profile: _ResolvedTerminalTypeProfile,
+        state_key: tuple[int, int],
         reason: str,
         no_improvement_count: int,
     ) -> TerminalGuidanceDecision:
@@ -766,6 +1085,8 @@ class TerminalGuidanceSkill:
             heading_error,
             predicted_miss,
             state,
+            profile,
+            state_key,
             STRAIGHT,
             reason,
             "STRAIGHT_RECOVERY",
@@ -780,6 +1101,8 @@ class TerminalGuidanceSkill:
         heading_error: float,
         predicted_miss: float,
         state: _OwnerState,
+        profile: _ResolvedTerminalTypeProfile,
+        state_key: tuple[int, int],
         no_improvement_count: int,
         *,
         entered: bool = False,
@@ -787,7 +1110,7 @@ class TerminalGuidanceSkill:
         assert state.turn_direction is not None
         state.pulse_remaining -= 1
         if state.pulse_remaining == 0:
-            state.recovery_remaining = self.config.straight_recovery_steps
+            state.recovery_remaining = profile.straight_recovery_steps
         state.mode = "TURN_PULSE"
         prefix = "entered_" if entered else ""
         return self._decision(
@@ -797,6 +1120,8 @@ class TerminalGuidanceSkill:
             heading_error,
             predicted_miss,
             state,
+            profile,
+            state_key,
             RIGHT if state.turn_direction == "right" else LEFT,
             f"{prefix}turn_pulse_{state.turn_direction}",
             "TURN_PULSE",
@@ -818,6 +1143,8 @@ class TerminalGuidanceSkill:
         heading_error: float,
         predicted_miss: float,
         state: _OwnerState,
+        profile: _ResolvedTerminalTypeProfile,
+        state_key: tuple[int, int],
         final: int,
         reason: str,
         control_state: ControlState,
@@ -831,7 +1158,7 @@ class TerminalGuidanceSkill:
             baseline=snapshot.baseline_action,
             final=final,
             overridden=final != snapshot.baseline_action,
-            latched=self.config.latch and snapshot.entity_id in self._owner_states,
+            latched=profile.latch and state_key in self._owner_states,
             reason=reason,
             distance=distance,
             threat=threat,
@@ -843,6 +1170,10 @@ class TerminalGuidanceSkill:
             no_improvement_count=no_improvement_count,
             velocity_source=snapshot.velocity_source,
         )
+
+
+def _is_detect_track(source: str) -> bool:
+    return source in (FRESH_DETECT_SOURCE, STALE_DETECT_SOURCE)
 
 
 def _horizontal_geometry(

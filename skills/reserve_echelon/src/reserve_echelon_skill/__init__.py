@@ -7,6 +7,7 @@ from .controller import (
     H_MISSILE_TYPE,
     L_MISSILE_TYPE,
     M_MISSILE_TYPE,
+    ReachabilityDiagnostics,
     ReserveDecision,
     ReserveDispatchRequest,
     ReserveEchelonConfig,
@@ -23,6 +24,7 @@ __all__ = [
     "H_MISSILE_TYPE",
     "L_MISSILE_TYPE",
     "M_MISSILE_TYPE",
+    "ReachabilityDiagnostics",
     "ReserveDecision",
     "ReserveDispatchRequest",
     "ReserveEchelonConfig",
@@ -32,4 +34,4 @@ __all__ = [
     "TargetDeficitSnapshot",
 ]
 
-__version__ = "0.2.0"
+__version__ = "0.4.0"

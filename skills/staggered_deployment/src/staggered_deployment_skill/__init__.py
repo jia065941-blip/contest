@@ -1,6 +1,7 @@
 """Deterministic two-wave staggered deployment for launch20 H/M/L platforms."""
 
 from .controller import (
+    DEPLOYMENT_ROLES,
     DeploymentBounds,
     DeploymentPlan,
     DeploymentPoint,
@@ -20,6 +21,7 @@ from .runtime_adapter import (
 )
 
 __all__ = [
+    "DEPLOYMENT_ROLES",
     "DeploymentAction",
     "DeploymentBounds",
     "DeploymentPlan",
@@ -35,4 +37,4 @@ __all__ = [
     "route_deployment_actions",
     "to_deployment_actions",
 ]
-__version__ = "0.8.0"
+__version__ = "0.10.0"

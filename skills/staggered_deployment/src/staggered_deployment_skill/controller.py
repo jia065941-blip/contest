@@ -15,6 +15,8 @@ SUPPORTED_PLATFORM_TYPES = frozenset(
     (H_PLATFORM_TYPE, M_PLATFORM_TYPE, L_PLATFORM_TYPE)
 )
 PUBLIC_TARGET_TYPES = frozenset((9400, 9600))
+DEPLOYMENT_ROLES = frozenset(("core", "reserve_h", "reserve_l"))
+_RESERVE_H_DEPTH_KM = 5.0
 
 _KM_PER_LATITUDE_DEGREE = 110.574
 _KM_PER_LONGITUDE_DEGREE_AT_EQUATOR = 111.320
@@ -99,12 +101,21 @@ class PlatformDeploymentRequest:
     target_lat: float | None = None
     target_id: int | None = None
     target_type: int | None = None
+    deployment_role: str = "core"
 
     def __post_init__(self) -> None:
         if type(self.entity_id) is not int or self.entity_id < 0:
             raise ValueError("entity_id must be a non-negative integer")
         if type(self.entity_type) is not int or self.entity_type not in SUPPORTED_PLATFORM_TYPES:
             raise ValueError("entity_type must be one of 21000, 21001, or 21002")
+        deployment_role = str(self.deployment_role).lower()
+        if deployment_role not in DEPLOYMENT_ROLES:
+            raise ValueError("deployment_role must be core, reserve_h, or reserve_l")
+        if deployment_role == "reserve_h" and self.entity_type != H_PLATFORM_TYPE:
+            raise ValueError("reserve_h deployment role requires an H platform")
+        if deployment_role == "reserve_l" and self.entity_type != L_PLATFORM_TYPE:
+            raise ValueError("reserve_l deployment role requires an L platform")
+        object.__setattr__(self, "deployment_role", deployment_role)
         if (self.target_lon is None) != (self.target_lat is None):
             raise ValueError("target_lon and target_lat must be provided together")
         if self.target_lon is not None:
@@ -121,6 +132,8 @@ class PlatformDeploymentRequest:
                 raise ValueError("target_id must be a non-negative integer")
             if type(self.target_type) is not int or self.target_type not in PUBLIC_TARGET_TYPES:
                 raise ValueError("target_type must be public 9400 or 9600")
+            if deployment_role != "core":
+                raise ValueError("reserve coordinates are provisional, not an assignment")
             if self.target_lon is None:
                 raise ValueError("target coordinates are required with target_id/target_type")
             if self.entity_type not in {H_PLATFORM_TYPE, M_PLATFORM_TYPE}:
@@ -149,6 +162,8 @@ class StaggeredDeploymentConfig:
     desired_m_arrival_lead_seconds: float = 5.0
     min_sentry_m_lead_km: float = 10.0
     max_sentry_m_lead_km: float | None = None
+    l_reserve_gap_km: float = 8.0
+    l_reserve_depth_km: float = 5.0
 
     def __post_init__(self) -> None:
         axis = str(self.front_axis).lower()
@@ -162,6 +177,8 @@ class StaggeredDeploymentConfig:
             "lateral_spacing_km",
             "h_depth_km",
             "m_depth_km",
+            "l_reserve_gap_km",
+            "l_reserve_depth_km",
         ):
             object.__setattr__(self, name, _positive(getattr(self, name), name))
         object.__setattr__(
@@ -259,12 +276,21 @@ class DeploymentPoint:
     predicted_separation_at_m_20km: float | None = None
     geometry_clamped: bool | None = None
     clamp_reason: str | None = None
+    deployment_role: str = "core"
 
     def __post_init__(self) -> None:
         if type(self.entity_id) is not int or self.entity_id < 0:
             raise ValueError("entity_id must be a non-negative integer")
         if type(self.entity_type) is not int or self.entity_type not in SUPPORTED_PLATFORM_TYPES:
             raise ValueError("entity_type must be one of 21000, 21001, or 21002")
+        deployment_role = str(self.deployment_role).lower()
+        if deployment_role not in DEPLOYMENT_ROLES:
+            raise ValueError("deployment_role must be core, reserve_h, or reserve_l")
+        if deployment_role == "reserve_h" and self.entity_type != H_PLATFORM_TYPE:
+            raise ValueError("reserve_h deployment role requires an H platform")
+        if deployment_role == "reserve_l" and self.entity_type != L_PLATFORM_TYPE:
+            raise ValueError("reserve_l deployment role requires an L platform")
+        object.__setattr__(self, "deployment_role", deployment_role)
         if self.band not in {"front", "second", "rear"}:
             raise ValueError("band must be front, second, or rear")
         wave_role = self.wave_role
@@ -273,9 +299,11 @@ class DeploymentPoint:
                 "front": "front",
                 "second": "second",
             }.get(self.band, "rear")
-        if wave_role not in {"front", "second", "h_lead", "m_follow", "rear"}:
+        if wave_role not in {
+            "front", "second", "reserve_l", "h_lead", "m_follow", "rear"
+        }:
             raise ValueError(
-                "wave_role must be front, second, h_lead, m_follow, or rear"
+                "wave_role must be front, second, reserve_l, h_lead, m_follow, or rear"
             )
         object.__setattr__(self, "wave_role", wave_role)
         if (self.target_id is None) != (self.target_type is None):
@@ -285,6 +313,8 @@ class DeploymentPoint:
                 raise ValueError("target_id must be a non-negative integer")
             if type(self.target_type) is not int or self.target_type not in PUBLIC_TARGET_TYPES:
                 raise ValueError("target_type must be public 9400 or 9600")
+            if deployment_role != "core":
+                raise ValueError("reserve coordinates are provisional, not an assignment")
         if self.crossfire_role not in {None, "left", "center", "right"}:
             raise ValueError("crossfire_role must be left, center, right, or None")
         if (self.crossfire_role is None) != (self.crossfire_angle is None):
@@ -445,12 +475,15 @@ class StaggeredDeploymentSkill:
                 )
 
         axis_length, lateral_length = self._dimensions(bounds)
-        required = (
+        required = max(
             self.config.l_depth_km
             + self.config.deployment_gap_km
             + self.config.h_depth_km
             + self.config.hm_follow_gap_km
-            + self.config.m_depth_km
+            + self.config.m_depth_km,
+            self.config.l_depth_km / 2.0
+            + self.config.l_reserve_gap_km
+            + self.config.l_reserve_depth_km / 2.0,
         )
         if axis_length + _EPSILON_KM < required:
             raise ValueError(
@@ -464,6 +497,12 @@ class StaggeredDeploymentSkill:
         h_low = h_high - self.config.h_depth_km
         follow_high = h_low - self.config.hm_follow_gap_km
         follow_low = max(0.0, follow_high - self.config.m_depth_km)
+        reserve_l_center = (
+            (front_low + front_high) / 2.0
+            - self.config.l_reserve_gap_km
+        )
+        reserve_l_low = reserve_l_center - self.config.l_reserve_depth_km / 2.0
+        reserve_l_high = reserve_l_center + self.config.l_reserve_depth_km / 2.0
 
         l_requests = tuple(
             sorted(
@@ -471,14 +510,39 @@ class StaggeredDeploymentSkill:
                 key=lambda item: item.entity_id,
             )
         )
-        first_wave_count = math.ceil(
-            len(l_requests) * self.config.l_first_wave_fraction
+        reserve_l_requests = tuple(
+            item for item in l_requests if item.deployment_role == "reserve_l"
         )
-        first_wave = l_requests[:first_wave_count]
-        second_wave = l_requests[first_wave_count:]
+        core_l_requests = tuple(
+            item for item in l_requests if item.deployment_role == "core"
+        )
+        if reserve_l_requests:
+            first_wave = core_l_requests
+            second_wave = ()
+        else:
+            first_wave_count = math.ceil(
+                len(core_l_requests) * self.config.l_first_wave_fraction
+            )
+            first_wave = core_l_requests[:first_wave_count]
+            second_wave = core_l_requests[first_wave_count:]
+        reserve_h_requests = tuple(
+            sorted(
+                (
+                    item
+                    for item in normalized
+                    if item.deployment_role == "reserve_h"
+                ),
+                key=lambda item: item.entity_id,
+            )
+        )
         h_requests = tuple(
             sorted(
-                (item for item in normalized if item.entity_type == H_PLATFORM_TYPE),
+                (
+                    item
+                    for item in normalized
+                    if item.entity_type == H_PLATFORM_TYPE
+                    and item.deployment_role == "core"
+                ),
                 key=lambda item: item.entity_id,
             )
         )
@@ -487,6 +551,21 @@ class StaggeredDeploymentSkill:
                 (item for item in normalized if item.entity_type == M_PLATFORM_TYPE),
                 key=lambda item: item.entity_id,
             )
+        )
+        reserve_h_points = self._place_reserve_h(
+            bounds,
+            reserve_h_requests,
+            lateral_length,
+        )
+        reserve_coordinates = {
+            (point.forward_km, point.lateral_km)
+            for point in reserve_h_points
+        }
+        minimum_core_forward = (
+            0.0
+            if not reserve_h_points
+            else max(point.forward_km for point in reserve_h_points)
+            + self.config.lateral_spacing_km
         )
         h_points, m_points = self._place_rear_groups(
             bounds,
@@ -498,16 +577,21 @@ class StaggeredDeploymentSkill:
             follow_high,
             axis_length,
             lateral_length,
+            reserve_coordinates,
+            minimum_core_forward,
         )
-        hm_points = h_points + m_points
+        hm_points = reserve_h_points + h_points + m_points
         l_points = self._place_l_groups(
             bounds,
             first_wave,
             second_wave,
+            reserve_l_requests,
             front_low,
             front_high,
             follow_low,
             follow_high,
+            reserve_l_low,
+            reserve_l_high,
             axis_length,
             lateral_length,
             {(point.forward_km, point.lateral_km) for point in hm_points},
@@ -575,8 +659,78 @@ class StaggeredDeploymentSkill:
                         wave_role=wave_role,
                         target_id=request.target_id,
                         target_type=request.target_type,
+                        deployment_role=request.deployment_role,
                     )
                 )
+        return tuple(result)
+
+    def _place_reserve_h(
+        self,
+        bounds: DeploymentBounds,
+        requests: tuple[PlatformDeploymentRequest, ...],
+        lateral_length: float,
+    ) -> tuple[DeploymentPoint, ...]:
+        if not requests:
+            return ()
+        spacing = self.config.lateral_spacing_km
+        row_capacity = math.floor((lateral_length + _EPSILON_KM) / spacing) + 1
+        column_count = math.ceil(len(requests) / row_capacity)
+        used_forward_span = (column_count - 1) * spacing
+        if used_forward_span > _RESERVE_H_DEPTH_KM + _EPSILON_KM:
+            capacity = row_capacity * (
+                math.floor(_RESERVE_H_DEPTH_KM / spacing) + 1
+            )
+            raise ValueError(
+                f"reserve_h band capacity {capacity} is smaller than "
+                f"{len(requests)} requests"
+            )
+        forward_start = (_RESERVE_H_DEPTH_KM - used_forward_span) / 2.0
+        rows = tuple(
+            (row, min(lateral_length, row * spacing))
+            for row in range(row_capacity)
+        )
+        result: list[DeploymentPoint] = []
+        for column in range(column_count):
+            column_requests = requests[
+                column * row_capacity:(column + 1) * row_capacity
+            ]
+            available = dict(rows)
+            untargeted_laterals = iter(self._uniform_lateral_positions(
+                sum(request.target_lon is None for request in column_requests),
+                lateral_length,
+            ))
+            for request in column_requests:
+                target_lateral = (
+                    next(untargeted_laterals)
+                    if request.target_lon is None
+                    else self._target_lateral(bounds, request, lateral_length)
+                )
+                row = min(
+                    available,
+                    key=lambda candidate: (
+                        abs(available[candidate] - target_lateral),
+                        candidate,
+                    ),
+                )
+                lateral = available.pop(row)
+                forward = forward_start + column * spacing
+                longitude, latitude = self._to_geographic(
+                    bounds, forward, lateral
+                )
+                result.append(DeploymentPoint(
+                    entity_id=request.entity_id,
+                    entity_type=request.entity_type,
+                    longitude=longitude,
+                    latitude=latitude,
+                    altitude=bounds.altitude,
+                    band="rear",
+                    column=column,
+                    row=row,
+                    forward_km=forward,
+                    lateral_km=lateral,
+                    wave_role="rear",
+                    deployment_role="reserve_h",
+                ))
         return tuple(result)
 
     def _grid_slots(
@@ -604,10 +758,13 @@ class StaggeredDeploymentSkill:
         bounds: DeploymentBounds,
         first_wave: tuple[PlatformDeploymentRequest, ...],
         second_wave: tuple[PlatformDeploymentRequest, ...],
+        reserve_l: tuple[PlatformDeploymentRequest, ...],
         front_low: float,
         front_high: float,
         follow_low: float,
         follow_high: float,
+        reserve_low: float,
+        reserve_high: float,
         axis_length: float,
         lateral_length: float,
         occupied: set[tuple[float, float]],
@@ -618,7 +775,7 @@ class StaggeredDeploymentSkill:
             for slot in all_slots
             if self._coordinates_clear((slot,), occupied)
         }
-        total_l = len(first_wave) + len(second_wave)
+        total_l = len(first_wave) + len(second_wave) + len(reserve_l)
         if total_l > len(available):
             raise ValueError(
                 f"L deployment capacity {len(available)} is smaller than "
@@ -626,13 +783,30 @@ class StaggeredDeploymentSkill:
             )
 
         result: list[DeploymentPoint] = []
+        spatial_order = tuple(sorted(
+            first_wave + second_wave + reserve_l,
+            key=lambda request: request.entity_id,
+        ))
+        target_lateral_by_id = dict(zip(
+            (request.entity_id for request in spatial_order),
+            self._uniform_lateral_positions(len(spatial_order), lateral_length),
+            strict=True,
+        ))
         for requests, band, wave_role, preferred_low, preferred_high in (
             (first_wave, "front", "front", front_low, front_high),
             (second_wave, "second", "second", follow_low, follow_high),
+            (reserve_l, "second", "reserve_l", reserve_low, reserve_high),
         ):
             preferred_center = (preferred_low + preferred_high) / 2.0
-            target_laterals = self._uniform_lateral_positions(
-                len(requests), lateral_length
+            target_laterals = (
+                tuple(
+                    target_lateral_by_id[request.entity_id]
+                    for request in requests
+                )
+                if reserve_l
+                else self._uniform_lateral_positions(
+                    len(requests), lateral_length
+                )
             )
             for request, target_lateral in zip(
                 requests, target_laterals, strict=True
@@ -705,6 +879,7 @@ class StaggeredDeploymentSkill:
             ),
             geometry_clamped=geometry_clamped,
             clamp_reason=clamp_reason,
+            deployment_role=request.deployment_role,
         )
 
     def _place_rear_groups(
@@ -718,12 +893,24 @@ class StaggeredDeploymentSkill:
         follow_high: float,
         axis_length: float,
         lateral_length: float,
+        initially_blocked: set[tuple[float, float]],
+        minimum_core_forward: float,
     ) -> tuple[tuple[DeploymentPoint, ...], tuple[DeploymentPoint, ...]]:
         h_slots = self._grid_slots(h_low, h_high, lateral_length)
         follow_slots = self._grid_slots(follow_low, follow_high, lateral_length)
 
-        h_available = {(slot[0], slot[1]): slot for slot in h_slots}
-        follow_available = {(slot[0], slot[1]): slot for slot in follow_slots}
+        h_available = {
+            (slot[0], slot[1]): slot
+            for slot in h_slots
+            if slot[2] + _EPSILON_KM >= minimum_core_forward
+            and self._coordinates_clear((slot,), initially_blocked)
+        }
+        follow_available = {
+            (slot[0], slot[1]): slot
+            for slot in follow_slots
+            if slot[2] + _EPSILON_KM >= minimum_core_forward
+            and self._coordinates_clear((slot,), initially_blocked)
+        }
         packages: dict[
             tuple[object, ...],
             dict[int, list[PlatformDeploymentRequest]],
@@ -784,7 +971,8 @@ class StaggeredDeploymentSkill:
                 (item.forward_km, item.lateral_km) for item in crossfire_points
             )
 
-        blocked_coordinates = set(occupied_h_coordinates)
+        blocked_coordinates = set(initially_blocked)
+        blocked_coordinates.update(occupied_h_coordinates)
         blocked_coordinates.update(
             (slot[2], slot[3])
             for slot in h_slots
@@ -856,6 +1044,7 @@ class StaggeredDeploymentSkill:
                     axis_length,
                     lateral_length,
                     blocked_coordinates,
+                    minimum_core_forward,
                 )
                 if adaptive is None:
                     raise ValueError(
@@ -1130,6 +1319,7 @@ class StaggeredDeploymentSkill:
         axis_length: float,
         lateral_length: float,
         blocked: set[tuple[float, float]],
+        minimum_core_forward: float,
     ) -> tuple[
         int,
         tuple[tuple[int, int, float, float], ...],
@@ -1138,7 +1328,10 @@ class StaggeredDeploymentSkill:
     ] | None:
         h_offsets = self._formation_offsets(len(h_members))
         m_offsets = self._formation_offsets(len(m_members))
-        h_min_center = -min(item[2] for item in h_offsets)
+        h_min_center = max(
+            -min(item[2] for item in h_offsets),
+            minimum_core_forward - min(item[2] for item in h_offsets),
+        )
         h_max_center = h_high - max(item[2] for item in h_offsets)
         if h_min_center > h_max_center + _EPSILON_KM:
             return None
@@ -1584,6 +1777,7 @@ class StaggeredDeploymentSkill:
                 target_type=request.target_type,
                 crossfire_role=role,
                 crossfire_angle=achieved_angle,
+                deployment_role=request.deployment_role,
             ))
         return tuple(points), reserved
 
@@ -1821,6 +2015,7 @@ __all__ = [
     "DeploymentBounds",
     "DeploymentPlan",
     "DeploymentPoint",
+    "DEPLOYMENT_ROLES",
     "H_PLATFORM_TYPE",
     "L_PLATFORM_TYPE",
     "M_PLATFORM_TYPE",

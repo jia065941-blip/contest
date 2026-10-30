@@ -4,11 +4,11 @@
 emits semantic package-level target changes only; callers retain command
 ownership and engine-action routing.
 
-Version `0.2.0` supports atomic H-only reserve packages against public `9400`
+Version `0.4.0` supports atomic H-only reserve packages against public `9400`
 and `9600` deficits, and atomic L-only packages against dark `9500` deficits.
-It adds per-member physical reachability gates while retaining the type vectors
-needed for future H/M package support. Mixed or M-containing packages still fail
-closed in this release.
+It uses turn-aware arrival estimates for per-member physical reachability while
+retaining the type vectors needed for future H/M package support. Mixed or
+M-containing packages still fail closed in this release.
 
 ## State Machine
 
@@ -24,7 +24,13 @@ snapshots cannot dispatch a terminal package again. `reset()` clears all
 registered definitions and state; the read-only `state` property returns the
 current package snapshots ordered by package ID.
 
-The whole package must pass every gate. All members must be below the
+Multi-member definitions may be evaluated with only their current surviving
+member subset. The request is routed to every supplied survivor, while the
+original package definition remains immutable. A committed snapshot persists
+the selected `target_id`; package-level `retarget_count` is reserved for the
+adapter's single post-dispatch H retarget.
+
+The whole surviving package must pass every gate. All current members must be below the
 dispatch/retarget limit, name the target in their `legal_target_ids`, and share
 one group. A deficit must match the package responsibility region and package
 type. With same-group evidence enabled, at least one `evidence_ids` entry must
@@ -37,23 +43,33 @@ integer retains the v0.1 behavior: any package member above that stage rejects
 the whole package with `stage_too_late`.
 
 Every logically eligible destination is then checked from every member's
-position. H members default to an `80 km` maximum distance and `60 degree`
-maximum turn; L members default to `100 km` and `75 degree`. `heading_east` and
-`heading_north` are direction components in the same local east/north frame as
-`position`. Both may be omitted for construction compatibility, but a nonzero
-trip then rejects with `missing_heading`; a zero heading does the same.
+position. H members default to an `80 km` maximum distance and L members to
+`100 km`. `heading_east` and `heading_north` are direction components in the
+same local east/north frame as `position`. Both may be omitted for construction
+compatibility, but a nonzero trip then rejects with `missing_heading`; a zero
+heading does the same.
 
-When `remaining_steps` is present, estimated travel steps are calculated as:
+Arrival time is calculated in seconds for each member as:
 
 ```text
-distance_km * 1000 / nominal_speed_mps / seconds_per_step
+turn_time = abs(turn_angle_degrees) / nominal_turn_rate_deg_s
+travel_time = distance_km * 1000 / nominal_speed_mps
+total_eta = turn_time + travel_time + turn_safety_seconds
+remaining_time = remaining_steps * seconds_per_step
 ```
 
-The estimate must not exceed that member's remaining steps. The default nominal
-speeds are the environment values `200 m/s` for H and `100 m/s` for L, and both
-are configurable. `remaining_steps=None` disables only the time-budget check;
-distance and turn checks still apply. Every member must pass for an atomic
-dispatch.
+`total_eta` must not exceed `remaining_time`. The default nominal speeds are the
+environment values `200 m/s` for H and `100 m/s` for L. Default nominal turn
+rates are `20 deg/s` for H and `15 deg/s` for L, with a `5 s` safety allowance.
+All are configurable. `remaining_steps=None` disables only the time-budget
+check; distance and heading checks still apply. Every member must pass for an
+atomic dispatch.
+
+The H/L `max_turn_angle_degrees` settings are optional risk caps and default to
+`None`. Consequently, large heading changes such as `107 degrees` are not
+rejected solely because of their angle; their turn duration is included in the
+ETA instead. Explicitly setting the former `60 degree` H or `75 degree` L values
+retains the v0.2 `turn_angle_exceeded` behavior.
 
 Eligible targets are ranked from the package position (the member-position
 centroid) using:
@@ -79,7 +95,13 @@ package remains staged.
 
 `Decision.rejected_reasons` reports `distance_exceeded`,
 `turn_angle_exceeded`, `insufficient_time`, or `missing_heading` when physical
-reachability prevents selection.
+reachability prevents selection. Every selected request exposes immutable
+`request.diagnostics`; `Decision.diagnostics` maps each physically assessed
+package ID to the diagnostic used for its request or rejection. The six fields
+are `distance` (km), `turn_angle` (degrees), and `turn_time`, `travel_time`,
+`total_eta`, and `remaining_time` (seconds). A missing heading produces `None`
+for the turn and ETA fields. Deadline fallback uses and reports the same
+diagnostics.
 
 ## Configuration
 
@@ -92,11 +114,14 @@ ReserveEchelonConfig(
     max_target_distance_km=None,
     h_max_distance_km=80.0,
     l_max_distance_km=100.0,
-    h_max_turn_angle_degrees=60.0,
-    l_max_turn_angle_degrees=75.0,
+    h_max_turn_angle_degrees=None,
+    l_max_turn_angle_degrees=None,
     seconds_per_step=1.0,
     h_nominal_speed_mps=200.0,
     l_nominal_speed_mps=100.0,
+    h_nominal_turn_rate_deg_s=20.0,
+    l_nominal_turn_rate_deg_s=15.0,
+    turn_safety_seconds=5.0,
 )
 ```
 

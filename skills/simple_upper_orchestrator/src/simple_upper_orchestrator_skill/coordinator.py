@@ -33,6 +33,7 @@ from terminal_guidance_override_skill import (
     TerminalGuidanceSnapshot,
 )
 from reserve_echelon_skill import (
+    ReachabilityDiagnostics,
     ReserveEchelonConfig,
     ReserveEchelonSkill,
     ReserveMemberSnapshot,
@@ -176,6 +177,34 @@ class _LedgerEvent:
     payload: object
 
 
+@dataclass(frozen=True)
+class PendingDeficit:
+    """A group-authorized deficit waiting for one later-step confirmation."""
+
+    first_step: int
+    evidence_signature: tuple[str, ...]
+    missing_damage: float
+
+
+@dataclass(frozen=True)
+class _ReserveContext:
+    package: ReservePackageSnapshot
+    members: tuple[ReserveMemberSnapshot, ...]
+    group: tuple[int, ...]
+    deficits: tuple[TargetDeficitSnapshot, ...]
+    coordinate_origin: tuple[float, float]
+
+
+@dataclass(frozen=True)
+class _PlannedReserveRequest:
+    member_ids: tuple[int, ...]
+    old_target_id: int
+    new_target_id: int
+    reason: str
+    deficit: TargetDeficitSnapshot | None
+    diagnostics: ReachabilityDiagnostics
+
+
 class TeamCoordinator:
     def __init__(self, members, public_observation, policy, config):
         self.members = {int(entity): int(agent) for agent, entity in members}
@@ -212,6 +241,13 @@ class TeamCoordinator:
             h_max_turn_angle_degrees=self.config.reserve_h_max_turn_angle_degrees,
             l_max_turn_angle_degrees=self.config.reserve_l_max_turn_angle_degrees,
             seconds_per_step=self.config.seconds_per_step,
+            h_nominal_turn_rate_deg_s=(
+                self.config.reserve_h_turn_rate_degrees_per_second
+            ),
+            l_nominal_turn_rate_deg_s=(
+                self.config.reserve_l_turn_rate_degrees_per_second
+            ),
+            turn_safety_seconds=self.config.reserve_turn_safety_seconds,
         ))
         self._reserve_holding = ReserveHoldingManeuverSkill(
             ReserveHoldingManeuverConfig(
@@ -231,6 +267,9 @@ class TeamCoordinator:
         self._mission_plan: PreMissionPlan | None = None
         self._l_roster: tuple[int, ...] = ()
         self._l_rank: dict[int, int] = {}
+        self._deployment_front_axis = self.config.deployment.front_axis
+        self._deployment_positions: dict[int, dict[str, float]] = {}
+        self._audited_initial_l_assignments: set[int] = set()
         self._l_core_ids: frozenset[int] | None = None
         self._l_core_assignments: dict[int, int] = {}
         self._l_progress: dict[int, _LProgress] = {}
@@ -249,9 +288,12 @@ class TeamCoordinator:
         self._core_hm_assignments: dict[int, int] = {}
         self._reserve_h_ids: frozenset[int] = frozenset()
         self._reserve_packages: dict[int, ReservePackageSnapshot] = {}
+        self._reserve_package_owners: dict[int, int] = {}
         self._hm_target_regions: dict[int, str] = {}
         self._hm_early_losses: dict[int, _EarlyLoss] = {}
         self._reserve_retarget_counts: dict[int, int] = {}
+        self._reserve_fresh_targets_seen: set[tuple[int, int]] = set()
+        self._reserve_cancelled_targets_step: set[tuple[int, int]] = set()
         self._reserve_member_snapshots: dict[int, ReserveMemberSnapshot] = {}
         self._reserve_seen_members: set[int] = set()
         self._reserve_package_terminations: dict[int, dict] = {}
@@ -260,6 +302,14 @@ class TeamCoordinator:
             int, tuple[float, float]
         ] = {}
         self._audited_reserve_deficits: set[tuple] = set()
+        self._pending_deficits: dict[
+            tuple[tuple[int, ...], int], PendingDeficit
+        ] = {}
+        self._confirmed_reserve_deficits: set[
+            tuple[tuple[int, ...], int]
+        ] = set()
+        self._reserve_ready_targets: dict[int, int] = {}
+        self._audited_reserve_rejections: dict[int, tuple] = {}
         self._last_groups: dict[int, tuple[int, ...]] = {}
         self._terminalized: set[int] = set()
         self._owner_ledgers: dict[int, dict[str, _LedgerEvent]] = {
@@ -292,7 +342,7 @@ class TeamCoordinator:
             if target_id not in self._public_by_id:
                 raise ValueError(f"mission plan target {target_id} is not public")
         for package in plan.reserve_packages:
-            if (
+            if set(package.member_types) == {21000} and (
                 package.provisional_target_id not in self._public_by_id
                 or package.fallback_target_id not in self._public_by_id
             ):
@@ -304,7 +354,7 @@ class TeamCoordinator:
             for owner, entity_type in sorted(plan.entity_types.items())
             if entity_type == 21002
         )
-        if plan.l_roster != expected_l:
+        if set(plan.l_roster) != set(expected_l) or len(plan.l_roster) != len(expected_l):
             raise ValueError("mission plan L roster does not match entity types")
         if self._mission_plan is not None:
             if self._mission_plan != plan:
@@ -339,15 +389,45 @@ class TeamCoordinator:
         self._reserve_holding.reset()
         self._reserve_holding_anchors.clear()
         self._reserve_reachability_origins.clear()
+        self._reserve_fresh_targets_seen.clear()
+        self._reserve_cancelled_targets_step.clear()
+        self._pending_deficits.clear()
+        self._confirmed_reserve_deficits.clear()
+        self._reserve_ready_targets.clear()
+        self._audited_reserve_rejections.clear()
         self._reserve_packages = {
             package.package_id: package
+            for package in self._mission_plan.reserve_packages
+        }
+        self._reserve_package_owners = {
+            package.package_id: min(package.member_ids)
             for package in self._mission_plan.reserve_packages
         }
         self._reserve_h_ids = frozenset(
             member_id
             for package in self._mission_plan.reserve_packages
+            if set(package.member_types) == {21000}
             for member_id in package.member_ids
         )
+        l_roles = dict(self._mission_plan.l_roles)
+        if not l_roles:
+            expected = self.config.l_strike.expected_target_count
+            core_count = (
+                len(self._l_roster)
+                if self.config.l_first_wave_per_target == 0
+                else min(
+                    len(self._l_roster),
+                    self.config.l_first_wave_per_target * int(expected or 0),
+                )
+            )
+            l_roles = {
+                owner: "core" if rank < core_count else "reserve_l"
+                for rank, owner in enumerate(self._l_roster)
+            }
+        self._l_core_ids = frozenset(
+            owner for owner, role in l_roles.items() if role == "core"
+        )
+        self._l_target_count = self.config.l_strike.expected_target_count
         self._assignments = {
             owner: target_id
             for owner, target_id in self._mission_plan.hm_assignments.items()
@@ -381,7 +461,9 @@ class TeamCoordinator:
                 owner=owner,
                 type=evidence.missile_type,
                 target=evidence.target_id,
+                target_rank=self._public_target_rank(evidence.target_id),
                 commitment=evidence.commitment_type,
+                role="core",
                 group=(owner,),
                 event_id=event_id,
             )
@@ -391,13 +473,20 @@ class TeamCoordinator:
     def _audit_initial_reserve(
         self, package: ReservePackageSnapshot, step: int, *, source: str
     ) -> None:
+        role = self._reserve_role(package)
         fields = {
             "package": package.package_id,
+            "owner": min(package.member_ids),
             "members": package.member_ids,
             "types": package.member_types,
             "provisional_target": package.provisional_target_id,
             "fallback_target": package.fallback_target_id,
             "responsibility_region": package.responsibility_region,
+            "role": role,
+            "deadline_step": self._reserve_deadline(package),
+            "target_rank": self._public_target_rank(
+                package.provisional_target_id
+            ),
             "source": source,
         }
         self._write_audit("initial_reserve", step, **fields)
@@ -409,16 +498,182 @@ class TeamCoordinator:
             **fields,
         )
 
+    @staticmethod
+    def _reserve_role(package: ReservePackageSnapshot) -> str:
+        return "reserve_h" if set(package.member_types) == {21000} else "reserve_l"
+
+    def _reserve_deadline(self, package: ReservePackageSnapshot) -> int:
+        return (
+            self.config.reserve_deadline_step
+            if set(package.member_types) == {21000}
+            else self.config.reserve_l_deadline_step
+        )
+
     def set_deployment_plan(self, plan) -> None:
+        self._deployment_front_axis = getattr(
+            getattr(plan, "config", None),
+            "front_axis",
+            self.config.deployment.front_axis,
+        )
+        self._deployment_positions = {
+            int(point.entity_id): {
+                "lon": float(point.longitude),
+                "lat": float(point.latitude),
+            }
+            for point in plan.points
+            if getattr(point, "longitude", None) is not None
+            and getattr(point, "latitude", None) is not None
+        }
+        l_points = tuple(
+            point for point in plan.points if int(point.entity_type) == 21002
+        )
+        ordered_l = sorted(
+            l_points,
+            key=lambda point: (
+                self._deployment_lateral(point),
+                int(point.entity_id),
+            ),
+        )
+        if ordered_l and (
+            self._mission_plan is None or not self._mission_plan.l_roles
+        ):
+            self._l_rank = {
+                int(point.entity_id): rank
+                for rank, point in enumerate(ordered_l)
+            }
         self._deployment_waves = {
             int(point.entity_id): (
                 2
-                if getattr(point, "wave_role", point.band) == "second"
+                if getattr(point, "wave_role", point.band) in {"second", "reserve_l"}
                 else 1
             )
             for point in plan.points
             if int(point.entity_type) == 21002
         }
+        if self._mission_plan is not None and self._mission_plan.l_roles:
+            actual_roles = {
+                int(point.entity_id): getattr(point, "deployment_role", "core")
+                for point in l_points
+            }
+            if actual_roles != dict(self._mission_plan.l_roles):
+                raise ValueError("deployment L roles do not match the mission roster")
+        reserve_targets = {
+            member_id: package.provisional_target_id
+            for package in (
+                ()
+                if self._mission_plan is None
+                else self._mission_plan.reserve_packages
+            )
+            for member_id in package.member_ids
+        }
+        for point in sorted(plan.points, key=lambda item: int(item.entity_id)):
+            owner = int(point.entity_id)
+            deployment_role = getattr(point, "deployment_role", "core")
+            target_id = getattr(point, "target_id", None)
+            if target_id is None:
+                target_id = reserve_targets.get(owner)
+            self._write_audit(
+                "initial_deployment",
+                0,
+                owner=owner,
+                type=int(point.entity_type),
+                role=deployment_role,
+                deadline_step=(
+                    self.config.reserve_deadline_step
+                    if deployment_role == "reserve_h"
+                    else self.config.reserve_l_deadline_step
+                    if deployment_role == "reserve_l"
+                    else None
+                ),
+                band=point.band,
+                wave_role=getattr(point, "wave_role", point.band),
+                longitude=getattr(point, "longitude", None),
+                latitude=getattr(point, "latitude", None),
+                forward_km=getattr(point, "forward_km", None),
+                lateral_km=getattr(point, "lateral_km", None),
+                l_spatial_rank=self._l_rank.get(owner),
+                target=target_id,
+                target_rank=self._public_target_rank(target_id),
+                predicted_l_eta=None,
+                crossfire_role=getattr(point, "crossfire_role", None),
+                crossfire_angle=getattr(point, "crossfire_angle", None),
+                formation_role=getattr(point, "formation_role", None),
+                requested_lead=getattr(point, "requested_lead", None),
+                actual_lead=getattr(point, "actual_lead", None),
+                predicted_m_arrival_delta_seconds=getattr(
+                    point, "predicted_m_arrival_delta_seconds", None
+                ),
+            )
+
+    def _deployment_lateral(self, point) -> float:
+        lateral = getattr(point, "lateral_km", None)
+        if lateral is not None:
+            return float(lateral)
+        coordinate = (
+            getattr(point, "latitude", None)
+            if self._deployment_front_axis in {"east", "west"}
+            else getattr(point, "longitude", None)
+        )
+        if coordinate is not None:
+            return float(coordinate)
+        return float(point.entity_id)
+
+    def _target_lateral(self, target) -> float:
+        return float(
+            target.lat
+            if self._deployment_front_axis in {"east", "west"}
+            else target.lon
+        )
+
+    def _ordered_target_ids(self, targets: Mapping[int, object]) -> tuple[int, ...]:
+        return tuple(
+            int(target_id)
+            for target_id, target in sorted(
+                targets.items(),
+                key=lambda item: (
+                    self._target_lateral(item[1]),
+                    int(item[0]),
+                ),
+            )
+        )
+
+    def _public_target_rank(self, target_id: int | None) -> int | None:
+        if target_id not in self._public_by_id:
+            return None
+        ordered = self._ordered_target_ids(self._public_by_id)
+        return ordered.index(int(target_id))
+
+    def _audit_initial_l_assignment(
+        self,
+        step: int,
+        owner: int,
+        target_id: int,
+        target_rank: int,
+        target,
+    ) -> None:
+        if owner in self._audited_initial_l_assignments:
+            return
+        deployment = self._deployment_positions.get(owner)
+        target_position = {"lon": float(target.lon), "lat": float(target.lat)}
+        predicted_eta = (
+            None
+            if deployment is None
+            else _distance_km(deployment, target_position) * 1000.0 / 100.0
+        )
+        self._write_audit(
+            "initial_l_assignment",
+            step,
+            owner=owner,
+            type=21002,
+            role="core",
+            l_spatial_rank=self._l_rank[owner],
+            target=target_id,
+            target_rank=target_rank,
+            deployment_position=deployment,
+            target_position=target_position,
+            predicted_l_eta=predicted_eta,
+        )
+        self._audited_initial_l_assignments.add(owner)
 
     def submit(self, entity_id: int, observation: dict) -> None:
         if self._reset_members == set(self.members):
@@ -548,24 +803,6 @@ class TeamCoordinator:
             owner: self._update_l_catalogue(owner, step)
             for owner in sorted(current_l)
         }
-        if (
-            self.config.l_first_wave_per_target > 0
-            and self._satellite_committed
-            and self._l_core_ids is None
-        ):
-            for owner in sorted(current_l):
-                target_ids = tuple(sorted(l_tracks_by_owner[owner]))
-                if target_ids and (
-                    expected is None or len(target_ids) >= expected
-                ):
-                    target_count = len(target_ids)
-                    core_count = min(
-                        len(self._l_roster),
-                        self.config.l_first_wave_per_target * target_count,
-                    )
-                    self._l_target_count = target_count
-                    self._l_core_ids = frozenset(self._l_roster[:core_count])
-                    break
         for owner in sorted(current_l):
             owner_tracks = l_tracks_by_owner[owner]
             target_id = self._assignments.get(owner)
@@ -577,13 +814,13 @@ class TeamCoordinator:
                     and held_package.member_types == (21002,)
                 ):
                     continue
-                target_ids = tuple(sorted(owner_tracks))
+                target_ids = self._ordered_target_ids(owner_tracks)
                 if not target_ids or (
                     expected is not None and len(target_ids) < expected
                 ):
                     continue
                 if self.config.l_first_wave_per_target > 0:
-                    if self._l_core_ids is None or len(target_ids) != self._l_target_count:
+                    if len(target_ids) != self._l_target_count:
                         continue
                 target_id = target_ids[self._l_rank[owner] % len(target_ids)]
                 if self.config.l_first_wave_per_target > 0:
@@ -604,9 +841,17 @@ class TeamCoordinator:
                             dispatch_count=0,
                         )
                         self._reserve_packages[package.package_id] = package
+                        self._reserve_package_owners[package.package_id] = owner
                         self._audit_initial_reserve(package, step, source="satellite")
                         continue
                 self._assignments[owner] = target_id
+                self._audit_initial_l_assignment(
+                    step,
+                    owner,
+                    target_id,
+                    target_ids.index(target_id),
+                    owner_tracks[target_id],
+                )
             track = owner_tracks.get(target_id)
             if track is None:
                 continue
@@ -620,6 +865,9 @@ class TeamCoordinator:
 
         self._record_hm_progress(step, current_hm)
         self._record_l_progress(step, current_l, l_tracks_by_owner)
+        # Terminal events and every group belief for this step must be complete
+        # before a transient deficit may advance to reserve dispatch.
+        self._refresh_damage_by_group(step, current_hm)
         self._plan_reserve_dispatches(
             step, current_hm, current_l, l_tracks_by_owner, rows,
         )
@@ -846,6 +1094,8 @@ class TeamCoordinator:
                 missile_terminal_event_id=None,
                 event_id=f"terminal:l:{owner}:{step}",
             )
+            self._terminal_guidance.reset(owner)
+            self._owner_velocity_history[owner] = self._new_owner_velocity_state()
             if (
                 self.config.l_first_wave_per_target == 0
                 or progress is None
@@ -921,15 +1171,46 @@ class TeamCoordinator:
         reason: str,
         group: tuple[int, ...],
     ) -> None:
-        terminated = []
+        affected = False
         for package_id, package in tuple(self._reserve_packages.items()):
             if owner not in package.member_ids:
+                continue
+            affected = True
+            surviving = tuple(
+                member_id
+                for member_id in package.member_ids
+                if member_id != owner
+                and member_id not in self._terminalized
+                and member_id in self._observations
+                and int(self._observations[member_id].get("step", -1)) == step
+                and bool(self._observations[member_id].get("self") or {})
+                and self._alive(member_id)
+            )
+            if surviving:
+                old_owner = self._reserve_package_owners.get(
+                    package_id, min(package.member_ids)
+                )
+                new_owner = min(surviving)
+                self._reserve_package_owners[package_id] = new_owner
+                if old_owner != new_owner:
+                    self._write_audit(
+                        "reserve_owner_changed",
+                        step,
+                        package=package_id,
+                        old_owner=old_owner,
+                        new_owner=new_owner,
+                        surviving_members=surviving,
+                        state=package.state,
+                        target=package.target_id,
+                        reason=reason,
+                        group=group,
+                    )
                 continue
             self._reserve_packages.pop(package_id)
             status = {
                 "package": package_id,
                 "members": package.member_ids,
-                "owner": owner,
+                "owner": self._reserve_package_owners.pop(package_id, owner),
                 "previous_state": package.state,
                 "status": "TERMINATED",
                 "reason": reason,
@@ -937,11 +1218,12 @@ class TeamCoordinator:
             }
             self._reserve_package_terminations[package_id] = status
             self._write_audit("reserve_terminal", step, **status)
-            terminated.append(package)
             for member_id in package.member_ids:
                 self._reserve_holding.reset(member_id)
                 self._reserve_holding_anchors.pop(member_id, None)
+                self._reserve_ready_targets.pop(member_id, None)
             self._reserve_reachability_origins.pop(package_id, None)
+            self._audited_reserve_rejections.pop(package_id, None)
             if package.state == "STAGING":
                 for member_id in package.member_ids:
                     self._assignments.pop(member_id, None)
@@ -951,12 +1233,11 @@ class TeamCoordinator:
                         for key, value in self._goal_versions.items()
                         if key[0] != member_id
                     }
-        if terminated:
+        if affected:
             self._reserve_member_snapshots.pop(owner, None)
             self._reserve_seen_members.discard(owner)
             self._reserve_retarget_counts.pop(owner, None)
-            # Remove terminated definitions from the pure skill. Surviving
-            # coordinator snapshots re-register on the next decision.
+        if not self._reserve_packages:
             self._reserve_echelon.reset()
 
     def _add_ledger_event(
@@ -1136,6 +1417,36 @@ class TeamCoordinator:
             )
         return "none", None, None
 
+    def _terminal_profile_fields(self, missile_type: int | None) -> dict:
+        profile_name = {21000: "H", 21001: "M", 21002: "L"}.get(missile_type)
+        profile = next(
+            (
+                value
+                for configured_type, value in self.config.terminal_guidance.profiles
+                if configured_type == missile_type
+            ),
+            None,
+        )
+        capture = (
+            None
+            if profile is None
+            else self.config.terminal_guidance.capture_distance
+            if profile.capture_distance is None
+            else profile.capture_distance
+        )
+        final = (
+            None
+            if profile is None
+            else self.config.terminal_guidance.final_straight_distance
+            if profile.final_straight_distance is None
+            else profile.final_straight_distance
+        )
+        return {
+            "profile": profile_name,
+            "profile_capture_distance": capture,
+            "profile_final_straight_distance": final,
+        }
+
     def _missile_trace_sample(
         self,
         step: int,
@@ -1143,9 +1454,14 @@ class TeamCoordinator:
         current_hm: Mapping[int, dict],
     ) -> dict:
         own = current_hm[owner]
+        missile_type = self._observed_nonnegative_int(own.get("type"))
         position = self._legal_position(own)
         target_id = self._assignments.get(owner)
-        target_track = self._owner_target_tracks(owner, step).get(target_id)
+        target_track = (
+            None
+            if target_id is None or missile_type is None
+            else self._terminal_target_track(owner, step, target_id, missile_type)
+        )
         aimpoint = None if target_track is None else target_track.position
         aimpoint_distance_km = (
             None
@@ -1212,7 +1528,8 @@ class TeamCoordinator:
             "event": "missile_trace",
             "step": int(step),
             "id": owner,
-            "type": 21001,
+            "type": missile_type,
+            **self._terminal_profile_fields(missile_type),
             "stage": stage,
             "position": position,
             "velocity": self._audit_velocity(own),
@@ -1262,6 +1579,8 @@ class TeamCoordinator:
             "control_state": motion.get("control_state"),
             "no_improvement_count": motion.get("no_improvement_count"),
             "heading_error": motion.get("heading_error"),
+            "mode": motion.get("mode"),
+            "error": motion.get("error"),
         }
 
     def _record_missile_traces(
@@ -1660,6 +1979,20 @@ class TeamCoordinator:
         shared = self._tracker_from_ledger(merged).export()
         return TargetDamageProbabilitySkill.from_snapshot(shared)
 
+    def _refresh_damage_by_group(
+        self, step: int, current_hm: Mapping[int, dict]
+    ) -> None:
+        groups: dict[tuple[int, ...], list[int]] = {}
+        for owner, own in sorted(current_hm.items()):
+            if self._alive(owner):
+                group = self._communication_group(owner, own)
+                groups.setdefault(group, []).append(owner)
+        self._damage_by_group.clear()
+        for group, raw_owners in sorted(groups.items()):
+            tracker = self._merge_owner_ledgers(tuple(raw_owners))
+            self._damage_by_group[group] = tracker
+            self._record_belief_changes(step, group, tracker)
+
     def _owner_detected_public_targets(
         self,
         owner: int,
@@ -1794,6 +2127,90 @@ class TeamCoordinator:
                 ):
                     newest[target_id] = track
         return newest
+
+    def _group_reserve_target_track(
+        self, group: tuple[int, ...], step: int, target_id: int
+    ) -> _TargetPosition | None:
+        candidates = []
+        for owner in group:
+            observation = self._observations.get(owner)
+            if observation is None or int(observation.get("step", -1)) != step:
+                continue
+            track = self._owner_detected_public_targets(owner, step).get(target_id)
+            if track is not None:
+                candidates.append(track)
+        if not candidates:
+            return None
+        return min(
+            candidates,
+            key=lambda track: (
+                0 if track.source == "detect_fresh" else 1,
+                -(track.source_time or track.observed_step or -1.0),
+            ),
+        )
+
+    def _core_completion_eta(
+        self,
+        context: _ReserveContext,
+        target_id: int,
+        target_position: Mapping[str, float],
+    ) -> tuple[float | None, tuple[int, ...]]:
+        tracker = self._damage_by_group.get(context.group)
+        if tracker is None or target_id not in self._public_by_id:
+            return None, ()
+        target = self._public_by_id[target_id]
+        belief = tracker.estimate(target_id)
+        required = max(
+            0.0,
+            self._target_health(target.target_type)
+            - belief.delivered_expected_damage,
+        )
+        arrivals = []
+        for owner in belief.core_committed_missiles:
+            progress = self._hm_progress.get(owner)
+            if (
+                progress is None
+                or progress.position is None
+                or self._assignments.get(owner) != target_id
+                or owner in self._terminalized
+            ):
+                continue
+            missile_type = self._mission_plan.entity_types.get(owner)
+            if missile_type not in (21000, 21001):
+                continue
+            speed = 200.0 if missile_type == 21000 else 120.0
+            arrivals.append((
+                _distance_km(progress.position, dict(target_position))
+                * 1000.0
+                / speed,
+                owner,
+                self._nominal_core_damage(missile_type, target.target_type),
+            ))
+        cumulative = 0.0
+        used = []
+        for eta, owner, damage in sorted(arrivals):
+            cumulative += damage
+            used.append(owner)
+            if cumulative + 1e-9 >= required:
+                return eta, tuple(used)
+        return None, tuple(owner for _, owner, _ in sorted(arrivals))
+
+    def _high_confidence_core_delivery(
+        self, context: _ReserveContext, target_id: int
+    ) -> bool:
+        tracker = self._damage_by_group.get(context.group)
+        if tracker is None or target_id not in self._public_by_id:
+            return False
+        belief = tracker.estimate(target_id)
+        core_ids = {
+            owner
+            for owner, assigned in self._core_hm_assignments.items()
+            if assigned == target_id
+        }
+        return any(
+            owner in core_ids and probability >= 0.85
+            for owner, probability in belief.delivery_probabilities
+        )
 
     @staticmethod
     def _velocity_xy(own: Mapping) -> tuple[float | None, float | None]:
@@ -2017,11 +2434,17 @@ class TeamCoordinator:
         coordinate_origin: tuple[float, float] | None = None,
     ) -> tuple[TargetDeficitSnapshot, ...]:
         visible = self._visible_early_losses(self._hm_early_losses, group)
+        tracker = self._damage_by_group.get(group)
         deficits = []
         for target_id in sorted({loss.target_id for loss in visible}):
             region = self._hm_target_regions.get(target_id)
             target = self._public_by_id.get(target_id)
             if region is None or target is None:
+                continue
+            if (
+                tracker is not None
+                and tracker.estimate(target_id).destruction_probability >= 0.9
+            ):
                 continue
             target_losses = tuple(
                 loss for loss in visible if loss.target_id == target_id
@@ -2070,16 +2493,15 @@ class TeamCoordinator:
                 loss for loss in visible if loss.target_id == target_id
             )
             evidence = tuple(sorted(loss.owner for loss in evidence_losses))
-            initial_commitment = sum(
-                0.8
-                for owner, assigned_target in self._l_core_assignments.items()
-                if assigned_target == target_id
+            _active_ids, _delivered_ids, optimistic_ids = self._l_core_status(
+                target_id
             )
-            early_lost = sum(loss.nominal_damage for loss in evidence_losses)
-            remaining_damage = max(0.0, initial_commitment - early_lost)
-            missing = self._target_health(9500) - remaining_damage
-            if missing <= 0.0:
+            if len(optimistic_ids) >= 2:
                 continue
+            missing = max(
+                0.0,
+                self._target_health(9500) - len(optimistic_ids) * 0.8,
+            )
             target_position = min(
                 evidence_losses, key=lambda loss: (loss.step, loss.owner)
             ).target_position
@@ -2100,6 +2522,22 @@ class TeamCoordinator:
                 evidence_ids=evidence,
             ))
         return tuple(deficits)
+
+    def _l_core_status(
+        self, target_id: int
+    ) -> tuple[tuple[int, ...], tuple[int, ...], tuple[int, ...]]:
+        optimistic = tuple(sorted(
+            owner
+            for owner, assigned_target in self._l_core_assignments.items()
+            if assigned_target == target_id and owner not in self._l_early_losses
+        ))
+        active = tuple(
+            owner for owner in optimistic if owner not in self._terminalized
+        )
+        delivered = tuple(
+            owner for owner in optimistic if owner in self._terminalized
+        )
+        return active, delivered, optimistic
 
     def _deficit_event_ids(
         self, deficit: TargetDeficitSnapshot
@@ -2178,153 +2616,775 @@ class TeamCoordinator:
         self._reserve_seen_members.add(owner)
         return snapshot
 
-    def _reserve_package_with_fallback_position(
+    def _reserve_reachability_fields(
         self,
-        package: ReservePackageSnapshot,
-        l_tracks_by_owner: Mapping[int, Mapping[int, object]],
-        coordinate_origin: tuple[float, float],
-    ) -> ReservePackageSnapshot:
-        if package.fallback_position is not None:
-            return package
-        if package.member_types[0] == 21000:
-            target = self._public_by_id.get(package.fallback_target_id)
-            if target is None:
-                return package
-            position = self._local_km_point(
-                {"lon": target.lon, "lat": target.lat}, coordinate_origin
-            )
-        else:
-            positions = []
-            for owner in package.member_ids:
-                track = l_tracks_by_owner.get(owner, {}).get(
-                    package.fallback_target_id
-                )
-                if track is None:
-                    return package
-                positions.append(self._local_km_point(
-                    {"lon": float(track.lon), "lat": float(track.lat)},
-                    coordinate_origin,
-                ))
-            position = (
-                sum(item[0] for item in positions) / len(positions),
-                sum(item[1] for item in positions) / len(positions),
-            )
-        return replace(package, fallback_position=position)
-
-    def _reserve_rejection_fields(
-        self,
-        package: ReservePackageSnapshot,
-        members: tuple[ReserveMemberSnapshot, ...],
-        deficits: tuple[TargetDeficitSnapshot, ...],
-        step: int,
-        reason: str,
+        diagnostic: ReachabilityDiagnostics | None,
+        member_type: int,
     ) -> dict:
-        if reason not in {
-            "distance_exceeded",
-            "turn_angle_exceeded",
-            "insufficient_time",
-            "missing_heading",
-        }:
+        if diagnostic is None:
             return {}
-        if step >= self.config.reserve_deadline_step:
-            target_id = package.fallback_target_id
-            target_position = package.fallback_position
-        else:
-            logical = tuple(
-                deficit
-                for deficit in deficits
-                if deficit.responsibility_region == package.responsibility_region
-                and deficit.target_id != package.provisional_target_id
-                and all(
-                    deficit.target_id in member.legal_target_ids
-                    for member in members
-                )
-                and (
-                    (members[0].type == 21000 and deficit.type in (9400, 9600))
-                    or (members[0].type == 21002 and deficit.type == 9500)
-                )
-            )
-            if not logical:
-                return {}
-            center_east = sum(member.position[0] for member in members) / len(members)
-            center_north = sum(member.position[1] for member in members) / len(members)
-            chosen = min(
-                logical,
-                key=lambda deficit: (
-                    -(
-                        deficit.weight
-                        * deficit.missing_damage
-                        / (
-                            1.0
-                            + math.hypot(
-                                deficit.position[0] - center_east,
-                                deficit.position[1] - center_north,
-                            )
-                        )
-                    ),
-                    -deficit.priority,
-                    math.hypot(
-                        deficit.position[0] - center_east,
-                        deficit.position[1] - center_north,
-                    ),
-                    deficit.target_id,
-                ),
-            )
-            target_id = chosen.target_id
-            target_position = chosen.position
-        if target_position is None:
-            return {"target": target_id}
-
-        distances = []
-        angles = []
-        travel_steps = []
-        for member in members:
-            east = target_position[0] - member.position[0]
-            north = target_position[1] - member.position[1]
-            distance = math.hypot(east, north)
-            distances.append(distance)
-            speed = 200.0 if member.type == 21000 else 100.0
-            travel_steps.append(
-                distance * 1000.0 / speed / self.config.seconds_per_step
-            )
-            if distance <= 1e-12:
-                angles.append(0.0)
-                continue
-            if member.heading_east is None or member.heading_north is None:
-                angles.append(None)
-                continue
-            norm = math.hypot(member.heading_east, member.heading_north)
-            if norm <= 1e-12:
-                angles.append(None)
-                continue
-            cosine = (
-                member.heading_east * east + member.heading_north * north
-            ) / (norm * distance)
-            angles.append(math.degrees(math.acos(min(1.0, max(-1.0, cosine)))))
-        member_type = members[0].type
+        seconds_per_step = float(self.config.seconds_per_step)
         return {
-            "target": target_id,
-            "distance_km": max(distances),
+            "distance": diagnostic.distance,
+            "distance_km": diagnostic.distance,
             "max_distance_km": (
                 self.config.reserve_h_max_distance_km
                 if member_type == 21000
                 else self.config.reserve_l_max_distance_km
             ),
-            "turn_angle_degrees": (
-                None if any(angle is None for angle in angles) else max(angles)
-            ),
+            "turn_angle": diagnostic.turn_angle,
+            "turn_angle_degrees": diagnostic.turn_angle,
             "max_turn_angle_degrees": (
                 self.config.reserve_h_max_turn_angle_degrees
                 if member_type == 21000
                 else self.config.reserve_l_max_turn_angle_degrees
             ),
-            "travel_steps": max(travel_steps),
-            "remaining_steps": min(
-                member.remaining_steps
-                for member in members
-                if member.remaining_steps is not None
+            "turn_time": diagnostic.turn_time,
+            "turn_time_seconds": diagnostic.turn_time,
+            "travel_time": diagnostic.travel_time,
+            "travel_time_seconds": diagnostic.travel_time,
+            "total_eta": diagnostic.total_eta,
+            "total_eta_seconds": diagnostic.total_eta,
+            "remaining_time": diagnostic.remaining_time,
+            "remaining_time_seconds": diagnostic.remaining_time,
+            # Retain the 2.2 aliases for audit consumers while exposing the
+            # seconds-based 0.3 diagnostics above.
+            "travel_steps": diagnostic.travel_time / seconds_per_step,
+            "remaining_steps": (
+                None
+                if diagnostic.remaining_time is None
+                else diagnostic.remaining_time / seconds_per_step
             ),
         }
+
+    def _record_reserve_rejection(
+        self,
+        step: int,
+        package: ReservePackageSnapshot,
+        reason: str,
+        **fields,
+    ) -> None:
+        signature = (
+            reason,
+            json.dumps(fields, sort_keys=True, separators=(",", ":"), default=repr),
+        )
+        if self._audited_reserve_rejections.get(package.package_id) == signature:
+            return
+        self._write_audit(
+            "reserve_rejected",
+            step,
+            package=package.package_id,
+            members=package.member_ids,
+            reason=reason,
+            **fields,
+        )
+        self._audited_reserve_rejections[package.package_id] = signature
+
+    def _clear_reserve_rejection(self, package_id: int) -> None:
+        self._audited_reserve_rejections.pop(package_id, None)
+
+    def _deficit_evidence_signature(
+        self, deficit: TargetDeficitSnapshot
+    ) -> tuple[str, ...]:
+        return self._deficit_event_ids(deficit)
+
+    def _write_pending_deficit(
+        self,
+        step: int,
+        key: tuple[tuple[int, ...], int],
+        pending: PendingDeficit,
+        status: str,
+        *,
+        package: ReservePackageSnapshot | None = None,
+        reason: str | None = None,
+    ) -> None:
+        fields = {
+            "status": status,
+            "group": key[0],
+            "target": key[1],
+            "first_step": pending.first_step,
+            "evidence_signature": pending.evidence_signature,
+            "missing": pending.missing_damage,
+        }
+        if package is not None:
+            fields["package"] = package.package_id
+            fields["members"] = package.member_ids
+            fields["responsibility_region"] = package.responsibility_region
+        if reason is not None:
+            fields["reason"] = reason
+        self._write_audit("reserve_pending", step, **fields)
+
+    @staticmethod
+    def _reserve_deficit_key(
+        group: tuple[int, ...], deficit: TargetDeficitSnapshot
+    ) -> tuple[tuple[int, ...], int]:
+        return group, deficit.target_id
+
+    @staticmethod
+    def _deficit_eligible_for_context(
+        context: _ReserveContext, deficit: TargetDeficitSnapshot
+    ) -> bool:
+        if deficit.responsibility_region != context.package.responsibility_region:
+            return False
+        if any(
+            deficit.target_id not in member.legal_target_ids
+            for member in context.members
+        ):
+            return False
+        if context.members[0].type == 21000:
+            return deficit.type in (9400, 9600)
+        return deficit.type == 9500
+
+    @staticmethod
+    def _reserve_deficit_rank(
+        members: tuple[ReserveMemberSnapshot, ...],
+        deficit: TargetDeficitSnapshot,
+    ) -> tuple[float, float, float, int]:
+        center_east = sum(member.position[0] for member in members) / len(members)
+        center_north = sum(member.position[1] for member in members) / len(members)
+        distance = math.hypot(
+            deficit.position[0] - center_east,
+            deficit.position[1] - center_north,
+        )
+        score = deficit.weight * deficit.missing_damage / (1.0 + distance)
+        return -score, -deficit.priority, distance, deficit.target_id
+
+    def _reserve_deficit_rank_for_context(
+        self,
+        step: int,
+        context: _ReserveContext,
+        deficit: TargetDeficitSnapshot,
+    ) -> tuple:
+        track = (
+            self._group_reserve_target_track(
+                context.group, step, deficit.target_id
+            )
+            if deficit.type in (9400, 9600)
+            else None
+        )
+        if track is not None and track.source == "detect_fresh":
+            self._reserve_fresh_targets_seen.add((
+                context.package.package_id, deficit.target_id
+            ))
+        return (
+            0 if track is not None and track.source == "detect_fresh" else 1,
+            *self._reserve_deficit_rank(context.members, deficit),
+        )
+
+    def _target_revalidation(
+        self,
+        step: int,
+        context: _ReserveContext,
+        target_id: int,
+        reserve_eta: float | None,
+    ) -> tuple[str | None, dict]:
+        if any(
+            target_id not in member.legal_target_ids
+            for member in context.members
+        ):
+            return "request_target_not_legal", {}
+        if context.members[0].type != 21000:
+            return None, {}
+        target = self._public_by_id.get(target_id)
+        if target is None:
+            return "request_target_not_legal", {}
+        if self._hm_target_regions.get(target_id) not in (
+            None,
+            context.package.responsibility_region,
+        ):
+            return "request_target_not_legal", {}
+        tracker = self._damage_by_group.get(context.group)
+        belief = None if tracker is None else tracker.estimate(target_id)
+        delivered = 0.0 if belief is None else belief.destruction_probability
+        track = self._group_reserve_target_track(
+            context.group, step, target_id
+        )
+        fresh = track is not None and track.source == "detect_fresh"
+        seen_key = (context.package.package_id, target_id)
+        previously_fresh = seen_key in self._reserve_fresh_targets_seen
+        if fresh:
+            self._reserve_fresh_targets_seen.add(seen_key)
+        target_position = (
+            track.position
+            if fresh
+            else {"lon": float(target.lon), "lat": float(target.lat)}
+        )
+        core_eta, core_ids = self._core_completion_eta(
+            context, target_id, target_position
+        )
+        fields = {
+            "package": context.package.package_id,
+            "owner": self._reserve_package_owners.get(
+                context.package.package_id,
+                min(member.id for member in context.members),
+            ),
+            "members": tuple(member.id for member in context.members),
+            "group": context.group,
+            "target": target_id,
+            "delivered_probability": delivered,
+            "track_source": None if track is None else track.source,
+            "track_age": None if track is None else track.age_steps,
+            "previously_fresh": previously_fresh,
+            "high_confidence_core_delivery": (
+                self._high_confidence_core_delivery(context, target_id)
+            ),
+            "reserve_eta_seconds": reserve_eta,
+            "core_completion_eta_seconds": core_eta,
+            "active_core_ids": core_ids,
+        }
+        if delivered >= 0.9:
+            return "reserve_target_satisfied", fields
+        if (
+            previously_fresh
+            and not fresh
+            and fields["high_confidence_core_delivery"]
+        ):
+            return "reserve_target_stale_cancel", fields
+        if (
+            reserve_eta is not None
+            and core_eta is not None
+            and core_eta <= reserve_eta
+        ):
+            return "core_arrives_first", fields
+        return None, fields
+
+    def _cancel_reserve_target(
+        self,
+        step: int,
+        context: _ReserveContext,
+        target_id: int,
+        reason: str,
+        fields: Mapping,
+    ) -> None:
+        self._reserve_cancelled_targets_step.add((
+            context.package.package_id, target_id
+        ))
+        if reason in (
+            "reserve_target_satisfied",
+            "reserve_target_stale_cancel",
+        ):
+            self._write_audit(reason, step, **dict(fields))
+        key = (context.group, target_id)
+        pending = self._pending_deficits.pop(key, None)
+        self._confirmed_reserve_deficits.discard(key)
+        if pending is not None:
+            self._write_pending_deficit(
+                step,
+                key,
+                pending,
+                "cancelled",
+                package=context.package,
+                reason=reason,
+            )
+        self._record_reserve_rejection(
+            step,
+            context.package,
+            reason,
+            group=context.group,
+            target=target_id,
+            reserve_eta_seconds=fields.get("reserve_eta_seconds"),
+            core_completion_eta_seconds=fields.get(
+                "core_completion_eta_seconds"
+            ),
+        )
+
+    def _update_pending_reserve_deficits(
+        self, step: int, contexts: tuple[_ReserveContext, ...]
+    ) -> frozenset[tuple[tuple[int, ...], int]]:
+        observed: dict[
+            tuple[tuple[int, ...], int],
+            tuple[TargetDeficitSnapshot, _ReserveContext],
+        ] = {}
+        for context in contexts:
+            for deficit in context.deficits:
+                if not self._deficit_eligible_for_context(context, deficit):
+                    continue
+                key = self._reserve_deficit_key(context.group, deficit)
+                observed.setdefault(key, (deficit, context))
+
+        for key in tuple(self._pending_deficits):
+            if key in observed:
+                continue
+            pending = self._pending_deficits.pop(key)
+            self._confirmed_reserve_deficits.discard(key)
+            self._write_pending_deficit(
+                step, key, pending, "cancelled", reason="deficit_disappeared"
+            )
+
+        for key, (deficit, context) in sorted(
+            observed.items(), key=lambda item: (item[0][0], item[0][1])
+        ):
+            package = context.package
+            signature = self._deficit_evidence_signature(deficit)
+            previous = self._pending_deficits.get(key)
+            unchanged = (
+                previous is not None
+                and previous.evidence_signature == signature
+                and math.isclose(
+                    previous.missing_damage,
+                    deficit.missing_damage,
+                    rel_tol=0.0,
+                    abs_tol=1e-9,
+                )
+            )
+            if not unchanged:
+                if previous is not None:
+                    self._write_pending_deficit(
+                        step,
+                        key,
+                        previous,
+                        "cancelled",
+                        package=package,
+                        reason="evidence_changed",
+                    )
+                pending = PendingDeficit(
+                    first_step=step,
+                    evidence_signature=signature,
+                    missing_damage=deficit.missing_damage,
+                )
+                self._pending_deficits[key] = pending
+                self._confirmed_reserve_deficits.discard(key)
+                self._write_pending_deficit(
+                    step, key, pending, "pending", package=package
+                )
+                continue
+            assert previous is not None
+            if (
+                step > previous.first_step
+                and key not in self._confirmed_reserve_deficits
+            ):
+                _, _, diagnostic = self._assess_confirmed_deficit(
+                    step, context, deficit
+                )
+                reason, fields = self._target_revalidation(
+                    step,
+                    context,
+                    deficit.target_id,
+                    None if diagnostic is None else diagnostic.total_eta,
+                )
+                if reason is not None:
+                    self._cancel_reserve_target(
+                        step, context, deficit.target_id, reason, fields
+                    )
+                    continue
+                self._confirmed_reserve_deficits.add(key)
+                self._write_pending_deficit(
+                    step, key, previous, "confirmed", package=package
+                )
+
+        self._reserve_ready_targets.clear()
+        for context in contexts:
+            if context.members[0].type != 21000:
+                continue
+            candidates = tuple(
+                deficit
+                for deficit in context.deficits
+                if self._reserve_deficit_key(context.group, deficit)
+                in self._pending_deficits
+                and self._deficit_eligible_for_context(context, deficit)
+            )
+            if not candidates:
+                continue
+            target = min(
+                candidates,
+                key=lambda item: self._reserve_deficit_rank_for_context(
+                    step, context, item
+                ),
+            ).target_id
+            if target not in self._public_by_id:
+                continue
+            for member in context.members:
+                self._reserve_ready_targets[member.id] = target
+                self._reserve_holding.reset(member.id)
+                self._reserve_holding_anchors.pop(member.id, None)
+
+        return frozenset(
+            key
+            for key in self._confirmed_reserve_deficits
+            if key in observed
+        )
+
+    def _run_reserve_decision(
+        self,
+        *,
+        step: int,
+        members: tuple[ReserveMemberSnapshot, ...],
+        deficits: tuple[TargetDeficitSnapshot, ...],
+        package: ReservePackageSnapshot,
+        deadline_enabled: bool,
+    ):
+        config = self._reserve_echelon.config
+        config = replace(
+            config,
+            deadline_step=(
+                self._reserve_deadline(package)
+                if deadline_enabled
+                else step + 1
+            ),
+        )
+        skill = ReserveEchelonSkill(config)
+        return skill.decide(
+            step=step,
+            members=members,
+            deficits=deficits,
+            packages=(package,),
+        )
+
+    def _assess_confirmed_deficit(
+        self,
+        step: int,
+        context: _ReserveContext,
+        deficit: TargetDeficitSnapshot,
+    ) -> tuple[_PlannedReserveRequest | None, str | None, ReachabilityDiagnostics | None]:
+        package = context.package
+        members = context.members
+        decision_package = package
+        decision_members = members
+        if deficit.target_id == package.provisional_target_id:
+            # reserve-echelon 0.3 treats provisional as metadata and excludes it
+            # from retarget candidates. A staged adapter member has no actual
+            # assignment, so assess the same-ID commitment through an equivalent
+            # temporary definition while retaining the real package externally.
+            decision_package = replace(
+                package,
+                provisional_target_id=package.fallback_target_id,
+                fallback_target_id=deficit.target_id,
+                fallback_position=deficit.position,
+            )
+            decision_members = tuple(
+                replace(member, current_target=package.fallback_target_id)
+                for member in members
+            )
+        decision = self._run_reserve_decision(
+            step=step,
+            members=decision_members,
+            deficits=(deficit,),
+            package=decision_package,
+            deadline_enabled=False,
+        )
+        diagnostic = decision.diagnostics.get(package.package_id)
+        if decision.requests:
+            return (
+                _PlannedReserveRequest(
+                    member_ids=tuple(member.id for member in members),
+                    old_target_id=package.provisional_target_id,
+                    new_target_id=deficit.target_id,
+                    reason="target_deficit",
+                    deficit=deficit,
+                    diagnostics=decision.requests[0].diagnostics,
+                ),
+                None,
+                diagnostic,
+            )
+        return (
+            None,
+            decision.rejected_reasons.get(
+                package.package_id, "no_eligible_deficit"
+            ),
+            diagnostic,
+        )
+
+    def _deadline_reserve_candidates(
+        self, step: int, context: _ReserveContext
+    ) -> tuple[tuple[tuple, int, tuple[float, float], dict], ...]:
+        common_legal = set(context.members[0].legal_target_ids)
+        for member in context.members[1:]:
+            common_legal.intersection_update(member.legal_target_ids)
+        deficits_by_id = {item.target_id: item for item in context.deficits}
+        center_east = sum(item.position[0] for item in context.members) / len(
+            context.members
+        )
+        center_north = sum(item.position[1] for item in context.members) / len(
+            context.members
+        )
+        candidates = []
+        if context.members[0].type == 21000:
+            tracker = self._damage_by_group.get(context.group)
+            for target_id in sorted(common_legal):
+                target = self._public_by_id.get(target_id)
+                if target is None:
+                    continue
+                region = self._hm_target_regions.get(target_id)
+                if (
+                    region is not None
+                    and region != context.package.responsibility_region
+                ):
+                    continue
+                belief = None if tracker is None else tracker.estimate(target_id)
+                delivered = (
+                    0.0 if belief is None else belief.destruction_probability
+                )
+                active_ids = (
+                    () if belief is None else belief.core_committed_missiles
+                )
+                track = self._group_reserve_target_track(
+                    context.group, step, target_id
+                )
+                target_position = (
+                    track.position
+                    if track is not None and track.source == "detect_fresh"
+                    else {"lon": target.lon, "lat": target.lat}
+                )
+                position = self._local_km_point(
+                    target_position,
+                    context.coordinate_origin,
+                )
+                distance = math.hypot(
+                    position[0] - center_east, position[1] - center_north
+                )
+                deficit = deficits_by_id.get(target_id)
+                confirmed = (
+                    (context.group, target_id)
+                    in self._confirmed_reserve_deficits
+                    and deficit is not None
+                )
+                core_eta, eta_core_ids = self._core_completion_eta(
+                    context, target_id, target_position
+                )
+                reserve_eta = (
+                    distance * 1000.0 / 200.0
+                    + float(self.config.reserve_turn_safety_seconds)
+                )
+                core_arrives_first = (
+                    core_eta is not None and core_eta <= reserve_eta
+                )
+                active_damage = sum(
+                    self._nominal_core_damage(
+                        self._mission_plan.entity_types[owner], target.target_type
+                    )
+                    for owner in active_ids
+                    if owner in self._mission_plan.entity_types
+                )
+                active_coverage = min(
+                    1.0, active_damage / self._target_health(target.target_type)
+                )
+                deficit_ratio = (
+                    0.0
+                    if deficit is None
+                    else deficit.missing_damage
+                    / self._target_health(target.target_type)
+                )
+                score = (
+                    target.value
+                    * (1.0 - delivered)
+                    * (1.0 + deficit_ratio)
+                    / (1.0 + distance)
+                    - target.value * active_coverage
+                    - (target.value if core_arrives_first else 0.0)
+                )
+                eligible = delivered < 0.9
+                fields = {
+                    "target": target_id,
+                    "position": target_position,
+                    "track_source": (
+                        "public" if track is None else track.source
+                    ),
+                    "track_age": None if track is None else track.age_steps,
+                    "score": score,
+                    "confirmed_deficit": confirmed,
+                    "missing": None if deficit is None else deficit.missing_damage,
+                    "weight": target.value,
+                    "distance_km": distance,
+                    "delivered_probability": delivered,
+                    "active_core_ids": active_ids,
+                    "active_core_damage": active_damage,
+                    "active_core_coverage": active_coverage,
+                    "reserve_eta_seconds": reserve_eta,
+                    "core_completion_eta_seconds": core_eta,
+                    "core_eta_ids": eta_core_ids,
+                    "core_arrives_first": core_arrives_first,
+                    "eligible": eligible,
+                    "excluded_reason": (
+                        None if eligible else "delivered_probability_at_least_0_9"
+                    ),
+                }
+                if not eligible:
+                    self._write_audit(
+                        "reserve_fallback_candidate",
+                        step,
+                        package=context.package.package_id,
+                        group=context.group,
+                        selected=False,
+                        reachability_reason=None,
+                        **fields,
+                    )
+                    continue
+                key = (
+                    0 if confirmed else 1,
+                    0
+                    if track is not None and track.source == "detect_fresh"
+                    else 1,
+                    1 if core_arrives_first else 0,
+                    -score,
+                    delivered,
+                    active_coverage,
+                    distance,
+                    target_id,
+                )
+                candidates.append((key, target_id, position, fields))
+        else:
+            for target_id in sorted(common_legal):
+                tracks = [
+                    self._l_catalogues.get(member.id, {}).get(target_id)
+                    for member in context.members
+                ]
+                if any(track is None for track in tracks):
+                    continue
+                positions = tuple(
+                    self._local_km_point(
+                        {"lon": float(track.lon), "lat": float(track.lat)},
+                        context.coordinate_origin,
+                    )
+                    for track in tracks
+                    if track is not None
+                )
+                position = (
+                    sum(item[0] for item in positions) / len(positions),
+                    sum(item[1] for item in positions) / len(positions),
+                )
+                distance = math.hypot(
+                    position[0] - center_east, position[1] - center_north
+                )
+                deficit = deficits_by_id.get(target_id)
+                confirmed = (
+                    (context.group, target_id)
+                    in self._confirmed_reserve_deficits
+                    and deficit is not None
+                )
+                active_ids, delivered_ids, optimistic_ids = self._l_core_status(
+                    target_id
+                )
+                active_coverage = min(
+                    1.0, len(optimistic_ids) * 0.8 / 1.2
+                )
+                reserve_eta = (
+                    distance * 1000.0 / 100.0
+                    + float(self.config.reserve_turn_safety_seconds)
+                )
+                arrivals = sorted(
+                    (
+                        _distance_km(
+                            progress.position,
+                            {
+                                "lon": float(tracks[0].lon),
+                                "lat": float(tracks[0].lat),
+                            },
+                        )
+                        * 1000.0
+                        / 100.0,
+                        owner,
+                    )
+                    for owner in active_ids
+                    if (progress := self._l_progress.get(owner)) is not None
+                    and progress.position is not None
+                )
+                core_eta = arrivals[1][0] if len(arrivals) >= 2 else None
+                core_arrives_first = (
+                    core_eta is not None and core_eta <= reserve_eta
+                )
+                deficit_ratio = (
+                    0.0 if deficit is None else deficit.missing_damage / 1.2
+                )
+                score = (
+                    (1.0 + deficit_ratio) / (1.0 + distance)
+                    - active_coverage
+                    - (1.0 if core_arrives_first else 0.0)
+                )
+                fields = {
+                    "target": target_id,
+                    "position": {
+                        "lon": float(tracks[0].lon),
+                        "lat": float(tracks[0].lat),
+                    },
+                    "score": score,
+                    "confirmed_deficit": confirmed,
+                    "missing": None if deficit is None else deficit.missing_damage,
+                    "weight": 1.0,
+                    "distance_km": distance,
+                    "delivered_probability": min(
+                        1.0, len(delivered_ids) * 0.8 / 1.2
+                    ),
+                    "delivered_core_ids": delivered_ids,
+                    "optimistic_core_ids": optimistic_ids,
+                    "optimistic_core_count": len(optimistic_ids),
+                    "active_core_ids": active_ids,
+                    "active_core_damage": len(active_ids) * 0.8,
+                    "active_core_coverage": active_coverage,
+                    "reserve_eta_seconds": reserve_eta,
+                    "core_completion_eta_seconds": core_eta,
+                    "core_eta_ids": tuple(owner for _, owner in arrivals[:2]),
+                    "core_arrives_first": core_arrives_first,
+                    "eligible": True,
+                    "excluded_reason": None,
+                }
+                key = (
+                    0 if confirmed else 1,
+                    len(delivered_ids),
+                    len(optimistic_ids),
+                    1 if core_arrives_first else 0,
+                    -score,
+                    active_coverage,
+                    distance,
+                    target_id,
+                )
+                candidates.append((key, target_id, position, fields))
+        return tuple(sorted(candidates, key=lambda item: item[0]))
+
+    def _assess_deadline_target(
+        self,
+        step: int,
+        context: _ReserveContext,
+        target_id: int,
+        position: tuple[float, float],
+    ) -> tuple[_PlannedReserveRequest | None, str | None, ReachabilityDiagnostics | None]:
+        package = context.package
+        members = context.members
+        decision_members = members
+        if target_id == package.provisional_target_id:
+            decision_package = replace(
+                package,
+                provisional_target_id=package.fallback_target_id,
+                fallback_target_id=target_id,
+                fallback_position=position,
+            )
+            decision_members = tuple(
+                replace(member, current_target=package.fallback_target_id)
+                for member in members
+            )
+        else:
+            decision_package = replace(
+                package,
+                fallback_target_id=target_id,
+                fallback_position=position,
+            )
+        decision = self._run_reserve_decision(
+            step=step,
+            members=decision_members,
+            deficits=(),
+            package=decision_package,
+            deadline_enabled=True,
+        )
+        diagnostic = decision.diagnostics.get(package.package_id)
+        if decision.requests:
+            return (
+                _PlannedReserveRequest(
+                    member_ids=tuple(member.id for member in members),
+                    old_target_id=package.provisional_target_id,
+                    new_target_id=target_id,
+                    reason="deadline_dynamic_fallback",
+                    deficit=None,
+                    diagnostics=decision.requests[0].diagnostics,
+                ),
+                None,
+                diagnostic,
+            )
+        return (
+            None,
+            decision.rejected_reasons.get(
+                package.package_id, "deadline_no_legal_target"
+            ),
+            diagnostic,
+        )
 
     def _record_reserve_deficits(
         self,
@@ -2342,6 +3402,11 @@ class TeamCoordinator:
             )
             if signature in self._audited_reserve_deficits:
                 continue
+            active_ids, delivered_ids, optimistic_ids = (
+                self._l_core_status(deficit.target_id)
+                if deficit.type == 9500
+                else ((), (), ())
+            )
             self._write_audit(
                 "reserve_deficit",
                 step,
@@ -2354,7 +3419,14 @@ class TeamCoordinator:
                 target_health=self._target_health(deficit.type),
                 initial_core_nominal=self._initial_core_nominal(deficit),
                 early_lost_nominal=self._early_lost_nominal(deficit),
+                active_core_ids=active_ids,
+                delivered_core_ids=delivered_ids,
+                optimistic_core_count=(
+                    len(optimistic_ids) if deficit.type == 9500 else None
+                ),
                 responsibility_region=deficit.responsibility_region,
+                role=self._reserve_role(package),
+                deadline_step=self._reserve_deadline(package),
                 evidence_ids=deficit.evidence_ids,
                 event_ids=self._deficit_event_ids(deficit),
             )
@@ -2388,6 +3460,541 @@ class TeamCoordinator:
             if loss.owner in evidence and loss.target_id == deficit.target_id
         )
 
+    def _apply_reserve_request(
+        self,
+        step: int,
+        context: _ReserveContext,
+        request: _PlannedReserveRequest,
+        current_hm: Mapping[int, dict],
+        current_l: Mapping[int, dict],
+        l_tracks_by_owner: Mapping[int, Mapping[int, object]],
+        rows: dict[int, list[tuple[float, ...]]],
+    ) -> bool:
+        package = context.package
+        refreshed_deficit = None
+        if request.deficit is not None:
+            latest = (
+                self._hm_reserve_deficits(
+                    context.group, context.coordinate_origin
+                )
+                if package.member_types[0] == 21000
+                else self._l_reserve_deficits(
+                    context.group, context.coordinate_origin
+                )
+            )
+            current = next(
+                (
+                    item
+                    for item in latest
+                    if item.target_id == request.new_target_id
+                    and self._deficit_eligible_for_context(context, item)
+                ),
+                None,
+            )
+            key = (context.group, request.new_target_id)
+            pending = self._pending_deficits.get(key)
+            if (
+                current is None
+                or pending is None
+                or key not in self._confirmed_reserve_deficits
+                or pending.evidence_signature
+                != self._deficit_evidence_signature(current)
+                or not math.isclose(
+                    pending.missing_damage,
+                    current.missing_damage,
+                    rel_tol=0.0,
+                    abs_tol=1e-9,
+                )
+            ):
+                if pending is not None:
+                    self._pending_deficits.pop(key, None)
+                    self._confirmed_reserve_deficits.discard(key)
+                    self._write_pending_deficit(
+                        step,
+                        key,
+                        pending,
+                        "cancelled",
+                        package=package,
+                        reason="deficit_disappeared_before_action",
+                    )
+                self._record_reserve_rejection(
+                    step,
+                    package,
+                    "pending_deficit_disappeared",
+                    group=context.group,
+                    target=request.new_target_id,
+                )
+                return False
+            refreshed_deficit = current
+
+        fresh_track = (
+            self._group_reserve_target_track(
+                context.group, step, request.new_target_id
+            )
+            if context.members[0].type == 21000
+            else None
+        )
+        if fresh_track is not None and fresh_track.source == "detect_fresh":
+            fresh_position = self._local_km_point(
+                fresh_track.position, context.coordinate_origin
+            )
+            if refreshed_deficit is not None:
+                refreshed_deficit = replace(
+                    refreshed_deficit, position=fresh_position
+                )
+                refreshed, physical_reason, physical_diagnostic = (
+                    self._assess_confirmed_deficit(
+                        step, context, refreshed_deficit
+                    )
+                )
+            else:
+                refreshed, physical_reason, physical_diagnostic = (
+                    self._assess_deadline_target(
+                        step,
+                        context,
+                        request.new_target_id,
+                        fresh_position,
+                    )
+                )
+            if refreshed is None:
+                self._record_reserve_rejection(
+                    step,
+                    package,
+                    physical_reason or "request_target_not_reachable",
+                    group=context.group,
+                    target=request.new_target_id,
+                    **self._reserve_reachability_fields(
+                        physical_diagnostic, context.members[0].type
+                    ),
+                )
+                return False
+            request = refreshed
+
+        revalidation_reason, revalidation_fields = self._target_revalidation(
+            step,
+            context,
+            request.new_target_id,
+            request.diagnostics.total_eta,
+        )
+        if revalidation_reason is not None:
+            self._cancel_reserve_target(
+                step,
+                context,
+                request.new_target_id,
+                revalidation_reason,
+                revalidation_fields,
+            )
+            return False
+
+        goals = {}
+        invalid_reason = None
+        for owner in request.member_ids:
+            if self._assignments.get(owner) is not None:
+                invalid_reason = "old_target_changed"
+                break
+            if owner in current_hm:
+                track = self._owner_target_tracks(owner, step).get(
+                    request.new_target_id
+                )
+                goal = None if track is None else track.position
+            elif owner in current_l:
+                track = l_tracks_by_owner.get(owner, {}).get(
+                    request.new_target_id
+                )
+                goal = (
+                    None
+                    if track is None
+                    else {"lon": float(track.lon), "lat": float(track.lat)}
+                )
+            else:
+                goal = None
+            if goal is None:
+                invalid_reason = "request_target_not_legal"
+                break
+            goals[owner] = goal
+        if invalid_reason is not None:
+            self._record_reserve_rejection(
+                step,
+                package,
+                invalid_reason,
+                group=context.group,
+                target=request.new_target_id,
+            )
+            return False
+
+        applied_hm = {}
+        for owner in request.member_ids:
+            self._reserve_holding.reset(owner)
+            self._reserve_holding_anchors.pop(owner, None)
+            self._reserve_ready_targets.pop(owner, None)
+        self._reserve_reachability_origins.pop(package.package_id, None)
+        for owner in request.member_ids:
+            goal = goals[owner]
+            self._assignments[owner] = request.new_target_id
+            self._goals[owner] = goal
+            self._goal_versions[(owner, request.new_target_id)] = (
+                goal["lon"], goal["lat"]
+            )
+            self._set_target_action(
+                rows, owner, request.new_target_id, priority=True
+            )
+            action_event_id = (
+                f"reserve-action:{package.package_id}:{owner}:"
+                f"{step}:{request.new_target_id}"
+            )
+            self._write_audit(
+                "reserve_action4",
+                step,
+                package=package.package_id,
+                owner=owner,
+                target=request.new_target_id,
+                action_type=4,
+                reason=request.reason,
+                role=self._reserve_role(package),
+                deadline_step=self._reserve_deadline(package),
+                event_id=action_event_id,
+            )
+            if owner in current_hm:
+                applied_hm[owner] = current_hm[owner]
+        if applied_hm:
+            self._record_hm_progress(step, applied_hm)
+        state = "DISPATCHED" if request.deficit is not None else "FALLBACK"
+        self._reserve_packages[package.package_id] = replace(
+            package,
+            state=state,
+            dispatch_count=package.dispatch_count + 1,
+            target_id=request.new_target_id,
+        )
+        self._clear_reserve_rejection(package.package_id)
+        request_event_id = (
+            f"reserve-request:{package.package_id}:{step}:"
+            f"{request.new_target_id}"
+        )
+        fields = {
+            "package": package.package_id,
+            "members": request.member_ids,
+            "old_target": request.old_target_id,
+            "new_target": request.new_target_id,
+            "reason": request.reason,
+            "group": context.group,
+            "role": self._reserve_role(package),
+            "deadline_step": self._reserve_deadline(package),
+            "event_id": request_event_id,
+            **self._reserve_reachability_fields(
+                request.diagnostics, context.members[0].type
+            ),
+        }
+        if request.deficit is not None:
+            fields["evidence_ids"] = request.deficit.evidence_ids
+            fields["evidence_event_ids"] = self._deficit_event_ids(
+                request.deficit
+            )
+            fields["missing"] = request.deficit.missing_damage
+            key = (context.group, request.deficit.target_id)
+            self._pending_deficits.pop(key, None)
+            self._confirmed_reserve_deficits.discard(key)
+            self._write_audit("reserve_dispatch", step, **fields)
+        else:
+            self._write_audit("reserve_fallback", step, **fields)
+        return True
+
+    def _assess_reserve_retarget(
+        self,
+        step: int,
+        context: _ReserveContext,
+        target_id: int,
+        position: tuple[float, float],
+    ) -> tuple[_PlannedReserveRequest | None, str | None, ReachabilityDiagnostics | None]:
+        current_target = context.package.target_id
+        if current_target is None:
+            current_target = self._assignments.get(context.members[0].id)
+        if current_target is None or current_target == target_id:
+            return None, "retarget_same_target", None
+        temporary = replace(
+            context.package,
+            state="STAGING",
+            provisional_target_id=current_target,
+            fallback_target_id=target_id,
+            fallback_position=position,
+            dispatch_count=0,
+            target_id=None,
+            retarget_count=0,
+        )
+        members = tuple(
+            replace(member, current_target=current_target, retarget_count=0)
+            for member in context.members
+        )
+        skill = ReserveEchelonSkill(replace(
+            self._reserve_echelon.config, deadline_step=step
+        ))
+        decision = skill.decide(
+            step=step,
+            members=members,
+            deficits=(),
+            packages=(temporary,),
+        )
+        diagnostic = decision.diagnostics.get(context.package.package_id)
+        if not decision.requests:
+            return (
+                None,
+                decision.rejected_reasons.get(
+                    context.package.package_id, "retarget_not_reachable"
+                ),
+                diagnostic,
+            )
+        return (
+            _PlannedReserveRequest(
+                member_ids=tuple(member.id for member in context.members),
+                old_target_id=current_target,
+                new_target_id=target_id,
+                reason="reserve_retarget",
+                deficit=None,
+                diagnostics=decision.requests[0].diagnostics,
+            ),
+            None,
+            diagnostic,
+        )
+
+    def _apply_reserve_retarget(
+        self,
+        step: int,
+        context: _ReserveContext,
+        request: _PlannedReserveRequest,
+        current_hm: Mapping[int, dict],
+        rows: dict[int, list[tuple[float, ...]]],
+    ) -> bool:
+        goals = {}
+        for member in context.members:
+            owner = member.id
+            if self._assignments.get(owner) != request.old_target_id:
+                return False
+            track = self._owner_target_tracks(owner, step).get(
+                request.new_target_id
+            )
+            if track is None:
+                return False
+            goals[owner] = track.position
+        reason, fields = self._target_revalidation(
+            step,
+            context,
+            request.new_target_id,
+            request.diagnostics.total_eta,
+        )
+        if reason is not None:
+            self._cancel_reserve_target(
+                step, context, request.new_target_id, reason, fields
+            )
+            return False
+        for member in context.members:
+            owner = member.id
+            goal = goals[owner]
+            self._assignments[owner] = request.new_target_id
+            self._goals[owner] = goal
+            self._goal_versions[(owner, request.new_target_id)] = (
+                goal["lon"], goal["lat"]
+            )
+            self._reserve_retarget_counts[owner] = (
+                self._reserve_retarget_counts.get(owner, 0) + 1
+            )
+            self._set_target_action(
+                rows, owner, request.new_target_id, priority=True
+            )
+            self._write_audit(
+                "reserve_action4",
+                step,
+                package=context.package.package_id,
+                owner=owner,
+                target=request.new_target_id,
+                action_type=4,
+                reason="reserve_retarget",
+                event_id=(
+                    f"reserve-retarget-action:{context.package.package_id}:"
+                    f"{owner}:{step}:{request.new_target_id}"
+                ),
+            )
+        updated = replace(
+            context.package,
+            target_id=request.new_target_id,
+            retarget_count=context.package.retarget_count + 1,
+        )
+        self._reserve_packages[context.package.package_id] = updated
+        self._write_audit(
+            "reserve_retarget",
+            step,
+            package=context.package.package_id,
+            owner=self._reserve_package_owners[context.package.package_id],
+            members=request.member_ids,
+            old_target=request.old_target_id,
+            new_target=request.new_target_id,
+            retarget_count=updated.retarget_count,
+            group=context.group,
+            reason="current_target_completed_or_stale",
+            event_id=(
+                f"reserve-retarget:{context.package.package_id}:{step}:"
+                f"{request.new_target_id}"
+            ),
+            **self._reserve_reachability_fields(
+                request.diagnostics, context.members[0].type
+            ),
+        )
+        self._record_hm_progress(
+            step,
+            {
+                member.id: current_hm[member.id]
+                for member in context.members
+                if member.id in current_hm
+            },
+        )
+        return True
+
+    def _plan_dispatched_reserve_retargets(
+        self,
+        step: int,
+        current_hm: Mapping[int, dict],
+        current_l: Mapping[int, dict],
+        l_tracks_by_owner: Mapping[int, Mapping[int, object]],
+        rows: dict[int, list[tuple[float, ...]]],
+    ) -> None:
+        for package in tuple(sorted(
+            self._reserve_packages.values(), key=lambda item: item.package_id
+        )):
+            if package.state == "STAGING" or set(package.member_types) != {21000}:
+                continue
+            active_ids = tuple(
+                owner for owner in package.member_ids if owner in current_hm
+            )
+            if not active_ids:
+                continue
+            origin_owner = min(active_ids)
+            origin_position = self._legal_position(current_hm[origin_owner])
+            if not self._valid_lonlat(origin_position):
+                continue
+            assert origin_position is not None
+            coordinate_origin = (
+                origin_position["lon"], origin_position["lat"]
+            )
+            snapshots = tuple(
+                self._current_reserve_member(
+                    owner,
+                    step,
+                    current_hm,
+                    current_l,
+                    l_tracks_by_owner,
+                    coordinate_origin,
+                )
+                for owner in active_ids
+            )
+            if any(snapshot is None for snapshot in snapshots):
+                continue
+            members = tuple(
+                snapshot for snapshot in snapshots if snapshot is not None
+            )
+            if len({member.group for member in members}) != 1:
+                continue
+            group = members[0].group
+            assert isinstance(group, tuple)
+            owner = min(active_ids)
+            old_owner = self._reserve_package_owners.get(
+                package.package_id, min(package.member_ids)
+            )
+            self._reserve_package_owners[package.package_id] = owner
+            if old_owner != owner:
+                self._write_audit(
+                    "reserve_owner_changed",
+                    step,
+                    package=package.package_id,
+                    old_owner=old_owner,
+                    new_owner=owner,
+                    surviving_members=active_ids,
+                    state=package.state,
+                    target=package.target_id,
+                    reason="active_member_set_changed",
+                    group=group,
+                )
+            deficits = self._hm_reserve_deficits(group, coordinate_origin)
+            deficits = tuple(
+                replace(
+                    deficit,
+                    position=self._local_km_point(track.position, coordinate_origin),
+                )
+                if (
+                    (track := self._group_reserve_target_track(
+                        group, step, deficit.target_id
+                    )) is not None
+                    and track.source == "detect_fresh"
+                )
+                else deficit
+                for deficit in deficits
+            )
+            context = _ReserveContext(
+                package, members, group, deficits, coordinate_origin
+            )
+            current_target = package.target_id
+            if current_target is None:
+                current_target = self._assignments.get(owner)
+            if current_target is None:
+                continue
+            trigger, trigger_fields = self._target_revalidation(
+                step, context, current_target, None
+            )
+            if trigger not in (
+                "reserve_target_satisfied",
+                "reserve_target_stale_cancel",
+            ):
+                continue
+            self._write_audit(trigger, step, **trigger_fields)
+            if package.retarget_count >= 1:
+                self._record_reserve_rejection(
+                    step,
+                    package,
+                    "max_reserve_retargets",
+                    group=group,
+                    target=current_target,
+                )
+                continue
+            candidates = []
+            for deficit in deficits:
+                if (
+                    deficit.target_id != current_target
+                    and (group, deficit.target_id)
+                    in self._confirmed_reserve_deficits
+                    and self._deficit_eligible_for_context(context, deficit)
+                ):
+                    candidates.append((
+                        self._reserve_deficit_rank_for_context(
+                            step, context, deficit
+                        ),
+                        deficit.target_id,
+                        deficit.position,
+                    ))
+            for key, target_id, position, _ in self._deadline_reserve_candidates(
+                step, context
+            ):
+                if target_id != current_target:
+                    candidates.append(((1, *key), target_id, position))
+            used_targets = set()
+            for _, target_id, position in sorted(candidates, key=lambda item: item[0]):
+                if target_id in used_targets:
+                    continue
+                used_targets.add(target_id)
+                request, _, _ = self._assess_reserve_retarget(
+                    step, context, target_id, position
+                )
+                if request is None:
+                    continue
+                reason, fields = self._target_revalidation(
+                    step,
+                    context,
+                    target_id,
+                    request.diagnostics.total_eta,
+                )
+                if reason is not None:
+                    continue
+                if self._apply_reserve_retarget(
+                    step, context, request, current_hm, rows
+                ):
+                    break
+
     def _plan_reserve_dispatches(
         self,
         step: int,
@@ -2397,8 +4004,18 @@ class TeamCoordinator:
         rows: dict[int, list[tuple[float, ...]]],
     ) -> None:
         self._reserve_member_snapshots.clear()
+        self._reserve_cancelled_targets_step.clear()
         if not self._reserve_packages:
+            self._pending_deficits.clear()
+            self._confirmed_reserve_deficits.clear()
+            self._reserve_ready_targets.clear()
             return
+
+        self._plan_dispatched_reserve_retargets(
+            step, current_hm, current_l, l_tracks_by_owner, rows
+        )
+
+        contexts = []
         for package in sorted(
             self._reserve_packages.values(), key=lambda item: item.package_id
         ):
@@ -2430,32 +4047,41 @@ class TeamCoordinator:
                 )
                 for owner in package.member_ids
             )
-            if any(snapshot is None for snapshot in snapshots):
-                missing = tuple(
-                    owner
-                    for owner, snapshot in zip(
-                        package.member_ids, snapshots, strict=True
-                    )
-                    if snapshot is None
-                )
-                self._write_audit(
-                    "reserve_rejected",
+            active = tuple(
+                snapshot for snapshot in snapshots if snapshot is not None
+            )
+            if not active:
+                self._record_reserve_rejection(
                     step,
-                    package=package.package_id,
-                    members=package.member_ids,
-                    reason="member_snapshot_unavailable",
-                    unavailable_members=missing,
+                    package,
+                    "member_snapshot_unavailable",
+                    unavailable_members=package.member_ids,
                 )
                 continue
-            active = tuple(snapshot for snapshot in snapshots if snapshot is not None)
-            groups = {snapshot.group for snapshot in active}
-            if len(groups) != 1:
+            old_owner = self._reserve_package_owners.get(
+                package.package_id, min(package.member_ids)
+            )
+            new_owner = min(member.id for member in active)
+            self._reserve_package_owners[package.package_id] = new_owner
+            if old_owner != new_owner:
                 self._write_audit(
-                    "reserve_rejected",
+                    "reserve_owner_changed",
                     step,
                     package=package.package_id,
-                    members=package.member_ids,
-                    reason="package_group_mismatch",
+                    old_owner=old_owner,
+                    new_owner=new_owner,
+                    surviving_members=tuple(member.id for member in active),
+                    state=package.state,
+                    target=package.target_id,
+                    reason="active_member_set_changed",
+                    group=active[0].group,
+                )
+            groups = {snapshot.group for snapshot in active}
+            if len(groups) != 1:
+                self._record_reserve_rejection(
+                    step,
+                    package,
+                    "package_group_mismatch",
                     groups=tuple(sorted(groups, key=repr)),
                 )
                 continue
@@ -2463,164 +4089,232 @@ class TeamCoordinator:
                 self._assignments.get(snapshot.id) is not None
                 for snapshot in active
             ):
-                self._write_audit(
-                    "reserve_rejected",
-                    step,
-                    package=package.package_id,
-                    members=package.member_ids,
-                    reason="provisional_target_mismatch",
-                )
-                continue
-            if any(
-                package.fallback_target_id not in snapshot.legal_target_ids
-                for snapshot in active
-            ):
-                self._write_audit(
-                    "reserve_rejected",
-                    step,
-                    package=package.package_id,
-                    members=package.member_ids,
-                    reason="fallback_target_not_legal",
+                self._record_reserve_rejection(
+                    step, package, "provisional_target_mismatch"
                 )
                 continue
             group = next(iter(groups))
+            assert isinstance(group, tuple)
             assert coordinate_origin is not None
             deficits = (
                 self._hm_reserve_deficits(group, coordinate_origin)
                 if package.member_types[0] == 21000
                 else self._l_reserve_deficits(group, coordinate_origin)
             )
+            if package.member_types[0] == 21000:
+                deficits = tuple(
+                    replace(
+                        deficit,
+                        position=self._local_km_point(
+                            track.position, coordinate_origin
+                        ),
+                    )
+                    if (
+                        (track := self._group_reserve_target_track(
+                            group, step, deficit.target_id
+                        )) is not None
+                        and track.source == "detect_fresh"
+                    )
+                    else deficit
+                    for deficit in deficits
+                )
             deficits = tuple(sorted(deficits, key=lambda item: item.target_id))
             self._record_reserve_deficits(step, package, group, deficits)
-            decision_package = self._reserve_package_with_fallback_position(
-                package, l_tracks_by_owner, coordinate_origin
-            )
-            decision = self._reserve_echelon.decide(
-                step=step,
+            contexts.append(_ReserveContext(
+                package=package,
                 members=active,
+                group=group,
                 deficits=deficits,
-                packages=(decision_package,),
+                coordinate_origin=coordinate_origin,
+            ))
+
+        context_tuple = tuple(contexts)
+        confirmed = self._update_pending_reserve_deficits(step, context_tuple)
+        for context in context_tuple:
+            package = context.package
+            eligible = tuple(
+                deficit
+                for deficit in context.deficits
+                if self._deficit_eligible_for_context(context, deficit)
+                and (package.package_id, deficit.target_id)
+                not in self._reserve_cancelled_targets_step
             )
-            for package_id, reason in sorted(decision.rejected_reasons.items()):
-                self._write_audit(
-                    "reserve_rejected",
+            confirmed_deficits = tuple(
+                deficit
+                for deficit in eligible
+                if self._reserve_deficit_key(context.group, deficit) in confirmed
+            )
+            if eligible and not confirmed_deficits:
+                # The first observation is warning/READY only, including when it
+                # first appears at the nominal deadline.
+                self._clear_reserve_rejection(package.package_id)
+                continue
+
+            request = None
+            rejection_reason = None
+            rejection_target = None
+            rejection_diagnostic = None
+            for deficit in sorted(
+                confirmed_deficits,
+                key=lambda item: self._reserve_deficit_rank_for_context(
+                    step, context, item
+                ),
+            ):
+                (
+                    request,
+                    rejection_reason,
+                    rejection_diagnostic,
+                ) = self._assess_confirmed_deficit(step, context, deficit)
+                rejection_target = deficit.target_id
+                if request is not None:
+                    revalidation_reason, revalidation_fields = (
+                        self._target_revalidation(
+                            step,
+                            context,
+                            deficit.target_id,
+                            request.diagnostics.total_eta,
+                        )
+                    )
+                    if revalidation_reason is not None:
+                        self._cancel_reserve_target(
+                            step,
+                            context,
+                            deficit.target_id,
+                            revalidation_reason,
+                            revalidation_fields,
+                        )
+                        request = None
+                        rejection_reason = revalidation_reason
+                        continue
+                    break
+                if rejection_reason in ("stage_too_late", "max_dispatches"):
+                    break
+
+            if request is not None:
+                if self._apply_reserve_request(
                     step,
-                    package=package_id,
-                    members=package.member_ids,
-                    reason=reason,
-                    group=group,
-                    **self._reserve_rejection_fields(
-                        decision_package, active, deficits, step, reason
-                    ),
-                )
-            for request in decision.requests:
-                goals = {}
-                invalid_reason = None
-                for owner in request.member_ids:
-                    assigned = self._assignments.get(owner)
-                    if assigned is not None:
-                        invalid_reason = "old_target_changed"
+                    context,
+                    request,
+                    current_hm,
+                    current_l,
+                    l_tracks_by_owner,
+                    rows,
+                ):
+                    continue
+                request = None
+
+            if step >= self._reserve_deadline(package) and rejection_reason not in (
+                "stage_too_late", "max_dispatches"
+            ):
+                candidate_rows = []
+                selected_request = None
+                for _, target_id, position, candidate_fields in (
+                    self._deadline_reserve_candidates(step, context)
+                ):
+                    (
+                        candidate_request,
+                        candidate_reason,
+                        candidate_diagnostic,
+                    ) = self._assess_deadline_target(
+                        step, context, target_id, position
+                    )
+                    if candidate_request is not None:
+                        validation_reason, validation_fields = (
+                            self._target_revalidation(
+                                step,
+                                context,
+                                target_id,
+                                candidate_request.diagnostics.total_eta,
+                            )
+                        )
+                        candidate_fields.update({
+                            "reserve_eta_seconds": validation_fields.get(
+                                "reserve_eta_seconds"
+                            ),
+                            "core_completion_eta_seconds": (
+                                validation_fields.get(
+                                    "core_completion_eta_seconds"
+                                )
+                            ),
+                            "core_arrives_first": (
+                                validation_reason == "core_arrives_first"
+                            ),
+                        })
+                        if validation_reason is not None:
+                            self._cancel_reserve_target(
+                                step,
+                                context,
+                                target_id,
+                                validation_reason,
+                                validation_fields,
+                            )
+                            candidate_request = None
+                            candidate_reason = validation_reason
+                    if selected_request is None and candidate_request is not None:
+                        selected_request = candidate_request
+                    candidate_rows.append((
+                        candidate_fields,
+                        candidate_reason,
+                        candidate_diagnostic,
+                        candidate_request is not None,
+                    ))
+                    if selected_request is None:
+                        rejection_reason = candidate_reason
+                        rejection_target = target_id
+                        rejection_diagnostic = candidate_diagnostic
+                    if candidate_reason in ("stage_too_late", "max_dispatches"):
                         break
-                    if owner in current_hm:
-                        track = self._owner_target_tracks(owner, step).get(
-                            request.new_target_id
-                        )
-                        goal = None if track is None else track.position
-                    else:
-                        track = l_tracks_by_owner.get(owner, {}).get(
-                            request.new_target_id
-                        )
-                        goal = (
-                            None
-                            if track is None
-                            else {"lon": float(track.lon), "lat": float(track.lat)}
-                        )
-                    if goal is None:
-                        invalid_reason = "request_target_not_legal"
-                        break
-                    goals[owner] = goal
-                if invalid_reason is not None:
+                request = selected_request
+                selected_target = None if request is None else request.new_target_id
+                for (
+                    candidate_fields,
+                    candidate_reason,
+                    candidate_diagnostic,
+                    reachable,
+                ) in candidate_rows:
+                    reachability_fields = self._reserve_reachability_fields(
+                        candidate_diagnostic, context.members[0].type
+                    )
                     self._write_audit(
-                        "reserve_rejected",
+                        "reserve_fallback_candidate",
                         step,
                         package=package.package_id,
-                        members=request.member_ids,
-                        reason=invalid_reason,
-                        group=group,
+                        group=context.group,
+                        selected=(
+                            reachable
+                            and candidate_fields["target"] == selected_target
+                        ),
+                        selected_target=selected_target,
+                        reachability_reason=candidate_reason,
+                        **{**candidate_fields, **reachability_fields},
+                    )
+                if not candidate_rows and request is None:
+                    rejection_reason = "deadline_no_legal_target"
+                if request is not None:
+                    self._apply_reserve_request(
+                        step,
+                        context,
+                        request,
+                        current_hm,
+                        current_l,
+                        l_tracks_by_owner,
+                        rows,
                     )
                     continue
 
-                applied_hm = {}
-                for owner in request.member_ids:
-                    self._reserve_holding.reset(owner)
-                    self._reserve_holding_anchors.pop(owner, None)
-                self._reserve_reachability_origins.pop(
-                    package.package_id, None
+            if rejection_reason is None:
+                rejection_reason = (
+                    "no_eligible_deficit" if context.deficits else "no_deficit"
                 )
-                for owner in request.member_ids:
-                    goal = goals[owner]
-                    self._assignments[owner] = request.new_target_id
-                    self._goals[owner] = goal
-                    self._goal_versions[(owner, request.new_target_id)] = (
-                        goal["lon"], goal["lat"]
-                    )
-                    self._reserve_retarget_counts[owner] = (
-                        self._reserve_retarget_counts.get(owner, 0) + 1
-                    )
-                    self._set_target_action(
-                        rows, owner, request.new_target_id, priority=True
-                    )
-                    action_event_id = (
-                        f"reserve-action:{package.package_id}:{owner}:"
-                        f"{step}:{request.new_target_id}"
-                    )
-                    self._write_audit(
-                        "reserve_action4",
-                        step,
-                        package=package.package_id,
-                        owner=owner,
-                        target=request.new_target_id,
-                        action_type=4,
-                        reason=request.reason,
-                        event_id=action_event_id,
-                    )
-                    if owner in current_hm:
-                        applied_hm[owner] = current_hm[owner]
-                if applied_hm:
-                    self._record_hm_progress(step, applied_hm)
-                for decided_package in decision.packages:
-                    if decided_package.package_id in self._reserve_packages:
-                        self._reserve_packages[
-                            decided_package.package_id
-                        ] = decided_package
-                request_event_id = (
-                    f"reserve-request:{package.package_id}:{step}:"
-                    f"{request.new_target_id}"
-                )
-                fields = {
-                    "package": package.package_id,
-                    "members": request.member_ids,
-                    "old_target": request.old_target_id,
-                    "new_target": request.new_target_id,
-                    "reason": request.reason,
-                    "group": group,
-                    "event_id": request_event_id,
-                }
-                if request.deficit is not None:
-                    fields["evidence_ids"] = request.deficit.evidence_ids
-                    fields["evidence_event_ids"] = self._deficit_event_ids(
-                        request.deficit
-                    )
-                    fields["missing"] = request.deficit.missing_damage
-                    self._write_audit("reserve_dispatch", step, **fields)
-                else:
-                    self._write_audit("reserve_fallback", step, **fields)
-            if not decision.requests:
-                for decided_package in decision.packages:
-                    if decided_package.package_id in self._reserve_packages:
-                        self._reserve_packages[
-                            decided_package.package_id
-                        ] = decided_package
+            fields = {"group": context.group}
+            if rejection_target is not None:
+                fields["target"] = rejection_target
+            fields.update(self._reserve_reachability_fields(
+                rejection_diagnostic, context.members[0].type
+            ))
+            self._record_reserve_rejection(
+                step, package, rejection_reason, **fields
+            )
 
     def _plan_dynamic_retargets(
         self,
@@ -2633,12 +4327,13 @@ class TeamCoordinator:
             if self._alive(owner):
                 groups.setdefault(self._communication_group(owner, own), []).append(owner)
 
-        self._damage_by_group.clear()
         for group, raw_owners in sorted(groups.items()):
             owners = tuple(raw_owners)
-            tracker = self._merge_owner_ledgers(owners)
-            self._damage_by_group[group] = tracker
-            self._record_belief_changes(step, group, tracker)
+            tracker = self._damage_by_group.get(group)
+            if tracker is None:
+                tracker = self._merge_owner_ledgers(owners)
+                self._damage_by_group[group] = tracker
+                self._record_belief_changes(step, group, tracker)
             if (
                 not self.config.dynamic_retarget_enabled
                 and self._audit_path is None
@@ -2811,35 +4506,13 @@ class TeamCoordinator:
             and -90.0 <= position["lat"] <= 90.0
         )
 
-    def _assigned_terminal_goal(
-        self, owner: int
-    ) -> tuple[int, dict[str, float]] | None:
-        target_id = self._assignments.get(owner)
-        goal = self._goals.get(owner)
-        if target_id is None or not isinstance(goal, Mapping):
-            return None
-        try:
-            raw_lon, raw_lat = goal.get("lon"), goal.get("lat")
-            if isinstance(raw_lon, bool) or isinstance(raw_lat, bool):
-                return None
-            position = {"lon": float(raw_lon), "lat": float(raw_lat)}
-        except (TypeError, ValueError, OverflowError):
-            return None
-        if not all(math.isfinite(value) for value in position.values()):
-            return None
-        if not self._valid_lonlat(position):
-            return None
-        if self._goal_versions.get((owner, target_id)) != (
-            position["lon"], position["lat"]
-        ):
-            return None
-        return target_id, position
-
     def _terminal_target_track(
-        self, owner: int, step: int, target_id: int
+        self, owner: int, step: int, target_id: int, missile_type: int
     ) -> _TargetPosition | None:
         max_age = self.config.terminal_guidance.max_track_age
-        if target_id in self._public_by_id:
+        if missile_type in (21000, 21001):
+            if target_id not in self._public_by_id:
+                return None
             track = self._owner_detected_public_targets(
                 owner,
                 step,
@@ -2848,6 +4521,9 @@ class TeamCoordinator:
             if track is None or not self._valid_lonlat(track.position):
                 return None
             return track
+
+        if missile_type != 21002:
+            return None
 
         own = self._observations[owner].get("self") or {}
         detected = own.get("detectInfo") or {}
@@ -2962,8 +4638,13 @@ class TeamCoordinator:
         control_state: str = "PASSTHROUGH",
         no_improvement_count: int = 0,
     ) -> None:
+        profile_fields = self._terminal_profile_fields(missile_type)
+        error = heading_error_degrees
+        mode = "passthrough" if mode is None else mode
         self._motion_guidance[owner] = {
             "step": step,
+            "type": missile_type,
+            **profile_fields,
             "baseline_action": baseline,
             "final_action": final,
             "override_reason": reason,
@@ -2971,6 +4652,8 @@ class TeamCoordinator:
             "control_state": control_state,
             "no_improvement_count": no_improvement_count,
             "heading_error": heading_error_degrees,
+            "mode": mode,
+            "error": error,
             "velocity_source": velocity_source,
         }
         signature = (
@@ -2984,6 +4667,7 @@ class TeamCoordinator:
             details = {
                 "owner": owner,
                 "type": missile_type,
+                **profile_fields,
                 "baseline": baseline,
                 "final": final,
                 "stage": stage,
@@ -3002,9 +4686,9 @@ class TeamCoordinator:
                 "control_state": control_state,
                 "no_improvement_count": no_improvement_count,
                 "heading_error": heading_error_degrees,
+                "mode": mode,
+                "error": error,
             }
-            if mode is not None:
-                details["mode"] = mode
             if heading_error_degrees is not None:
                 details["heading_error_degrees"] = heading_error_degrees
             if turn_direction is not None:
@@ -3091,7 +4775,7 @@ class TeamCoordinator:
                 stage=stage,
                 **velocity_fields,
             )
-        if missile_type != 21001:
+        if missile_type not in (21000, 21001, 21002):
             return self._terminal_passthrough(
                 step,
                 owner,
@@ -3101,19 +4785,8 @@ class TeamCoordinator:
                 stage=stage,
                 **velocity_fields,
             )
-        if stage < self.config.terminal_guidance.min_stage:
-            return self._terminal_passthrough(
-                step,
-                owner,
-                missile_type,
-                baseline,
-                "stage_below_minimum",
-                stage=stage,
-                **velocity_fields,
-            )
-
-        assigned = self._assigned_terminal_goal(owner)
-        if assigned is None:
+        target_id = self._assignments.get(owner)
+        if target_id is None:
             return self._terminal_passthrough(
                 step,
                 owner,
@@ -3123,7 +4796,6 @@ class TeamCoordinator:
                 stage=stage,
                 **velocity_fields,
             )
-        target_id, goal = assigned
         if owner_position is None:
             return self._terminal_passthrough(
                 step,
@@ -3135,7 +4807,6 @@ class TeamCoordinator:
                 **velocity_fields,
             )
 
-        distance_m = _distance_km(owner_position, goal) * 1000.0
         nearest_interceptor = self._nearest_interceptor_distance_m(
             owner_position, own
         )
@@ -3144,7 +4815,9 @@ class TeamCoordinator:
             and nearest_interceptor
             <= self.config.terminal_guidance.threat_distance_m
         )
-        target_track = self._terminal_target_track(owner, step, target_id)
+        target_track = self._terminal_target_track(
+            owner, step, target_id, missile_type
+        )
         if target_track is None or target_track.age_steps is None:
             return self._terminal_passthrough(
                 step,
@@ -3153,7 +4826,24 @@ class TeamCoordinator:
                 baseline,
                 "missing_owner_target_fix",
                 stage=stage,
+                nearest_interceptor_distance_m=nearest_interceptor,
+                threat=threat,
+                **velocity_fields,
+            )
+
+        aimpoint = target_track.position
+        distance_m = _distance_km(owner_position, aimpoint) * 1000.0
+        if missile_type in (21000, 21001) and target_track.source != "detect_fresh":
+            return self._terminal_passthrough(
+                step,
+                owner,
+                missile_type,
+                baseline,
+                "track_stale",
+                stage=stage,
                 distance_m=distance_m,
+                track_source=target_track.source,
+                track_age=target_track.age_steps,
                 nearest_interceptor_distance_m=nearest_interceptor,
                 threat=threat,
                 **velocity_fields,
@@ -3168,6 +4858,8 @@ class TeamCoordinator:
                 "missing_owner_velocity",
                 stage=stage,
                 distance_m=distance_m,
+                track_source=target_track.source,
+                track_age=target_track.age_steps,
                 nearest_interceptor_distance_m=nearest_interceptor,
                 threat=threat,
                 **velocity_fields,
@@ -3178,8 +4870,8 @@ class TeamCoordinator:
             missile_type=missile_type,
             stage=stage,
             baseline_action=baseline,
-            aimpoint_lon=goal["lon"],
-            aimpoint_lat=goal["lat"],
+            aimpoint_lon=aimpoint["lon"],
+            aimpoint_lat=aimpoint["lat"],
             track_source=target_track.source,
             track_age=target_track.age_steps,
             nearest_interceptor_distance_m=nearest_interceptor,
@@ -3367,18 +5059,45 @@ class TeamCoordinator:
             agent_id = self.members[owner]
             state = int(observation.get("_orchestrator_maneuver_state", 0))
             launch_step = int(observation.get("_orchestrator_launch_step", step))
+            ready_target_id = self._reserve_ready_targets.get(owner)
+            ready_target = self._public_by_id.get(ready_target_id)
+            ready_goal = (
+                None
+                if ready_target is None
+                else {"lon": ready_target.lon, "lat": ready_target.lat}
+            )
             encoded = self.policy.encode_motion_observation(
                 observation, agent_id=agent_id, entity_id=owner,
                 launch_step=launch_step, maneuver_state=state,
-                goal_position=self._goals.get(owner, self._fallback_goal(owner)),
+                goal_position=(
+                    ready_goal
+                    if ready_goal is not None
+                    else self._goals.get(owner, self._fallback_goal(owner))
+                ),
             )
             mask = self.policy.prepare_action_mask(encoded, np.ones(3, dtype=np.bool_))
             selected = int(self.policy.select_action(encoded, mask))
             if selected not in (0, 1, 2):
                 raise RuntimeError(f"external policy returned invalid action {selected}")
-            held = self._apply_reserve_holding(
-                step, owner, observation["self"], selected
-            )
+            if ready_goal is not None:
+                package = self._reserve_package_for_owner(owner)
+                self._write_audit(
+                    "reserve_ready_align",
+                    step,
+                    package=None if package is None else package.package_id,
+                    owner=owner,
+                    target=ready_target_id,
+                    goal=ready_goal,
+                    baseline=selected,
+                    final=selected,
+                    holding_paused=True,
+                    action4=False,
+                )
+                held = selected
+            else:
+                held = self._apply_reserve_holding(
+                    step, owner, observation["self"], selected
+                )
             final = self._apply_terminal_guidance(step, owner, observation["self"], held)
             maneuver = float(final - 1)
             self._actions[owner] = ((0, owner, maneuver, 0), *self._actions.get(owner, ()))
@@ -3406,21 +5125,29 @@ class TeamCoordinator:
             self._core_hm_assignments.clear()
             self._reserve_h_ids = frozenset()
             self._reserve_packages.clear()
+            self._reserve_package_owners.clear()
             self._hm_target_regions.clear()
             self._hm_early_losses.clear()
             self._reserve_retarget_counts.clear()
+            self._reserve_fresh_targets_seen.clear()
+            self._reserve_cancelled_targets_step.clear()
             self._reserve_member_snapshots.clear()
             self._reserve_seen_members.clear()
             self._reserve_package_terminations.clear()
             self._reserve_holding_anchors.clear()
             self._reserve_reachability_origins.clear()
             self._audited_reserve_deficits.clear()
+            self._pending_deficits.clear()
+            self._confirmed_reserve_deficits.clear()
+            self._reserve_ready_targets.clear()
+            self._audited_reserve_rejections.clear()
             self._l_core_ids = None
             self._l_core_assignments.clear()
             self._l_progress.clear()
             self._l_early_losses.clear()
             self._l_catalogues = {owner: {} for owner in self.members}
             self._l_target_count = None
+            self._audited_initial_l_assignments.clear()
             self._last_groups.clear()
             self._terminalized.clear()
             self._owner_ledgers = {owner: {} for owner in self.members}

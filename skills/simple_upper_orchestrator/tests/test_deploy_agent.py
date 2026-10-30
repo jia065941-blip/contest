@@ -116,6 +116,7 @@ def test_mission_callback_is_first_immutable_and_survives_reset():
         1: 21000, 2: 21000, 3: 21001, 4: 21002, 5: 21002,
     }
     assert mission.l_roster == (4, 5)
+    assert mission.l_roles == {4: "core", 5: "core"}
     assert set(mission.hm_assignments) <= {1, 2, 3}
     with pytest.raises(TypeError):
         mission.hm_assignments[1] = 901
@@ -190,3 +191,63 @@ def test_easy_style_h_reserve_two_is_staged_by_latitude_region():
     assert reserve_ids.isdisjoint(mission.hm_assignments)
     points = {point.entity_id: point for point in plans[0].points}
     assert all(points[member_id].target_id is None for member_id in reserve_ids)
+    assert {
+        points[member_id].deployment_role for member_id in reserve_ids
+    } == {"reserve_h"}
+    assert all(
+        points[member_id].deployment_role == "core"
+        for member_id in points.keys() - reserve_ids
+    )
+    for package in mission.reserve_packages:
+        provisional = next(
+            target
+            for target in targets
+            if target.target_id == package.provisional_target_id
+        )
+        for member_id in package.member_ids:
+            assert points[member_id].latitude == pytest.approx(
+                provisional.lat, abs=0.01
+            )
+
+
+def test_deploy_freezes_spatial_core_and_reserve_l_roster():
+    missions = []
+    plans = []
+    agent = StaggeredDeployAgent(
+        RECTANGLE,
+        RECTANGLE,
+        config=StaggeredDeploymentConfig(),
+        batch_size=20,
+        launch_altitude=1000,
+        on_mission_plan=missions.append,
+        on_plan=plans.append,
+        l_first_wave_per_target=2,
+        expected_l_target_count=2,
+    )
+    agent.set_observation({"entities": {
+        entity_id: {"type": 21002, "position": {"alt": 1000}}
+        for entity_id in range(100, 110)
+    }})
+
+    agent.get_action()
+
+    mission = missions[0]
+    plan = plans[0]
+    assert tuple(mission.l_roles[owner] for owner in mission.l_roster) == (
+        "core", "core", "core", "core",
+        "reserve_l", "reserve_l", "reserve_l", "reserve_l", "reserve_l", "reserve_l",
+    )
+    points = {point.entity_id: point for point in plan.points}
+    assert all(
+        points[owner].deployment_role == mission.l_roles[owner]
+        for owner in mission.l_roster
+    )
+    assert {
+        points[owner].wave_role
+        for owner in mission.l_roster
+        if mission.l_roles[owner] == "reserve_l"
+    } == {"reserve_l"}
+    assert tuple(
+        point.entity_id
+        for point in sorted(plan.points, key=lambda point: (point.lateral_km, point.entity_id))
+    ) == mission.l_roster

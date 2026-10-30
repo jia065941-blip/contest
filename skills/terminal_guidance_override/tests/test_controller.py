@@ -7,6 +7,7 @@ from terminal_guidance_override_skill import (
     TerminalGuidanceConfig,
     TerminalGuidanceSkill,
     TerminalGuidanceSnapshot,
+    TerminalTypeProfile,
     __version__,
 )
 
@@ -20,7 +21,7 @@ def snapshot(
     missile_type: int = 21001,
     stage: int = 4,
     baseline_action: int = 1,
-    distance_m: float = 1500.0,
+    distance_m: float = 500.0,
     heading_error_deg: float = 20.0,
     track_source: str = "detect_fresh",
     track_age: float = 0.0,
@@ -49,19 +50,36 @@ def snapshot(
     )
 
 
-def test_version_frozen_dtos_and_v03_defaults() -> None:
+def test_version_frozen_dtos_and_v04_default_profiles() -> None:
     item = snapshot()
     decision = TerminalGuidanceSkill().decide(item)
+    profile = TerminalTypeProfile(capture_distance=100.0)
 
     with pytest.raises(FrozenInstanceError):
         item.stage = 5
     with pytest.raises(FrozenInstanceError):
         decision.final = 1
+    with pytest.raises(FrozenInstanceError):
+        profile.capture_distance = 200.0
 
     config = TerminalGuidanceConfig()
-    assert __version__ == "0.3.0"
-    assert config.capture_distance == pytest.approx(2000.0)
-    assert config.final_straight_distance == pytest.approx(300.0)
+    profiles = dict(config.profiles)
+    assert __version__ == "0.4.0"
+    assert config.enabled_types == (21000, 21001, 21002)
+    assert profiles[21000].capture_distance == pytest.approx(300.0)
+    assert profiles[21000].final_straight_distance == pytest.approx(150.0)
+    assert profiles[21000].max_track_age == 5
+    assert profiles[21000].require_fresh_track is True
+    assert profiles[21001].capture_distance == pytest.approx(600.0)
+    assert profiles[21001].final_straight_distance == pytest.approx(200.0)
+    assert profiles[21001].max_track_age == 5
+    assert profiles[21001].require_fresh_track is True
+    assert profiles[21002].capture_distance == pytest.approx(600.0)
+    assert profiles[21002].final_straight_distance == pytest.approx(200.0)
+    assert profiles[21002].max_track_age is None
+    assert profiles[21002].require_fresh_track is False
+    assert config.capture_distance == pytest.approx(600.0)
+    assert config.final_straight_distance == pytest.approx(200.0)
     assert config.max_track_age == 5
     assert config.stale_grace_age == 8
     assert config.heading_enter_straight_deg == pytest.approx(6.0)
@@ -71,6 +89,146 @@ def test_version_frozen_dtos_and_v03_defaults() -> None:
     assert config.straight_recovery_steps == 2
     assert config.no_improvement_limit == 3
     assert config.latch is True
+
+
+@pytest.mark.parametrize(
+    ("missile_type", "capture_distance", "final_distance"),
+    (
+        (21000, 300.0, 150.0),
+        (21001, 600.0, 200.0),
+        (21002, 600.0, 200.0),
+    ),
+)
+def test_default_profile_capture_and_final_boundaries(
+    missile_type: int,
+    capture_distance: float,
+    final_distance: float,
+) -> None:
+    captured = TerminalGuidanceSkill().decide(snapshot(
+        missile_type=missile_type,
+        distance_m=capture_distance,
+        heading_error_deg=90.0,
+    ))
+    outside = TerminalGuidanceSkill().decide(snapshot(
+        missile_type=missile_type,
+        distance_m=capture_distance + 0.01,
+        heading_error_deg=90.0,
+    ))
+    final = TerminalGuidanceSkill().decide(snapshot(
+        missile_type=missile_type,
+        distance_m=final_distance,
+        heading_error_deg=90.0,
+        baseline_action=2,
+    ))
+    above_final = TerminalGuidanceSkill().decide(snapshot(
+        missile_type=missile_type,
+        distance_m=final_distance + 0.01,
+        heading_error_deg=90.0,
+    ))
+
+    assert captured.control_state == "TURN_PULSE"
+    assert captured.latched is True
+    assert outside.reason == "outside_capture_distance"
+    assert outside.control_state == "PASSTHROUGH"
+    assert final.final == 1
+    assert final.control_state == "FINAL_STRAIGHT"
+    assert above_final.control_state == "TURN_PULSE"
+
+
+def test_l_allows_stale_detect_track_but_requires_detect_track_and_aimpoint() -> None:
+    allowed = TerminalGuidanceSkill().decide(snapshot(
+        missile_type=21002,
+        track_source="detect_stale",
+        track_age=100_000,
+        heading_error_deg=90.0,
+    ))
+    invalid_source = TerminalGuidanceSkill().decide(snapshot(
+        missile_type=21002,
+        track_source="estimated",
+        track_age=0,
+    ))
+    missing_aimpoint = TerminalGuidanceSkill().decide(replace(
+        snapshot(missile_type=21002, track_source="detect_stale", track_age=100_000),
+        aimpoint_lon=None,
+        aimpoint_lat=None,
+    ))
+
+    assert allowed.control_state == "TURN_PULSE"
+    assert allowed.latched is True
+    assert invalid_source.reason == "track_stale"
+    assert invalid_source.control_state == "PASSTHROUGH"
+    assert missing_aimpoint.reason == "aimpoint_missing"
+
+
+@pytest.mark.parametrize(
+    ("missile_type", "distance_m"),
+    ((21000, 250.0), (21001, 500.0)),
+)
+def test_h_and_m_reject_stale_track_on_entry(
+    missile_type: int, distance_m: float
+) -> None:
+    decision = TerminalGuidanceSkill().decide(snapshot(
+        missile_type=missile_type,
+        distance_m=distance_m,
+        track_source="detect_stale",
+        track_age=6,
+        baseline_action=0,
+    ))
+
+    assert decision.final == 0
+    assert decision.control_state == "PASSTHROUGH"
+    assert decision.reason == "track_stale"
+
+
+def test_same_owner_has_independent_state_for_each_profile() -> None:
+    skill = TerminalGuidanceSkill()
+
+    m_first = skill.decide(snapshot(entity_id=7, missile_type=21001, step=10))
+    l_first = skill.decide(snapshot(entity_id=7, missile_type=21002, step=10))
+    m_second = skill.decide(snapshot(entity_id=7, missile_type=21001, step=11))
+    l_second = skill.decide(snapshot(entity_id=7, missile_type=21002, step=11))
+
+    assert m_first.reason == "entered_turn_pulse_right"
+    assert l_first.reason == "entered_turn_pulse_right"
+    assert m_second.control_state == "STRAIGHT_RECOVERY"
+    assert l_second.control_state == "STRAIGHT_RECOVERY"
+
+
+def test_profiles_accept_mapping_or_tuple_and_inherit_global_defaults() -> None:
+    inherited = TerminalTypeProfile(
+        max_track_age=None,
+        require_fresh_track=False,
+    )
+    mapping_config = TerminalGuidanceConfig(
+        capture_distance=700.0,
+        final_straight_distance=250.0,
+        profiles={21001: inherited},
+    )
+    tuple_config = TerminalGuidanceConfig(
+        profiles=((21002, TerminalTypeProfile(
+            capture_distance=450.0,
+            final_straight_distance=100.0,
+            max_track_age=None,
+            require_fresh_track=False,
+        )),),
+    )
+
+    mapping_decision = TerminalGuidanceSkill(mapping_config).decide(snapshot(
+        missile_type=21001,
+        distance_m=700.0,
+        track_source="detect_stale",
+        track_age=100,
+        heading_error_deg=90.0,
+    ))
+    tuple_outside = TerminalGuidanceSkill(tuple_config).decide(snapshot(
+        missile_type=21002,
+        distance_m=450.01,
+    ))
+
+    assert mapping_config.enabled_types == (21001,)
+    assert tuple_config.enabled_types == (21002,)
+    assert mapping_decision.control_state == "TURN_PULSE"
+    assert tuple_outside.reason == "outside_capture_distance"
 
 
 def test_capture_turn_pulse_then_two_recovery_steps_and_reestimate() -> None:
@@ -131,7 +289,9 @@ def test_three_non_improving_observations_restart_straight_recovery() -> None:
 
 
 def test_heading_straight_hysteresis_enters_at_six_and_exits_at_ten() -> None:
-    skill = TerminalGuidanceSkill()
+    skill = TerminalGuidanceSkill(TerminalGuidanceConfig(
+        predicted_miss_threshold_m=0.0
+    ))
 
     entered = skill.decide(snapshot(step=10, heading_error_deg=6.0))
     held = skill.decide(snapshot(step=11, heading_error_deg=9.0))
@@ -223,7 +383,7 @@ def test_unlatched_stale_track_cannot_enter_capture() -> None:
 
 def test_final_distance_forces_final_straight_even_when_misaligned() -> None:
     decision = TerminalGuidanceSkill().decide(snapshot(
-        distance_m=300.0,
+        distance_m=200.0,
         heading_error_deg=90.0,
         baseline_action=2,
     ))
@@ -235,16 +395,21 @@ def test_final_distance_forces_final_straight_even_when_misaligned() -> None:
     assert decision.turn_direction is None
 
 
-def test_threats_are_diagnostic_only_even_with_deprecated_release_flag() -> None:
+def test_threats_are_ignored_after_latch_even_with_deprecated_release_flag() -> None:
     skill = TerminalGuidanceSkill(TerminalGuidanceConfig(
         ignore_interceptors_after_latch=False
     ))
 
-    decision = skill.decide(snapshot(nearest_interceptor_distance_m=1.0))
+    skill.decide(snapshot())
+    decision = skill.decide(snapshot(
+        step=11,
+        distance_m=700.0,
+        nearest_interceptor_distance_m=1.0,
+    ))
 
     assert decision.threat is True
     assert decision.latched is True
-    assert decision.control_state == "TURN_PULSE"
+    assert decision.control_state == "STRAIGHT_RECOVERY"
 
 
 def test_velocity_source_is_validated_and_copied_to_decision() -> None:
@@ -282,28 +447,84 @@ def test_legacy_config_fields_map_to_v03_fields() -> None:
     assert old_default_with_enter_alias.capture_distance == pytest.approx(1200.0)
 
 
+def test_legacy_enabled_types_builds_one_profile_from_global_fields() -> None:
+    config = TerminalGuidanceConfig(
+        enabled_types=(21001,),
+        capture_distance=900.0,
+        final_straight_distance=250.0,
+        max_track_age=4,
+    )
+    skill = TerminalGuidanceSkill(config)
+
+    captured_m = skill.decide(snapshot(
+        missile_type=21001,
+        distance_m=900.0,
+        heading_error_deg=90.0,
+    ))
+    unconfigured_h = skill.decide(snapshot(
+        missile_type=21000,
+        distance_m=250.0,
+        heading_error_deg=90.0,
+    ))
+
+    assert config.enabled_types == (21001,)
+    assert tuple(dict(config.profiles)) == (21001,)
+    assert captured_m.control_state == "TURN_PULSE"
+    assert unconfigured_h.reason == "missile_type_passthrough"
+
+
 def test_reset_clears_one_owner_or_all_owner_state() -> None:
     skill = TerminalGuidanceSkill()
     skill.decide(snapshot(entity_id=1))
     skill.decide(snapshot(entity_id=2))
 
     skill.reset(1)
-    owner_one = skill.decide(snapshot(entity_id=1, distance_m=2500.0))
-    owner_two = skill.decide(snapshot(entity_id=2, distance_m=2500.0, step=11))
+    owner_one = skill.decide(snapshot(entity_id=1, distance_m=700.0))
+    owner_two = skill.decide(snapshot(entity_id=2, distance_m=700.0, step=11))
     assert owner_one.control_state == "PASSTHROUGH"
     assert owner_one.latched is False
     assert owner_two.control_state == "STRAIGHT_RECOVERY"
     assert owner_two.latched is True
 
     skill.reset()
-    after_all = skill.decide(snapshot(entity_id=2, distance_m=2500.0, step=12))
+    after_all = skill.decide(snapshot(entity_id=2, distance_m=700.0, step=12))
     assert after_all.control_state == "PASSTHROUGH"
     assert after_all.latched is False
 
 
-def test_non_m_stage_and_capture_gates_pass_through() -> None:
-    wrong_type = TerminalGuidanceSkill().decide(snapshot(
+def test_reset_owner_clears_that_owner_across_all_type_profiles() -> None:
+    skill = TerminalGuidanceSkill()
+    skill.decide(snapshot(entity_id=1, missile_type=21000, distance_m=250.0))
+    skill.decide(snapshot(entity_id=1, missile_type=21001))
+    skill.decide(snapshot(entity_id=2, missile_type=21002))
+
+    skill.reset(1)
+    h_owner_one = skill.decide(snapshot(
+        entity_id=1,
         missile_type=21000,
+        distance_m=350.0,
+    ))
+    m_owner_one = skill.decide(snapshot(
+        entity_id=1,
+        missile_type=21001,
+        distance_m=700.0,
+    ))
+    l_owner_two = skill.decide(snapshot(
+        entity_id=2,
+        missile_type=21002,
+        distance_m=700.0,
+        step=11,
+    ))
+
+    assert h_owner_one.control_state == "PASSTHROUGH"
+    assert m_owner_one.control_state == "PASSTHROUGH"
+    assert l_owner_two.control_state == "STRAIGHT_RECOVERY"
+    assert l_owner_two.latched is True
+
+
+def test_unprofiled_type_stage_and_capture_gates_pass_through() -> None:
+    wrong_type = TerminalGuidanceSkill().decide(snapshot(
+        missile_type=21003,
         baseline_action=0,
     ))
     low_stage = TerminalGuidanceSkill().decide(snapshot(
@@ -311,7 +532,7 @@ def test_non_m_stage_and_capture_gates_pass_through() -> None:
         baseline_action=0,
     ))
     too_far = TerminalGuidanceSkill().decide(snapshot(
-        distance_m=2001.0,
+        distance_m=601.0,
         baseline_action=0,
     ))
 
@@ -337,7 +558,10 @@ def test_ecef_position_velocity_and_aimpoint_are_supported() -> None:
         velocity_source="observed_ecf",
     )
 
-    decision = TerminalGuidanceSkill().decide(item)
+    decision = TerminalGuidanceSkill(TerminalGuidanceConfig(
+        enabled_types=(21001,),
+        capture_distance=2000.0,
+    )).decide(item)
 
     assert decision.distance == pytest.approx(1113.19, rel=1e-4)
     assert decision.heading_error == pytest.approx(90.0, abs=0.01)

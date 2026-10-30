@@ -1,4 +1,5 @@
 from dataclasses import FrozenInstanceError
+from math import cos, radians, sin
 
 import pytest
 
@@ -111,7 +112,7 @@ def test_frozen_dtos_version_and_default_config() -> None:
         snapshot.stage = 2
 
     config = ReserveEchelonConfig()
-    assert __version__ == "0.2.0"
+    assert __version__ == "0.4.0"
     assert config.max_dispatch_stage is None
     assert config.max_dispatches == 1
     assert config.deadline_step == 300
@@ -119,11 +120,14 @@ def test_frozen_dtos_version_and_default_config() -> None:
     assert config.max_target_distance_km is None
     assert config.h_max_distance_km == pytest.approx(80.0)
     assert config.l_max_distance_km == pytest.approx(100.0)
-    assert config.h_max_turn_angle_degrees == pytest.approx(60.0)
-    assert config.l_max_turn_angle_degrees == pytest.approx(75.0)
+    assert config.h_max_turn_angle_degrees is None
+    assert config.l_max_turn_angle_degrees is None
     assert config.seconds_per_step == pytest.approx(1.0)
     assert config.h_nominal_speed_mps == pytest.approx(200.0)
     assert config.l_nominal_speed_mps == pytest.approx(100.0)
+    assert config.h_nominal_turn_rate_deg_s == pytest.approx(20.0)
+    assert config.l_nominal_turn_rate_deg_s == pytest.approx(15.0)
+    assert config.turn_safety_seconds == pytest.approx(5.0)
 
 
 def test_mother_deficit_wins_weighted_missing_damage_priority() -> None:
@@ -280,6 +284,24 @@ def test_all_members_must_allow_target_for_atomic_dispatch() -> None:
     assert decision.packages[0].state == "STAGING"
 
 
+def test_surviving_member_subset_continues_package_dispatch() -> None:
+    reserve_package = package(
+        member_ids=(10, 11),
+        member_types=(H_MISSILE_TYPE, H_MISSILE_TYPE),
+    )
+    decision = decide(
+        ReserveEchelonSkill(),
+        members=(member(11),),
+        deficits=(deficit(901, evidence_ids=(11,)),),
+        packages=(reserve_package,),
+    )
+
+    assert decision.requests[0].member_ids == (11,)
+    assert decision.packages[0].state == "DISPATCHED"
+    assert decision.packages[0].target_id == 901
+    assert decision.packages[0].retarget_count == 0
+
+
 def test_legacy_optional_distance_limit_is_an_additional_cap() -> None:
     skill = ReserveEchelonSkill(ReserveEchelonConfig(
         max_target_distance_km=5.0,
@@ -314,28 +336,83 @@ def test_type_distance_limit_rejects_far_candidate(
     assert decision.rejected_reasons[1] == "distance_exceeded"
 
 
-@pytest.mark.parametrize(
-    ("member_type", "target_type", "target_id"),
-    (
-        (H_MISSILE_TYPE, 9600, 901),
-        (L_MISSILE_TYPE, 9500, 950),
-    ),
-)
-def test_turn_limit_rejects_large_heading_change(
-    member_type, target_type, target_id
-) -> None:
+def test_h_107_degree_turn_and_9km_trip_is_reachable_with_enough_time() -> None:
+    angle = radians(107.0)
+    target_position = (9.0 * cos(angle), 9.0 * sin(angle))
     decision = decide(
         ReserveEchelonSkill(),
-        members=(member(10, member_type=member_type),),
-        deficits=(deficit(
-            target_id,
-            target_type=target_type,
-            position=(0.0, 10.0),
-        ),),
-        packages=(package(member_types=(member_type,)),),
+        members=(member(10, remaining_steps=56),),
+        deficits=(deficit(901, position=target_position),),
     )
+
+    request = decision.requests[0]
+    diagnostic = request.diagnostics
+    assert request.new_target_id == 901
+    assert decision.diagnostics[1] == diagnostic
+    assert diagnostic.distance == pytest.approx(9.0)
+    assert diagnostic.turn_angle == pytest.approx(107.0)
+    assert diagnostic.turn_time == pytest.approx(107.0 / 20.0)
+    assert diagnostic.travel_time == pytest.approx(45.0)
+    assert diagnostic.total_eta == pytest.approx(55.35)
+    assert diagnostic.remaining_time == pytest.approx(56.0)
+
+
+def test_h_107_degree_turn_rejects_when_total_eta_exceeds_remaining_time() -> None:
+    angle = radians(107.0)
+    target_position = (9.0 * cos(angle), 9.0 * sin(angle))
+    decision = decide(
+        ReserveEchelonSkill(),
+        members=(member(10, remaining_steps=55),),
+        deficits=(deficit(901, position=target_position),),
+    )
+
+    assert decision.requests == ()
+    assert decision.rejected_reasons[1] == "insufficient_time"
+    assert decision.diagnostics[1].total_eta == pytest.approx(55.35)
+    assert decision.diagnostics[1].remaining_time == pytest.approx(55.0)
+
+
+def test_explicit_legacy_turn_limit_remains_a_compatible_risk_cap() -> None:
+    angle = radians(107.0)
+    target_position = (9.0 * cos(angle), 9.0 * sin(angle))
+    skill = ReserveEchelonSkill(ReserveEchelonConfig(
+        h_max_turn_angle_degrees=60.0,
+    ))
+    decision = decide(
+        skill,
+        members=(member(10, remaining_steps=100),),
+        deficits=(deficit(901, position=target_position),),
+    )
+
     assert decision.requests == ()
     assert decision.rejected_reasons[1] == "turn_angle_exceeded"
+    assert decision.diagnostics[1].turn_angle == pytest.approx(107.0)
+
+
+def test_l_reachability_uses_l_turn_rate_speed_and_safety_time() -> None:
+    angle = radians(107.0)
+    target_position = (9.0 * cos(angle), 9.0 * sin(angle))
+    decision = decide(
+        ReserveEchelonSkill(),
+        members=(member(
+            10,
+            member_type=L_MISSILE_TYPE,
+            remaining_steps=103,
+        ),),
+        deficits=(deficit(
+            950,
+            target_type=9500,
+            position=target_position,
+        ),),
+        packages=(package(member_types=(L_MISSILE_TYPE,)),),
+    )
+
+    diagnostic = decision.requests[0].diagnostics
+    assert diagnostic.turn_angle == pytest.approx(107.0)
+    assert diagnostic.turn_time == pytest.approx(107.0 / 15.0)
+    assert diagnostic.travel_time == pytest.approx(90.0)
+    assert diagnostic.total_eta == pytest.approx(102.0 + 2.0 / 15.0)
+    assert diagnostic.remaining_time == pytest.approx(103.0)
 
 
 def test_missing_heading_fails_closed() -> None:
@@ -350,12 +427,12 @@ def test_missing_heading_fails_closed() -> None:
 def test_estimated_arrival_must_fit_remaining_steps() -> None:
     too_late = decide(
         ReserveEchelonSkill(),
-        members=(member(10, remaining_steps=49),),
+        members=(member(10, remaining_steps=54),),
         deficits=(deficit(901, position=(10.0, 0.0)),),
     )
     on_time = decide(
         ReserveEchelonSkill(),
-        members=(member(10, remaining_steps=50),),
+        members=(member(10, remaining_steps=55),),
         deficits=(deficit(901, position=(10.0, 0.0)),),
     )
     assert too_late.requests == ()
@@ -365,7 +442,9 @@ def test_estimated_arrival_must_fit_remaining_steps() -> None:
 
 def test_deadline_fallback_uses_same_reachability_gate() -> None:
     decision = decide(
-        ReserveEchelonSkill(),
+        ReserveEchelonSkill(ReserveEchelonConfig(
+            h_max_turn_angle_degrees=60.0,
+        )),
         step=300,
         members=(member(10, heading_east=0.0, heading_north=1.0),),
         deficits=(),
@@ -373,6 +452,41 @@ def test_deadline_fallback_uses_same_reachability_gate() -> None:
     assert decision.requests == ()
     assert decision.rejected_reasons[1] == "turn_angle_exceeded"
     assert decision.packages[0].state == "STAGING"
+
+
+def test_deadline_fallback_reports_turn_aware_diagnostics() -> None:
+    angle = radians(107.0)
+    target_position = (9.0 * cos(angle), 9.0 * sin(angle))
+    decision = decide(
+        ReserveEchelonSkill(),
+        step=300,
+        members=(member(10, remaining_steps=56),),
+        deficits=(),
+        packages=(package(fallback_position=target_position),),
+    )
+
+    request = decision.requests[0]
+    assert request.reason == "deadline_no_deficit_fallback"
+    assert request.diagnostics.turn_angle == pytest.approx(107.0)
+    assert request.diagnostics.total_eta == pytest.approx(55.35)
+    assert decision.diagnostics[1] == request.diagnostics
+
+
+def test_deadline_fallback_rejects_when_turn_aware_eta_is_too_late() -> None:
+    angle = radians(107.0)
+    target_position = (9.0 * cos(angle), 9.0 * sin(angle))
+    decision = decide(
+        ReserveEchelonSkill(),
+        step=300,
+        members=(member(10, remaining_steps=55),),
+        deficits=(),
+        packages=(package(fallback_position=target_position),),
+    )
+
+    assert decision.requests == ()
+    assert decision.rejected_reasons[1] == "insufficient_time"
+    assert decision.diagnostics[1].total_eta == pytest.approx(55.35)
+    assert decision.diagnostics[1].remaining_time == pytest.approx(55.0)
 
 
 def test_ordering_is_deterministic() -> None:
@@ -417,6 +531,9 @@ def test_ordering_is_deterministic() -> None:
         ("seconds_per_step", 0.0),
         ("h_nominal_speed_mps", -1.0),
         ("l_nominal_speed_mps", float("nan")),
+        ("h_nominal_turn_rate_deg_s", 0.0),
+        ("l_nominal_turn_rate_deg_s", float("inf")),
+        ("turn_safety_seconds", -1.0),
     ),
 )
 def test_config_validation_is_strict(field, value) -> None:

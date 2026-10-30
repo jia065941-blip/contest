@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from types import MappingProxyType
 
 import numpy as np
@@ -45,6 +45,7 @@ class PreMissionPlan:
     l_roster: tuple[int, ...]
     reserve_packages: tuple[ReservePackageSnapshot, ...] = ()
     reserve_target_regions: Mapping[int, str] = field(default_factory=dict)
+    l_roles: Mapping[int, str] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         assignments = {
@@ -60,6 +61,10 @@ class PreMissionPlan:
             for entity_id, value in sorted(self.entity_core.items())
         }
         l_roster = tuple(int(entity_id) for entity_id in self.l_roster)
+        l_roles = {
+            int(entity_id): str(role).lower()
+            for entity_id, role in sorted(self.l_roles.items())
+        }
         reserve_packages = tuple(
             sorted(self.reserve_packages, key=lambda package: package.package_id)
         )
@@ -67,8 +72,8 @@ class PreMissionPlan:
             int(target_id): str(region)
             for target_id, region in sorted(self.reserve_target_regions.items())
         }
-        if l_roster != tuple(sorted(set(l_roster))):
-            raise ValueError("l_roster must contain unique sorted entity IDs")
+        if len(l_roster) != len(set(l_roster)):
+            raise ValueError("l_roster must contain unique entity IDs")
         if set(entity_core) != set(entity_types):
             raise ValueError("entity_core and entity_types must have identical IDs")
         if any(entity_type not in SUPPORTED_PLATFORM_TYPES for entity_type in entity_types.values()):
@@ -80,8 +85,12 @@ class PreMissionPlan:
             for entity_id, entity_type in entity_types.items()
             if entity_type == 21002
         )
-        if l_roster != expected_l:
+        if set(l_roster) != set(expected_l) or len(l_roster) != len(expected_l):
             raise ValueError("l_roster must contain every 21002 entity exactly once")
+        if l_roles and set(l_roles) != set(l_roster):
+            raise ValueError("l_roles must contain every L roster entity exactly once")
+        if any(role not in {"core", "reserve_l"} for role in l_roles.values()):
+            raise ValueError("L roles must be core or reserve_l")
         if any(
             not isinstance(package, ReservePackageSnapshot)
             for package in reserve_packages
@@ -97,23 +106,31 @@ class PreMissionPlan:
         for package in reserve_packages:
             if package.state != "STAGING" or package.dispatch_count != 0:
                 raise ValueError("pre-mission reserve packages must be STAGING")
-            if any(entity_types.get(member_id) != 21000 for member_id in package.member_ids):
-                raise ValueError("pre-mission reserve packages may contain only H members")
+            member_types = {entity_types.get(member_id) for member_id in package.member_ids}
+            if member_types not in ({21000}, {21002}):
+                raise ValueError("pre-mission reserve packages must contain homogeneous H or L members")
             if any(member_id in assignments for member_id in package.member_ids):
-                raise ValueError("reserve H members must not have core assignments")
-            if any(
-                reserve_target_regions.get(target_id)
-                != package.responsibility_region
-                for target_id in (
-                    package.provisional_target_id,
-                    package.fallback_target_id,
-                )
+                raise ValueError("reserve members must not have core H/M assignments")
+            if member_types == {21000}:
+                if any(
+                    reserve_target_regions.get(target_id)
+                    != package.responsibility_region
+                    for target_id in (
+                        package.provisional_target_id,
+                        package.fallback_target_id,
+                    )
+                ):
+                    raise ValueError("reserve H package targets must match its region")
+            elif package.responsibility_region != "l" or any(
+                l_roles.get(member_id) != "reserve_l"
+                for member_id in package.member_ids
             ):
-                raise ValueError("reserve package targets must match its region")
+                raise ValueError("reserve L packages require reserve_l roster members")
         object.__setattr__(self, "hm_assignments", MappingProxyType(assignments))
         object.__setattr__(self, "entity_types", MappingProxyType(entity_types))
         object.__setattr__(self, "entity_core", MappingProxyType(entity_core))
         object.__setattr__(self, "l_roster", l_roster)
+        object.__setattr__(self, "l_roles", MappingProxyType(l_roles))
         object.__setattr__(self, "reserve_packages", reserve_packages)
         object.__setattr__(
             self,
@@ -197,7 +214,8 @@ class StaggeredDeployAgent(BaseAgent):
     def __init__(
         self, coordinates, coordinates_hm, *, config, batch_size: int,
         launch_altitude, on_plan=None, on_mission_plan=None,
-        public_targets=(), hm_config=None,
+        public_targets=(), hm_config=None, l_first_wave_per_target=0,
+        expected_l_target_count=None,
     ):
         super().__init__(-1, -1, AgentType.DEPLOY, {})
         bounds = rectangle_bounds(coordinates)
@@ -215,6 +233,24 @@ class StaggeredDeployAgent(BaseAgent):
         self._on_mission_plan = on_mission_plan
         self._public_targets = tuple(public_targets)
         self._hm_config = hm_config
+        self._l_first_wave_per_target = int(l_first_wave_per_target)
+        self._expected_l_target_count = (
+            None
+            if expected_l_target_count is None
+            else int(expected_l_target_count)
+        )
+        if self._l_first_wave_per_target < 0:
+            raise ValueError("l_first_wave_per_target must be nonnegative")
+        if (
+            self._l_first_wave_per_target > 0
+            and (
+                self._expected_l_target_count is None
+                or self._expected_l_target_count <= 0
+            )
+        ):
+            raise ValueError(
+                "positive l_first_wave_per_target requires expected L target count"
+            )
         self._mission_plan: PreMissionPlan | None = None
 
     def set_observation(self, observation: dict) -> None:
@@ -235,10 +271,21 @@ class StaggeredDeployAgent(BaseAgent):
             entity_id: int(entity["type"])
             for entity_id, entity in selected
         }
-        l_roster = tuple(
+        entity_l_ids = tuple(
             entity_id
             for entity_id, entity in selected
             if int(entity["type"]) == 21002
+        )
+        altitude = self._altitude
+        if altitude is None:
+            values = {float(entity["position"]["alt"]) for _, entity in selected}
+            if len(values) != 1:
+                raise ValueError(
+                    "platform launch altitudes differ and no launch altitude was supplied"
+                )
+            altitude = values.pop()
+        deployment_bounds = DeploymentBounds(
+            *self._raw_bounds, float(altitude)
         )
         if self._mission_plan is None:
             hm_members = tuple(
@@ -269,6 +316,75 @@ class StaggeredDeployAgent(BaseAgent):
             else:
                 reserve_packages = ()
                 reserve_target_regions = {}
+            target_by_id = {
+                target.target_id: target for target in self._public_targets
+            }
+            reserve_target_by_member = {
+                member_id: target_by_id[package.provisional_target_id]
+                for package in reserve_packages
+                for member_id in package.member_ids
+            }
+            provisional_requests = tuple(
+                PlatformDeploymentRequest(
+                    entity_id,
+                    int(entity["type"]),
+                    target_lon=(
+                        None
+                        if (
+                            target := reserve_target_by_member.get(entity_id)
+                            or target_by_id.get(target_by_member.get(entity_id))
+                        ) is None
+                        else target.lon
+                    ),
+                    target_lat=None if target is None else target.lat,
+                    target_id=(
+                        None
+                        if target is None or entity_id in reserve_target_by_member
+                        else target.target_id
+                    ),
+                    target_type=(
+                        None
+                        if target is None or entity_id in reserve_target_by_member
+                        else target.target_type
+                    ),
+                    deployment_role=(
+                        "reserve_h"
+                        if entity_id in reserve_target_by_member
+                        else "core"
+                    ),
+                )
+                for entity_id, entity in selected
+            )
+            spatial_skill = StaggeredDeploymentSkill(replace(
+                self._skill.config, l_first_wave_fraction=1.0
+            ))
+            provisional_plan = spatial_skill.plan(
+                deployment_bounds, provisional_requests
+            )
+            l_roster = tuple(
+                int(point.entity_id)
+                for point in sorted(
+                    (
+                        point
+                        for point in provisional_plan.points
+                        if int(point.entity_type) == 21002
+                    ),
+                    key=lambda point: (point.lateral_km, point.entity_id),
+                )
+            )
+            core_count = (
+                len(l_roster)
+                if self._l_first_wave_per_target == 0
+                else min(
+                    len(l_roster),
+                    self._l_first_wave_per_target
+                    * self._expected_l_target_count,
+                )
+            )
+            l_roles = {
+                entity_id: "core" if rank < core_count else "reserve_l"
+                for rank, entity_id in enumerate(l_roster)
+            }
             self._mission_plan = PreMissionPlan(
                 hm_assignments=target_by_member,
                 entity_types=entity_types,
@@ -277,35 +393,53 @@ class StaggeredDeployAgent(BaseAgent):
                     for entity_id, entity in selected
                 },
                 l_roster=l_roster,
+                l_roles=l_roles,
                 reserve_packages=reserve_packages,
                 reserve_target_regions=reserve_target_regions,
             )
         elif (
             self._mission_plan.entity_types != entity_types
-            or self._mission_plan.l_roster != l_roster
+            or set(self._mission_plan.l_roster) != set(entity_l_ids)
         ):
             raise RuntimeError("deployment reset changed the immutable entity roster")
         target_by_member = self._mission_plan.hm_assignments
         target_by_id = {target.target_id: target for target in self._public_targets}
+        reserve_target_by_member = {
+            member_id: target_by_id[package.provisional_target_id]
+            for package in self._mission_plan.reserve_packages
+            for member_id in package.member_ids
+        }
         requests = []
         for entity_id, entity in selected:
-            target = target_by_id.get(target_by_member.get(entity_id))
+            reserve_target = reserve_target_by_member.get(entity_id)
+            target = (
+                reserve_target
+                if reserve_target is not None
+                else target_by_id.get(target_by_member.get(entity_id))
+            )
             requests.append(PlatformDeploymentRequest(
                 entity_id,
                 int(entity["type"]),
                 target_lon=None if target is None else target.lon,
                 target_lat=None if target is None else target.lat,
-                target_id=None if target is None else target.target_id,
-                target_type=None if target is None else target.target_type,
+                target_id=(
+                    None
+                    if target is None or reserve_target is not None
+                    else target.target_id
+                ),
+                target_type=(
+                    None
+                    if target is None or reserve_target is not None
+                    else target.target_type
+                ),
+                deployment_role=(
+                    "reserve_h"
+                    if reserve_target is not None
+                    else self._mission_plan.l_roles.get(entity_id, "core")
+                ),
             ))
         requests = tuple(requests)
-        altitude = self._altitude
-        if altitude is None:
-            values = {float(entity["position"]["alt"]) for _, entity in selected}
-            if len(values) != 1:
-                raise ValueError("platform launch altitudes differ and no launch altitude was supplied")
-            altitude = values.pop()
-        plan = self._skill.plan(DeploymentBounds(*self._raw_bounds, float(altitude)), requests)
+        plan = self._skill.plan(deployment_bounds, requests)
         if self._on_mission_plan is not None:
             self._on_mission_plan(self._mission_plan)
         if self._on_plan is not None:

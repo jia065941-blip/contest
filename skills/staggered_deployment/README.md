@@ -40,6 +40,13 @@ require coordinates, accept only public types `9400`/`9600`, and are valid only
 on H/M requests. Coordinate-only requests remain supported for callers that
 have not yet supplied target identity.
 
+`deployment_role` defaults to `core`. An H request may instead use
+`reserve_h`; its optional coordinates are a provisional lateral responsibility
+reference and cannot include target identity. Reserve H uses the minimum-forward
+5 km band, remains strictly behind core H/M when both are present, and is marked
+on `DeploymentPoint.deployment_role`. The geometry is identical for all four
+front axes after axis rotation.
+
 Two or three H platforms assigned to one `9400` mother use crossfire placement.
 They share a forward column and occupy `-offset,+offset` or
 `-offset,0,+offset` around the target's lateral center. The requested crossfire

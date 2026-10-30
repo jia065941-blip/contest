@@ -48,11 +48,13 @@ xargs -P 2 -n 2 bash -c '
     --deploy-m-arrival-lead-seconds 5 \
     --deploy-min-m-lead 10 \
     --deploy-spacing-km 1 \
-    --deploy-l-first-wave-fraction 0.70 \
+    --deploy-l-first-wave-fraction 1 \
     --l-satellite-trigger-step 1 \
     --l-allocation-mode distance_balanced \
     --l-package-count 10 \
     --l-expected-target-count 10 \
+    --l-first-wave-per-target 7 \
+    --reserve-l-deadline-step 250 \
     --hm-allocation-mode deterministic_thresholds \
     --hm-target-kill-probability 0.85 \
     --hm-min-h-per-mother "$mother_h" \
@@ -89,6 +91,7 @@ xargs -P 2 -n 2 bash -c '
     --terminal-turn-pulse-steps 1 \
     --terminal-straight-recovery-steps 2 \
     --terminal-no-improvement-limit 3 \
+    --enable-terminal-guidance \
     --velocity-window-steps 5 \
     --seconds-per-step 1 \
     --enable-event \

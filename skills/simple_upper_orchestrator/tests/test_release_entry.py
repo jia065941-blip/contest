@@ -25,17 +25,23 @@ def test_parser_contains_official_and_adapter_options():
     assert args.hm_reserve_h == 2
     assert args.reserve_h_count == 0
     assert args.l_first_wave_per_target == 0
-    assert args.reserve_deadline_step == 300
+    assert args.reserve_deadline_step == 450
+    assert args.reserve_l_deadline_step == 250
     assert args.reserve_max_stage is None
     assert args.reserve_h_max_distance == 80.0
     assert args.reserve_l_max_distance == 100.0
-    assert args.reserve_h_max_turn == 60.0
-    assert args.reserve_l_max_turn == 75.0
+    assert args.reserve_h_max_turn is None
+    assert args.reserve_l_max_turn is None
+    assert args.reserve_h_turn_rate == 20.0
+    assert args.reserve_l_turn_rate == 15.0
+    assert args.reserve_turn_safety_seconds == 5.0
     assert args.reserve_holding_half_width == 6.0
     assert args.reserve_holding_heading_offset == 35.0
     assert args.reserve_holding_max_turn_steps == 6
     assert args.reserve_holding_straight_steps == 2
     assert args.deploy_gap_km == 15.0
+    assert args.deploy_l_reserve_gap_km == 8.0
+    assert args.deploy_l_reserve_depth_km == 5.0
     assert args.deploy_l_first_wave_fraction == 0.70
     assert args.deploy_h_depth_km == 5.0
     assert args.deploy_m_depth_km == 10.0
@@ -74,10 +80,17 @@ def test_parser_contains_official_and_adapter_options():
     assert args.dynamic_retarget_max_per_old_target == 1
     assert args.disable_dynamic_retarget is False
     assert args.disable_terminal_guidance is False
+    assert args.enable_terminal_guidance is False
     assert args.terminal_min_stage == 4
     assert args.terminal_enter_distance is None
-    assert args.terminal_capture_distance == 2000.0
-    assert args.terminal_final_straight_distance == 300.0
+    assert args.terminal_capture_distance == 600.0
+    assert args.terminal_final_straight_distance == 200.0
+    assert args.terminal_h_capture is None
+    assert args.terminal_h_final is None
+    assert args.terminal_m_capture is None
+    assert args.terminal_m_final is None
+    assert args.terminal_l_capture is None
+    assert args.terminal_l_final is None
     assert args.terminal_straight_distance is None
     assert args.terminal_exit_distance == 3500.0
     assert args.terminal_max_track_age == 5
@@ -106,11 +119,15 @@ def test_reserve_options_are_wired_into_config():
         "--reserve-h-count", "2",
         "--l-first-wave-per-target", "6",
         "--reserve-deadline-step", "240",
+        "--reserve-l-deadline-step", "180",
         "--reserve-max-stage", "1",
         "--reserve-h-max-distance", "70",
         "--reserve-l-max-distance", "90",
         "--reserve-h-max-turn", "50",
         "--reserve-l-max-turn", "65",
+        "--reserve-h-turn-rate", "18",
+        "--reserve-l-turn-rate", "14",
+        "--reserve-turn-safety-seconds", "7",
         "--reserve-holding-half-width", "5",
         "--reserve-holding-heading-offset", "30",
         "--reserve-holding-max-turn-steps", "4",
@@ -123,11 +140,15 @@ def test_reserve_options_are_wired_into_config():
     assert configured.reserve_h_count == 2
     assert configured.l_first_wave_per_target == 6
     assert configured.reserve_deadline_step == 240
+    assert configured.reserve_l_deadline_step == 180
     assert configured.reserve_max_stage == 1
     assert configured.reserve_h_max_distance_km == 70
     assert configured.reserve_l_max_distance_km == 90
     assert configured.reserve_h_max_turn_angle_degrees == 50
     assert configured.reserve_l_max_turn_angle_degrees == 65
+    assert configured.reserve_h_turn_rate_degrees_per_second == 18
+    assert configured.reserve_l_turn_rate_degrees_per_second == 14
+    assert configured.reserve_turn_safety_seconds == 7
     assert configured.reserve_holding_half_width_km == 5
     assert configured.reserve_holding_heading_offset_degrees == 30
     assert configured.reserve_holding_max_turn_steps == 4
@@ -194,6 +215,39 @@ def test_terminal_guidance_030_and_velocity_window_options_are_wired():
     assert terminal.straight_recovery_steps == 3
     assert terminal.no_improvement_limit == 4
     assert configured.velocity_window_steps == 7
+
+
+def test_terminal_guidance_040_profiles_and_explicit_enable_are_wired():
+    parser = build_parser(OFFICIAL)
+    defaults = parser.parse_args([
+        "--scenario", "launch20/easy/E01", "--max-steps", "12",
+    ])
+
+    configured = _config(defaults)
+    profiles = dict(configured.terminal_guidance.profiles)
+    assert configured.terminal_guidance_enabled is False
+    assert (profiles[21000].capture_distance, profiles[21000].final_straight_distance) == (300.0, 150.0)
+    assert (profiles[21001].capture_distance, profiles[21001].final_straight_distance) == (600.0, 200.0)
+    assert (profiles[21002].capture_distance, profiles[21002].final_straight_distance) == (600.0, 200.0)
+    assert profiles[21002].max_track_age is None
+    assert profiles[21002].require_fresh_track is False
+
+    overridden = parser.parse_args([
+        "--scenario", "launch20/easy/E01", "--max-steps", "12",
+        "--enable-terminal-guidance",
+        "--terminal-h-capture300", "325",
+        "--terminal-h-final150", "140",
+        "--terminal-m-capture600", "625",
+        "--terminal-m-final200", "190",
+        "--terminal-l-capture600", "650",
+        "--terminal-l-final200", "180",
+    ])
+    configured = _config(overridden)
+    profiles = dict(configured.terminal_guidance.profiles)
+    assert configured.terminal_guidance_enabled is True
+    assert (profiles[21000].capture_distance, profiles[21000].final_straight_distance) == (325.0, 140.0)
+    assert (profiles[21001].capture_distance, profiles[21001].final_straight_distance) == (625.0, 190.0)
+    assert (profiles[21002].capture_distance, profiles[21002].final_straight_distance) == (650.0, 180.0)
 
 
 def test_legacy_terminal_straight_and_deadband_options_remain_compatible():

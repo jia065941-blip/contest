@@ -24,9 +24,12 @@ run_id="launch20_easy_E01_simple_upper_s${SEED}_t${SIMPLE_UPPER_THREADS}"
   --deploy-l-depth-km 5 \
   --deploy-hm-depth-km 10 \
   --deploy-spacing-km 1 \
+  --deploy-l-first-wave-fraction 1 \
   --l-satellite-trigger-step 1 \
   --l-package-count 10 \
   --l-expected-target-count 10 \
+  --l-first-wave-per-target 7 \
+  --reserve-l-deadline-step 250 \
   --hm-safety-factor 1.25 \
   --disable-log-color \
   >"$OUTPUT_ROOT/logs/$run_id.log" 2>&1

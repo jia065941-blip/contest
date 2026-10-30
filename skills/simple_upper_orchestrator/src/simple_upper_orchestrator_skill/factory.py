@@ -60,6 +60,8 @@ class SimpleUpperFactory:
             on_plan=self._coordinator.set_deployment_plan,
             on_mission_plan=self._coordinator.set_mission_plan,
             public_targets=self._coordinator.public_targets,
+            l_first_wave_per_target=self.config.l_first_wave_per_target,
+            expected_l_target_count=self.config.l_strike.expected_target_count,
             hm_config=replace(
                 self.config.hm_strike,
                 reserve_h=(
