@@ -1,0 +1,49 @@
+{
+  "status": "passed",
+  "raw_api_choices_verified": 60,
+  "final_choices": 20,
+  "all_final_choices_match_historical_maximum": true,
+  "api_requests": 14,
+  "all_usage_recorded": true,
+  "anonymous_prompt_checks": true,
+  "native_games": 0,
+  "aggregate_mode": "seed_equal",
+  "input_hashes": {
+    "seed1/matrix.csv": {
+      "sha256": "a0600d662173f01494c2c9a22d2ad1960d767243b55fbe3caf87167cfdf57531",
+      "seed": "seed1",
+      "native_provenance": "matrix_only_at_requested_location"
+    },
+    "seed2/matrix.csv": {
+      "sha256": "9eeb63d72eff0a2e0f46813cad9a133f9c0380868c25830aedca3659da66bc6b",
+      "seed": "seed2",
+      "native_provenance": "matrix_only_at_requested_location"
+    },
+    "seed4/run001/matrix.csv": {
+      "sha256": "2d6a0e732f3ca5553f6f58c00babee745c75358bd34c70430b8beec3653af87f",
+      "seed": "seed4",
+      "native_provenance": "matrix_only_at_requested_location"
+    },
+    "seed4/run002/matrix.csv": {
+      "sha256": "99d7597b0776eabd6f7cfcc021ffef6141d40855dbb2ad2d984aee6dcae4785d",
+      "seed": "seed4",
+      "native_provenance": "matrix_only_at_requested_location"
+    },
+    "seed5/matrix.csv": {
+      "sha256": "0d1ccc1b2f37e337c123becb800f8d1afaa4ec24c963703ef8285a49b58ae7de",
+      "seed": "seed5",
+      "native_provenance": "matrix_only_at_requested_location"
+    }
+  },
+  "source_code_hashes": {
+    "train.py": "028ed1dce30c7fb26b866b7055650cf0f5ca96ebb3e8eac06b536155d8928513",
+    "data.py": "038a705712e400ec1305730033f710c896f2181120a46c713db2995a519a2d46",
+    "api.py": "ee1ec243b0be854953e3da689f2688e7dc179630e2d13c4fd0b91aa3ac843a9b",
+    "repair_experience.py": "08ce6654f83052f3489161c67efb3d97a1e345762dc32570c9b3017cb7d22ec6",
+    "selector.py": "3f3375d2ef6b233896a77fa2534bf572c42d59db06ef5296996a4d66301fdccf"
+  },
+  "intermediate_parser_errors": "Resolved by parsing equivalent numeric strings and text rows; cached paid replies reused without altering choices.",
+  "intermediate_experience_error": "Incorrect numerical comparison retired; final experience uses validated citations with source-derived numbers.",
+  "frozen_inference_input_checks": 20,
+  "extra_api_calls_for_export": 0
+}

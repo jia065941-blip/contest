@@ -1,0 +1,57 @@
+{
+  "guard": {
+    "feature": "A_source_retained_budget",
+    "threshold": 1.5,
+    "clusters": 17,
+    "left": {
+      "action": "RETAIN",
+      "weighted_marginal_gain": -7.103645147123396,
+      "predicted_veto_gain": -0.5919704289269497,
+      "clusters": 13,
+      "rows": 34,
+      "weight": 12.0,
+      "active_base_A_clusters": 10,
+      "active_weight": 7.666666666666666,
+      "correction_benefit_rows": 0,
+      "correction_harm_rows": 8,
+      "correction_tie_rows": 13,
+      "correction_benefit_clusters": 0,
+      "correction_harm_clusters": 3,
+      "override_rows": 0
+    },
+    "right": {
+      "action": "VETO",
+      "weighted_marginal_gain": 1.3333333333333333,
+      "predicted_veto_gain": 0.26666666666666666,
+      "clusters": 6,
+      "rows": 15,
+      "weight": 5.0,
+      "active_base_A_clusters": 3,
+      "active_weight": 1.6666666666666665,
+      "correction_benefit_rows": 2,
+      "correction_harm_rows": 0,
+      "correction_tie_rows": 3,
+      "correction_benefit_clusters": 2,
+      "correction_harm_clusters": 0,
+      "override_rows": 5
+    },
+    "training_equal_cluster_delta_base": 0.0784313725490196
+  },
+  "composed_tree": {
+    "feature": "B_takeover_time_ratio",
+    "threshold": 2.5,
+    "left": {
+      "choice": "KEEP"
+    },
+    "right": {
+      "feature": "A_source_retained_budget",
+      "threshold": 1.5,
+      "left": {
+        "choice": "A"
+      },
+      "right": {
+        "choice": "KEEP"
+      }
+    }
+  }
+}

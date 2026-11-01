@@ -1,0 +1,2670 @@
+{
+  "version": "pku_initial_astra_v2",
+  "generator": "GPT-6 Astra, high reasoning (delegated generation)",
+  "candidates": [
+    {
+      "version": "pku_initial_astra_v2",
+      "id": "A00",
+      "name": "完整摧毁边际预算",
+      "priority_score_mechanism": "以加一H或成组M的完整摧毁概率增量配置余量，统一H天眼窗，L三机首批",
+      "legal_inputs": {
+        "opening": [
+          "map_bounds (original longitude/latitude degrees)",
+          "deployment.coordinates and coordinatesHM (all polygons)",
+          "own_inventory.role,type,count,initial_health_values",
+          "public_targets.ref,type,position,initial_health"
+        ],
+        "runtime": [
+          "current component own-unit position/velocity/stage/health/visibility",
+          "current component received target ID,type,position,velocity,timestamp",
+          "per-unit current task and native command receipts",
+          "public satellite active flag"
+        ],
+        "forbidden": [
+          "Q label as a policy selector",
+          "map difficulty/name",
+          "private hidden target catalogue or HP",
+          "blue unopened interceptor inventory",
+          "historical scores",
+          "cross-component private memory"
+        ],
+        "coordinate_contract": "Original unscaled lon/lat/alt in actions; WGS84 ECEF for distances. No model-scale multiplication in actor output. Targets at z=0; deployments at 3000m."
+      },
+      "deployment": {
+        "call": "planner_v2.compile_plan(case,id)",
+        "algorithm": "Use all polygon boundaries (41samples/edge) and legal11x11 interior samples, then solve exact desired-distance edge roots. Choose point minimizing ETA error plus soft350m separation penalty; altitude3000. All points validated in the relevant polygon union. H nominal200,M120,L100m/s. Same target H arrival jitter4s, M jitter5s. No waiting or relaunch.",
+        "parameters": {
+          "id": "A00",
+          "name": "完整摧毁边际预算",
+          "mechanism": "以加一H或成组M的完整摧毁概率增量配置余量，统一H天眼窗，L三机首批",
+          "mother_bias": 1.0,
+          "sentry_bias": 1.0,
+          "h_survival": 0.84,
+          "m_survival": 0.88,
+          "window_mode": "balanced",
+          "arrival_fraction": 0.5,
+          "m_lag": 18,
+          "hidden_batch": 3,
+          "hidden_topup": 2,
+          "hidden_spread": 24,
+          "search_spacing": 3600,
+          "search_rear_fraction": 0.22,
+          "loss_mode": "expected",
+          "refresh": 2
+        },
+        "soft_separation_m": 350,
+        "hard_separation_constraint": null,
+        "all_units_required": true
+      },
+      "public_target_assignment": {
+        "known_hp": {
+          "9400": 24,
+          "9600": 18,
+          "9500": null
+        },
+        "effective_damage": {
+          "ordinary": {
+            "H_9400": 16,
+            "H_9600": 12,
+            "M_9400": 4,
+            "M_9600": 3,
+            "L_9500": 0.8
+          },
+          "satellite": {
+            "H_9400": 20,
+            "H_9600": 20,
+            "M_9400": "ordinary path including angle modifiers"
+          },
+          "mother_pessimistic_per_hit": {
+            "H": 9.6,
+            "M": 2.4
+          }
+        },
+        "ordinary_conditions": [
+          "9400 nominal: 16H+4M>=24; 9600:12H+3M>=18.",
+          "9400 robust order-free lower bound:9.6H+2.4M>=24. This is deliberately conservative: the first hit without history has no decrease.",
+          "For 2 H alone on a mother, first>=16 and second>=9.6 gives25.6 if both hit; no H-loss margin. With arbitrary M arrival order the generic all-hit floor remains safe.",
+          "9600 H+2M=18 but loses completeness after any member loss;2H=24 survives no H loss."
+        ],
+        "window_conditions": [
+          "9400 2H=40 intact;1H+2M has worst20+4.8=24.8. 2H+2M keeps24.8 after losing oneH if the remainingH hits during window.",
+          "9600 1H=20 intact,2H=40 keeps20 after oneH loss;1H+6M keeps18 after oneH loss.",
+          "L batch3/4/5 gives2.4/3.2/4.0 intact damage, not guaranteed destruction because hiddenHP is unknown."
+        ],
+        "loss_model": "Exact enumeration over independent assumed H/M survival in _p_kill; these are hypothesis parameters, not measured or official probabilities. No artificial survival reward; objective is target weight times estimated full-kill probability plus explicit fallback robustness.",
+        "allocation_algorithm": "Seed each public mother with2H, each sentry with1H. When infeasible select complete packages in weight/(1+nearestETA/1000) order. Spend all remaining H/M by enumerating bundle increments dH=0..2,dM=0..8; maximize weighted complete-kill objective gain divided by dH*(M_inventory/H_inventory)+dM. Tie-break gain, cost, ETA, target ref. Includes ordinary-angle fallback; compile outputs actual budgets after geometry and escort placement."
+      },
+      "arrival_coordination": {
+        "estimate": "1.06*ECEF_distance/nominal_speed+12seconds; runtime remainingETA=1.08*distance/clamped_current_speed+12; clamp speed to[.45,1.8]*nominal",
+        "window_search": "Enumerate start times every5s, evaluate legal per-target H ETA intervals; score weighted target inclusion in inner[+12,+168]s minus delay penalty; aim at candidate arrival_fraction*180. Candidate-specific sentry/deep/mother/early/late objective is executable in planner.",
+        "uncertainty": "±45s reported estimate, not a native guarantee. Target movement12m/s, V13 interference and stage-dependent flight can dominate.",
+        "M_late_handling": "Deploy M as close as legally possible if desired ETA cannot be met. Report M-lastH gap. A06 moves oneH per eligible multi-H target toward M ETA as sensor escort. Other plans budget H complete kill independently and treat M as uncertain backup; no unsupported target-death assumption.",
+        "same_target_updates": "Attack IDs reissued each step; coordinates from latest legal records only. Fresh H observations near target can update nearby M.",
+        "angles": "No claimed guaranteed >30degree bonus or avoided<10degree penalty. Soft alternation of deployment side is a diversity tie-break only; budgets retain conservative factors."
+      },
+      "satellite_policy": {
+        "resource": "exactly1 global opportunity,180seconds strict expiry",
+        "optimization": "combine H complete-budget arrival coverage with early hidden-discovery opportunity; report predicted coverage and post-discovery L reachability per case",
+        "responsibility": "central-latitude rear-search L first; statically ordered otherL backups every3s, rank slots capped45s; any available issuer type is legal, but these plans choose L to preserve attack commitment",
+        "trigger": "planned time or primary advance<=18s when >=60% and >=2 own-group H legally observed ETA<=22s; no cross-group adaptive observations",
+        "activity": "use legal is_using_satellite flag; observed active latches only local memory. Unit request marker prevents same-unit retry after split. Other groups may attempt backup; engine quota handles global competition.",
+        "failure": "late requests stop at min(1150,planned+45); if none succeed, use ordinary-budget fallback without inventing another opportunity"
+      },
+      "search_and_hidden_targets": {
+        "geometry": "full north-south map span divided into ceil(height/spacing) horizontal lanes; actual lane step<=profile spacing. Every L assigned lane i%nlanes, wave floor(i/nlanes). Rear wave starts near legal western edge, forward waves near eastern legal edge with1800m spacing. Projection considers all polygons.",
+        "sensor": "at2000m above ground, horizontal radius sqrt(3000^2-2000^2)=2236.07m; use3200–3800m lane spacing. At initial3000m height horizontal radius is zero; no guarantee until native altitude evolves.",
+        "route": "first leg to east map edge400m inset; optional broad return to lane+2 and western waypoint, switch8km early only with45s turning and90s remaining margin. First-leg coverage only is credited in static estimates.",
+        "batch": 3,
+        "topup": 2,
+        "hidden_hp": "unknown; batch damage is a budget, not kill guarantee",
+        "dispatch": "sort by nearest ETA except early/deep profiles use smallest remaining-lifetime slack; choose a compact arrival wave within hidden_spread seconds, preserve search floor, compare current actual bindings before every nomination",
+        "knowledge": "static targets can retain old coordinates for existing commitment; new assignments and replenishment require fresh timestamp<=6s; absent snapshot is unknown, never dead",
+        "insufficient": "wait for complete batch until1450s, then allow reachable partial final wave; all members still require remaining-life margin"
+      },
+      "event_rules": [
+        {
+          "state": "OPENING_COMMITTED",
+          "trigger": "first decision",
+          "binding": "every own unit exactly once",
+          "action": "H/M: [4,self,targetID,0]; L:[2,self,waypoint_lon,waypoint_lat]",
+          "exit": "continue updating legal targets every step; no takeoff delay"
+        },
+        {
+          "state": "SATELLITE_DUE",
+          "trigger": "predeclared local responsibility time, no legally observed active state and per-unit request not already made",
+          "binding": "primary L then static backup rank slots of3s, max45s late",
+          "action": "[3,self,0,0] alongside task and V13 turn",
+          "exit": "active flag latches only within received group; actual quota belongs engine"
+        },
+        {
+          "state": "HIDDEN_NOMINATED",
+          "trigger": "fresh <=6s 9500 record and full batch reachable before lifetime-90s",
+          "binding": "only current-group free L; keep max(1,ceil(.1*freeL)) searchers",
+          "action": "propose exact batch to frozen prior_t03_make, which may substitute legal free receivers and preserve searchers",
+          "exit": "actual returned/current bindings only; rejected nominations retried after6s"
+        },
+        {
+          "state": "HIDDEN_IN_FLIGHT",
+          "trigger": "actual prior-bound L report",
+          "binding": "sticky target commitment; never steal bound L",
+          "action": "[4,self,targetID,0] refreshed every step with group legal data",
+          "exit": "ETA plus18s is review time only, never proof of hit or death"
+        },
+        {
+          "state": "HIDDEN_REVIEW",
+          "trigger": "review time elapsed and newly fresh live target timestamp after previous expected arrival",
+          "binding": "top-up2 or3 new unbound L via a fresh prior wave ID",
+          "action": "same legal prior handoff; preserve existing attackers and search floor",
+          "exit": "no fresh record means unknown; no deletion or kill credit"
+        },
+        {
+          "state": "SEARCH_CONTINUE",
+          "trigger": "within8km of waypoint and next segment fits remaining lifetime including45s turning estimate and90s reserve",
+          "binding": "own search task waypoint index",
+          "action": "[2,self,next_lon,next_lat]",
+          "exit": "at final route end no unlimited hold; native model may finish"
+        },
+        {
+          "state": "PUBLIC_REBALANCE",
+          "trigger": "only after planned satellite window ends; every8s",
+          "binding": "current group owns donor; removing donor still covers original public initialHP under conservative current coefficients; donor beyond18km terminal lock",
+          "action": "retarget only to <=5s-fresh public target with deficit; ETAnew<=1.25*ETAold, remaining lifetime-60",
+          "exit": "preserve bindings otherwise; missing member/target is not destruction"
+        },
+        {
+          "state": "COMPONENT_CHANGE",
+          "trigger": "split/merge reported by legal communications",
+          "binding": "per-unit own task retained; group ledger rebuilt from current members only",
+          "action": "no cross-group memory import; actual tasks dominate nominations",
+          "exit": "expected damage remains an estimate; new group cannot infer old group kills"
+        }
+      ],
+      "execution_integration": {
+        "priority": [
+          "preserve frozen prior accepted bindings and unit role legality",
+          "refresh committed attack target from legal data",
+          "apply approved public surplus reassignment or hidden prior handoff",
+          "advance own search route",
+          "one scheduled satellite request",
+          "existing V13/mission_v12 turn action"
+        ],
+        "prior_t03_make": "nomination is not binding, native receipt is not impact; actual current bindings next step override planner memory; retry6s exceeds frozen5s timeout",
+        "mission_v12": "all original threat thresholds, terminal gates,4degree deadzone and signed recovery remain frozen"
+      },
+      "degradation": {
+        "resource_shortage": "complete public target packages ranked by weight/reachable ETA; no unsupported partial damage score",
+        "communication_split": "retain own task and snapshots; rebuild only actual members; do not steal committed target resources below initialHP coverage",
+        "requester_loss": "static backup slots independent of unobservable absence",
+        "stale_information": "no new hidden nomination or public reassignment from stale tracks; preserve old own commitment, keep searching",
+        "unknown_destroyed": "no available explicit kill evidence is assumed; inferred arrivals produce review states only"
+      },
+      "formulas_and_parameter_sources": {
+        "official": "damage,HP,speeds,lifetimes,range,quota,angle bounds from approved rule_facts/prompt",
+        "hypotheses": "survival rates,6%/8% ETA loss,12s overhead,45s turning uncertainty,90s L reserve,350m spacing,profile weights are design estimates requiring native evaluation",
+        "score": "official100*destroyed_weight/all_true_weight; actual hidden denominator unknown to actor. Static public budget percentage is never called official score."
+      },
+      "required_compiler_changes": {
+        "existing_preserved": [
+          "V13 checkpoint",
+          "mission_v12 gating and recovery-sign adapter",
+          "per-step legal target-coordinate update",
+          "prior_t03_make implementation including5s confirmation and search retention",
+          "actual engine deployment and combat action validators"
+        ],
+        "new_required": [
+          "Call compile_plan using public inputs; map each role index H000/M000/L000 to sorted own legal IDs, T refs to public target IDs.",
+          "Deploy every unit once with altitude3000; validate all polygons and append one[1,-1,0,0,0] at end.",
+          "Initialize every unit task on first decision; action2 for waypoint or4 for attack, then existing action0 motion.",
+          "Call step_group once per actual communication component and step; only pass its legal reports/tracks and local memory.",
+          "Send hidden nominations through frozen prior with distinct(target_ref,wave)event IDs; report actual bindings next step, not requested nominations.",
+          "Retain per-unit satellite_requested_step across splits; actor request result is not assumed global activity.",
+          "Preserve waypoint index/binding per unit; group memory carries no privately imported other-component state.",
+          "Translate all finite action fields; do not emit speed/height/hold/relaunch commands.",
+          "Store actual_score only from full3000-step native match official scorer, separate from static estimated fields."
+        ]
+      }
+    },
+    {
+      "version": "pku_initial_astra_v2",
+      "id": "A01",
+      "name": "母巢五权重保险",
+      "priority_score_mechanism": "提高母巢失败代价，余H优先补母巢一员损失余量，L四机首批减少未知HP下打残",
+      "legal_inputs": {
+        "opening": [
+          "map_bounds (original longitude/latitude degrees)",
+          "deployment.coordinates and coordinatesHM (all polygons)",
+          "own_inventory.role,type,count,initial_health_values",
+          "public_targets.ref,type,position,initial_health"
+        ],
+        "runtime": [
+          "current component own-unit position/velocity/stage/health/visibility",
+          "current component received target ID,type,position,velocity,timestamp",
+          "per-unit current task and native command receipts",
+          "public satellite active flag"
+        ],
+        "forbidden": [
+          "Q label as a policy selector",
+          "map difficulty/name",
+          "private hidden target catalogue or HP",
+          "blue unopened interceptor inventory",
+          "historical scores",
+          "cross-component private memory"
+        ],
+        "coordinate_contract": "Original unscaled lon/lat/alt in actions; WGS84 ECEF for distances. No model-scale multiplication in actor output. Targets at z=0; deployments at 3000m."
+      },
+      "deployment": {
+        "call": "planner_v2.compile_plan(case,id)",
+        "algorithm": "Use all polygon boundaries (41samples/edge) and legal11x11 interior samples, then solve exact desired-distance edge roots. Choose point minimizing ETA error plus soft350m separation penalty; altitude3000. All points validated in the relevant polygon union. H nominal200,M120,L100m/s. Same target H arrival jitter4s, M jitter5s. No waiting or relaunch.",
+        "parameters": {
+          "id": "A01",
+          "name": "母巢五权重保险",
+          "mechanism": "提高母巢失败代价，余H优先补母巢一员损失余量，L四机首批减少未知HP下打残",
+          "mother_bias": 1.65,
+          "sentry_bias": 1.0,
+          "h_survival": 0.8,
+          "m_survival": 0.88,
+          "window_mode": "mother",
+          "arrival_fraction": 0.55,
+          "m_lag": 12,
+          "hidden_batch": 4,
+          "hidden_topup": 2,
+          "hidden_spread": 28,
+          "search_spacing": 3600,
+          "search_rear_fraction": 0.2,
+          "loss_mode": "one_loss",
+          "refresh": 1
+        },
+        "soft_separation_m": 350,
+        "hard_separation_constraint": null,
+        "all_units_required": true
+      },
+      "public_target_assignment": {
+        "known_hp": {
+          "9400": 24,
+          "9600": 18,
+          "9500": null
+        },
+        "effective_damage": {
+          "ordinary": {
+            "H_9400": 16,
+            "H_9600": 12,
+            "M_9400": 4,
+            "M_9600": 3,
+            "L_9500": 0.8
+          },
+          "satellite": {
+            "H_9400": 20,
+            "H_9600": 20,
+            "M_9400": "ordinary path including angle modifiers"
+          },
+          "mother_pessimistic_per_hit": {
+            "H": 9.6,
+            "M": 2.4
+          }
+        },
+        "ordinary_conditions": [
+          "9400 nominal: 16H+4M>=24; 9600:12H+3M>=18.",
+          "9400 robust order-free lower bound:9.6H+2.4M>=24. This is deliberately conservative: the first hit without history has no decrease.",
+          "For 2 H alone on a mother, first>=16 and second>=9.6 gives25.6 if both hit; no H-loss margin. With arbitrary M arrival order the generic all-hit floor remains safe.",
+          "9600 H+2M=18 but loses completeness after any member loss;2H=24 survives no H loss."
+        ],
+        "window_conditions": [
+          "9400 2H=40 intact;1H+2M has worst20+4.8=24.8. 2H+2M keeps24.8 after losing oneH if the remainingH hits during window.",
+          "9600 1H=20 intact,2H=40 keeps20 after oneH loss;1H+6M keeps18 after oneH loss.",
+          "L batch3/4/5 gives2.4/3.2/4.0 intact damage, not guaranteed destruction because hiddenHP is unknown."
+        ],
+        "loss_model": "Exact enumeration over independent assumed H/M survival in _p_kill; these are hypothesis parameters, not measured or official probabilities. No artificial survival reward; objective is target weight times estimated full-kill probability plus explicit fallback robustness.",
+        "allocation_algorithm": "Seed each public mother with2H, each sentry with1H. When infeasible select complete packages in weight/(1+nearestETA/1000) order. Spend all remaining H/M by enumerating bundle increments dH=0..2,dM=0..8; maximize weighted complete-kill objective gain divided by dH*(M_inventory/H_inventory)+dM. Tie-break gain, cost, ETA, target ref. Includes ordinary-angle fallback; compile outputs actual budgets after geometry and escort placement."
+      },
+      "arrival_coordination": {
+        "estimate": "1.06*ECEF_distance/nominal_speed+12seconds; runtime remainingETA=1.08*distance/clamped_current_speed+12; clamp speed to[.45,1.8]*nominal",
+        "window_search": "Enumerate start times every5s, evaluate legal per-target H ETA intervals; score weighted target inclusion in inner[+12,+168]s minus delay penalty; aim at candidate arrival_fraction*180. Candidate-specific sentry/deep/mother/early/late objective is executable in planner.",
+        "uncertainty": "±45s reported estimate, not a native guarantee. Target movement12m/s, V13 interference and stage-dependent flight can dominate.",
+        "M_late_handling": "Deploy M as close as legally possible if desired ETA cannot be met. Report M-lastH gap. A06 moves oneH per eligible multi-H target toward M ETA as sensor escort. Other plans budget H complete kill independently and treat M as uncertain backup; no unsupported target-death assumption.",
+        "same_target_updates": "Attack IDs reissued each step; coordinates from latest legal records only. Fresh H observations near target can update nearby M.",
+        "angles": "No claimed guaranteed >30degree bonus or avoided<10degree penalty. Soft alternation of deployment side is a diversity tie-break only; budgets retain conservative factors."
+      },
+      "satellite_policy": {
+        "resource": "exactly1 global opportunity,180seconds strict expiry",
+        "optimization": "combine H complete-budget arrival coverage with early hidden-discovery opportunity; report predicted coverage and post-discovery L reachability per case",
+        "responsibility": "central-latitude rear-search L first; statically ordered otherL backups every3s, rank slots capped45s; any available issuer type is legal, but these plans choose L to preserve attack commitment",
+        "trigger": "planned time or primary advance<=18s when >=60% and >=2 own-group H legally observed ETA<=22s; no cross-group adaptive observations",
+        "activity": "use legal is_using_satellite flag; observed active latches only local memory. Unit request marker prevents same-unit retry after split. Other groups may attempt backup; engine quota handles global competition.",
+        "failure": "late requests stop at min(1150,planned+45); if none succeed, use ordinary-budget fallback without inventing another opportunity"
+      },
+      "search_and_hidden_targets": {
+        "geometry": "full north-south map span divided into ceil(height/spacing) horizontal lanes; actual lane step<=profile spacing. Every L assigned lane i%nlanes, wave floor(i/nlanes). Rear wave starts near legal western edge, forward waves near eastern legal edge with1800m spacing. Projection considers all polygons.",
+        "sensor": "at2000m above ground, horizontal radius sqrt(3000^2-2000^2)=2236.07m; use3200–3800m lane spacing. At initial3000m height horizontal radius is zero; no guarantee until native altitude evolves.",
+        "route": "first leg to east map edge400m inset; optional broad return to lane+2 and western waypoint, switch8km early only with45s turning and90s remaining margin. First-leg coverage only is credited in static estimates.",
+        "batch": 4,
+        "topup": 2,
+        "hidden_hp": "unknown; batch damage is a budget, not kill guarantee",
+        "dispatch": "sort by nearest ETA except early/deep profiles use smallest remaining-lifetime slack; choose a compact arrival wave within hidden_spread seconds, preserve search floor, compare current actual bindings before every nomination",
+        "knowledge": "static targets can retain old coordinates for existing commitment; new assignments and replenishment require fresh timestamp<=6s; absent snapshot is unknown, never dead",
+        "insufficient": "wait for complete batch until1450s, then allow reachable partial final wave; all members still require remaining-life margin"
+      },
+      "event_rules": [
+        {
+          "state": "OPENING_COMMITTED",
+          "trigger": "first decision",
+          "binding": "every own unit exactly once",
+          "action": "H/M: [4,self,targetID,0]; L:[2,self,waypoint_lon,waypoint_lat]",
+          "exit": "continue updating legal targets every step; no takeoff delay"
+        },
+        {
+          "state": "SATELLITE_DUE",
+          "trigger": "predeclared local responsibility time, no legally observed active state and per-unit request not already made",
+          "binding": "primary L then static backup rank slots of3s, max45s late",
+          "action": "[3,self,0,0] alongside task and V13 turn",
+          "exit": "active flag latches only within received group; actual quota belongs engine"
+        },
+        {
+          "state": "HIDDEN_NOMINATED",
+          "trigger": "fresh <=6s 9500 record and full batch reachable before lifetime-90s",
+          "binding": "only current-group free L; keep max(1,ceil(.1*freeL)) searchers",
+          "action": "propose exact batch to frozen prior_t03_make, which may substitute legal free receivers and preserve searchers",
+          "exit": "actual returned/current bindings only; rejected nominations retried after6s"
+        },
+        {
+          "state": "HIDDEN_IN_FLIGHT",
+          "trigger": "actual prior-bound L report",
+          "binding": "sticky target commitment; never steal bound L",
+          "action": "[4,self,targetID,0] refreshed every step with group legal data",
+          "exit": "ETA plus18s is review time only, never proof of hit or death"
+        },
+        {
+          "state": "HIDDEN_REVIEW",
+          "trigger": "review time elapsed and newly fresh live target timestamp after previous expected arrival",
+          "binding": "top-up2 or3 new unbound L via a fresh prior wave ID",
+          "action": "same legal prior handoff; preserve existing attackers and search floor",
+          "exit": "no fresh record means unknown; no deletion or kill credit"
+        },
+        {
+          "state": "SEARCH_CONTINUE",
+          "trigger": "within8km of waypoint and next segment fits remaining lifetime including45s turning estimate and90s reserve",
+          "binding": "own search task waypoint index",
+          "action": "[2,self,next_lon,next_lat]",
+          "exit": "at final route end no unlimited hold; native model may finish"
+        },
+        {
+          "state": "PUBLIC_REBALANCE",
+          "trigger": "only after planned satellite window ends; every8s",
+          "binding": "current group owns donor; removing donor still covers original public initialHP under conservative current coefficients; donor beyond18km terminal lock",
+          "action": "retarget only to <=5s-fresh public target with deficit; ETAnew<=1.25*ETAold, remaining lifetime-60",
+          "exit": "preserve bindings otherwise; missing member/target is not destruction"
+        },
+        {
+          "state": "COMPONENT_CHANGE",
+          "trigger": "split/merge reported by legal communications",
+          "binding": "per-unit own task retained; group ledger rebuilt from current members only",
+          "action": "no cross-group memory import; actual tasks dominate nominations",
+          "exit": "expected damage remains an estimate; new group cannot infer old group kills"
+        }
+      ],
+      "execution_integration": {
+        "priority": [
+          "preserve frozen prior accepted bindings and unit role legality",
+          "refresh committed attack target from legal data",
+          "apply approved public surplus reassignment or hidden prior handoff",
+          "advance own search route",
+          "one scheduled satellite request",
+          "existing V13/mission_v12 turn action"
+        ],
+        "prior_t03_make": "nomination is not binding, native receipt is not impact; actual current bindings next step override planner memory; retry6s exceeds frozen5s timeout",
+        "mission_v12": "all original threat thresholds, terminal gates,4degree deadzone and signed recovery remain frozen"
+      },
+      "degradation": {
+        "resource_shortage": "complete public target packages ranked by weight/reachable ETA; no unsupported partial damage score",
+        "communication_split": "retain own task and snapshots; rebuild only actual members; do not steal committed target resources below initialHP coverage",
+        "requester_loss": "static backup slots independent of unobservable absence",
+        "stale_information": "no new hidden nomination or public reassignment from stale tracks; preserve old own commitment, keep searching",
+        "unknown_destroyed": "no available explicit kill evidence is assumed; inferred arrivals produce review states only"
+      },
+      "formulas_and_parameter_sources": {
+        "official": "damage,HP,speeds,lifetimes,range,quota,angle bounds from approved rule_facts/prompt",
+        "hypotheses": "survival rates,6%/8% ETA loss,12s overhead,45s turning uncertainty,90s L reserve,350m spacing,profile weights are design estimates requiring native evaluation",
+        "score": "official100*destroyed_weight/all_true_weight; actual hidden denominator unknown to actor. Static public budget percentage is never called official score."
+      },
+      "required_compiler_changes": {
+        "existing_preserved": [
+          "V13 checkpoint",
+          "mission_v12 gating and recovery-sign adapter",
+          "per-step legal target-coordinate update",
+          "prior_t03_make implementation including5s confirmation and search retention",
+          "actual engine deployment and combat action validators"
+        ],
+        "new_required": [
+          "Call compile_plan using public inputs; map each role index H000/M000/L000 to sorted own legal IDs, T refs to public target IDs.",
+          "Deploy every unit once with altitude3000; validate all polygons and append one[1,-1,0,0,0] at end.",
+          "Initialize every unit task on first decision; action2 for waypoint or4 for attack, then existing action0 motion.",
+          "Call step_group once per actual communication component and step; only pass its legal reports/tracks and local memory.",
+          "Send hidden nominations through frozen prior with distinct(target_ref,wave)event IDs; report actual bindings next step, not requested nominations.",
+          "Retain per-unit satellite_requested_step across splits; actor request result is not assumed global activity.",
+          "Preserve waypoint index/binding per unit; group memory carries no privately imported other-component state.",
+          "Translate all finite action fields; do not emit speed/height/hold/relaunch commands.",
+          "Store actual_score only from full3000-step native match official scorer, separate from static estimated fields."
+        ]
+      }
+    },
+    {
+      "version": "pku_initial_astra_v2",
+      "id": "A02",
+      "name": "哨卫通道先压制",
+      "priority_score_mechanism": "按公开进攻线附近哨卫密度加权摧毁预算与到达提前量，削弱潜在附属防御但不宣称已压制",
+      "legal_inputs": {
+        "opening": [
+          "map_bounds (original longitude/latitude degrees)",
+          "deployment.coordinates and coordinatesHM (all polygons)",
+          "own_inventory.role,type,count,initial_health_values",
+          "public_targets.ref,type,position,initial_health"
+        ],
+        "runtime": [
+          "current component own-unit position/velocity/stage/health/visibility",
+          "current component received target ID,type,position,velocity,timestamp",
+          "per-unit current task and native command receipts",
+          "public satellite active flag"
+        ],
+        "forbidden": [
+          "Q label as a policy selector",
+          "map difficulty/name",
+          "private hidden target catalogue or HP",
+          "blue unopened interceptor inventory",
+          "historical scores",
+          "cross-component private memory"
+        ],
+        "coordinate_contract": "Original unscaled lon/lat/alt in actions; WGS84 ECEF for distances. No model-scale multiplication in actor output. Targets at z=0; deployments at 3000m."
+      },
+      "deployment": {
+        "call": "planner_v2.compile_plan(case,id)",
+        "algorithm": "Use all polygon boundaries (41samples/edge) and legal11x11 interior samples, then solve exact desired-distance edge roots. Choose point minimizing ETA error plus soft350m separation penalty; altitude3000. All points validated in the relevant polygon union. H nominal200,M120,L100m/s. Same target H arrival jitter4s, M jitter5s. No waiting or relaunch.",
+        "parameters": {
+          "id": "A02",
+          "name": "哨卫通道先压制",
+          "mechanism": "按公开进攻线附近哨卫密度加权摧毁预算与到达提前量，削弱潜在附属防御但不宣称已压制",
+          "mother_bias": 1.0,
+          "sentry_bias": 1.6,
+          "h_survival": 0.82,
+          "m_survival": 0.87,
+          "window_mode": "sentry",
+          "arrival_fraction": 0.45,
+          "m_lag": 8,
+          "hidden_batch": 3,
+          "hidden_topup": 3,
+          "hidden_spread": 20,
+          "search_spacing": 3400,
+          "search_rear_fraction": 0.24,
+          "loss_mode": "expected",
+          "refresh": 1
+        },
+        "soft_separation_m": 350,
+        "hard_separation_constraint": null,
+        "all_units_required": true
+      },
+      "public_target_assignment": {
+        "known_hp": {
+          "9400": 24,
+          "9600": 18,
+          "9500": null
+        },
+        "effective_damage": {
+          "ordinary": {
+            "H_9400": 16,
+            "H_9600": 12,
+            "M_9400": 4,
+            "M_9600": 3,
+            "L_9500": 0.8
+          },
+          "satellite": {
+            "H_9400": 20,
+            "H_9600": 20,
+            "M_9400": "ordinary path including angle modifiers"
+          },
+          "mother_pessimistic_per_hit": {
+            "H": 9.6,
+            "M": 2.4
+          }
+        },
+        "ordinary_conditions": [
+          "9400 nominal: 16H+4M>=24; 9600:12H+3M>=18.",
+          "9400 robust order-free lower bound:9.6H+2.4M>=24. This is deliberately conservative: the first hit without history has no decrease.",
+          "For 2 H alone on a mother, first>=16 and second>=9.6 gives25.6 if both hit; no H-loss margin. With arbitrary M arrival order the generic all-hit floor remains safe.",
+          "9600 H+2M=18 but loses completeness after any member loss;2H=24 survives no H loss."
+        ],
+        "window_conditions": [
+          "9400 2H=40 intact;1H+2M has worst20+4.8=24.8. 2H+2M keeps24.8 after losing oneH if the remainingH hits during window.",
+          "9600 1H=20 intact,2H=40 keeps20 after oneH loss;1H+6M keeps18 after oneH loss.",
+          "L batch3/4/5 gives2.4/3.2/4.0 intact damage, not guaranteed destruction because hiddenHP is unknown."
+        ],
+        "loss_model": "Exact enumeration over independent assumed H/M survival in _p_kill; these are hypothesis parameters, not measured or official probabilities. No artificial survival reward; objective is target weight times estimated full-kill probability plus explicit fallback robustness.",
+        "allocation_algorithm": "Seed each public mother with2H, each sentry with1H. When infeasible select complete packages in weight/(1+nearestETA/1000) order. Spend all remaining H/M by enumerating bundle increments dH=0..2,dM=0..8; maximize weighted complete-kill objective gain divided by dH*(M_inventory/H_inventory)+dM. Tie-break gain, cost, ETA, target ref. Includes ordinary-angle fallback; compile outputs actual budgets after geometry and escort placement."
+      },
+      "arrival_coordination": {
+        "estimate": "1.06*ECEF_distance/nominal_speed+12seconds; runtime remainingETA=1.08*distance/clamped_current_speed+12; clamp speed to[.45,1.8]*nominal",
+        "window_search": "Enumerate start times every5s, evaluate legal per-target H ETA intervals; score weighted target inclusion in inner[+12,+168]s minus delay penalty; aim at candidate arrival_fraction*180. Candidate-specific sentry/deep/mother/early/late objective is executable in planner.",
+        "uncertainty": "±45s reported estimate, not a native guarantee. Target movement12m/s, V13 interference and stage-dependent flight can dominate.",
+        "M_late_handling": "Deploy M as close as legally possible if desired ETA cannot be met. Report M-lastH gap. A06 moves oneH per eligible multi-H target toward M ETA as sensor escort. Other plans budget H complete kill independently and treat M as uncertain backup; no unsupported target-death assumption.",
+        "same_target_updates": "Attack IDs reissued each step; coordinates from latest legal records only. Fresh H observations near target can update nearby M.",
+        "angles": "No claimed guaranteed >30degree bonus or avoided<10degree penalty. Soft alternation of deployment side is a diversity tie-break only; budgets retain conservative factors."
+      },
+      "satellite_policy": {
+        "resource": "exactly1 global opportunity,180seconds strict expiry",
+        "optimization": "combine H complete-budget arrival coverage with early hidden-discovery opportunity; report predicted coverage and post-discovery L reachability per case",
+        "responsibility": "central-latitude rear-search L first; statically ordered otherL backups every3s, rank slots capped45s; any available issuer type is legal, but these plans choose L to preserve attack commitment",
+        "trigger": "planned time or primary advance<=18s when >=60% and >=2 own-group H legally observed ETA<=22s; no cross-group adaptive observations",
+        "activity": "use legal is_using_satellite flag; observed active latches only local memory. Unit request marker prevents same-unit retry after split. Other groups may attempt backup; engine quota handles global competition.",
+        "failure": "late requests stop at min(1150,planned+45); if none succeed, use ordinary-budget fallback without inventing another opportunity"
+      },
+      "search_and_hidden_targets": {
+        "geometry": "full north-south map span divided into ceil(height/spacing) horizontal lanes; actual lane step<=profile spacing. Every L assigned lane i%nlanes, wave floor(i/nlanes). Rear wave starts near legal western edge, forward waves near eastern legal edge with1800m spacing. Projection considers all polygons.",
+        "sensor": "at2000m above ground, horizontal radius sqrt(3000^2-2000^2)=2236.07m; use3200–3800m lane spacing. At initial3000m height horizontal radius is zero; no guarantee until native altitude evolves.",
+        "route": "first leg to east map edge400m inset; optional broad return to lane+2 and western waypoint, switch8km early only with45s turning and90s remaining margin. First-leg coverage only is credited in static estimates.",
+        "batch": 3,
+        "topup": 3,
+        "hidden_hp": "unknown; batch damage is a budget, not kill guarantee",
+        "dispatch": "sort by nearest ETA except early/deep profiles use smallest remaining-lifetime slack; choose a compact arrival wave within hidden_spread seconds, preserve search floor, compare current actual bindings before every nomination",
+        "knowledge": "static targets can retain old coordinates for existing commitment; new assignments and replenishment require fresh timestamp<=6s; absent snapshot is unknown, never dead",
+        "insufficient": "wait for complete batch until1450s, then allow reachable partial final wave; all members still require remaining-life margin"
+      },
+      "event_rules": [
+        {
+          "state": "OPENING_COMMITTED",
+          "trigger": "first decision",
+          "binding": "every own unit exactly once",
+          "action": "H/M: [4,self,targetID,0]; L:[2,self,waypoint_lon,waypoint_lat]",
+          "exit": "continue updating legal targets every step; no takeoff delay"
+        },
+        {
+          "state": "SATELLITE_DUE",
+          "trigger": "predeclared local responsibility time, no legally observed active state and per-unit request not already made",
+          "binding": "primary L then static backup rank slots of3s, max45s late",
+          "action": "[3,self,0,0] alongside task and V13 turn",
+          "exit": "active flag latches only within received group; actual quota belongs engine"
+        },
+        {
+          "state": "HIDDEN_NOMINATED",
+          "trigger": "fresh <=6s 9500 record and full batch reachable before lifetime-90s",
+          "binding": "only current-group free L; keep max(1,ceil(.1*freeL)) searchers",
+          "action": "propose exact batch to frozen prior_t03_make, which may substitute legal free receivers and preserve searchers",
+          "exit": "actual returned/current bindings only; rejected nominations retried after6s"
+        },
+        {
+          "state": "HIDDEN_IN_FLIGHT",
+          "trigger": "actual prior-bound L report",
+          "binding": "sticky target commitment; never steal bound L",
+          "action": "[4,self,targetID,0] refreshed every step with group legal data",
+          "exit": "ETA plus18s is review time only, never proof of hit or death"
+        },
+        {
+          "state": "HIDDEN_REVIEW",
+          "trigger": "review time elapsed and newly fresh live target timestamp after previous expected arrival",
+          "binding": "top-up2 or3 new unbound L via a fresh prior wave ID",
+          "action": "same legal prior handoff; preserve existing attackers and search floor",
+          "exit": "no fresh record means unknown; no deletion or kill credit"
+        },
+        {
+          "state": "SEARCH_CONTINUE",
+          "trigger": "within8km of waypoint and next segment fits remaining lifetime including45s turning estimate and90s reserve",
+          "binding": "own search task waypoint index",
+          "action": "[2,self,next_lon,next_lat]",
+          "exit": "at final route end no unlimited hold; native model may finish"
+        },
+        {
+          "state": "PUBLIC_REBALANCE",
+          "trigger": "only after planned satellite window ends; every8s",
+          "binding": "current group owns donor; removing donor still covers original public initialHP under conservative current coefficients; donor beyond18km terminal lock",
+          "action": "retarget only to <=5s-fresh public target with deficit; ETAnew<=1.25*ETAold, remaining lifetime-60",
+          "exit": "preserve bindings otherwise; missing member/target is not destruction"
+        },
+        {
+          "state": "COMPONENT_CHANGE",
+          "trigger": "split/merge reported by legal communications",
+          "binding": "per-unit own task retained; group ledger rebuilt from current members only",
+          "action": "no cross-group memory import; actual tasks dominate nominations",
+          "exit": "expected damage remains an estimate; new group cannot infer old group kills"
+        }
+      ],
+      "execution_integration": {
+        "priority": [
+          "preserve frozen prior accepted bindings and unit role legality",
+          "refresh committed attack target from legal data",
+          "apply approved public surplus reassignment or hidden prior handoff",
+          "advance own search route",
+          "one scheduled satellite request",
+          "existing V13/mission_v12 turn action"
+        ],
+        "prior_t03_make": "nomination is not binding, native receipt is not impact; actual current bindings next step override planner memory; retry6s exceeds frozen5s timeout",
+        "mission_v12": "all original threat thresholds, terminal gates,4degree deadzone and signed recovery remain frozen"
+      },
+      "degradation": {
+        "resource_shortage": "complete public target packages ranked by weight/reachable ETA; no unsupported partial damage score",
+        "communication_split": "retain own task and snapshots; rebuild only actual members; do not steal committed target resources below initialHP coverage",
+        "requester_loss": "static backup slots independent of unobservable absence",
+        "stale_information": "no new hidden nomination or public reassignment from stale tracks; preserve old own commitment, keep searching",
+        "unknown_destroyed": "no available explicit kill evidence is assumed; inferred arrivals produce review states only"
+      },
+      "formulas_and_parameter_sources": {
+        "official": "damage,HP,speeds,lifetimes,range,quota,angle bounds from approved rule_facts/prompt",
+        "hypotheses": "survival rates,6%/8% ETA loss,12s overhead,45s turning uncertainty,90s L reserve,350m spacing,profile weights are design estimates requiring native evaluation",
+        "score": "official100*destroyed_weight/all_true_weight; actual hidden denominator unknown to actor. Static public budget percentage is never called official score."
+      },
+      "required_compiler_changes": {
+        "existing_preserved": [
+          "V13 checkpoint",
+          "mission_v12 gating and recovery-sign adapter",
+          "per-step legal target-coordinate update",
+          "prior_t03_make implementation including5s confirmation and search retention",
+          "actual engine deployment and combat action validators"
+        ],
+        "new_required": [
+          "Call compile_plan using public inputs; map each role index H000/M000/L000 to sorted own legal IDs, T refs to public target IDs.",
+          "Deploy every unit once with altitude3000; validate all polygons and append one[1,-1,0,0,0] at end.",
+          "Initialize every unit task on first decision; action2 for waypoint or4 for attack, then existing action0 motion.",
+          "Call step_group once per actual communication component and step; only pass its legal reports/tracks and local memory.",
+          "Send hidden nominations through frozen prior with distinct(target_ref,wave)event IDs; report actual bindings next step, not requested nominations.",
+          "Retain per-unit satellite_requested_step across splits; actor request result is not assumed global activity.",
+          "Preserve waypoint index/binding per unit; group memory carries no privately imported other-component state.",
+          "Translate all finite action fields; do not emit speed/height/hold/relaunch commands.",
+          "Store actual_score only from full3000-step native match official scorer, separate from static estimated fields."
+        ]
+      }
+    },
+    {
+      "version": "pku_initial_astra_v2",
+      "id": "A03",
+      "name": "窗口偏差容忍",
+      "priority_score_mechanism": "显式提高普通伤害而非窗口伤害的组合价值，攻击窗边缘目标用M补足普通伤害",
+      "legal_inputs": {
+        "opening": [
+          "map_bounds (original longitude/latitude degrees)",
+          "deployment.coordinates and coordinatesHM (all polygons)",
+          "own_inventory.role,type,count,initial_health_values",
+          "public_targets.ref,type,position,initial_health"
+        ],
+        "runtime": [
+          "current component own-unit position/velocity/stage/health/visibility",
+          "current component received target ID,type,position,velocity,timestamp",
+          "per-unit current task and native command receipts",
+          "public satellite active flag"
+        ],
+        "forbidden": [
+          "Q label as a policy selector",
+          "map difficulty/name",
+          "private hidden target catalogue or HP",
+          "blue unopened interceptor inventory",
+          "historical scores",
+          "cross-component private memory"
+        ],
+        "coordinate_contract": "Original unscaled lon/lat/alt in actions; WGS84 ECEF for distances. No model-scale multiplication in actor output. Targets at z=0; deployments at 3000m."
+      },
+      "deployment": {
+        "call": "planner_v2.compile_plan(case,id)",
+        "algorithm": "Use all polygon boundaries (41samples/edge) and legal11x11 interior samples, then solve exact desired-distance edge roots. Choose point minimizing ETA error plus soft350m separation penalty; altitude3000. All points validated in the relevant polygon union. H nominal200,M120,L100m/s. Same target H arrival jitter4s, M jitter5s. No waiting or relaunch.",
+        "parameters": {
+          "id": "A03",
+          "name": "窗口偏差容忍",
+          "mechanism": "显式提高普通伤害而非窗口伤害的组合价值，攻击窗边缘目标用M补足普通伤害",
+          "mother_bias": 1.2,
+          "sentry_bias": 1.0,
+          "h_survival": 0.85,
+          "m_survival": 0.9,
+          "window_mode": "balanced",
+          "arrival_fraction": 0.5,
+          "m_lag": 10,
+          "hidden_batch": 4,
+          "hidden_topup": 2,
+          "hidden_spread": 30,
+          "search_spacing": 3600,
+          "search_rear_fraction": 0.25,
+          "loss_mode": "fallback",
+          "refresh": 1
+        },
+        "soft_separation_m": 350,
+        "hard_separation_constraint": null,
+        "all_units_required": true
+      },
+      "public_target_assignment": {
+        "known_hp": {
+          "9400": 24,
+          "9600": 18,
+          "9500": null
+        },
+        "effective_damage": {
+          "ordinary": {
+            "H_9400": 16,
+            "H_9600": 12,
+            "M_9400": 4,
+            "M_9600": 3,
+            "L_9500": 0.8
+          },
+          "satellite": {
+            "H_9400": 20,
+            "H_9600": 20,
+            "M_9400": "ordinary path including angle modifiers"
+          },
+          "mother_pessimistic_per_hit": {
+            "H": 9.6,
+            "M": 2.4
+          }
+        },
+        "ordinary_conditions": [
+          "9400 nominal: 16H+4M>=24; 9600:12H+3M>=18.",
+          "9400 robust order-free lower bound:9.6H+2.4M>=24. This is deliberately conservative: the first hit without history has no decrease.",
+          "For 2 H alone on a mother, first>=16 and second>=9.6 gives25.6 if both hit; no H-loss margin. With arbitrary M arrival order the generic all-hit floor remains safe.",
+          "9600 H+2M=18 but loses completeness after any member loss;2H=24 survives no H loss."
+        ],
+        "window_conditions": [
+          "9400 2H=40 intact;1H+2M has worst20+4.8=24.8. 2H+2M keeps24.8 after losing oneH if the remainingH hits during window.",
+          "9600 1H=20 intact,2H=40 keeps20 after oneH loss;1H+6M keeps18 after oneH loss.",
+          "L batch3/4/5 gives2.4/3.2/4.0 intact damage, not guaranteed destruction because hiddenHP is unknown."
+        ],
+        "loss_model": "Exact enumeration over independent assumed H/M survival in _p_kill; these are hypothesis parameters, not measured or official probabilities. No artificial survival reward; objective is target weight times estimated full-kill probability plus explicit fallback robustness.",
+        "allocation_algorithm": "Seed each public mother with2H, each sentry with1H. When infeasible select complete packages in weight/(1+nearestETA/1000) order. Spend all remaining H/M by enumerating bundle increments dH=0..2,dM=0..8; maximize weighted complete-kill objective gain divided by dH*(M_inventory/H_inventory)+dM. Tie-break gain, cost, ETA, target ref. Includes ordinary-angle fallback; compile outputs actual budgets after geometry and escort placement."
+      },
+      "arrival_coordination": {
+        "estimate": "1.06*ECEF_distance/nominal_speed+12seconds; runtime remainingETA=1.08*distance/clamped_current_speed+12; clamp speed to[.45,1.8]*nominal",
+        "window_search": "Enumerate start times every5s, evaluate legal per-target H ETA intervals; score weighted target inclusion in inner[+12,+168]s minus delay penalty; aim at candidate arrival_fraction*180. Candidate-specific sentry/deep/mother/early/late objective is executable in planner.",
+        "uncertainty": "±45s reported estimate, not a native guarantee. Target movement12m/s, V13 interference and stage-dependent flight can dominate.",
+        "M_late_handling": "Deploy M as close as legally possible if desired ETA cannot be met. Report M-lastH gap. A06 moves oneH per eligible multi-H target toward M ETA as sensor escort. Other plans budget H complete kill independently and treat M as uncertain backup; no unsupported target-death assumption.",
+        "same_target_updates": "Attack IDs reissued each step; coordinates from latest legal records only. Fresh H observations near target can update nearby M.",
+        "angles": "No claimed guaranteed >30degree bonus or avoided<10degree penalty. Soft alternation of deployment side is a diversity tie-break only; budgets retain conservative factors."
+      },
+      "satellite_policy": {
+        "resource": "exactly1 global opportunity,180seconds strict expiry",
+        "optimization": "combine H complete-budget arrival coverage with early hidden-discovery opportunity; report predicted coverage and post-discovery L reachability per case",
+        "responsibility": "central-latitude rear-search L first; statically ordered otherL backups every3s, rank slots capped45s; any available issuer type is legal, but these plans choose L to preserve attack commitment",
+        "trigger": "planned time or primary advance<=18s when >=60% and >=2 own-group H legally observed ETA<=22s; no cross-group adaptive observations",
+        "activity": "use legal is_using_satellite flag; observed active latches only local memory. Unit request marker prevents same-unit retry after split. Other groups may attempt backup; engine quota handles global competition.",
+        "failure": "late requests stop at min(1150,planned+45); if none succeed, use ordinary-budget fallback without inventing another opportunity"
+      },
+      "search_and_hidden_targets": {
+        "geometry": "full north-south map span divided into ceil(height/spacing) horizontal lanes; actual lane step<=profile spacing. Every L assigned lane i%nlanes, wave floor(i/nlanes). Rear wave starts near legal western edge, forward waves near eastern legal edge with1800m spacing. Projection considers all polygons.",
+        "sensor": "at2000m above ground, horizontal radius sqrt(3000^2-2000^2)=2236.07m; use3200–3800m lane spacing. At initial3000m height horizontal radius is zero; no guarantee until native altitude evolves.",
+        "route": "first leg to east map edge400m inset; optional broad return to lane+2 and western waypoint, switch8km early only with45s turning and90s remaining margin. First-leg coverage only is credited in static estimates.",
+        "batch": 4,
+        "topup": 2,
+        "hidden_hp": "unknown; batch damage is a budget, not kill guarantee",
+        "dispatch": "sort by nearest ETA except early/deep profiles use smallest remaining-lifetime slack; choose a compact arrival wave within hidden_spread seconds, preserve search floor, compare current actual bindings before every nomination",
+        "knowledge": "static targets can retain old coordinates for existing commitment; new assignments and replenishment require fresh timestamp<=6s; absent snapshot is unknown, never dead",
+        "insufficient": "wait for complete batch until1450s, then allow reachable partial final wave; all members still require remaining-life margin"
+      },
+      "event_rules": [
+        {
+          "state": "OPENING_COMMITTED",
+          "trigger": "first decision",
+          "binding": "every own unit exactly once",
+          "action": "H/M: [4,self,targetID,0]; L:[2,self,waypoint_lon,waypoint_lat]",
+          "exit": "continue updating legal targets every step; no takeoff delay"
+        },
+        {
+          "state": "SATELLITE_DUE",
+          "trigger": "predeclared local responsibility time, no legally observed active state and per-unit request not already made",
+          "binding": "primary L then static backup rank slots of3s, max45s late",
+          "action": "[3,self,0,0] alongside task and V13 turn",
+          "exit": "active flag latches only within received group; actual quota belongs engine"
+        },
+        {
+          "state": "HIDDEN_NOMINATED",
+          "trigger": "fresh <=6s 9500 record and full batch reachable before lifetime-90s",
+          "binding": "only current-group free L; keep max(1,ceil(.1*freeL)) searchers",
+          "action": "propose exact batch to frozen prior_t03_make, which may substitute legal free receivers and preserve searchers",
+          "exit": "actual returned/current bindings only; rejected nominations retried after6s"
+        },
+        {
+          "state": "HIDDEN_IN_FLIGHT",
+          "trigger": "actual prior-bound L report",
+          "binding": "sticky target commitment; never steal bound L",
+          "action": "[4,self,targetID,0] refreshed every step with group legal data",
+          "exit": "ETA plus18s is review time only, never proof of hit or death"
+        },
+        {
+          "state": "HIDDEN_REVIEW",
+          "trigger": "review time elapsed and newly fresh live target timestamp after previous expected arrival",
+          "binding": "top-up2 or3 new unbound L via a fresh prior wave ID",
+          "action": "same legal prior handoff; preserve existing attackers and search floor",
+          "exit": "no fresh record means unknown; no deletion or kill credit"
+        },
+        {
+          "state": "SEARCH_CONTINUE",
+          "trigger": "within8km of waypoint and next segment fits remaining lifetime including45s turning estimate and90s reserve",
+          "binding": "own search task waypoint index",
+          "action": "[2,self,next_lon,next_lat]",
+          "exit": "at final route end no unlimited hold; native model may finish"
+        },
+        {
+          "state": "PUBLIC_REBALANCE",
+          "trigger": "only after planned satellite window ends; every8s",
+          "binding": "current group owns donor; removing donor still covers original public initialHP under conservative current coefficients; donor beyond18km terminal lock",
+          "action": "retarget only to <=5s-fresh public target with deficit; ETAnew<=1.25*ETAold, remaining lifetime-60",
+          "exit": "preserve bindings otherwise; missing member/target is not destruction"
+        },
+        {
+          "state": "COMPONENT_CHANGE",
+          "trigger": "split/merge reported by legal communications",
+          "binding": "per-unit own task retained; group ledger rebuilt from current members only",
+          "action": "no cross-group memory import; actual tasks dominate nominations",
+          "exit": "expected damage remains an estimate; new group cannot infer old group kills"
+        }
+      ],
+      "execution_integration": {
+        "priority": [
+          "preserve frozen prior accepted bindings and unit role legality",
+          "refresh committed attack target from legal data",
+          "apply approved public surplus reassignment or hidden prior handoff",
+          "advance own search route",
+          "one scheduled satellite request",
+          "existing V13/mission_v12 turn action"
+        ],
+        "prior_t03_make": "nomination is not binding, native receipt is not impact; actual current bindings next step override planner memory; retry6s exceeds frozen5s timeout",
+        "mission_v12": "all original threat thresholds, terminal gates,4degree deadzone and signed recovery remain frozen"
+      },
+      "degradation": {
+        "resource_shortage": "complete public target packages ranked by weight/reachable ETA; no unsupported partial damage score",
+        "communication_split": "retain own task and snapshots; rebuild only actual members; do not steal committed target resources below initialHP coverage",
+        "requester_loss": "static backup slots independent of unobservable absence",
+        "stale_information": "no new hidden nomination or public reassignment from stale tracks; preserve old own commitment, keep searching",
+        "unknown_destroyed": "no available explicit kill evidence is assumed; inferred arrivals produce review states only"
+      },
+      "formulas_and_parameter_sources": {
+        "official": "damage,HP,speeds,lifetimes,range,quota,angle bounds from approved rule_facts/prompt",
+        "hypotheses": "survival rates,6%/8% ETA loss,12s overhead,45s turning uncertainty,90s L reserve,350m spacing,profile weights are design estimates requiring native evaluation",
+        "score": "official100*destroyed_weight/all_true_weight; actual hidden denominator unknown to actor. Static public budget percentage is never called official score."
+      },
+      "required_compiler_changes": {
+        "existing_preserved": [
+          "V13 checkpoint",
+          "mission_v12 gating and recovery-sign adapter",
+          "per-step legal target-coordinate update",
+          "prior_t03_make implementation including5s confirmation and search retention",
+          "actual engine deployment and combat action validators"
+        ],
+        "new_required": [
+          "Call compile_plan using public inputs; map each role index H000/M000/L000 to sorted own legal IDs, T refs to public target IDs.",
+          "Deploy every unit once with altitude3000; validate all polygons and append one[1,-1,0,0,0] at end.",
+          "Initialize every unit task on first decision; action2 for waypoint or4 for attack, then existing action0 motion.",
+          "Call step_group once per actual communication component and step; only pass its legal reports/tracks and local memory.",
+          "Send hidden nominations through frozen prior with distinct(target_ref,wave)event IDs; report actual bindings next step, not requested nominations.",
+          "Retain per-unit satellite_requested_step across splits; actor request result is not assumed global activity.",
+          "Preserve waypoint index/binding per unit; group memory carries no privately imported other-component state.",
+          "Translate all finite action fields; do not emit speed/height/hold/relaunch commands.",
+          "Store actual_score only from full3000-step native match official scorer, separate from static estimated fields."
+        ]
+      }
+    },
+    {
+      "version": "pku_initial_astra_v2",
+      "id": "A04",
+      "name": "暗巢早发现远端覆盖",
+      "priority_score_mechanism": "选择仍能覆盖H主攻击的最早窗口，L更前置且首批三机，优先无法晚到的远端暗巢",
+      "legal_inputs": {
+        "opening": [
+          "map_bounds (original longitude/latitude degrees)",
+          "deployment.coordinates and coordinatesHM (all polygons)",
+          "own_inventory.role,type,count,initial_health_values",
+          "public_targets.ref,type,position,initial_health"
+        ],
+        "runtime": [
+          "current component own-unit position/velocity/stage/health/visibility",
+          "current component received target ID,type,position,velocity,timestamp",
+          "per-unit current task and native command receipts",
+          "public satellite active flag"
+        ],
+        "forbidden": [
+          "Q label as a policy selector",
+          "map difficulty/name",
+          "private hidden target catalogue or HP",
+          "blue unopened interceptor inventory",
+          "historical scores",
+          "cross-component private memory"
+        ],
+        "coordinate_contract": "Original unscaled lon/lat/alt in actions; WGS84 ECEF for distances. No model-scale multiplication in actor output. Targets at z=0; deployments at 3000m."
+      },
+      "deployment": {
+        "call": "planner_v2.compile_plan(case,id)",
+        "algorithm": "Use all polygon boundaries (41samples/edge) and legal11x11 interior samples, then solve exact desired-distance edge roots. Choose point minimizing ETA error plus soft350m separation penalty; altitude3000. All points validated in the relevant polygon union. H nominal200,M120,L100m/s. Same target H arrival jitter4s, M jitter5s. No waiting or relaunch.",
+        "parameters": {
+          "id": "A04",
+          "name": "暗巢早发现远端覆盖",
+          "mechanism": "选择仍能覆盖H主攻击的最早窗口，L更前置且首批三机，优先无法晚到的远端暗巢",
+          "mother_bias": 1.0,
+          "sentry_bias": 1.0,
+          "h_survival": 0.85,
+          "m_survival": 0.88,
+          "window_mode": "early",
+          "arrival_fraction": 0.32,
+          "m_lag": 14,
+          "hidden_batch": 3,
+          "hidden_topup": 2,
+          "hidden_spread": 18,
+          "search_spacing": 3200,
+          "search_rear_fraction": 0.14,
+          "loss_mode": "expected",
+          "refresh": 2
+        },
+        "soft_separation_m": 350,
+        "hard_separation_constraint": null,
+        "all_units_required": true
+      },
+      "public_target_assignment": {
+        "known_hp": {
+          "9400": 24,
+          "9600": 18,
+          "9500": null
+        },
+        "effective_damage": {
+          "ordinary": {
+            "H_9400": 16,
+            "H_9600": 12,
+            "M_9400": 4,
+            "M_9600": 3,
+            "L_9500": 0.8
+          },
+          "satellite": {
+            "H_9400": 20,
+            "H_9600": 20,
+            "M_9400": "ordinary path including angle modifiers"
+          },
+          "mother_pessimistic_per_hit": {
+            "H": 9.6,
+            "M": 2.4
+          }
+        },
+        "ordinary_conditions": [
+          "9400 nominal: 16H+4M>=24; 9600:12H+3M>=18.",
+          "9400 robust order-free lower bound:9.6H+2.4M>=24. This is deliberately conservative: the first hit without history has no decrease.",
+          "For 2 H alone on a mother, first>=16 and second>=9.6 gives25.6 if both hit; no H-loss margin. With arbitrary M arrival order the generic all-hit floor remains safe.",
+          "9600 H+2M=18 but loses completeness after any member loss;2H=24 survives no H loss."
+        ],
+        "window_conditions": [
+          "9400 2H=40 intact;1H+2M has worst20+4.8=24.8. 2H+2M keeps24.8 after losing oneH if the remainingH hits during window.",
+          "9600 1H=20 intact,2H=40 keeps20 after oneH loss;1H+6M keeps18 after oneH loss.",
+          "L batch3/4/5 gives2.4/3.2/4.0 intact damage, not guaranteed destruction because hiddenHP is unknown."
+        ],
+        "loss_model": "Exact enumeration over independent assumed H/M survival in _p_kill; these are hypothesis parameters, not measured or official probabilities. No artificial survival reward; objective is target weight times estimated full-kill probability plus explicit fallback robustness.",
+        "allocation_algorithm": "Seed each public mother with2H, each sentry with1H. When infeasible select complete packages in weight/(1+nearestETA/1000) order. Spend all remaining H/M by enumerating bundle increments dH=0..2,dM=0..8; maximize weighted complete-kill objective gain divided by dH*(M_inventory/H_inventory)+dM. Tie-break gain, cost, ETA, target ref. Includes ordinary-angle fallback; compile outputs actual budgets after geometry and escort placement."
+      },
+      "arrival_coordination": {
+        "estimate": "1.06*ECEF_distance/nominal_speed+12seconds; runtime remainingETA=1.08*distance/clamped_current_speed+12; clamp speed to[.45,1.8]*nominal",
+        "window_search": "Enumerate start times every5s, evaluate legal per-target H ETA intervals; score weighted target inclusion in inner[+12,+168]s minus delay penalty; aim at candidate arrival_fraction*180. Candidate-specific sentry/deep/mother/early/late objective is executable in planner.",
+        "uncertainty": "±45s reported estimate, not a native guarantee. Target movement12m/s, V13 interference and stage-dependent flight can dominate.",
+        "M_late_handling": "Deploy M as close as legally possible if desired ETA cannot be met. Report M-lastH gap. A06 moves oneH per eligible multi-H target toward M ETA as sensor escort. Other plans budget H complete kill independently and treat M as uncertain backup; no unsupported target-death assumption.",
+        "same_target_updates": "Attack IDs reissued each step; coordinates from latest legal records only. Fresh H observations near target can update nearby M.",
+        "angles": "No claimed guaranteed >30degree bonus or avoided<10degree penalty. Soft alternation of deployment side is a diversity tie-break only; budgets retain conservative factors."
+      },
+      "satellite_policy": {
+        "resource": "exactly1 global opportunity,180seconds strict expiry",
+        "optimization": "combine H complete-budget arrival coverage with early hidden-discovery opportunity; report predicted coverage and post-discovery L reachability per case",
+        "responsibility": "central-latitude rear-search L first; statically ordered otherL backups every3s, rank slots capped45s; any available issuer type is legal, but these plans choose L to preserve attack commitment",
+        "trigger": "planned time or primary advance<=18s when >=60% and >=2 own-group H legally observed ETA<=22s; no cross-group adaptive observations",
+        "activity": "use legal is_using_satellite flag; observed active latches only local memory. Unit request marker prevents same-unit retry after split. Other groups may attempt backup; engine quota handles global competition.",
+        "failure": "late requests stop at min(1150,planned+45); if none succeed, use ordinary-budget fallback without inventing another opportunity"
+      },
+      "search_and_hidden_targets": {
+        "geometry": "full north-south map span divided into ceil(height/spacing) horizontal lanes; actual lane step<=profile spacing. Every L assigned lane i%nlanes, wave floor(i/nlanes). Rear wave starts near legal western edge, forward waves near eastern legal edge with1800m spacing. Projection considers all polygons.",
+        "sensor": "at2000m above ground, horizontal radius sqrt(3000^2-2000^2)=2236.07m; use3200–3800m lane spacing. At initial3000m height horizontal radius is zero; no guarantee until native altitude evolves.",
+        "route": "first leg to east map edge400m inset; optional broad return to lane+2 and western waypoint, switch8km early only with45s turning and90s remaining margin. First-leg coverage only is credited in static estimates.",
+        "batch": 3,
+        "topup": 2,
+        "hidden_hp": "unknown; batch damage is a budget, not kill guarantee",
+        "dispatch": "sort by nearest ETA except early/deep profiles use smallest remaining-lifetime slack; choose a compact arrival wave within hidden_spread seconds, preserve search floor, compare current actual bindings before every nomination",
+        "knowledge": "static targets can retain old coordinates for existing commitment; new assignments and replenishment require fresh timestamp<=6s; absent snapshot is unknown, never dead",
+        "insufficient": "wait for complete batch until1450s, then allow reachable partial final wave; all members still require remaining-life margin"
+      },
+      "event_rules": [
+        {
+          "state": "OPENING_COMMITTED",
+          "trigger": "first decision",
+          "binding": "every own unit exactly once",
+          "action": "H/M: [4,self,targetID,0]; L:[2,self,waypoint_lon,waypoint_lat]",
+          "exit": "continue updating legal targets every step; no takeoff delay"
+        },
+        {
+          "state": "SATELLITE_DUE",
+          "trigger": "predeclared local responsibility time, no legally observed active state and per-unit request not already made",
+          "binding": "primary L then static backup rank slots of3s, max45s late",
+          "action": "[3,self,0,0] alongside task and V13 turn",
+          "exit": "active flag latches only within received group; actual quota belongs engine"
+        },
+        {
+          "state": "HIDDEN_NOMINATED",
+          "trigger": "fresh <=6s 9500 record and full batch reachable before lifetime-90s",
+          "binding": "only current-group free L; keep max(1,ceil(.1*freeL)) searchers",
+          "action": "propose exact batch to frozen prior_t03_make, which may substitute legal free receivers and preserve searchers",
+          "exit": "actual returned/current bindings only; rejected nominations retried after6s"
+        },
+        {
+          "state": "HIDDEN_IN_FLIGHT",
+          "trigger": "actual prior-bound L report",
+          "binding": "sticky target commitment; never steal bound L",
+          "action": "[4,self,targetID,0] refreshed every step with group legal data",
+          "exit": "ETA plus18s is review time only, never proof of hit or death"
+        },
+        {
+          "state": "HIDDEN_REVIEW",
+          "trigger": "review time elapsed and newly fresh live target timestamp after previous expected arrival",
+          "binding": "top-up2 or3 new unbound L via a fresh prior wave ID",
+          "action": "same legal prior handoff; preserve existing attackers and search floor",
+          "exit": "no fresh record means unknown; no deletion or kill credit"
+        },
+        {
+          "state": "SEARCH_CONTINUE",
+          "trigger": "within8km of waypoint and next segment fits remaining lifetime including45s turning estimate and90s reserve",
+          "binding": "own search task waypoint index",
+          "action": "[2,self,next_lon,next_lat]",
+          "exit": "at final route end no unlimited hold; native model may finish"
+        },
+        {
+          "state": "PUBLIC_REBALANCE",
+          "trigger": "only after planned satellite window ends; every8s",
+          "binding": "current group owns donor; removing donor still covers original public initialHP under conservative current coefficients; donor beyond18km terminal lock",
+          "action": "retarget only to <=5s-fresh public target with deficit; ETAnew<=1.25*ETAold, remaining lifetime-60",
+          "exit": "preserve bindings otherwise; missing member/target is not destruction"
+        },
+        {
+          "state": "COMPONENT_CHANGE",
+          "trigger": "split/merge reported by legal communications",
+          "binding": "per-unit own task retained; group ledger rebuilt from current members only",
+          "action": "no cross-group memory import; actual tasks dominate nominations",
+          "exit": "expected damage remains an estimate; new group cannot infer old group kills"
+        }
+      ],
+      "execution_integration": {
+        "priority": [
+          "preserve frozen prior accepted bindings and unit role legality",
+          "refresh committed attack target from legal data",
+          "apply approved public surplus reassignment or hidden prior handoff",
+          "advance own search route",
+          "one scheduled satellite request",
+          "existing V13/mission_v12 turn action"
+        ],
+        "prior_t03_make": "nomination is not binding, native receipt is not impact; actual current bindings next step override planner memory; retry6s exceeds frozen5s timeout",
+        "mission_v12": "all original threat thresholds, terminal gates,4degree deadzone and signed recovery remain frozen"
+      },
+      "degradation": {
+        "resource_shortage": "complete public target packages ranked by weight/reachable ETA; no unsupported partial damage score",
+        "communication_split": "retain own task and snapshots; rebuild only actual members; do not steal committed target resources below initialHP coverage",
+        "requester_loss": "static backup slots independent of unobservable absence",
+        "stale_information": "no new hidden nomination or public reassignment from stale tracks; preserve old own commitment, keep searching",
+        "unknown_destroyed": "no available explicit kill evidence is assumed; inferred arrivals produce review states only"
+      },
+      "formulas_and_parameter_sources": {
+        "official": "damage,HP,speeds,lifetimes,range,quota,angle bounds from approved rule_facts/prompt",
+        "hypotheses": "survival rates,6%/8% ETA loss,12s overhead,45s turning uncertainty,90s L reserve,350m spacing,profile weights are design estimates requiring native evaluation",
+        "score": "official100*destroyed_weight/all_true_weight; actual hidden denominator unknown to actor. Static public budget percentage is never called official score."
+      },
+      "required_compiler_changes": {
+        "existing_preserved": [
+          "V13 checkpoint",
+          "mission_v12 gating and recovery-sign adapter",
+          "per-step legal target-coordinate update",
+          "prior_t03_make implementation including5s confirmation and search retention",
+          "actual engine deployment and combat action validators"
+        ],
+        "new_required": [
+          "Call compile_plan using public inputs; map each role index H000/M000/L000 to sorted own legal IDs, T refs to public target IDs.",
+          "Deploy every unit once with altitude3000; validate all polygons and append one[1,-1,0,0,0] at end.",
+          "Initialize every unit task on first decision; action2 for waypoint or4 for attack, then existing action0 motion.",
+          "Call step_group once per actual communication component and step; only pass its legal reports/tracks and local memory.",
+          "Send hidden nominations through frozen prior with distinct(target_ref,wave)event IDs; report actual bindings next step, not requested nominations.",
+          "Retain per-unit satellite_requested_step across splits; actor request result is not assumed global activity.",
+          "Preserve waypoint index/binding per unit; group memory carries no privately imported other-component state.",
+          "Translate all finite action fields; do not emit speed/height/hold/relaunch commands.",
+          "Store actual_score only from full3000-step native match official scorer, separate from static estimated fields."
+        ]
+      }
+    },
+    {
+      "version": "pku_initial_astra_v2",
+      "id": "A05",
+      "name": "晚窗高速重击",
+      "priority_score_mechanism": "让最远母巢进入窗口中心，H重击末端与L前出发现共享天眼，L四机先打并保留后续搜索",
+      "legal_inputs": {
+        "opening": [
+          "map_bounds (original longitude/latitude degrees)",
+          "deployment.coordinates and coordinatesHM (all polygons)",
+          "own_inventory.role,type,count,initial_health_values",
+          "public_targets.ref,type,position,initial_health"
+        ],
+        "runtime": [
+          "current component own-unit position/velocity/stage/health/visibility",
+          "current component received target ID,type,position,velocity,timestamp",
+          "per-unit current task and native command receipts",
+          "public satellite active flag"
+        ],
+        "forbidden": [
+          "Q label as a policy selector",
+          "map difficulty/name",
+          "private hidden target catalogue or HP",
+          "blue unopened interceptor inventory",
+          "historical scores",
+          "cross-component private memory"
+        ],
+        "coordinate_contract": "Original unscaled lon/lat/alt in actions; WGS84 ECEF for distances. No model-scale multiplication in actor output. Targets at z=0; deployments at 3000m."
+      },
+      "deployment": {
+        "call": "planner_v2.compile_plan(case,id)",
+        "algorithm": "Use all polygon boundaries (41samples/edge) and legal11x11 interior samples, then solve exact desired-distance edge roots. Choose point minimizing ETA error plus soft350m separation penalty; altitude3000. All points validated in the relevant polygon union. H nominal200,M120,L100m/s. Same target H arrival jitter4s, M jitter5s. No waiting or relaunch.",
+        "parameters": {
+          "id": "A05",
+          "name": "晚窗高速重击",
+          "mechanism": "让最远母巢进入窗口中心，H重击末端与L前出发现共享天眼，L四机先打并保留后续搜索",
+          "mother_bias": 1.25,
+          "sentry_bias": 1.0,
+          "h_survival": 0.83,
+          "m_survival": 0.88,
+          "window_mode": "late",
+          "arrival_fraction": 0.64,
+          "m_lag": 0,
+          "hidden_batch": 4,
+          "hidden_topup": 3,
+          "hidden_spread": 24,
+          "search_spacing": 3600,
+          "search_rear_fraction": 0.28,
+          "loss_mode": "expected",
+          "refresh": 1
+        },
+        "soft_separation_m": 350,
+        "hard_separation_constraint": null,
+        "all_units_required": true
+      },
+      "public_target_assignment": {
+        "known_hp": {
+          "9400": 24,
+          "9600": 18,
+          "9500": null
+        },
+        "effective_damage": {
+          "ordinary": {
+            "H_9400": 16,
+            "H_9600": 12,
+            "M_9400": 4,
+            "M_9600": 3,
+            "L_9500": 0.8
+          },
+          "satellite": {
+            "H_9400": 20,
+            "H_9600": 20,
+            "M_9400": "ordinary path including angle modifiers"
+          },
+          "mother_pessimistic_per_hit": {
+            "H": 9.6,
+            "M": 2.4
+          }
+        },
+        "ordinary_conditions": [
+          "9400 nominal: 16H+4M>=24; 9600:12H+3M>=18.",
+          "9400 robust order-free lower bound:9.6H+2.4M>=24. This is deliberately conservative: the first hit without history has no decrease.",
+          "For 2 H alone on a mother, first>=16 and second>=9.6 gives25.6 if both hit; no H-loss margin. With arbitrary M arrival order the generic all-hit floor remains safe.",
+          "9600 H+2M=18 but loses completeness after any member loss;2H=24 survives no H loss."
+        ],
+        "window_conditions": [
+          "9400 2H=40 intact;1H+2M has worst20+4.8=24.8. 2H+2M keeps24.8 after losing oneH if the remainingH hits during window.",
+          "9600 1H=20 intact,2H=40 keeps20 after oneH loss;1H+6M keeps18 after oneH loss.",
+          "L batch3/4/5 gives2.4/3.2/4.0 intact damage, not guaranteed destruction because hiddenHP is unknown."
+        ],
+        "loss_model": "Exact enumeration over independent assumed H/M survival in _p_kill; these are hypothesis parameters, not measured or official probabilities. No artificial survival reward; objective is target weight times estimated full-kill probability plus explicit fallback robustness.",
+        "allocation_algorithm": "Seed each public mother with2H, each sentry with1H. When infeasible select complete packages in weight/(1+nearestETA/1000) order. Spend all remaining H/M by enumerating bundle increments dH=0..2,dM=0..8; maximize weighted complete-kill objective gain divided by dH*(M_inventory/H_inventory)+dM. Tie-break gain, cost, ETA, target ref. Includes ordinary-angle fallback; compile outputs actual budgets after geometry and escort placement."
+      },
+      "arrival_coordination": {
+        "estimate": "1.06*ECEF_distance/nominal_speed+12seconds; runtime remainingETA=1.08*distance/clamped_current_speed+12; clamp speed to[.45,1.8]*nominal",
+        "window_search": "Enumerate start times every5s, evaluate legal per-target H ETA intervals; score weighted target inclusion in inner[+12,+168]s minus delay penalty; aim at candidate arrival_fraction*180. Candidate-specific sentry/deep/mother/early/late objective is executable in planner.",
+        "uncertainty": "±45s reported estimate, not a native guarantee. Target movement12m/s, V13 interference and stage-dependent flight can dominate.",
+        "M_late_handling": "Deploy M as close as legally possible if desired ETA cannot be met. Report M-lastH gap. A06 moves oneH per eligible multi-H target toward M ETA as sensor escort. Other plans budget H complete kill independently and treat M as uncertain backup; no unsupported target-death assumption.",
+        "same_target_updates": "Attack IDs reissued each step; coordinates from latest legal records only. Fresh H observations near target can update nearby M.",
+        "angles": "No claimed guaranteed >30degree bonus or avoided<10degree penalty. Soft alternation of deployment side is a diversity tie-break only; budgets retain conservative factors."
+      },
+      "satellite_policy": {
+        "resource": "exactly1 global opportunity,180seconds strict expiry",
+        "optimization": "combine H complete-budget arrival coverage with early hidden-discovery opportunity; report predicted coverage and post-discovery L reachability per case",
+        "responsibility": "central-latitude rear-search L first; statically ordered otherL backups every3s, rank slots capped45s; any available issuer type is legal, but these plans choose L to preserve attack commitment",
+        "trigger": "planned time or primary advance<=18s when >=60% and >=2 own-group H legally observed ETA<=22s; no cross-group adaptive observations",
+        "activity": "use legal is_using_satellite flag; observed active latches only local memory. Unit request marker prevents same-unit retry after split. Other groups may attempt backup; engine quota handles global competition.",
+        "failure": "late requests stop at min(1150,planned+45); if none succeed, use ordinary-budget fallback without inventing another opportunity"
+      },
+      "search_and_hidden_targets": {
+        "geometry": "full north-south map span divided into ceil(height/spacing) horizontal lanes; actual lane step<=profile spacing. Every L assigned lane i%nlanes, wave floor(i/nlanes). Rear wave starts near legal western edge, forward waves near eastern legal edge with1800m spacing. Projection considers all polygons.",
+        "sensor": "at2000m above ground, horizontal radius sqrt(3000^2-2000^2)=2236.07m; use3200–3800m lane spacing. At initial3000m height horizontal radius is zero; no guarantee until native altitude evolves.",
+        "route": "first leg to east map edge400m inset; optional broad return to lane+2 and western waypoint, switch8km early only with45s turning and90s remaining margin. First-leg coverage only is credited in static estimates.",
+        "batch": 4,
+        "topup": 3,
+        "hidden_hp": "unknown; batch damage is a budget, not kill guarantee",
+        "dispatch": "sort by nearest ETA except early/deep profiles use smallest remaining-lifetime slack; choose a compact arrival wave within hidden_spread seconds, preserve search floor, compare current actual bindings before every nomination",
+        "knowledge": "static targets can retain old coordinates for existing commitment; new assignments and replenishment require fresh timestamp<=6s; absent snapshot is unknown, never dead",
+        "insufficient": "wait for complete batch until1450s, then allow reachable partial final wave; all members still require remaining-life margin"
+      },
+      "event_rules": [
+        {
+          "state": "OPENING_COMMITTED",
+          "trigger": "first decision",
+          "binding": "every own unit exactly once",
+          "action": "H/M: [4,self,targetID,0]; L:[2,self,waypoint_lon,waypoint_lat]",
+          "exit": "continue updating legal targets every step; no takeoff delay"
+        },
+        {
+          "state": "SATELLITE_DUE",
+          "trigger": "predeclared local responsibility time, no legally observed active state and per-unit request not already made",
+          "binding": "primary L then static backup rank slots of3s, max45s late",
+          "action": "[3,self,0,0] alongside task and V13 turn",
+          "exit": "active flag latches only within received group; actual quota belongs engine"
+        },
+        {
+          "state": "HIDDEN_NOMINATED",
+          "trigger": "fresh <=6s 9500 record and full batch reachable before lifetime-90s",
+          "binding": "only current-group free L; keep max(1,ceil(.1*freeL)) searchers",
+          "action": "propose exact batch to frozen prior_t03_make, which may substitute legal free receivers and preserve searchers",
+          "exit": "actual returned/current bindings only; rejected nominations retried after6s"
+        },
+        {
+          "state": "HIDDEN_IN_FLIGHT",
+          "trigger": "actual prior-bound L report",
+          "binding": "sticky target commitment; never steal bound L",
+          "action": "[4,self,targetID,0] refreshed every step with group legal data",
+          "exit": "ETA plus18s is review time only, never proof of hit or death"
+        },
+        {
+          "state": "HIDDEN_REVIEW",
+          "trigger": "review time elapsed and newly fresh live target timestamp after previous expected arrival",
+          "binding": "top-up2 or3 new unbound L via a fresh prior wave ID",
+          "action": "same legal prior handoff; preserve existing attackers and search floor",
+          "exit": "no fresh record means unknown; no deletion or kill credit"
+        },
+        {
+          "state": "SEARCH_CONTINUE",
+          "trigger": "within8km of waypoint and next segment fits remaining lifetime including45s turning estimate and90s reserve",
+          "binding": "own search task waypoint index",
+          "action": "[2,self,next_lon,next_lat]",
+          "exit": "at final route end no unlimited hold; native model may finish"
+        },
+        {
+          "state": "PUBLIC_REBALANCE",
+          "trigger": "only after planned satellite window ends; every8s",
+          "binding": "current group owns donor; removing donor still covers original public initialHP under conservative current coefficients; donor beyond18km terminal lock",
+          "action": "retarget only to <=5s-fresh public target with deficit; ETAnew<=1.25*ETAold, remaining lifetime-60",
+          "exit": "preserve bindings otherwise; missing member/target is not destruction"
+        },
+        {
+          "state": "COMPONENT_CHANGE",
+          "trigger": "split/merge reported by legal communications",
+          "binding": "per-unit own task retained; group ledger rebuilt from current members only",
+          "action": "no cross-group memory import; actual tasks dominate nominations",
+          "exit": "expected damage remains an estimate; new group cannot infer old group kills"
+        }
+      ],
+      "execution_integration": {
+        "priority": [
+          "preserve frozen prior accepted bindings and unit role legality",
+          "refresh committed attack target from legal data",
+          "apply approved public surplus reassignment or hidden prior handoff",
+          "advance own search route",
+          "one scheduled satellite request",
+          "existing V13/mission_v12 turn action"
+        ],
+        "prior_t03_make": "nomination is not binding, native receipt is not impact; actual current bindings next step override planner memory; retry6s exceeds frozen5s timeout",
+        "mission_v12": "all original threat thresholds, terminal gates,4degree deadzone and signed recovery remain frozen"
+      },
+      "degradation": {
+        "resource_shortage": "complete public target packages ranked by weight/reachable ETA; no unsupported partial damage score",
+        "communication_split": "retain own task and snapshots; rebuild only actual members; do not steal committed target resources below initialHP coverage",
+        "requester_loss": "static backup slots independent of unobservable absence",
+        "stale_information": "no new hidden nomination or public reassignment from stale tracks; preserve old own commitment, keep searching",
+        "unknown_destroyed": "no available explicit kill evidence is assumed; inferred arrivals produce review states only"
+      },
+      "formulas_and_parameter_sources": {
+        "official": "damage,HP,speeds,lifetimes,range,quota,angle bounds from approved rule_facts/prompt",
+        "hypotheses": "survival rates,6%/8% ETA loss,12s overhead,45s turning uncertainty,90s L reserve,350m spacing,profile weights are design estimates requiring native evaluation",
+        "score": "official100*destroyed_weight/all_true_weight; actual hidden denominator unknown to actor. Static public budget percentage is never called official score."
+      },
+      "required_compiler_changes": {
+        "existing_preserved": [
+          "V13 checkpoint",
+          "mission_v12 gating and recovery-sign adapter",
+          "per-step legal target-coordinate update",
+          "prior_t03_make implementation including5s confirmation and search retention",
+          "actual engine deployment and combat action validators"
+        ],
+        "new_required": [
+          "Call compile_plan using public inputs; map each role index H000/M000/L000 to sorted own legal IDs, T refs to public target IDs.",
+          "Deploy every unit once with altitude3000; validate all polygons and append one[1,-1,0,0,0] at end.",
+          "Initialize every unit task on first decision; action2 for waypoint or4 for attack, then existing action0 motion.",
+          "Call step_group once per actual communication component and step; only pass its legal reports/tracks and local memory.",
+          "Send hidden nominations through frozen prior with distinct(target_ref,wave)event IDs; report actual bindings next step, not requested nominations.",
+          "Retain per-unit satellite_requested_step across splits; actor request result is not assumed global activity.",
+          "Preserve waypoint index/binding per unit; group memory carries no privately imported other-component state.",
+          "Translate all finite action fields; do not emit speed/height/hold/relaunch commands.",
+          "Store actual_score only from full3000-step native match official scorer, separate from static estimated fields."
+        ]
+      }
+    },
+    {
+      "version": "pku_initial_astra_v2",
+      "id": "A06",
+      "name": "M后续到达与H传感伴随",
+      "priority_score_mechanism": "对M晚到超过窗口的目标保留最后一H作为传感伴随，先行H争取重击，预算按混合普通/天眼重新核算",
+      "legal_inputs": {
+        "opening": [
+          "map_bounds (original longitude/latitude degrees)",
+          "deployment.coordinates and coordinatesHM (all polygons)",
+          "own_inventory.role,type,count,initial_health_values",
+          "public_targets.ref,type,position,initial_health"
+        ],
+        "runtime": [
+          "current component own-unit position/velocity/stage/health/visibility",
+          "current component received target ID,type,position,velocity,timestamp",
+          "per-unit current task and native command receipts",
+          "public satellite active flag"
+        ],
+        "forbidden": [
+          "Q label as a policy selector",
+          "map difficulty/name",
+          "private hidden target catalogue or HP",
+          "blue unopened interceptor inventory",
+          "historical scores",
+          "cross-component private memory"
+        ],
+        "coordinate_contract": "Original unscaled lon/lat/alt in actions; WGS84 ECEF for distances. No model-scale multiplication in actor output. Targets at z=0; deployments at 3000m."
+      },
+      "deployment": {
+        "call": "planner_v2.compile_plan(case,id)",
+        "algorithm": "Use all polygon boundaries (41samples/edge) and legal11x11 interior samples, then solve exact desired-distance edge roots. Choose point minimizing ETA error plus soft350m separation penalty; altitude3000. All points validated in the relevant polygon union. H nominal200,M120,L100m/s. Same target H arrival jitter4s, M jitter5s. No waiting or relaunch.",
+        "parameters": {
+          "id": "A06",
+          "name": "M后续到达与H传感伴随",
+          "mechanism": "对M晚到超过窗口的目标保留最后一H作为传感伴随，先行H争取重击，预算按混合普通/天眼重新核算",
+          "mother_bias": 1.15,
+          "sentry_bias": 1.0,
+          "h_survival": 0.86,
+          "m_survival": 0.9,
+          "window_mode": "balanced",
+          "arrival_fraction": 0.52,
+          "m_lag": 6,
+          "hidden_batch": 3,
+          "hidden_topup": 2,
+          "hidden_spread": 32,
+          "search_spacing": 3500,
+          "search_rear_fraction": 0.24,
+          "loss_mode": "escort",
+          "refresh": 1
+        },
+        "soft_separation_m": 350,
+        "hard_separation_constraint": null,
+        "all_units_required": true
+      },
+      "public_target_assignment": {
+        "known_hp": {
+          "9400": 24,
+          "9600": 18,
+          "9500": null
+        },
+        "effective_damage": {
+          "ordinary": {
+            "H_9400": 16,
+            "H_9600": 12,
+            "M_9400": 4,
+            "M_9600": 3,
+            "L_9500": 0.8
+          },
+          "satellite": {
+            "H_9400": 20,
+            "H_9600": 20,
+            "M_9400": "ordinary path including angle modifiers"
+          },
+          "mother_pessimistic_per_hit": {
+            "H": 9.6,
+            "M": 2.4
+          }
+        },
+        "ordinary_conditions": [
+          "9400 nominal: 16H+4M>=24; 9600:12H+3M>=18.",
+          "9400 robust order-free lower bound:9.6H+2.4M>=24. This is deliberately conservative: the first hit without history has no decrease.",
+          "For 2 H alone on a mother, first>=16 and second>=9.6 gives25.6 if both hit; no H-loss margin. With arbitrary M arrival order the generic all-hit floor remains safe.",
+          "9600 H+2M=18 but loses completeness after any member loss;2H=24 survives no H loss."
+        ],
+        "window_conditions": [
+          "9400 2H=40 intact;1H+2M has worst20+4.8=24.8. 2H+2M keeps24.8 after losing oneH if the remainingH hits during window.",
+          "9600 1H=20 intact,2H=40 keeps20 after oneH loss;1H+6M keeps18 after oneH loss.",
+          "L batch3/4/5 gives2.4/3.2/4.0 intact damage, not guaranteed destruction because hiddenHP is unknown."
+        ],
+        "loss_model": "Exact enumeration over independent assumed H/M survival in _p_kill; these are hypothesis parameters, not measured or official probabilities. No artificial survival reward; objective is target weight times estimated full-kill probability plus explicit fallback robustness.",
+        "allocation_algorithm": "Seed each public mother with2H, each sentry with1H. When infeasible select complete packages in weight/(1+nearestETA/1000) order. Spend all remaining H/M by enumerating bundle increments dH=0..2,dM=0..8; maximize weighted complete-kill objective gain divided by dH*(M_inventory/H_inventory)+dM. Tie-break gain, cost, ETA, target ref. Includes ordinary-angle fallback; compile outputs actual budgets after geometry and escort placement."
+      },
+      "arrival_coordination": {
+        "estimate": "1.06*ECEF_distance/nominal_speed+12seconds; runtime remainingETA=1.08*distance/clamped_current_speed+12; clamp speed to[.45,1.8]*nominal",
+        "window_search": "Enumerate start times every5s, evaluate legal per-target H ETA intervals; score weighted target inclusion in inner[+12,+168]s minus delay penalty; aim at candidate arrival_fraction*180. Candidate-specific sentry/deep/mother/early/late objective is executable in planner.",
+        "uncertainty": "±45s reported estimate, not a native guarantee. Target movement12m/s, V13 interference and stage-dependent flight can dominate.",
+        "M_late_handling": "Deploy M as close as legally possible if desired ETA cannot be met. Report M-lastH gap. A06 moves oneH per eligible multi-H target toward M ETA as sensor escort. Other plans budget H complete kill independently and treat M as uncertain backup; no unsupported target-death assumption.",
+        "same_target_updates": "Attack IDs reissued each step; coordinates from latest legal records only. Fresh H observations near target can update nearby M.",
+        "angles": "No claimed guaranteed >30degree bonus or avoided<10degree penalty. Soft alternation of deployment side is a diversity tie-break only; budgets retain conservative factors."
+      },
+      "satellite_policy": {
+        "resource": "exactly1 global opportunity,180seconds strict expiry",
+        "optimization": "combine H complete-budget arrival coverage with early hidden-discovery opportunity; report predicted coverage and post-discovery L reachability per case",
+        "responsibility": "central-latitude rear-search L first; statically ordered otherL backups every3s, rank slots capped45s; any available issuer type is legal, but these plans choose L to preserve attack commitment",
+        "trigger": "planned time or primary advance<=18s when >=60% and >=2 own-group H legally observed ETA<=22s; no cross-group adaptive observations",
+        "activity": "use legal is_using_satellite flag; observed active latches only local memory. Unit request marker prevents same-unit retry after split. Other groups may attempt backup; engine quota handles global competition.",
+        "failure": "late requests stop at min(1150,planned+45); if none succeed, use ordinary-budget fallback without inventing another opportunity"
+      },
+      "search_and_hidden_targets": {
+        "geometry": "full north-south map span divided into ceil(height/spacing) horizontal lanes; actual lane step<=profile spacing. Every L assigned lane i%nlanes, wave floor(i/nlanes). Rear wave starts near legal western edge, forward waves near eastern legal edge with1800m spacing. Projection considers all polygons.",
+        "sensor": "at2000m above ground, horizontal radius sqrt(3000^2-2000^2)=2236.07m; use3200–3800m lane spacing. At initial3000m height horizontal radius is zero; no guarantee until native altitude evolves.",
+        "route": "first leg to east map edge400m inset; optional broad return to lane+2 and western waypoint, switch8km early only with45s turning and90s remaining margin. First-leg coverage only is credited in static estimates.",
+        "batch": 3,
+        "topup": 2,
+        "hidden_hp": "unknown; batch damage is a budget, not kill guarantee",
+        "dispatch": "sort by nearest ETA except early/deep profiles use smallest remaining-lifetime slack; choose a compact arrival wave within hidden_spread seconds, preserve search floor, compare current actual bindings before every nomination",
+        "knowledge": "static targets can retain old coordinates for existing commitment; new assignments and replenishment require fresh timestamp<=6s; absent snapshot is unknown, never dead",
+        "insufficient": "wait for complete batch until1450s, then allow reachable partial final wave; all members still require remaining-life margin"
+      },
+      "event_rules": [
+        {
+          "state": "OPENING_COMMITTED",
+          "trigger": "first decision",
+          "binding": "every own unit exactly once",
+          "action": "H/M: [4,self,targetID,0]; L:[2,self,waypoint_lon,waypoint_lat]",
+          "exit": "continue updating legal targets every step; no takeoff delay"
+        },
+        {
+          "state": "SATELLITE_DUE",
+          "trigger": "predeclared local responsibility time, no legally observed active state and per-unit request not already made",
+          "binding": "primary L then static backup rank slots of3s, max45s late",
+          "action": "[3,self,0,0] alongside task and V13 turn",
+          "exit": "active flag latches only within received group; actual quota belongs engine"
+        },
+        {
+          "state": "HIDDEN_NOMINATED",
+          "trigger": "fresh <=6s 9500 record and full batch reachable before lifetime-90s",
+          "binding": "only current-group free L; keep max(1,ceil(.1*freeL)) searchers",
+          "action": "propose exact batch to frozen prior_t03_make, which may substitute legal free receivers and preserve searchers",
+          "exit": "actual returned/current bindings only; rejected nominations retried after6s"
+        },
+        {
+          "state": "HIDDEN_IN_FLIGHT",
+          "trigger": "actual prior-bound L report",
+          "binding": "sticky target commitment; never steal bound L",
+          "action": "[4,self,targetID,0] refreshed every step with group legal data",
+          "exit": "ETA plus18s is review time only, never proof of hit or death"
+        },
+        {
+          "state": "HIDDEN_REVIEW",
+          "trigger": "review time elapsed and newly fresh live target timestamp after previous expected arrival",
+          "binding": "top-up2 or3 new unbound L via a fresh prior wave ID",
+          "action": "same legal prior handoff; preserve existing attackers and search floor",
+          "exit": "no fresh record means unknown; no deletion or kill credit"
+        },
+        {
+          "state": "SEARCH_CONTINUE",
+          "trigger": "within8km of waypoint and next segment fits remaining lifetime including45s turning estimate and90s reserve",
+          "binding": "own search task waypoint index",
+          "action": "[2,self,next_lon,next_lat]",
+          "exit": "at final route end no unlimited hold; native model may finish"
+        },
+        {
+          "state": "PUBLIC_REBALANCE",
+          "trigger": "only after planned satellite window ends; every8s",
+          "binding": "current group owns donor; removing donor still covers original public initialHP under conservative current coefficients; donor beyond18km terminal lock",
+          "action": "retarget only to <=5s-fresh public target with deficit; ETAnew<=1.25*ETAold, remaining lifetime-60",
+          "exit": "preserve bindings otherwise; missing member/target is not destruction"
+        },
+        {
+          "state": "COMPONENT_CHANGE",
+          "trigger": "split/merge reported by legal communications",
+          "binding": "per-unit own task retained; group ledger rebuilt from current members only",
+          "action": "no cross-group memory import; actual tasks dominate nominations",
+          "exit": "expected damage remains an estimate; new group cannot infer old group kills"
+        }
+      ],
+      "execution_integration": {
+        "priority": [
+          "preserve frozen prior accepted bindings and unit role legality",
+          "refresh committed attack target from legal data",
+          "apply approved public surplus reassignment or hidden prior handoff",
+          "advance own search route",
+          "one scheduled satellite request",
+          "existing V13/mission_v12 turn action"
+        ],
+        "prior_t03_make": "nomination is not binding, native receipt is not impact; actual current bindings next step override planner memory; retry6s exceeds frozen5s timeout",
+        "mission_v12": "all original threat thresholds, terminal gates,4degree deadzone and signed recovery remain frozen"
+      },
+      "degradation": {
+        "resource_shortage": "complete public target packages ranked by weight/reachable ETA; no unsupported partial damage score",
+        "communication_split": "retain own task and snapshots; rebuild only actual members; do not steal committed target resources below initialHP coverage",
+        "requester_loss": "static backup slots independent of unobservable absence",
+        "stale_information": "no new hidden nomination or public reassignment from stale tracks; preserve old own commitment, keep searching",
+        "unknown_destroyed": "no available explicit kill evidence is assumed; inferred arrivals produce review states only"
+      },
+      "formulas_and_parameter_sources": {
+        "official": "damage,HP,speeds,lifetimes,range,quota,angle bounds from approved rule_facts/prompt",
+        "hypotheses": "survival rates,6%/8% ETA loss,12s overhead,45s turning uncertainty,90s L reserve,350m spacing,profile weights are design estimates requiring native evaluation",
+        "score": "official100*destroyed_weight/all_true_weight; actual hidden denominator unknown to actor. Static public budget percentage is never called official score."
+      },
+      "required_compiler_changes": {
+        "existing_preserved": [
+          "V13 checkpoint",
+          "mission_v12 gating and recovery-sign adapter",
+          "per-step legal target-coordinate update",
+          "prior_t03_make implementation including5s confirmation and search retention",
+          "actual engine deployment and combat action validators"
+        ],
+        "new_required": [
+          "Call compile_plan using public inputs; map each role index H000/M000/L000 to sorted own legal IDs, T refs to public target IDs.",
+          "Deploy every unit once with altitude3000; validate all polygons and append one[1,-1,0,0,0] at end.",
+          "Initialize every unit task on first decision; action2 for waypoint or4 for attack, then existing action0 motion.",
+          "Call step_group once per actual communication component and step; only pass its legal reports/tracks and local memory.",
+          "Send hidden nominations through frozen prior with distinct(target_ref,wave)event IDs; report actual bindings next step, not requested nominations.",
+          "Retain per-unit satellite_requested_step across splits; actor request result is not assumed global activity.",
+          "Preserve waypoint index/binding per unit; group memory carries no privately imported other-component state.",
+          "Translate all finite action fields; do not emit speed/height/hold/relaunch commands.",
+          "Store actual_score only from full3000-step native match official scorer, separate from static estimated fields."
+        ]
+      }
+    },
+    {
+      "version": "pku_initial_astra_v2",
+      "id": "A07",
+      "name": "长航程目标独立闭环",
+      "priority_score_mechanism": "远目标增加H保险，减少依赖过期坐标的M；暗巢按剩余寿命最紧先派单",
+      "legal_inputs": {
+        "opening": [
+          "map_bounds (original longitude/latitude degrees)",
+          "deployment.coordinates and coordinatesHM (all polygons)",
+          "own_inventory.role,type,count,initial_health_values",
+          "public_targets.ref,type,position,initial_health"
+        ],
+        "runtime": [
+          "current component own-unit position/velocity/stage/health/visibility",
+          "current component received target ID,type,position,velocity,timestamp",
+          "per-unit current task and native command receipts",
+          "public satellite active flag"
+        ],
+        "forbidden": [
+          "Q label as a policy selector",
+          "map difficulty/name",
+          "private hidden target catalogue or HP",
+          "blue unopened interceptor inventory",
+          "historical scores",
+          "cross-component private memory"
+        ],
+        "coordinate_contract": "Original unscaled lon/lat/alt in actions; WGS84 ECEF for distances. No model-scale multiplication in actor output. Targets at z=0; deployments at 3000m."
+      },
+      "deployment": {
+        "call": "planner_v2.compile_plan(case,id)",
+        "algorithm": "Use all polygon boundaries (41samples/edge) and legal11x11 interior samples, then solve exact desired-distance edge roots. Choose point minimizing ETA error plus soft350m separation penalty; altitude3000. All points validated in the relevant polygon union. H nominal200,M120,L100m/s. Same target H arrival jitter4s, M jitter5s. No waiting or relaunch.",
+        "parameters": {
+          "id": "A07",
+          "name": "长航程目标独立闭环",
+          "mechanism": "远目标增加H保险，减少依赖过期坐标的M；暗巢按剩余寿命最紧先派单",
+          "mother_bias": 1.1,
+          "sentry_bias": 1.0,
+          "h_survival": 0.8,
+          "m_survival": 0.86,
+          "window_mode": "deep",
+          "arrival_fraction": 0.56,
+          "m_lag": 20,
+          "hidden_batch": 4,
+          "hidden_topup": 2,
+          "hidden_spread": 26,
+          "search_spacing": 3600,
+          "search_rear_fraction": 0.18,
+          "loss_mode": "deep",
+          "refresh": 1
+        },
+        "soft_separation_m": 350,
+        "hard_separation_constraint": null,
+        "all_units_required": true
+      },
+      "public_target_assignment": {
+        "known_hp": {
+          "9400": 24,
+          "9600": 18,
+          "9500": null
+        },
+        "effective_damage": {
+          "ordinary": {
+            "H_9400": 16,
+            "H_9600": 12,
+            "M_9400": 4,
+            "M_9600": 3,
+            "L_9500": 0.8
+          },
+          "satellite": {
+            "H_9400": 20,
+            "H_9600": 20,
+            "M_9400": "ordinary path including angle modifiers"
+          },
+          "mother_pessimistic_per_hit": {
+            "H": 9.6,
+            "M": 2.4
+          }
+        },
+        "ordinary_conditions": [
+          "9400 nominal: 16H+4M>=24; 9600:12H+3M>=18.",
+          "9400 robust order-free lower bound:9.6H+2.4M>=24. This is deliberately conservative: the first hit without history has no decrease.",
+          "For 2 H alone on a mother, first>=16 and second>=9.6 gives25.6 if both hit; no H-loss margin. With arbitrary M arrival order the generic all-hit floor remains safe.",
+          "9600 H+2M=18 but loses completeness after any member loss;2H=24 survives no H loss."
+        ],
+        "window_conditions": [
+          "9400 2H=40 intact;1H+2M has worst20+4.8=24.8. 2H+2M keeps24.8 after losing oneH if the remainingH hits during window.",
+          "9600 1H=20 intact,2H=40 keeps20 after oneH loss;1H+6M keeps18 after oneH loss.",
+          "L batch3/4/5 gives2.4/3.2/4.0 intact damage, not guaranteed destruction because hiddenHP is unknown."
+        ],
+        "loss_model": "Exact enumeration over independent assumed H/M survival in _p_kill; these are hypothesis parameters, not measured or official probabilities. No artificial survival reward; objective is target weight times estimated full-kill probability plus explicit fallback robustness.",
+        "allocation_algorithm": "Seed each public mother with2H, each sentry with1H. When infeasible select complete packages in weight/(1+nearestETA/1000) order. Spend all remaining H/M by enumerating bundle increments dH=0..2,dM=0..8; maximize weighted complete-kill objective gain divided by dH*(M_inventory/H_inventory)+dM. Tie-break gain, cost, ETA, target ref. Includes ordinary-angle fallback; compile outputs actual budgets after geometry and escort placement."
+      },
+      "arrival_coordination": {
+        "estimate": "1.06*ECEF_distance/nominal_speed+12seconds; runtime remainingETA=1.08*distance/clamped_current_speed+12; clamp speed to[.45,1.8]*nominal",
+        "window_search": "Enumerate start times every5s, evaluate legal per-target H ETA intervals; score weighted target inclusion in inner[+12,+168]s minus delay penalty; aim at candidate arrival_fraction*180. Candidate-specific sentry/deep/mother/early/late objective is executable in planner.",
+        "uncertainty": "±45s reported estimate, not a native guarantee. Target movement12m/s, V13 interference and stage-dependent flight can dominate.",
+        "M_late_handling": "Deploy M as close as legally possible if desired ETA cannot be met. Report M-lastH gap. A06 moves oneH per eligible multi-H target toward M ETA as sensor escort. Other plans budget H complete kill independently and treat M as uncertain backup; no unsupported target-death assumption.",
+        "same_target_updates": "Attack IDs reissued each step; coordinates from latest legal records only. Fresh H observations near target can update nearby M.",
+        "angles": "No claimed guaranteed >30degree bonus or avoided<10degree penalty. Soft alternation of deployment side is a diversity tie-break only; budgets retain conservative factors."
+      },
+      "satellite_policy": {
+        "resource": "exactly1 global opportunity,180seconds strict expiry",
+        "optimization": "combine H complete-budget arrival coverage with early hidden-discovery opportunity; report predicted coverage and post-discovery L reachability per case",
+        "responsibility": "central-latitude rear-search L first; statically ordered otherL backups every3s, rank slots capped45s; any available issuer type is legal, but these plans choose L to preserve attack commitment",
+        "trigger": "planned time or primary advance<=18s when >=60% and >=2 own-group H legally observed ETA<=22s; no cross-group adaptive observations",
+        "activity": "use legal is_using_satellite flag; observed active latches only local memory. Unit request marker prevents same-unit retry after split. Other groups may attempt backup; engine quota handles global competition.",
+        "failure": "late requests stop at min(1150,planned+45); if none succeed, use ordinary-budget fallback without inventing another opportunity"
+      },
+      "search_and_hidden_targets": {
+        "geometry": "full north-south map span divided into ceil(height/spacing) horizontal lanes; actual lane step<=profile spacing. Every L assigned lane i%nlanes, wave floor(i/nlanes). Rear wave starts near legal western edge, forward waves near eastern legal edge with1800m spacing. Projection considers all polygons.",
+        "sensor": "at2000m above ground, horizontal radius sqrt(3000^2-2000^2)=2236.07m; use3200–3800m lane spacing. At initial3000m height horizontal radius is zero; no guarantee until native altitude evolves.",
+        "route": "first leg to east map edge400m inset; optional broad return to lane+2 and western waypoint, switch8km early only with45s turning and90s remaining margin. First-leg coverage only is credited in static estimates.",
+        "batch": 4,
+        "topup": 2,
+        "hidden_hp": "unknown; batch damage is a budget, not kill guarantee",
+        "dispatch": "sort by nearest ETA except early/deep profiles use smallest remaining-lifetime slack; choose a compact arrival wave within hidden_spread seconds, preserve search floor, compare current actual bindings before every nomination",
+        "knowledge": "static targets can retain old coordinates for existing commitment; new assignments and replenishment require fresh timestamp<=6s; absent snapshot is unknown, never dead",
+        "insufficient": "wait for complete batch until1450s, then allow reachable partial final wave; all members still require remaining-life margin"
+      },
+      "event_rules": [
+        {
+          "state": "OPENING_COMMITTED",
+          "trigger": "first decision",
+          "binding": "every own unit exactly once",
+          "action": "H/M: [4,self,targetID,0]; L:[2,self,waypoint_lon,waypoint_lat]",
+          "exit": "continue updating legal targets every step; no takeoff delay"
+        },
+        {
+          "state": "SATELLITE_DUE",
+          "trigger": "predeclared local responsibility time, no legally observed active state and per-unit request not already made",
+          "binding": "primary L then static backup rank slots of3s, max45s late",
+          "action": "[3,self,0,0] alongside task and V13 turn",
+          "exit": "active flag latches only within received group; actual quota belongs engine"
+        },
+        {
+          "state": "HIDDEN_NOMINATED",
+          "trigger": "fresh <=6s 9500 record and full batch reachable before lifetime-90s",
+          "binding": "only current-group free L; keep max(1,ceil(.1*freeL)) searchers",
+          "action": "propose exact batch to frozen prior_t03_make, which may substitute legal free receivers and preserve searchers",
+          "exit": "actual returned/current bindings only; rejected nominations retried after6s"
+        },
+        {
+          "state": "HIDDEN_IN_FLIGHT",
+          "trigger": "actual prior-bound L report",
+          "binding": "sticky target commitment; never steal bound L",
+          "action": "[4,self,targetID,0] refreshed every step with group legal data",
+          "exit": "ETA plus18s is review time only, never proof of hit or death"
+        },
+        {
+          "state": "HIDDEN_REVIEW",
+          "trigger": "review time elapsed and newly fresh live target timestamp after previous expected arrival",
+          "binding": "top-up2 or3 new unbound L via a fresh prior wave ID",
+          "action": "same legal prior handoff; preserve existing attackers and search floor",
+          "exit": "no fresh record means unknown; no deletion or kill credit"
+        },
+        {
+          "state": "SEARCH_CONTINUE",
+          "trigger": "within8km of waypoint and next segment fits remaining lifetime including45s turning estimate and90s reserve",
+          "binding": "own search task waypoint index",
+          "action": "[2,self,next_lon,next_lat]",
+          "exit": "at final route end no unlimited hold; native model may finish"
+        },
+        {
+          "state": "PUBLIC_REBALANCE",
+          "trigger": "only after planned satellite window ends; every8s",
+          "binding": "current group owns donor; removing donor still covers original public initialHP under conservative current coefficients; donor beyond18km terminal lock",
+          "action": "retarget only to <=5s-fresh public target with deficit; ETAnew<=1.25*ETAold, remaining lifetime-60",
+          "exit": "preserve bindings otherwise; missing member/target is not destruction"
+        },
+        {
+          "state": "COMPONENT_CHANGE",
+          "trigger": "split/merge reported by legal communications",
+          "binding": "per-unit own task retained; group ledger rebuilt from current members only",
+          "action": "no cross-group memory import; actual tasks dominate nominations",
+          "exit": "expected damage remains an estimate; new group cannot infer old group kills"
+        }
+      ],
+      "execution_integration": {
+        "priority": [
+          "preserve frozen prior accepted bindings and unit role legality",
+          "refresh committed attack target from legal data",
+          "apply approved public surplus reassignment or hidden prior handoff",
+          "advance own search route",
+          "one scheduled satellite request",
+          "existing V13/mission_v12 turn action"
+        ],
+        "prior_t03_make": "nomination is not binding, native receipt is not impact; actual current bindings next step override planner memory; retry6s exceeds frozen5s timeout",
+        "mission_v12": "all original threat thresholds, terminal gates,4degree deadzone and signed recovery remain frozen"
+      },
+      "degradation": {
+        "resource_shortage": "complete public target packages ranked by weight/reachable ETA; no unsupported partial damage score",
+        "communication_split": "retain own task and snapshots; rebuild only actual members; do not steal committed target resources below initialHP coverage",
+        "requester_loss": "static backup slots independent of unobservable absence",
+        "stale_information": "no new hidden nomination or public reassignment from stale tracks; preserve old own commitment, keep searching",
+        "unknown_destroyed": "no available explicit kill evidence is assumed; inferred arrivals produce review states only"
+      },
+      "formulas_and_parameter_sources": {
+        "official": "damage,HP,speeds,lifetimes,range,quota,angle bounds from approved rule_facts/prompt",
+        "hypotheses": "survival rates,6%/8% ETA loss,12s overhead,45s turning uncertainty,90s L reserve,350m spacing,profile weights are design estimates requiring native evaluation",
+        "score": "official100*destroyed_weight/all_true_weight; actual hidden denominator unknown to actor. Static public budget percentage is never called official score."
+      },
+      "required_compiler_changes": {
+        "existing_preserved": [
+          "V13 checkpoint",
+          "mission_v12 gating and recovery-sign adapter",
+          "per-step legal target-coordinate update",
+          "prior_t03_make implementation including5s confirmation and search retention",
+          "actual engine deployment and combat action validators"
+        ],
+        "new_required": [
+          "Call compile_plan using public inputs; map each role index H000/M000/L000 to sorted own legal IDs, T refs to public target IDs.",
+          "Deploy every unit once with altitude3000; validate all polygons and append one[1,-1,0,0,0] at end.",
+          "Initialize every unit task on first decision; action2 for waypoint or4 for attack, then existing action0 motion.",
+          "Call step_group once per actual communication component and step; only pass its legal reports/tracks and local memory.",
+          "Send hidden nominations through frozen prior with distinct(target_ref,wave)event IDs; report actual bindings next step, not requested nominations.",
+          "Retain per-unit satellite_requested_step across splits; actor request result is not assumed global activity.",
+          "Preserve waypoint index/binding per unit; group memory carries no privately imported other-component state.",
+          "Translate all finite action fields; do not emit speed/height/hold/relaunch commands.",
+          "Store actual_score only from full3000-step native match official scorer, separate from static estimated fields."
+        ]
+      }
+    },
+    {
+      "version": "pku_initial_astra_v2",
+      "id": "A08",
+      "name": "本群损失重建与留一搜索",
+      "priority_score_mechanism": "提高成员损失下完整预算，群分裂只用当前成员重建覆盖，L每活跃搜索带保留一机避免全员转攻",
+      "legal_inputs": {
+        "opening": [
+          "map_bounds (original longitude/latitude degrees)",
+          "deployment.coordinates and coordinatesHM (all polygons)",
+          "own_inventory.role,type,count,initial_health_values",
+          "public_targets.ref,type,position,initial_health"
+        ],
+        "runtime": [
+          "current component own-unit position/velocity/stage/health/visibility",
+          "current component received target ID,type,position,velocity,timestamp",
+          "per-unit current task and native command receipts",
+          "public satellite active flag"
+        ],
+        "forbidden": [
+          "Q label as a policy selector",
+          "map difficulty/name",
+          "private hidden target catalogue or HP",
+          "blue unopened interceptor inventory",
+          "historical scores",
+          "cross-component private memory"
+        ],
+        "coordinate_contract": "Original unscaled lon/lat/alt in actions; WGS84 ECEF for distances. No model-scale multiplication in actor output. Targets at z=0; deployments at 3000m."
+      },
+      "deployment": {
+        "call": "planner_v2.compile_plan(case,id)",
+        "algorithm": "Use all polygon boundaries (41samples/edge) and legal11x11 interior samples, then solve exact desired-distance edge roots. Choose point minimizing ETA error plus soft350m separation penalty; altitude3000. All points validated in the relevant polygon union. H nominal200,M120,L100m/s. Same target H arrival jitter4s, M jitter5s. No waiting or relaunch.",
+        "parameters": {
+          "id": "A08",
+          "name": "本群损失重建与留一搜索",
+          "mechanism": "提高成员损失下完整预算，群分裂只用当前成员重建覆盖，L每活跃搜索带保留一机避免全员转攻",
+          "mother_bias": 1.1,
+          "sentry_bias": 1.15,
+          "h_survival": 0.77,
+          "m_survival": 0.82,
+          "window_mode": "balanced",
+          "arrival_fraction": 0.5,
+          "m_lag": 22,
+          "hidden_batch": 3,
+          "hidden_topup": 3,
+          "hidden_spread": 34,
+          "search_spacing": 3300,
+          "search_rear_fraction": 0.3,
+          "loss_mode": "one_loss",
+          "refresh": 1
+        },
+        "soft_separation_m": 350,
+        "hard_separation_constraint": null,
+        "all_units_required": true
+      },
+      "public_target_assignment": {
+        "known_hp": {
+          "9400": 24,
+          "9600": 18,
+          "9500": null
+        },
+        "effective_damage": {
+          "ordinary": {
+            "H_9400": 16,
+            "H_9600": 12,
+            "M_9400": 4,
+            "M_9600": 3,
+            "L_9500": 0.8
+          },
+          "satellite": {
+            "H_9400": 20,
+            "H_9600": 20,
+            "M_9400": "ordinary path including angle modifiers"
+          },
+          "mother_pessimistic_per_hit": {
+            "H": 9.6,
+            "M": 2.4
+          }
+        },
+        "ordinary_conditions": [
+          "9400 nominal: 16H+4M>=24; 9600:12H+3M>=18.",
+          "9400 robust order-free lower bound:9.6H+2.4M>=24. This is deliberately conservative: the first hit without history has no decrease.",
+          "For 2 H alone on a mother, first>=16 and second>=9.6 gives25.6 if both hit; no H-loss margin. With arbitrary M arrival order the generic all-hit floor remains safe.",
+          "9600 H+2M=18 but loses completeness after any member loss;2H=24 survives no H loss."
+        ],
+        "window_conditions": [
+          "9400 2H=40 intact;1H+2M has worst20+4.8=24.8. 2H+2M keeps24.8 after losing oneH if the remainingH hits during window.",
+          "9600 1H=20 intact,2H=40 keeps20 after oneH loss;1H+6M keeps18 after oneH loss.",
+          "L batch3/4/5 gives2.4/3.2/4.0 intact damage, not guaranteed destruction because hiddenHP is unknown."
+        ],
+        "loss_model": "Exact enumeration over independent assumed H/M survival in _p_kill; these are hypothesis parameters, not measured or official probabilities. No artificial survival reward; objective is target weight times estimated full-kill probability plus explicit fallback robustness.",
+        "allocation_algorithm": "Seed each public mother with2H, each sentry with1H. When infeasible select complete packages in weight/(1+nearestETA/1000) order. Spend all remaining H/M by enumerating bundle increments dH=0..2,dM=0..8; maximize weighted complete-kill objective gain divided by dH*(M_inventory/H_inventory)+dM. Tie-break gain, cost, ETA, target ref. Includes ordinary-angle fallback; compile outputs actual budgets after geometry and escort placement."
+      },
+      "arrival_coordination": {
+        "estimate": "1.06*ECEF_distance/nominal_speed+12seconds; runtime remainingETA=1.08*distance/clamped_current_speed+12; clamp speed to[.45,1.8]*nominal",
+        "window_search": "Enumerate start times every5s, evaluate legal per-target H ETA intervals; score weighted target inclusion in inner[+12,+168]s minus delay penalty; aim at candidate arrival_fraction*180. Candidate-specific sentry/deep/mother/early/late objective is executable in planner.",
+        "uncertainty": "±45s reported estimate, not a native guarantee. Target movement12m/s, V13 interference and stage-dependent flight can dominate.",
+        "M_late_handling": "Deploy M as close as legally possible if desired ETA cannot be met. Report M-lastH gap. A06 moves oneH per eligible multi-H target toward M ETA as sensor escort. Other plans budget H complete kill independently and treat M as uncertain backup; no unsupported target-death assumption.",
+        "same_target_updates": "Attack IDs reissued each step; coordinates from latest legal records only. Fresh H observations near target can update nearby M.",
+        "angles": "No claimed guaranteed >30degree bonus or avoided<10degree penalty. Soft alternation of deployment side is a diversity tie-break only; budgets retain conservative factors."
+      },
+      "satellite_policy": {
+        "resource": "exactly1 global opportunity,180seconds strict expiry",
+        "optimization": "combine H complete-budget arrival coverage with early hidden-discovery opportunity; report predicted coverage and post-discovery L reachability per case",
+        "responsibility": "central-latitude rear-search L first; statically ordered otherL backups every3s, rank slots capped45s; any available issuer type is legal, but these plans choose L to preserve attack commitment",
+        "trigger": "planned time or primary advance<=18s when >=60% and >=2 own-group H legally observed ETA<=22s; no cross-group adaptive observations",
+        "activity": "use legal is_using_satellite flag; observed active latches only local memory. Unit request marker prevents same-unit retry after split. Other groups may attempt backup; engine quota handles global competition.",
+        "failure": "late requests stop at min(1150,planned+45); if none succeed, use ordinary-budget fallback without inventing another opportunity"
+      },
+      "search_and_hidden_targets": {
+        "geometry": "full north-south map span divided into ceil(height/spacing) horizontal lanes; actual lane step<=profile spacing. Every L assigned lane i%nlanes, wave floor(i/nlanes). Rear wave starts near legal western edge, forward waves near eastern legal edge with1800m spacing. Projection considers all polygons.",
+        "sensor": "at2000m above ground, horizontal radius sqrt(3000^2-2000^2)=2236.07m; use3200–3800m lane spacing. At initial3000m height horizontal radius is zero; no guarantee until native altitude evolves.",
+        "route": "first leg to east map edge400m inset; optional broad return to lane+2 and western waypoint, switch8km early only with45s turning and90s remaining margin. First-leg coverage only is credited in static estimates.",
+        "batch": 3,
+        "topup": 3,
+        "hidden_hp": "unknown; batch damage is a budget, not kill guarantee",
+        "dispatch": "sort by nearest ETA except early/deep profiles use smallest remaining-lifetime slack; choose a compact arrival wave within hidden_spread seconds, preserve search floor, compare current actual bindings before every nomination",
+        "knowledge": "static targets can retain old coordinates for existing commitment; new assignments and replenishment require fresh timestamp<=6s; absent snapshot is unknown, never dead",
+        "insufficient": "wait for complete batch until1450s, then allow reachable partial final wave; all members still require remaining-life margin"
+      },
+      "event_rules": [
+        {
+          "state": "OPENING_COMMITTED",
+          "trigger": "first decision",
+          "binding": "every own unit exactly once",
+          "action": "H/M: [4,self,targetID,0]; L:[2,self,waypoint_lon,waypoint_lat]",
+          "exit": "continue updating legal targets every step; no takeoff delay"
+        },
+        {
+          "state": "SATELLITE_DUE",
+          "trigger": "predeclared local responsibility time, no legally observed active state and per-unit request not already made",
+          "binding": "primary L then static backup rank slots of3s, max45s late",
+          "action": "[3,self,0,0] alongside task and V13 turn",
+          "exit": "active flag latches only within received group; actual quota belongs engine"
+        },
+        {
+          "state": "HIDDEN_NOMINATED",
+          "trigger": "fresh <=6s 9500 record and full batch reachable before lifetime-90s",
+          "binding": "only current-group free L; keep max(1,ceil(.1*freeL)) searchers",
+          "action": "propose exact batch to frozen prior_t03_make, which may substitute legal free receivers and preserve searchers",
+          "exit": "actual returned/current bindings only; rejected nominations retried after6s"
+        },
+        {
+          "state": "HIDDEN_IN_FLIGHT",
+          "trigger": "actual prior-bound L report",
+          "binding": "sticky target commitment; never steal bound L",
+          "action": "[4,self,targetID,0] refreshed every step with group legal data",
+          "exit": "ETA plus18s is review time only, never proof of hit or death"
+        },
+        {
+          "state": "HIDDEN_REVIEW",
+          "trigger": "review time elapsed and newly fresh live target timestamp after previous expected arrival",
+          "binding": "top-up2 or3 new unbound L via a fresh prior wave ID",
+          "action": "same legal prior handoff; preserve existing attackers and search floor",
+          "exit": "no fresh record means unknown; no deletion or kill credit"
+        },
+        {
+          "state": "SEARCH_CONTINUE",
+          "trigger": "within8km of waypoint and next segment fits remaining lifetime including45s turning estimate and90s reserve",
+          "binding": "own search task waypoint index",
+          "action": "[2,self,next_lon,next_lat]",
+          "exit": "at final route end no unlimited hold; native model may finish"
+        },
+        {
+          "state": "PUBLIC_REBALANCE",
+          "trigger": "only after planned satellite window ends; every8s",
+          "binding": "current group owns donor; removing donor still covers original public initialHP under conservative current coefficients; donor beyond18km terminal lock",
+          "action": "retarget only to <=5s-fresh public target with deficit; ETAnew<=1.25*ETAold, remaining lifetime-60",
+          "exit": "preserve bindings otherwise; missing member/target is not destruction"
+        },
+        {
+          "state": "COMPONENT_CHANGE",
+          "trigger": "split/merge reported by legal communications",
+          "binding": "per-unit own task retained; group ledger rebuilt from current members only",
+          "action": "no cross-group memory import; actual tasks dominate nominations",
+          "exit": "expected damage remains an estimate; new group cannot infer old group kills"
+        }
+      ],
+      "execution_integration": {
+        "priority": [
+          "preserve frozen prior accepted bindings and unit role legality",
+          "refresh committed attack target from legal data",
+          "apply approved public surplus reassignment or hidden prior handoff",
+          "advance own search route",
+          "one scheduled satellite request",
+          "existing V13/mission_v12 turn action"
+        ],
+        "prior_t03_make": "nomination is not binding, native receipt is not impact; actual current bindings next step override planner memory; retry6s exceeds frozen5s timeout",
+        "mission_v12": "all original threat thresholds, terminal gates,4degree deadzone and signed recovery remain frozen"
+      },
+      "degradation": {
+        "resource_shortage": "complete public target packages ranked by weight/reachable ETA; no unsupported partial damage score",
+        "communication_split": "retain own task and snapshots; rebuild only actual members; do not steal committed target resources below initialHP coverage",
+        "requester_loss": "static backup slots independent of unobservable absence",
+        "stale_information": "no new hidden nomination or public reassignment from stale tracks; preserve old own commitment, keep searching",
+        "unknown_destroyed": "no available explicit kill evidence is assumed; inferred arrivals produce review states only"
+      },
+      "formulas_and_parameter_sources": {
+        "official": "damage,HP,speeds,lifetimes,range,quota,angle bounds from approved rule_facts/prompt",
+        "hypotheses": "survival rates,6%/8% ETA loss,12s overhead,45s turning uncertainty,90s L reserve,350m spacing,profile weights are design estimates requiring native evaluation",
+        "score": "official100*destroyed_weight/all_true_weight; actual hidden denominator unknown to actor. Static public budget percentage is never called official score."
+      },
+      "required_compiler_changes": {
+        "existing_preserved": [
+          "V13 checkpoint",
+          "mission_v12 gating and recovery-sign adapter",
+          "per-step legal target-coordinate update",
+          "prior_t03_make implementation including5s confirmation and search retention",
+          "actual engine deployment and combat action validators"
+        ],
+        "new_required": [
+          "Call compile_plan using public inputs; map each role index H000/M000/L000 to sorted own legal IDs, T refs to public target IDs.",
+          "Deploy every unit once with altitude3000; validate all polygons and append one[1,-1,0,0,0] at end.",
+          "Initialize every unit task on first decision; action2 for waypoint or4 for attack, then existing action0 motion.",
+          "Call step_group once per actual communication component and step; only pass its legal reports/tracks and local memory.",
+          "Send hidden nominations through frozen prior with distinct(target_ref,wave)event IDs; report actual bindings next step, not requested nominations.",
+          "Retain per-unit satellite_requested_step across splits; actor request result is not assumed global activity.",
+          "Preserve waypoint index/binding per unit; group memory carries no privately imported other-component state.",
+          "Translate all finite action fields; do not emit speed/height/hold/relaunch commands.",
+          "Store actual_score only from full3000-step native match official scorer, separate from static estimated fields."
+        ]
+      }
+    },
+    {
+      "version": "pku_initial_astra_v2",
+      "id": "A09",
+      "name": "M成组收尾与母巢角度退化预算",
+      "priority_score_mechanism": "以母巢M单发2.4和H普通9.6作退化预算，M成组而非零碎分散，减少普通窗外打残",
+      "legal_inputs": {
+        "opening": [
+          "map_bounds (original longitude/latitude degrees)",
+          "deployment.coordinates and coordinatesHM (all polygons)",
+          "own_inventory.role,type,count,initial_health_values",
+          "public_targets.ref,type,position,initial_health"
+        ],
+        "runtime": [
+          "current component own-unit position/velocity/stage/health/visibility",
+          "current component received target ID,type,position,velocity,timestamp",
+          "per-unit current task and native command receipts",
+          "public satellite active flag"
+        ],
+        "forbidden": [
+          "Q label as a policy selector",
+          "map difficulty/name",
+          "private hidden target catalogue or HP",
+          "blue unopened interceptor inventory",
+          "historical scores",
+          "cross-component private memory"
+        ],
+        "coordinate_contract": "Original unscaled lon/lat/alt in actions; WGS84 ECEF for distances. No model-scale multiplication in actor output. Targets at z=0; deployments at 3000m."
+      },
+      "deployment": {
+        "call": "planner_v2.compile_plan(case,id)",
+        "algorithm": "Use all polygon boundaries (41samples/edge) and legal11x11 interior samples, then solve exact desired-distance edge roots. Choose point minimizing ETA error plus soft350m separation penalty; altitude3000. All points validated in the relevant polygon union. H nominal200,M120,L100m/s. Same target H arrival jitter4s, M jitter5s. No waiting or relaunch.",
+        "parameters": {
+          "id": "A09",
+          "name": "M成组收尾与母巢角度退化预算",
+          "mechanism": "以母巢M单发2.4和H普通9.6作退化预算，M成组而非零碎分散，减少普通窗外打残",
+          "mother_bias": 1.3,
+          "sentry_bias": 1.0,
+          "h_survival": 0.84,
+          "m_survival": 0.91,
+          "window_mode": "balanced",
+          "arrival_fraction": 0.48,
+          "m_lag": 0,
+          "hidden_batch": 4,
+          "hidden_topup": 2,
+          "hidden_spread": 22,
+          "search_spacing": 3600,
+          "search_rear_fraction": 0.26,
+          "loss_mode": "fallback",
+          "refresh": 1
+        },
+        "soft_separation_m": 350,
+        "hard_separation_constraint": null,
+        "all_units_required": true
+      },
+      "public_target_assignment": {
+        "known_hp": {
+          "9400": 24,
+          "9600": 18,
+          "9500": null
+        },
+        "effective_damage": {
+          "ordinary": {
+            "H_9400": 16,
+            "H_9600": 12,
+            "M_9400": 4,
+            "M_9600": 3,
+            "L_9500": 0.8
+          },
+          "satellite": {
+            "H_9400": 20,
+            "H_9600": 20,
+            "M_9400": "ordinary path including angle modifiers"
+          },
+          "mother_pessimistic_per_hit": {
+            "H": 9.6,
+            "M": 2.4
+          }
+        },
+        "ordinary_conditions": [
+          "9400 nominal: 16H+4M>=24; 9600:12H+3M>=18.",
+          "9400 robust order-free lower bound:9.6H+2.4M>=24. This is deliberately conservative: the first hit without history has no decrease.",
+          "For 2 H alone on a mother, first>=16 and second>=9.6 gives25.6 if both hit; no H-loss margin. With arbitrary M arrival order the generic all-hit floor remains safe.",
+          "9600 H+2M=18 but loses completeness after any member loss;2H=24 survives no H loss."
+        ],
+        "window_conditions": [
+          "9400 2H=40 intact;1H+2M has worst20+4.8=24.8. 2H+2M keeps24.8 after losing oneH if the remainingH hits during window.",
+          "9600 1H=20 intact,2H=40 keeps20 after oneH loss;1H+6M keeps18 after oneH loss.",
+          "L batch3/4/5 gives2.4/3.2/4.0 intact damage, not guaranteed destruction because hiddenHP is unknown."
+        ],
+        "loss_model": "Exact enumeration over independent assumed H/M survival in _p_kill; these are hypothesis parameters, not measured or official probabilities. No artificial survival reward; objective is target weight times estimated full-kill probability plus explicit fallback robustness.",
+        "allocation_algorithm": "Seed each public mother with2H, each sentry with1H. When infeasible select complete packages in weight/(1+nearestETA/1000) order. Spend all remaining H/M by enumerating bundle increments dH=0..2,dM=0..8; maximize weighted complete-kill objective gain divided by dH*(M_inventory/H_inventory)+dM. Tie-break gain, cost, ETA, target ref. Includes ordinary-angle fallback; compile outputs actual budgets after geometry and escort placement."
+      },
+      "arrival_coordination": {
+        "estimate": "1.06*ECEF_distance/nominal_speed+12seconds; runtime remainingETA=1.08*distance/clamped_current_speed+12; clamp speed to[.45,1.8]*nominal",
+        "window_search": "Enumerate start times every5s, evaluate legal per-target H ETA intervals; score weighted target inclusion in inner[+12,+168]s minus delay penalty; aim at candidate arrival_fraction*180. Candidate-specific sentry/deep/mother/early/late objective is executable in planner.",
+        "uncertainty": "±45s reported estimate, not a native guarantee. Target movement12m/s, V13 interference and stage-dependent flight can dominate.",
+        "M_late_handling": "Deploy M as close as legally possible if desired ETA cannot be met. Report M-lastH gap. A06 moves oneH per eligible multi-H target toward M ETA as sensor escort. Other plans budget H complete kill independently and treat M as uncertain backup; no unsupported target-death assumption.",
+        "same_target_updates": "Attack IDs reissued each step; coordinates from latest legal records only. Fresh H observations near target can update nearby M.",
+        "angles": "No claimed guaranteed >30degree bonus or avoided<10degree penalty. Soft alternation of deployment side is a diversity tie-break only; budgets retain conservative factors."
+      },
+      "satellite_policy": {
+        "resource": "exactly1 global opportunity,180seconds strict expiry",
+        "optimization": "combine H complete-budget arrival coverage with early hidden-discovery opportunity; report predicted coverage and post-discovery L reachability per case",
+        "responsibility": "central-latitude rear-search L first; statically ordered otherL backups every3s, rank slots capped45s; any available issuer type is legal, but these plans choose L to preserve attack commitment",
+        "trigger": "planned time or primary advance<=18s when >=60% and >=2 own-group H legally observed ETA<=22s; no cross-group adaptive observations",
+        "activity": "use legal is_using_satellite flag; observed active latches only local memory. Unit request marker prevents same-unit retry after split. Other groups may attempt backup; engine quota handles global competition.",
+        "failure": "late requests stop at min(1150,planned+45); if none succeed, use ordinary-budget fallback without inventing another opportunity"
+      },
+      "search_and_hidden_targets": {
+        "geometry": "full north-south map span divided into ceil(height/spacing) horizontal lanes; actual lane step<=profile spacing. Every L assigned lane i%nlanes, wave floor(i/nlanes). Rear wave starts near legal western edge, forward waves near eastern legal edge with1800m spacing. Projection considers all polygons.",
+        "sensor": "at2000m above ground, horizontal radius sqrt(3000^2-2000^2)=2236.07m; use3200–3800m lane spacing. At initial3000m height horizontal radius is zero; no guarantee until native altitude evolves.",
+        "route": "first leg to east map edge400m inset; optional broad return to lane+2 and western waypoint, switch8km early only with45s turning and90s remaining margin. First-leg coverage only is credited in static estimates.",
+        "batch": 4,
+        "topup": 2,
+        "hidden_hp": "unknown; batch damage is a budget, not kill guarantee",
+        "dispatch": "sort by nearest ETA except early/deep profiles use smallest remaining-lifetime slack; choose a compact arrival wave within hidden_spread seconds, preserve search floor, compare current actual bindings before every nomination",
+        "knowledge": "static targets can retain old coordinates for existing commitment; new assignments and replenishment require fresh timestamp<=6s; absent snapshot is unknown, never dead",
+        "insufficient": "wait for complete batch until1450s, then allow reachable partial final wave; all members still require remaining-life margin"
+      },
+      "event_rules": [
+        {
+          "state": "OPENING_COMMITTED",
+          "trigger": "first decision",
+          "binding": "every own unit exactly once",
+          "action": "H/M: [4,self,targetID,0]; L:[2,self,waypoint_lon,waypoint_lat]",
+          "exit": "continue updating legal targets every step; no takeoff delay"
+        },
+        {
+          "state": "SATELLITE_DUE",
+          "trigger": "predeclared local responsibility time, no legally observed active state and per-unit request not already made",
+          "binding": "primary L then static backup rank slots of3s, max45s late",
+          "action": "[3,self,0,0] alongside task and V13 turn",
+          "exit": "active flag latches only within received group; actual quota belongs engine"
+        },
+        {
+          "state": "HIDDEN_NOMINATED",
+          "trigger": "fresh <=6s 9500 record and full batch reachable before lifetime-90s",
+          "binding": "only current-group free L; keep max(1,ceil(.1*freeL)) searchers",
+          "action": "propose exact batch to frozen prior_t03_make, which may substitute legal free receivers and preserve searchers",
+          "exit": "actual returned/current bindings only; rejected nominations retried after6s"
+        },
+        {
+          "state": "HIDDEN_IN_FLIGHT",
+          "trigger": "actual prior-bound L report",
+          "binding": "sticky target commitment; never steal bound L",
+          "action": "[4,self,targetID,0] refreshed every step with group legal data",
+          "exit": "ETA plus18s is review time only, never proof of hit or death"
+        },
+        {
+          "state": "HIDDEN_REVIEW",
+          "trigger": "review time elapsed and newly fresh live target timestamp after previous expected arrival",
+          "binding": "top-up2 or3 new unbound L via a fresh prior wave ID",
+          "action": "same legal prior handoff; preserve existing attackers and search floor",
+          "exit": "no fresh record means unknown; no deletion or kill credit"
+        },
+        {
+          "state": "SEARCH_CONTINUE",
+          "trigger": "within8km of waypoint and next segment fits remaining lifetime including45s turning estimate and90s reserve",
+          "binding": "own search task waypoint index",
+          "action": "[2,self,next_lon,next_lat]",
+          "exit": "at final route end no unlimited hold; native model may finish"
+        },
+        {
+          "state": "PUBLIC_REBALANCE",
+          "trigger": "only after planned satellite window ends; every8s",
+          "binding": "current group owns donor; removing donor still covers original public initialHP under conservative current coefficients; donor beyond18km terminal lock",
+          "action": "retarget only to <=5s-fresh public target with deficit; ETAnew<=1.25*ETAold, remaining lifetime-60",
+          "exit": "preserve bindings otherwise; missing member/target is not destruction"
+        },
+        {
+          "state": "COMPONENT_CHANGE",
+          "trigger": "split/merge reported by legal communications",
+          "binding": "per-unit own task retained; group ledger rebuilt from current members only",
+          "action": "no cross-group memory import; actual tasks dominate nominations",
+          "exit": "expected damage remains an estimate; new group cannot infer old group kills"
+        }
+      ],
+      "execution_integration": {
+        "priority": [
+          "preserve frozen prior accepted bindings and unit role legality",
+          "refresh committed attack target from legal data",
+          "apply approved public surplus reassignment or hidden prior handoff",
+          "advance own search route",
+          "one scheduled satellite request",
+          "existing V13/mission_v12 turn action"
+        ],
+        "prior_t03_make": "nomination is not binding, native receipt is not impact; actual current bindings next step override planner memory; retry6s exceeds frozen5s timeout",
+        "mission_v12": "all original threat thresholds, terminal gates,4degree deadzone and signed recovery remain frozen"
+      },
+      "degradation": {
+        "resource_shortage": "complete public target packages ranked by weight/reachable ETA; no unsupported partial damage score",
+        "communication_split": "retain own task and snapshots; rebuild only actual members; do not steal committed target resources below initialHP coverage",
+        "requester_loss": "static backup slots independent of unobservable absence",
+        "stale_information": "no new hidden nomination or public reassignment from stale tracks; preserve old own commitment, keep searching",
+        "unknown_destroyed": "no available explicit kill evidence is assumed; inferred arrivals produce review states only"
+      },
+      "formulas_and_parameter_sources": {
+        "official": "damage,HP,speeds,lifetimes,range,quota,angle bounds from approved rule_facts/prompt",
+        "hypotheses": "survival rates,6%/8% ETA loss,12s overhead,45s turning uncertainty,90s L reserve,350m spacing,profile weights are design estimates requiring native evaluation",
+        "score": "official100*destroyed_weight/all_true_weight; actual hidden denominator unknown to actor. Static public budget percentage is never called official score."
+      },
+      "required_compiler_changes": {
+        "existing_preserved": [
+          "V13 checkpoint",
+          "mission_v12 gating and recovery-sign adapter",
+          "per-step legal target-coordinate update",
+          "prior_t03_make implementation including5s confirmation and search retention",
+          "actual engine deployment and combat action validators"
+        ],
+        "new_required": [
+          "Call compile_plan using public inputs; map each role index H000/M000/L000 to sorted own legal IDs, T refs to public target IDs.",
+          "Deploy every unit once with altitude3000; validate all polygons and append one[1,-1,0,0,0] at end.",
+          "Initialize every unit task on first decision; action2 for waypoint or4 for attack, then existing action0 motion.",
+          "Call step_group once per actual communication component and step; only pass its legal reports/tracks and local memory.",
+          "Send hidden nominations through frozen prior with distinct(target_ref,wave)event IDs; report actual bindings next step, not requested nominations.",
+          "Retain per-unit satellite_requested_step across splits; actor request result is not assumed global activity.",
+          "Preserve waypoint index/binding per unit; group memory carries no privately imported other-component state.",
+          "Translate all finite action fields; do not emit speed/height/hold/relaunch commands.",
+          "Store actual_score only from full3000-step native match official scorer, separate from static estimated fields."
+        ]
+      }
+    },
+    {
+      "version": "pku_initial_astra_v2",
+      "id": "A10",
+      "name": "暗巢两段补充证据门控",
+      "priority_score_mechanism": "暗巢首批五机提高未知HP容忍度，仅新鲜存活记录触发两机补充，避免按命令回执重复灌入",
+      "legal_inputs": {
+        "opening": [
+          "map_bounds (original longitude/latitude degrees)",
+          "deployment.coordinates and coordinatesHM (all polygons)",
+          "own_inventory.role,type,count,initial_health_values",
+          "public_targets.ref,type,position,initial_health"
+        ],
+        "runtime": [
+          "current component own-unit position/velocity/stage/health/visibility",
+          "current component received target ID,type,position,velocity,timestamp",
+          "per-unit current task and native command receipts",
+          "public satellite active flag"
+        ],
+        "forbidden": [
+          "Q label as a policy selector",
+          "map difficulty/name",
+          "private hidden target catalogue or HP",
+          "blue unopened interceptor inventory",
+          "historical scores",
+          "cross-component private memory"
+        ],
+        "coordinate_contract": "Original unscaled lon/lat/alt in actions; WGS84 ECEF for distances. No model-scale multiplication in actor output. Targets at z=0; deployments at 3000m."
+      },
+      "deployment": {
+        "call": "planner_v2.compile_plan(case,id)",
+        "algorithm": "Use all polygon boundaries (41samples/edge) and legal11x11 interior samples, then solve exact desired-distance edge roots. Choose point minimizing ETA error plus soft350m separation penalty; altitude3000. All points validated in the relevant polygon union. H nominal200,M120,L100m/s. Same target H arrival jitter4s, M jitter5s. No waiting or relaunch.",
+        "parameters": {
+          "id": "A10",
+          "name": "暗巢两段补充证据门控",
+          "mechanism": "暗巢首批五机提高未知HP容忍度，仅新鲜存活记录触发两机补充，避免按命令回执重复灌入",
+          "mother_bias": 1.0,
+          "sentry_bias": 1.15,
+          "h_survival": 0.84,
+          "m_survival": 0.88,
+          "window_mode": "early",
+          "arrival_fraction": 0.42,
+          "m_lag": 15,
+          "hidden_batch": 5,
+          "hidden_topup": 2,
+          "hidden_spread": 38,
+          "search_spacing": 3800,
+          "search_rear_fraction": 0.26,
+          "loss_mode": "expected",
+          "refresh": 2
+        },
+        "soft_separation_m": 350,
+        "hard_separation_constraint": null,
+        "all_units_required": true
+      },
+      "public_target_assignment": {
+        "known_hp": {
+          "9400": 24,
+          "9600": 18,
+          "9500": null
+        },
+        "effective_damage": {
+          "ordinary": {
+            "H_9400": 16,
+            "H_9600": 12,
+            "M_9400": 4,
+            "M_9600": 3,
+            "L_9500": 0.8
+          },
+          "satellite": {
+            "H_9400": 20,
+            "H_9600": 20,
+            "M_9400": "ordinary path including angle modifiers"
+          },
+          "mother_pessimistic_per_hit": {
+            "H": 9.6,
+            "M": 2.4
+          }
+        },
+        "ordinary_conditions": [
+          "9400 nominal: 16H+4M>=24; 9600:12H+3M>=18.",
+          "9400 robust order-free lower bound:9.6H+2.4M>=24. This is deliberately conservative: the first hit without history has no decrease.",
+          "For 2 H alone on a mother, first>=16 and second>=9.6 gives25.6 if both hit; no H-loss margin. With arbitrary M arrival order the generic all-hit floor remains safe.",
+          "9600 H+2M=18 but loses completeness after any member loss;2H=24 survives no H loss."
+        ],
+        "window_conditions": [
+          "9400 2H=40 intact;1H+2M has worst20+4.8=24.8. 2H+2M keeps24.8 after losing oneH if the remainingH hits during window.",
+          "9600 1H=20 intact,2H=40 keeps20 after oneH loss;1H+6M keeps18 after oneH loss.",
+          "L batch3/4/5 gives2.4/3.2/4.0 intact damage, not guaranteed destruction because hiddenHP is unknown."
+        ],
+        "loss_model": "Exact enumeration over independent assumed H/M survival in _p_kill; these are hypothesis parameters, not measured or official probabilities. No artificial survival reward; objective is target weight times estimated full-kill probability plus explicit fallback robustness.",
+        "allocation_algorithm": "Seed each public mother with2H, each sentry with1H. When infeasible select complete packages in weight/(1+nearestETA/1000) order. Spend all remaining H/M by enumerating bundle increments dH=0..2,dM=0..8; maximize weighted complete-kill objective gain divided by dH*(M_inventory/H_inventory)+dM. Tie-break gain, cost, ETA, target ref. Includes ordinary-angle fallback; compile outputs actual budgets after geometry and escort placement."
+      },
+      "arrival_coordination": {
+        "estimate": "1.06*ECEF_distance/nominal_speed+12seconds; runtime remainingETA=1.08*distance/clamped_current_speed+12; clamp speed to[.45,1.8]*nominal",
+        "window_search": "Enumerate start times every5s, evaluate legal per-target H ETA intervals; score weighted target inclusion in inner[+12,+168]s minus delay penalty; aim at candidate arrival_fraction*180. Candidate-specific sentry/deep/mother/early/late objective is executable in planner.",
+        "uncertainty": "±45s reported estimate, not a native guarantee. Target movement12m/s, V13 interference and stage-dependent flight can dominate.",
+        "M_late_handling": "Deploy M as close as legally possible if desired ETA cannot be met. Report M-lastH gap. A06 moves oneH per eligible multi-H target toward M ETA as sensor escort. Other plans budget H complete kill independently and treat M as uncertain backup; no unsupported target-death assumption.",
+        "same_target_updates": "Attack IDs reissued each step; coordinates from latest legal records only. Fresh H observations near target can update nearby M.",
+        "angles": "No claimed guaranteed >30degree bonus or avoided<10degree penalty. Soft alternation of deployment side is a diversity tie-break only; budgets retain conservative factors."
+      },
+      "satellite_policy": {
+        "resource": "exactly1 global opportunity,180seconds strict expiry",
+        "optimization": "combine H complete-budget arrival coverage with early hidden-discovery opportunity; report predicted coverage and post-discovery L reachability per case",
+        "responsibility": "central-latitude rear-search L first; statically ordered otherL backups every3s, rank slots capped45s; any available issuer type is legal, but these plans choose L to preserve attack commitment",
+        "trigger": "planned time or primary advance<=18s when >=60% and >=2 own-group H legally observed ETA<=22s; no cross-group adaptive observations",
+        "activity": "use legal is_using_satellite flag; observed active latches only local memory. Unit request marker prevents same-unit retry after split. Other groups may attempt backup; engine quota handles global competition.",
+        "failure": "late requests stop at min(1150,planned+45); if none succeed, use ordinary-budget fallback without inventing another opportunity"
+      },
+      "search_and_hidden_targets": {
+        "geometry": "full north-south map span divided into ceil(height/spacing) horizontal lanes; actual lane step<=profile spacing. Every L assigned lane i%nlanes, wave floor(i/nlanes). Rear wave starts near legal western edge, forward waves near eastern legal edge with1800m spacing. Projection considers all polygons.",
+        "sensor": "at2000m above ground, horizontal radius sqrt(3000^2-2000^2)=2236.07m; use3200–3800m lane spacing. At initial3000m height horizontal radius is zero; no guarantee until native altitude evolves.",
+        "route": "first leg to east map edge400m inset; optional broad return to lane+2 and western waypoint, switch8km early only with45s turning and90s remaining margin. First-leg coverage only is credited in static estimates.",
+        "batch": 5,
+        "topup": 2,
+        "hidden_hp": "unknown; batch damage is a budget, not kill guarantee",
+        "dispatch": "sort by nearest ETA except early/deep profiles use smallest remaining-lifetime slack; choose a compact arrival wave within hidden_spread seconds, preserve search floor, compare current actual bindings before every nomination",
+        "knowledge": "static targets can retain old coordinates for existing commitment; new assignments and replenishment require fresh timestamp<=6s; absent snapshot is unknown, never dead",
+        "insufficient": "wait for complete batch until1450s, then allow reachable partial final wave; all members still require remaining-life margin"
+      },
+      "event_rules": [
+        {
+          "state": "OPENING_COMMITTED",
+          "trigger": "first decision",
+          "binding": "every own unit exactly once",
+          "action": "H/M: [4,self,targetID,0]; L:[2,self,waypoint_lon,waypoint_lat]",
+          "exit": "continue updating legal targets every step; no takeoff delay"
+        },
+        {
+          "state": "SATELLITE_DUE",
+          "trigger": "predeclared local responsibility time, no legally observed active state and per-unit request not already made",
+          "binding": "primary L then static backup rank slots of3s, max45s late",
+          "action": "[3,self,0,0] alongside task and V13 turn",
+          "exit": "active flag latches only within received group; actual quota belongs engine"
+        },
+        {
+          "state": "HIDDEN_NOMINATED",
+          "trigger": "fresh <=6s 9500 record and full batch reachable before lifetime-90s",
+          "binding": "only current-group free L; keep max(1,ceil(.1*freeL)) searchers",
+          "action": "propose exact batch to frozen prior_t03_make, which may substitute legal free receivers and preserve searchers",
+          "exit": "actual returned/current bindings only; rejected nominations retried after6s"
+        },
+        {
+          "state": "HIDDEN_IN_FLIGHT",
+          "trigger": "actual prior-bound L report",
+          "binding": "sticky target commitment; never steal bound L",
+          "action": "[4,self,targetID,0] refreshed every step with group legal data",
+          "exit": "ETA plus18s is review time only, never proof of hit or death"
+        },
+        {
+          "state": "HIDDEN_REVIEW",
+          "trigger": "review time elapsed and newly fresh live target timestamp after previous expected arrival",
+          "binding": "top-up2 or3 new unbound L via a fresh prior wave ID",
+          "action": "same legal prior handoff; preserve existing attackers and search floor",
+          "exit": "no fresh record means unknown; no deletion or kill credit"
+        },
+        {
+          "state": "SEARCH_CONTINUE",
+          "trigger": "within8km of waypoint and next segment fits remaining lifetime including45s turning estimate and90s reserve",
+          "binding": "own search task waypoint index",
+          "action": "[2,self,next_lon,next_lat]",
+          "exit": "at final route end no unlimited hold; native model may finish"
+        },
+        {
+          "state": "PUBLIC_REBALANCE",
+          "trigger": "only after planned satellite window ends; every8s",
+          "binding": "current group owns donor; removing donor still covers original public initialHP under conservative current coefficients; donor beyond18km terminal lock",
+          "action": "retarget only to <=5s-fresh public target with deficit; ETAnew<=1.25*ETAold, remaining lifetime-60",
+          "exit": "preserve bindings otherwise; missing member/target is not destruction"
+        },
+        {
+          "state": "COMPONENT_CHANGE",
+          "trigger": "split/merge reported by legal communications",
+          "binding": "per-unit own task retained; group ledger rebuilt from current members only",
+          "action": "no cross-group memory import; actual tasks dominate nominations",
+          "exit": "expected damage remains an estimate; new group cannot infer old group kills"
+        }
+      ],
+      "execution_integration": {
+        "priority": [
+          "preserve frozen prior accepted bindings and unit role legality",
+          "refresh committed attack target from legal data",
+          "apply approved public surplus reassignment or hidden prior handoff",
+          "advance own search route",
+          "one scheduled satellite request",
+          "existing V13/mission_v12 turn action"
+        ],
+        "prior_t03_make": "nomination is not binding, native receipt is not impact; actual current bindings next step override planner memory; retry6s exceeds frozen5s timeout",
+        "mission_v12": "all original threat thresholds, terminal gates,4degree deadzone and signed recovery remain frozen"
+      },
+      "degradation": {
+        "resource_shortage": "complete public target packages ranked by weight/reachable ETA; no unsupported partial damage score",
+        "communication_split": "retain own task and snapshots; rebuild only actual members; do not steal committed target resources below initialHP coverage",
+        "requester_loss": "static backup slots independent of unobservable absence",
+        "stale_information": "no new hidden nomination or public reassignment from stale tracks; preserve old own commitment, keep searching",
+        "unknown_destroyed": "no available explicit kill evidence is assumed; inferred arrivals produce review states only"
+      },
+      "formulas_and_parameter_sources": {
+        "official": "damage,HP,speeds,lifetimes,range,quota,angle bounds from approved rule_facts/prompt",
+        "hypotheses": "survival rates,6%/8% ETA loss,12s overhead,45s turning uncertainty,90s L reserve,350m spacing,profile weights are design estimates requiring native evaluation",
+        "score": "official100*destroyed_weight/all_true_weight; actual hidden denominator unknown to actor. Static public budget percentage is never called official score."
+      },
+      "required_compiler_changes": {
+        "existing_preserved": [
+          "V13 checkpoint",
+          "mission_v12 gating and recovery-sign adapter",
+          "per-step legal target-coordinate update",
+          "prior_t03_make implementation including5s confirmation and search retention",
+          "actual engine deployment and combat action validators"
+        ],
+        "new_required": [
+          "Call compile_plan using public inputs; map each role index H000/M000/L000 to sorted own legal IDs, T refs to public target IDs.",
+          "Deploy every unit once with altitude3000; validate all polygons and append one[1,-1,0,0,0] at end.",
+          "Initialize every unit task on first decision; action2 for waypoint or4 for attack, then existing action0 motion.",
+          "Call step_group once per actual communication component and step; only pass its legal reports/tracks and local memory.",
+          "Send hidden nominations through frozen prior with distinct(target_ref,wave)event IDs; report actual bindings next step, not requested nominations.",
+          "Retain per-unit satellite_requested_step across splits; actor request result is not assumed global activity.",
+          "Preserve waypoint index/binding per unit; group memory carries no privately imported other-component state.",
+          "Translate all finite action fields; do not emit speed/height/hold/relaunch commands.",
+          "Store actual_score only from full3000-step native match official scorer, separate from static estimated fields."
+        ]
+      }
+    },
+    {
+      "version": "pku_initial_astra_v2",
+      "id": "A11",
+      "name": "全目标最差余量补强",
+      "priority_score_mechanism": "在边际收益相近时先补最薄弱完整摧毁预算，H与M分散到达避免单枚爆炸同时带走整组，L宽覆盖后集中",
+      "legal_inputs": {
+        "opening": [
+          "map_bounds (original longitude/latitude degrees)",
+          "deployment.coordinates and coordinatesHM (all polygons)",
+          "own_inventory.role,type,count,initial_health_values",
+          "public_targets.ref,type,position,initial_health"
+        ],
+        "runtime": [
+          "current component own-unit position/velocity/stage/health/visibility",
+          "current component received target ID,type,position,velocity,timestamp",
+          "per-unit current task and native command receipts",
+          "public satellite active flag"
+        ],
+        "forbidden": [
+          "Q label as a policy selector",
+          "map difficulty/name",
+          "private hidden target catalogue or HP",
+          "blue unopened interceptor inventory",
+          "historical scores",
+          "cross-component private memory"
+        ],
+        "coordinate_contract": "Original unscaled lon/lat/alt in actions; WGS84 ECEF for distances. No model-scale multiplication in actor output. Targets at z=0; deployments at 3000m."
+      },
+      "deployment": {
+        "call": "planner_v2.compile_plan(case,id)",
+        "algorithm": "Use all polygon boundaries (41samples/edge) and legal11x11 interior samples, then solve exact desired-distance edge roots. Choose point minimizing ETA error plus soft350m separation penalty; altitude3000. All points validated in the relevant polygon union. H nominal200,M120,L100m/s. Same target H arrival jitter4s, M jitter5s. No waiting or relaunch.",
+        "parameters": {
+          "id": "A11",
+          "name": "全目标最差余量补强",
+          "mechanism": "在边际收益相近时先补最薄弱完整摧毁预算，H与M分散到达避免单枚爆炸同时带走整组，L宽覆盖后集中",
+          "mother_bias": 1.15,
+          "sentry_bias": 1.1,
+          "h_survival": 0.81,
+          "m_survival": 0.85,
+          "window_mode": "balanced",
+          "arrival_fraction": 0.5,
+          "m_lag": 30,
+          "hidden_batch": 4,
+          "hidden_topup": 3,
+          "hidden_spread": 40,
+          "search_spacing": 3400,
+          "search_rear_fraction": 0.32,
+          "loss_mode": "maxmin",
+          "refresh": 1
+        },
+        "soft_separation_m": 350,
+        "hard_separation_constraint": null,
+        "all_units_required": true
+      },
+      "public_target_assignment": {
+        "known_hp": {
+          "9400": 24,
+          "9600": 18,
+          "9500": null
+        },
+        "effective_damage": {
+          "ordinary": {
+            "H_9400": 16,
+            "H_9600": 12,
+            "M_9400": 4,
+            "M_9600": 3,
+            "L_9500": 0.8
+          },
+          "satellite": {
+            "H_9400": 20,
+            "H_9600": 20,
+            "M_9400": "ordinary path including angle modifiers"
+          },
+          "mother_pessimistic_per_hit": {
+            "H": 9.6,
+            "M": 2.4
+          }
+        },
+        "ordinary_conditions": [
+          "9400 nominal: 16H+4M>=24; 9600:12H+3M>=18.",
+          "9400 robust order-free lower bound:9.6H+2.4M>=24. This is deliberately conservative: the first hit without history has no decrease.",
+          "For 2 H alone on a mother, first>=16 and second>=9.6 gives25.6 if both hit; no H-loss margin. With arbitrary M arrival order the generic all-hit floor remains safe.",
+          "9600 H+2M=18 but loses completeness after any member loss;2H=24 survives no H loss."
+        ],
+        "window_conditions": [
+          "9400 2H=40 intact;1H+2M has worst20+4.8=24.8. 2H+2M keeps24.8 after losing oneH if the remainingH hits during window.",
+          "9600 1H=20 intact,2H=40 keeps20 after oneH loss;1H+6M keeps18 after oneH loss.",
+          "L batch3/4/5 gives2.4/3.2/4.0 intact damage, not guaranteed destruction because hiddenHP is unknown."
+        ],
+        "loss_model": "Exact enumeration over independent assumed H/M survival in _p_kill; these are hypothesis parameters, not measured or official probabilities. No artificial survival reward; objective is target weight times estimated full-kill probability plus explicit fallback robustness.",
+        "allocation_algorithm": "Seed each public mother with2H, each sentry with1H. When infeasible select complete packages in weight/(1+nearestETA/1000) order. Spend all remaining H/M by enumerating bundle increments dH=0..2,dM=0..8; maximize weighted complete-kill objective gain divided by dH*(M_inventory/H_inventory)+dM. Tie-break gain, cost, ETA, target ref. Includes ordinary-angle fallback; compile outputs actual budgets after geometry and escort placement."
+      },
+      "arrival_coordination": {
+        "estimate": "1.06*ECEF_distance/nominal_speed+12seconds; runtime remainingETA=1.08*distance/clamped_current_speed+12; clamp speed to[.45,1.8]*nominal",
+        "window_search": "Enumerate start times every5s, evaluate legal per-target H ETA intervals; score weighted target inclusion in inner[+12,+168]s minus delay penalty; aim at candidate arrival_fraction*180. Candidate-specific sentry/deep/mother/early/late objective is executable in planner.",
+        "uncertainty": "±45s reported estimate, not a native guarantee. Target movement12m/s, V13 interference and stage-dependent flight can dominate.",
+        "M_late_handling": "Deploy M as close as legally possible if desired ETA cannot be met. Report M-lastH gap. A06 moves oneH per eligible multi-H target toward M ETA as sensor escort. Other plans budget H complete kill independently and treat M as uncertain backup; no unsupported target-death assumption.",
+        "same_target_updates": "Attack IDs reissued each step; coordinates from latest legal records only. Fresh H observations near target can update nearby M.",
+        "angles": "No claimed guaranteed >30degree bonus or avoided<10degree penalty. Soft alternation of deployment side is a diversity tie-break only; budgets retain conservative factors."
+      },
+      "satellite_policy": {
+        "resource": "exactly1 global opportunity,180seconds strict expiry",
+        "optimization": "combine H complete-budget arrival coverage with early hidden-discovery opportunity; report predicted coverage and post-discovery L reachability per case",
+        "responsibility": "central-latitude rear-search L first; statically ordered otherL backups every3s, rank slots capped45s; any available issuer type is legal, but these plans choose L to preserve attack commitment",
+        "trigger": "planned time or primary advance<=18s when >=60% and >=2 own-group H legally observed ETA<=22s; no cross-group adaptive observations",
+        "activity": "use legal is_using_satellite flag; observed active latches only local memory. Unit request marker prevents same-unit retry after split. Other groups may attempt backup; engine quota handles global competition.",
+        "failure": "late requests stop at min(1150,planned+45); if none succeed, use ordinary-budget fallback without inventing another opportunity"
+      },
+      "search_and_hidden_targets": {
+        "geometry": "full north-south map span divided into ceil(height/spacing) horizontal lanes; actual lane step<=profile spacing. Every L assigned lane i%nlanes, wave floor(i/nlanes). Rear wave starts near legal western edge, forward waves near eastern legal edge with1800m spacing. Projection considers all polygons.",
+        "sensor": "at2000m above ground, horizontal radius sqrt(3000^2-2000^2)=2236.07m; use3200–3800m lane spacing. At initial3000m height horizontal radius is zero; no guarantee until native altitude evolves.",
+        "route": "first leg to east map edge400m inset; optional broad return to lane+2 and western waypoint, switch8km early only with45s turning and90s remaining margin. First-leg coverage only is credited in static estimates.",
+        "batch": 4,
+        "topup": 3,
+        "hidden_hp": "unknown; batch damage is a budget, not kill guarantee",
+        "dispatch": "sort by nearest ETA except early/deep profiles use smallest remaining-lifetime slack; choose a compact arrival wave within hidden_spread seconds, preserve search floor, compare current actual bindings before every nomination",
+        "knowledge": "static targets can retain old coordinates for existing commitment; new assignments and replenishment require fresh timestamp<=6s; absent snapshot is unknown, never dead",
+        "insufficient": "wait for complete batch until1450s, then allow reachable partial final wave; all members still require remaining-life margin"
+      },
+      "event_rules": [
+        {
+          "state": "OPENING_COMMITTED",
+          "trigger": "first decision",
+          "binding": "every own unit exactly once",
+          "action": "H/M: [4,self,targetID,0]; L:[2,self,waypoint_lon,waypoint_lat]",
+          "exit": "continue updating legal targets every step; no takeoff delay"
+        },
+        {
+          "state": "SATELLITE_DUE",
+          "trigger": "predeclared local responsibility time, no legally observed active state and per-unit request not already made",
+          "binding": "primary L then static backup rank slots of3s, max45s late",
+          "action": "[3,self,0,0] alongside task and V13 turn",
+          "exit": "active flag latches only within received group; actual quota belongs engine"
+        },
+        {
+          "state": "HIDDEN_NOMINATED",
+          "trigger": "fresh <=6s 9500 record and full batch reachable before lifetime-90s",
+          "binding": "only current-group free L; keep max(1,ceil(.1*freeL)) searchers",
+          "action": "propose exact batch to frozen prior_t03_make, which may substitute legal free receivers and preserve searchers",
+          "exit": "actual returned/current bindings only; rejected nominations retried after6s"
+        },
+        {
+          "state": "HIDDEN_IN_FLIGHT",
+          "trigger": "actual prior-bound L report",
+          "binding": "sticky target commitment; never steal bound L",
+          "action": "[4,self,targetID,0] refreshed every step with group legal data",
+          "exit": "ETA plus18s is review time only, never proof of hit or death"
+        },
+        {
+          "state": "HIDDEN_REVIEW",
+          "trigger": "review time elapsed and newly fresh live target timestamp after previous expected arrival",
+          "binding": "top-up2 or3 new unbound L via a fresh prior wave ID",
+          "action": "same legal prior handoff; preserve existing attackers and search floor",
+          "exit": "no fresh record means unknown; no deletion or kill credit"
+        },
+        {
+          "state": "SEARCH_CONTINUE",
+          "trigger": "within8km of waypoint and next segment fits remaining lifetime including45s turning estimate and90s reserve",
+          "binding": "own search task waypoint index",
+          "action": "[2,self,next_lon,next_lat]",
+          "exit": "at final route end no unlimited hold; native model may finish"
+        },
+        {
+          "state": "PUBLIC_REBALANCE",
+          "trigger": "only after planned satellite window ends; every8s",
+          "binding": "current group owns donor; removing donor still covers original public initialHP under conservative current coefficients; donor beyond18km terminal lock",
+          "action": "retarget only to <=5s-fresh public target with deficit; ETAnew<=1.25*ETAold, remaining lifetime-60",
+          "exit": "preserve bindings otherwise; missing member/target is not destruction"
+        },
+        {
+          "state": "COMPONENT_CHANGE",
+          "trigger": "split/merge reported by legal communications",
+          "binding": "per-unit own task retained; group ledger rebuilt from current members only",
+          "action": "no cross-group memory import; actual tasks dominate nominations",
+          "exit": "expected damage remains an estimate; new group cannot infer old group kills"
+        }
+      ],
+      "execution_integration": {
+        "priority": [
+          "preserve frozen prior accepted bindings and unit role legality",
+          "refresh committed attack target from legal data",
+          "apply approved public surplus reassignment or hidden prior handoff",
+          "advance own search route",
+          "one scheduled satellite request",
+          "existing V13/mission_v12 turn action"
+        ],
+        "prior_t03_make": "nomination is not binding, native receipt is not impact; actual current bindings next step override planner memory; retry6s exceeds frozen5s timeout",
+        "mission_v12": "all original threat thresholds, terminal gates,4degree deadzone and signed recovery remain frozen"
+      },
+      "degradation": {
+        "resource_shortage": "complete public target packages ranked by weight/reachable ETA; no unsupported partial damage score",
+        "communication_split": "retain own task and snapshots; rebuild only actual members; do not steal committed target resources below initialHP coverage",
+        "requester_loss": "static backup slots independent of unobservable absence",
+        "stale_information": "no new hidden nomination or public reassignment from stale tracks; preserve old own commitment, keep searching",
+        "unknown_destroyed": "no available explicit kill evidence is assumed; inferred arrivals produce review states only"
+      },
+      "formulas_and_parameter_sources": {
+        "official": "damage,HP,speeds,lifetimes,range,quota,angle bounds from approved rule_facts/prompt",
+        "hypotheses": "survival rates,6%/8% ETA loss,12s overhead,45s turning uncertainty,90s L reserve,350m spacing,profile weights are design estimates requiring native evaluation",
+        "score": "official100*destroyed_weight/all_true_weight; actual hidden denominator unknown to actor. Static public budget percentage is never called official score."
+      },
+      "required_compiler_changes": {
+        "existing_preserved": [
+          "V13 checkpoint",
+          "mission_v12 gating and recovery-sign adapter",
+          "per-step legal target-coordinate update",
+          "prior_t03_make implementation including5s confirmation and search retention",
+          "actual engine deployment and combat action validators"
+        ],
+        "new_required": [
+          "Call compile_plan using public inputs; map each role index H000/M000/L000 to sorted own legal IDs, T refs to public target IDs.",
+          "Deploy every unit once with altitude3000; validate all polygons and append one[1,-1,0,0,0] at end.",
+          "Initialize every unit task on first decision; action2 for waypoint or4 for attack, then existing action0 motion.",
+          "Call step_group once per actual communication component and step; only pass its legal reports/tracks and local memory.",
+          "Send hidden nominations through frozen prior with distinct(target_ref,wave)event IDs; report actual bindings next step, not requested nominations.",
+          "Retain per-unit satellite_requested_step across splits; actor request result is not assumed global activity.",
+          "Preserve waypoint index/binding per unit; group memory carries no privately imported other-component state.",
+          "Translate all finite action fields; do not emit speed/height/hold/relaunch commands.",
+          "Store actual_score only from full3000-step native match official scorer, separate from static estimated fields."
+        ]
+      }
+    }
+  ]
+}

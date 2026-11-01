@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "native_simulations": 0,
+  "counts": {
+    "h_latch_states": 10180,
+    "chronological_actor_steps": 107696,
+    "pure_decisions": 107696,
+    "changed_native_commands": 177
+  },
+  "per_arm": {
+    "keep": 13457,
+    "h": 13467,
+    "c": 13457,
+    "p": 13456,
+    "hc": 13467,
+    "hp": 13468,
+    "cp": 13456,
+    "hcp": 13468
+  },
+  "exact_coordinate_match": true,
+  "changed_command_match": true,
+  "distinction": "Offline exact execution fidelity to measured HP; not a new native score or cross-map generalization test",
+  "file_hashes": {
+    "build.py": "06f96325d085c7e1a705120b4ed506b1678b8466cba5e5db00d57db2c7bc406f",
+    "features.py": "6f16ada70732c1d5c7bc9f3cb3d8e2690ba0f29d4b7bc62577ea3765855c897d",
+    "verify.py": "080025cd52e6dc6ff4377aaf8a4e3123c828d5d5ea483b569a7c2476ced378fb",
+    "runtime.py": "931177cf7ec6430184f61b4f4e5bed978f6e3b7592853fdd98652f9407f088bb",
+    "decision_tree.py": "e3fa347e6cbfe1be55a288cfa54f38c7f6fed15fef9aa4cafe0436032c2b886b"
+  }
+}

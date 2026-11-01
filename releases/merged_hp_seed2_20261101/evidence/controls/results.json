@@ -1,0 +1,1349 @@
+{
+  "status": "passed",
+  "completed": 20,
+  "total": 20,
+  "rows": [
+    {
+      "map": "E02",
+      "choice": "A05",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "409bf6da083b14864509f4286262a608819bbe8dedc690de00ec21cefd9b9f01",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 234,
+          "parent_pid": 628479,
+          "time_unix": 1793051676.9195955
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 628479,
+            "start_registry_hash": "409bf6da083b14864509f4286262a608819bbe8dedc690de00ec21cefd9b9f01",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 97.72727272727273,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 1001.5357706180075,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "dfc88f9e8f8dec3fff86153e74e1cf6f8f2f540675a918ff5380cbb0ea9aeadc",
+            "native_summary_sha256": "206a88f63df4a1ffd6605c96e88b33ba15ec276b35071b85a7835fc01ecb1d47"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 628497,
+            "start_registry_hash": "409bf6da083b14864509f4286262a608819bbe8dedc690de00ec21cefd9b9f01",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 97.72727272727273,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 1000.5023547119927,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "dfc88f9e8f8dec3fff86153e74e1cf6f8f2f540675a918ff5380cbb0ea9aeadc",
+            "native_summary_sha256": "206a88f63df4a1ffd6605c96e88b33ba15ec276b35071b85a7835fc01ecb1d47"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 628498,
+            "start_registry_hash": "409bf6da083b14864509f4286262a608819bbe8dedc690de00ec21cefd9b9f01",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 97.72727272727273,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 885.0873814579681,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "dfc88f9e8f8dec3fff86153e74e1cf6f8f2f540675a918ff5380cbb0ea9aeadc",
+            "native_summary_sha256": "206a88f63df4a1ffd6605c96e88b33ba15ec276b35071b85a7835fc01ecb1d47"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "E01",
+      "choice": "A08",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "c852fbae2cad83a766befab2c2fefef8f519a4b2a9d4fa7877dd5c776fcd9dba",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 234,
+          "parent_pid": 628473,
+          "time_unix": 1793051674.900323
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 628473,
+            "start_registry_hash": "c852fbae2cad83a766befab2c2fefef8f519a4b2a9d4fa7877dd5c776fcd9dba",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 809.5719033560017,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "47d4a843d58f41f6dbb59480be8d18c3483900fd1646f25773182efbfe63f972",
+            "native_summary_sha256": "aa6b969fa03de57340bfc8603d32925121f0878d5d1ade77a8a50a75c551cc59"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 628489,
+            "start_registry_hash": "c852fbae2cad83a766befab2c2fefef8f519a4b2a9d4fa7877dd5c776fcd9dba",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 832.0409471800085,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "47d4a843d58f41f6dbb59480be8d18c3483900fd1646f25773182efbfe63f972",
+            "native_summary_sha256": "aa6b969fa03de57340bfc8603d32925121f0878d5d1ade77a8a50a75c551cc59"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 628490,
+            "start_registry_hash": "c852fbae2cad83a766befab2c2fefef8f519a4b2a9d4fa7877dd5c776fcd9dba",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 1016.7863713629777,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "47d4a843d58f41f6dbb59480be8d18c3483900fd1646f25773182efbfe63f972",
+            "native_summary_sha256": "aa6b969fa03de57340bfc8603d32925121f0878d5d1ade77a8a50a75c551cc59"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "E06",
+      "choice": "A10",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "2a6219dcc6201b24670339b82b49b74d8f911c8ffa3a92f84d977388ef2602a7",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 234,
+          "parent_pid": 628520,
+          "time_unix": 1793051685.2286599
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 628520,
+            "start_registry_hash": "2a6219dcc6201b24670339b82b49b74d8f911c8ffa3a92f84d977388ef2602a7",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 764.3702909860294,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "4cc6c29440b07e10ca55df658a8fb057ce51f82ac948f3eab6eac6b44a833bb3",
+            "native_summary_sha256": "ac9ee60162f706d32da2ddb9a791f4506f4b541e2cb94eb3d5f5e035c80adcdb"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 628539,
+            "start_registry_hash": "2a6219dcc6201b24670339b82b49b74d8f911c8ffa3a92f84d977388ef2602a7",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 1011.4289691289887,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "4cc6c29440b07e10ca55df658a8fb057ce51f82ac948f3eab6eac6b44a833bb3",
+            "native_summary_sha256": "ac9ee60162f706d32da2ddb9a791f4506f4b541e2cb94eb3d5f5e035c80adcdb"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 628540,
+            "start_registry_hash": "2a6219dcc6201b24670339b82b49b74d8f911c8ffa3a92f84d977388ef2602a7",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 910.6570974890492,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "4cc6c29440b07e10ca55df658a8fb057ce51f82ac948f3eab6eac6b44a833bb3",
+            "native_summary_sha256": "ac9ee60162f706d32da2ddb9a791f4506f4b541e2cb94eb3d5f5e035c80adcdb"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "E05",
+      "choice": "A02",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "79bdb694a46ece51bb07ce7af2f81ea5d086f3d1e776a1da027a93e803835349",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 234,
+          "parent_pid": 628499,
+          "time_unix": 1793051683.0302534
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 628499,
+            "start_registry_hash": "79bdb694a46ece51bb07ce7af2f81ea5d086f3d1e776a1da027a93e803835349",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 801.1135139480466,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "ff1a3d4863ab4165c2d87bf975322fd6976966cbb21487d65024333bb6c98067",
+            "native_summary_sha256": "57e6f31162f77eb586595b4f8ac2584a46f0a7baa0950c3b7affe15a015f87cf"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 628532,
+            "start_registry_hash": "79bdb694a46ece51bb07ce7af2f81ea5d086f3d1e776a1da027a93e803835349",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 1057.6116675189696,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "ff1a3d4863ab4165c2d87bf975322fd6976966cbb21487d65024333bb6c98067",
+            "native_summary_sha256": "57e6f31162f77eb586595b4f8ac2584a46f0a7baa0950c3b7affe15a015f87cf"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 628533,
+            "start_registry_hash": "79bdb694a46ece51bb07ce7af2f81ea5d086f3d1e776a1da027a93e803835349",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 797.4884330509813,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "ff1a3d4863ab4165c2d87bf975322fd6976966cbb21487d65024333bb6c98067",
+            "native_summary_sha256": "57e6f31162f77eb586595b4f8ac2584a46f0a7baa0950c3b7affe15a015f87cf"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "E03",
+      "choice": "A08",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "c72ffce03ee292cfaa265cdf56c708a18c6044f7cfda0e94d2d5eafeb459d05f",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 234,
+          "parent_pid": 628484,
+          "time_unix": 1793051678.968454
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 628484,
+            "start_registry_hash": "c72ffce03ee292cfaa265cdf56c708a18c6044f7cfda0e94d2d5eafeb459d05f",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 1093.106321388972,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "0c85f63967a00eeff1837cdc27e95c8994fbc2422b5f2f710609721082f21f8b",
+            "native_summary_sha256": "5c16fa505a7dee58531d32b51d407242c30e75247911e87ebabf1bebe6ed9125"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 628518,
+            "start_registry_hash": "c72ffce03ee292cfaa265cdf56c708a18c6044f7cfda0e94d2d5eafeb459d05f",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 971.2957487759995,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "0c85f63967a00eeff1837cdc27e95c8994fbc2422b5f2f710609721082f21f8b",
+            "native_summary_sha256": "5c16fa505a7dee58531d32b51d407242c30e75247911e87ebabf1bebe6ed9125"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 628519,
+            "start_registry_hash": "c72ffce03ee292cfaa265cdf56c708a18c6044f7cfda0e94d2d5eafeb459d05f",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 862.3995599979535,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "0c85f63967a00eeff1837cdc27e95c8994fbc2422b5f2f710609721082f21f8b",
+            "native_summary_sha256": "5c16fa505a7dee58531d32b51d407242c30e75247911e87ebabf1bebe6ed9125"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "E04",
+      "choice": "A08",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "23657d8518d036ce77762f16574f5a05c4e207d1110e675ac9852053be7deb92",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 234,
+          "parent_pid": 628491,
+          "time_unix": 1793051680.9485152
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 628491,
+            "start_registry_hash": "23657d8518d036ce77762f16574f5a05c4e207d1110e675ac9852053be7deb92",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 95.45454545454545,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 978.0879201670177,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "7528dcea8aadc8a0cfff90cc94324efc747b70b526c6d9f3611013a29d904d79",
+            "native_summary_sha256": "fa97815caad03d43eda0d3162550c4ed6dbc1c7cc000128dd314db6532ac3b75"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 628525,
+            "start_registry_hash": "23657d8518d036ce77762f16574f5a05c4e207d1110e675ac9852053be7deb92",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 95.45454545454545,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 1174.925657055981,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "7528dcea8aadc8a0cfff90cc94324efc747b70b526c6d9f3611013a29d904d79",
+            "native_summary_sha256": "fa97815caad03d43eda0d3162550c4ed6dbc1c7cc000128dd314db6532ac3b75"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 628526,
+            "start_registry_hash": "23657d8518d036ce77762f16574f5a05c4e207d1110e675ac9852053be7deb92",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 95.45454545454545,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 854.888915839023,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "7528dcea8aadc8a0cfff90cc94324efc747b70b526c6d9f3611013a29d904d79",
+            "native_summary_sha256": "fa97815caad03d43eda0d3162550c4ed6dbc1c7cc000128dd314db6532ac3b75"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "M05",
+      "choice": "A09",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "0bd9d3f77f509fd4aa201dc87391f324d4c037c6a5faccea2bda107b6329621f",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 385,
+          "parent_pid": 628567,
+          "time_unix": 1793051697.489525
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 628567,
+            "start_registry_hash": "0bd9d3f77f509fd4aa201dc87391f324d4c037c6a5faccea2bda107b6329621f",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 94.20289855072464,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 1893.5256587550393,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "f63ebcc5c61ac1da1adfd3ce2ddffa2614cd5d3738b6cb31e28f7238569162bf",
+            "native_summary_sha256": "289ece2c36f66f024dbf283006e3e95bcfe0cec1059eb4e50c1fc9cf4cebd67d"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 628602,
+            "start_registry_hash": "0bd9d3f77f509fd4aa201dc87391f324d4c037c6a5faccea2bda107b6329621f",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 94.20289855072464,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 1969.1334400399937,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "f63ebcc5c61ac1da1adfd3ce2ddffa2614cd5d3738b6cb31e28f7238569162bf",
+            "native_summary_sha256": "289ece2c36f66f024dbf283006e3e95bcfe0cec1059eb4e50c1fc9cf4cebd67d"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 628603,
+            "start_registry_hash": "0bd9d3f77f509fd4aa201dc87391f324d4c037c6a5faccea2bda107b6329621f",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 94.20289855072464,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 2048.902559818991,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "f63ebcc5c61ac1da1adfd3ce2ddffa2614cd5d3738b6cb31e28f7238569162bf",
+            "native_summary_sha256": "289ece2c36f66f024dbf283006e3e95bcfe0cec1059eb4e50c1fc9cf4cebd67d"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "M06",
+      "choice": "A08",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "375c53ee1f9cd6ae7550b04b7eafbeb14e0a78d63a9252505d14676099f3dab3",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 385,
+          "parent_pid": 628575,
+          "time_unix": 1793051698.2859733
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 628575,
+            "start_registry_hash": "375c53ee1f9cd6ae7550b04b7eafbeb14e0a78d63a9252505d14676099f3dab3",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 94.20289855072464,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 1809.2401322689839,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "22b24c1269d910498b627320520691c5d4987fa48a7c2a186c4917474ad659bd",
+            "native_summary_sha256": "76465edc768aec627197b24e235b5d3428fd791e57b083cb00ada36cbabb38e3"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 628607,
+            "start_registry_hash": "375c53ee1f9cd6ae7550b04b7eafbeb14e0a78d63a9252505d14676099f3dab3",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 94.20289855072464,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 2110.2731550330063,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "22b24c1269d910498b627320520691c5d4987fa48a7c2a186c4917474ad659bd",
+            "native_summary_sha256": "76465edc768aec627197b24e235b5d3428fd791e57b083cb00ada36cbabb38e3"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 628608,
+            "start_registry_hash": "375c53ee1f9cd6ae7550b04b7eafbeb14e0a78d63a9252505d14676099f3dab3",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 94.20289855072464,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 2129.121782769973,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "22b24c1269d910498b627320520691c5d4987fa48a7c2a186c4917474ad659bd",
+            "native_summary_sha256": "76465edc768aec627197b24e235b5d3428fd791e57b083cb00ada36cbabb38e3"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "M02",
+      "choice": "A05",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "1a0c1fde6f97b070fc269aadd57bf4a2fae68bc7292b951e5400dc90ca879b4a",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 385,
+          "parent_pid": 628534,
+          "time_unix": 1793051690.0030272
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 628534,
+            "start_registry_hash": "1a0c1fde6f97b070fc269aadd57bf4a2fae68bc7292b951e5400dc90ca879b4a",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 2178.162484589033,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "5206bd169513ba5ffa6c78cc3b45604c8aee529a57bceca267b101ce8fa28432",
+            "native_summary_sha256": "91c176a6b80a28391f3eea89031af074d97703050e86e8750fe3289fed41cffa"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 628570,
+            "start_registry_hash": "1a0c1fde6f97b070fc269aadd57bf4a2fae68bc7292b951e5400dc90ca879b4a",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 1879.2000099520083,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "5206bd169513ba5ffa6c78cc3b45604c8aee529a57bceca267b101ce8fa28432",
+            "native_summary_sha256": "91c176a6b80a28391f3eea89031af074d97703050e86e8750fe3289fed41cffa"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 628571,
+            "start_registry_hash": "1a0c1fde6f97b070fc269aadd57bf4a2fae68bc7292b951e5400dc90ca879b4a",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 2134.4181836359785,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "5206bd169513ba5ffa6c78cc3b45604c8aee529a57bceca267b101ce8fa28432",
+            "native_summary_sha256": "91c176a6b80a28391f3eea89031af074d97703050e86e8750fe3289fed41cffa"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "M03",
+      "choice": "A07",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "9d640258659e37639326e9c25a025518764bb45a8c6f5d157be64f2b9aa63cd4",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 385,
+          "parent_pid": 628541,
+          "time_unix": 1793051691.9673982
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 628541,
+            "start_registry_hash": "9d640258659e37639326e9c25a025518764bb45a8c6f5d157be64f2b9aa63cd4",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 2164.6331250200165,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "00bbae1342b260efcc24516aea7e2fd46becf65de7c820aca207f94db546ec0f",
+            "native_summary_sha256": "81e0e9662322740758495549231ad124ae322d61a526653fa00fdc43ae76d5e9"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 628577,
+            "start_registry_hash": "9d640258659e37639326e9c25a025518764bb45a8c6f5d157be64f2b9aa63cd4",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 2289.927812027978,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "00bbae1342b260efcc24516aea7e2fd46becf65de7c820aca207f94db546ec0f",
+            "native_summary_sha256": "81e0e9662322740758495549231ad124ae322d61a526653fa00fdc43ae76d5e9"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 628578,
+            "start_registry_hash": "9d640258659e37639326e9c25a025518764bb45a8c6f5d157be64f2b9aa63cd4",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 1981.0950749620097,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "00bbae1342b260efcc24516aea7e2fd46becf65de7c820aca207f94db546ec0f",
+            "native_summary_sha256": "81e0e9662322740758495549231ad124ae322d61a526653fa00fdc43ae76d5e9"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "M04",
+      "choice": "A06",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "542d8cda6c4a372ab4f9fa07d0b8488914f442a5d97a5e3fa9841e6553125e13",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 385,
+          "parent_pid": 628559,
+          "time_unix": 1793051694.1734452
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 628559,
+            "start_registry_hash": "542d8cda6c4a372ab4f9fa07d0b8488914f442a5d97a5e3fa9841e6553125e13",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "time_limit",
+            "steps": 3000,
+            "elapsed_s": 2702.515546060982,
+            "error": null,
+            "frame_count": 2996,
+            "all_frames_sha256": "1bfb5e16f507d8c2b8f3a14de9ad3081bffdbe2d37e36001175739f267805fb1",
+            "native_summary_sha256": "b09ad237f586f9d81736b30913dd5344d67e6738fb8681f07f20095e457c0bfe"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 628593,
+            "start_registry_hash": "542d8cda6c4a372ab4f9fa07d0b8488914f442a5d97a5e3fa9841e6553125e13",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "time_limit",
+            "steps": 3000,
+            "elapsed_s": 2584.522884976992,
+            "error": null,
+            "frame_count": 2996,
+            "all_frames_sha256": "1bfb5e16f507d8c2b8f3a14de9ad3081bffdbe2d37e36001175739f267805fb1",
+            "native_summary_sha256": "b09ad237f586f9d81736b30913dd5344d67e6738fb8681f07f20095e457c0bfe"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 628594,
+            "start_registry_hash": "542d8cda6c4a372ab4f9fa07d0b8488914f442a5d97a5e3fa9841e6553125e13",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "time_limit",
+            "steps": 3000,
+            "elapsed_s": 2621.853724612971,
+            "error": null,
+            "frame_count": 2996,
+            "all_frames_sha256": "1bfb5e16f507d8c2b8f3a14de9ad3081bffdbe2d37e36001175739f267805fb1",
+            "native_summary_sha256": "b09ad237f586f9d81736b30913dd5344d67e6738fb8681f07f20095e457c0bfe"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "M01",
+      "choice": "A06",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "dcaa6e4c71b5417b033a6d46933880a39d316d865fd96b17b8c411cc1096f2a4",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 385,
+          "parent_pid": 628527,
+          "time_unix": 1793051687.9082987
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 628527,
+            "start_registry_hash": "dcaa6e4c71b5417b033a6d46933880a39d316d865fd96b17b8c411cc1096f2a4",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "time_limit",
+            "steps": 3000,
+            "elapsed_s": 2826.483475151006,
+            "error": null,
+            "frame_count": 2996,
+            "all_frames_sha256": "ff63dc79e4c9bf9ab20a64910ee867f98fb7e26e41a3180f370d0484990bf1a8",
+            "native_summary_sha256": "f8521227f50eca93066453ccf28b4dceda7e08ba8ad233100248a7afd5be5e17"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 628561,
+            "start_registry_hash": "dcaa6e4c71b5417b033a6d46933880a39d316d865fd96b17b8c411cc1096f2a4",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "time_limit",
+            "steps": 3000,
+            "elapsed_s": 2864.055879436026,
+            "error": null,
+            "frame_count": 2996,
+            "all_frames_sha256": "ff63dc79e4c9bf9ab20a64910ee867f98fb7e26e41a3180f370d0484990bf1a8",
+            "native_summary_sha256": "f8521227f50eca93066453ccf28b4dceda7e08ba8ad233100248a7afd5be5e17"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 628562,
+            "start_registry_hash": "dcaa6e4c71b5417b033a6d46933880a39d316d865fd96b17b8c411cc1096f2a4",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "time_limit",
+            "steps": 3000,
+            "elapsed_s": 3163.1524345910293,
+            "error": null,
+            "frame_count": 2996,
+            "all_frames_sha256": "ff63dc79e4c9bf9ab20a64910ee867f98fb7e26e41a3180f370d0484990bf1a8",
+            "native_summary_sha256": "f8521227f50eca93066453ccf28b4dceda7e08ba8ad233100248a7afd5be5e17"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "H01",
+      "choice": "A10",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "d8fff03fa517a15937742bad97b288d5a38268c2e10e838fa601bb6f5a576b5d",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 746,
+          "parent_pid": 628591,
+          "time_unix": 1793051707.1427522
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 628591,
+            "start_registry_hash": "d8fff03fa517a15937742bad97b288d5a38268c2e10e838fa601bb6f5a576b5d",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7152.927939989022,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "04d474b8e3db93edb8591e1a81f9abf75e54fb96c839cc98ffbb459677d08efb",
+            "native_summary_sha256": "1fd58f418303bfa1f4907bd103956e193b966720143b686bc5f4ba87d3403bd1"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 628624,
+            "start_registry_hash": "d8fff03fa517a15937742bad97b288d5a38268c2e10e838fa601bb6f5a576b5d",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7368.434579163033,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "04d474b8e3db93edb8591e1a81f9abf75e54fb96c839cc98ffbb459677d08efb",
+            "native_summary_sha256": "1fd58f418303bfa1f4907bd103956e193b966720143b686bc5f4ba87d3403bd1"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 628625,
+            "start_registry_hash": "d8fff03fa517a15937742bad97b288d5a38268c2e10e838fa601bb6f5a576b5d",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7387.641126707022,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "04d474b8e3db93edb8591e1a81f9abf75e54fb96c839cc98ffbb459677d08efb",
+            "native_summary_sha256": "1fd58f418303bfa1f4907bd103956e193b966720143b686bc5f4ba87d3403bd1"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "H02",
+      "choice": "A11",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "b3ee65d71c8a816c9a34adf0a32ad6f7cbdd2a223040c1623815efa0f6016eb3",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 746,
+          "parent_pid": 628598,
+          "time_unix": 1793051709.5592194
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 628598,
+            "start_registry_hash": "b3ee65d71c8a816c9a34adf0a32ad6f7cbdd2a223040c1623815efa0f6016eb3",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 99.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7415.981366992986,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "76f36f70c6d67fdd84a66aa50316e2eb6746ac2789ca12cf29d358647de27c5f",
+            "native_summary_sha256": "34b5e96a4a20ebae236b12726aa25e22740e20e6228a3293abec371a1958d170"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 628632,
+            "start_registry_hash": "b3ee65d71c8a816c9a34adf0a32ad6f7cbdd2a223040c1623815efa0f6016eb3",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 99.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7355.500709390966,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "76f36f70c6d67fdd84a66aa50316e2eb6746ac2789ca12cf29d358647de27c5f",
+            "native_summary_sha256": "34b5e96a4a20ebae236b12726aa25e22740e20e6228a3293abec371a1958d170"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 628633,
+            "start_registry_hash": "b3ee65d71c8a816c9a34adf0a32ad6f7cbdd2a223040c1623815efa0f6016eb3",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 99.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7378.20593962603,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "76f36f70c6d67fdd84a66aa50316e2eb6746ac2789ca12cf29d358647de27c5f",
+            "native_summary_sha256": "34b5e96a4a20ebae236b12726aa25e22740e20e6228a3293abec371a1958d170"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "H03",
+      "choice": "A00",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "1a7de046bef1eda4d8966f06f0d99247d3d3d8035ef81e7bd807c8aa380d7502",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 746,
+          "parent_pid": 628600,
+          "time_unix": 1793051711.6295455
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 628600,
+            "start_registry_hash": "1a7de046bef1eda4d8966f06f0d99247d3d3d8035ef81e7bd807c8aa380d7502",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 99.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7427.837720702984,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "c728b078077152a02633b00a46fe561769b6963c9f7ae0d5104ce5ebb6a71c6c",
+            "native_summary_sha256": "96e5a40cf1f625b426b202752f4f8174dbcff7c43d3dd2c29868f94f533c011b"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 628639,
+            "start_registry_hash": "1a7de046bef1eda4d8966f06f0d99247d3d3d8035ef81e7bd807c8aa380d7502",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 99.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7404.608729840955,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "c728b078077152a02633b00a46fe561769b6963c9f7ae0d5104ce5ebb6a71c6c",
+            "native_summary_sha256": "96e5a40cf1f625b426b202752f4f8174dbcff7c43d3dd2c29868f94f533c011b"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 628640,
+            "start_registry_hash": "1a7de046bef1eda4d8966f06f0d99247d3d3d8035ef81e7bd807c8aa380d7502",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 99.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7491.37597598898,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "c728b078077152a02633b00a46fe561769b6963c9f7ae0d5104ce5ebb6a71c6c",
+            "native_summary_sha256": "96e5a40cf1f625b426b202752f4f8174dbcff7c43d3dd2c29868f94f533c011b"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "H04",
+      "choice": "A01",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "ec5dbf82bdbc1a25b8bd5fc5106d9e3b4875a28b971ebf0b7377baa1a09d3038",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 746,
+          "parent_pid": 630469,
+          "time_unix": 1793052873.6369452
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 630469,
+            "start_registry_hash": "ec5dbf82bdbc1a25b8bd5fc5106d9e3b4875a28b971ebf0b7377baa1a09d3038",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 98.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7513.729904818989,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "573dc4915becfbc27f39b9a5e32913d0c8f079deaa57bb9f1e1754a79dc753d5",
+            "native_summary_sha256": "e4a599eb87265b712e2e59e960bbdcca3283592ddb586b627d241f66d015ee0f"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 630483,
+            "start_registry_hash": "ec5dbf82bdbc1a25b8bd5fc5106d9e3b4875a28b971ebf0b7377baa1a09d3038",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 98.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7438.594828542962,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "573dc4915becfbc27f39b9a5e32913d0c8f079deaa57bb9f1e1754a79dc753d5",
+            "native_summary_sha256": "e4a599eb87265b712e2e59e960bbdcca3283592ddb586b627d241f66d015ee0f"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 630484,
+            "start_registry_hash": "ec5dbf82bdbc1a25b8bd5fc5106d9e3b4875a28b971ebf0b7377baa1a09d3038",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 98.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7453.987346214999,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "573dc4915becfbc27f39b9a5e32913d0c8f079deaa57bb9f1e1754a79dc753d5",
+            "native_summary_sha256": "e4a599eb87265b712e2e59e960bbdcca3283592ddb586b627d241f66d015ee0f"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "H05",
+      "choice": "A04",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "a7b105c0004a09f4dd3ac72d4081f903f86264d1d0018a20d1eb34fc8cec3b81",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 746,
+          "parent_pid": 632054,
+          "time_unix": 1793053889.9704015
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 632054,
+            "start_registry_hash": "a7b105c0004a09f4dd3ac72d4081f903f86264d1d0018a20d1eb34fc8cec3b81",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 98.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7701.708506299998,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "d39495fc4de3eb96ecda9f57da0071f5229dbe48a2f798b08305edec7f9baacd",
+            "native_summary_sha256": "0c9a44fa685a7496eda08f43e55b10d65ea65f906355e9122d3a06ca19f697e5"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 632077,
+            "start_registry_hash": "a7b105c0004a09f4dd3ac72d4081f903f86264d1d0018a20d1eb34fc8cec3b81",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 98.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7696.3641612880165,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "d39495fc4de3eb96ecda9f57da0071f5229dbe48a2f798b08305edec7f9baacd",
+            "native_summary_sha256": "0c9a44fa685a7496eda08f43e55b10d65ea65f906355e9122d3a06ca19f697e5"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 632078,
+            "start_registry_hash": "a7b105c0004a09f4dd3ac72d4081f903f86264d1d0018a20d1eb34fc8cec3b81",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 98.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7729.944988346018,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "d39495fc4de3eb96ecda9f57da0071f5229dbe48a2f798b08305edec7f9baacd",
+            "native_summary_sha256": "0c9a44fa685a7496eda08f43e55b10d65ea65f906355e9122d3a06ca19f697e5"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "H06",
+      "choice": "A10",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "775e7a7662d7c8650c44da21214cf7fac796d470c771083cd2fc306e4b3e3124",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 746,
+          "parent_pid": 632880,
+          "time_unix": 1793054419.715338
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 632880,
+            "start_registry_hash": "775e7a7662d7c8650c44da21214cf7fac796d470c771083cd2fc306e4b3e3124",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7307.240308374981,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "37b883f6b3488b3e3188bdf8001bbc7a1d9e43e3190f8301f7fd4f74ba100062",
+            "native_summary_sha256": "21e28433666847d1792ab320190a2afa1f6035a7d45edd9e2341591f7d0a420a"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 632894,
+            "start_registry_hash": "775e7a7662d7c8650c44da21214cf7fac796d470c771083cd2fc306e4b3e3124",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7275.410973138991,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "37b883f6b3488b3e3188bdf8001bbc7a1d9e43e3190f8301f7fd4f74ba100062",
+            "native_summary_sha256": "21e28433666847d1792ab320190a2afa1f6035a7d45edd9e2341591f7d0a420a"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 632895,
+            "start_registry_hash": "775e7a7662d7c8650c44da21214cf7fac796d470c771083cd2fc306e4b3e3124",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7319.422263558023,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "37b883f6b3488b3e3188bdf8001bbc7a1d9e43e3190f8301f7fd4f74ba100062",
+            "native_summary_sha256": "21e28433666847d1792ab320190a2afa1f6035a7d45edd9e2341591f7d0a420a"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "H08",
+      "choice": "A10",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "0c4854ec8d483358f44884f7ed68b85c3a6d13795d9113d9ef85ef9e32b537fc",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 746,
+          "parent_pid": 640241,
+          "time_unix": 1793059273.5147588
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 640241,
+            "start_registry_hash": "0c4854ec8d483358f44884f7ed68b85c3a6d13795d9113d9ef85ef9e32b537fc",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 98.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 6724.177771340008,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "10265e1e8cca5f71a79ecf7b833b8f3403e9c98f5e426aa776f5222a9c1b2b2f",
+            "native_summary_sha256": "7fcada102f9cdc31bb6d2163f612581df55c2635bc24682a149092cee63da61a"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 640255,
+            "start_registry_hash": "0c4854ec8d483358f44884f7ed68b85c3a6d13795d9113d9ef85ef9e32b537fc",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 98.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 6703.394376429031,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "10265e1e8cca5f71a79ecf7b833b8f3403e9c98f5e426aa776f5222a9c1b2b2f",
+            "native_summary_sha256": "7fcada102f9cdc31bb6d2163f612581df55c2635bc24682a149092cee63da61a"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 640256,
+            "start_registry_hash": "0c4854ec8d483358f44884f7ed68b85c3a6d13795d9113d9ef85ef9e32b537fc",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 98.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 6755.216212275962,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "10265e1e8cca5f71a79ecf7b833b8f3403e9c98f5e426aa776f5222a9c1b2b2f",
+            "native_summary_sha256": "7fcada102f9cdc31bb6d2163f612581df55c2635bc24682a149092cee63da61a"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    },
+    {
+      "map": "H07",
+      "choice": "A07",
+      "status": "passed",
+      "comparison": {
+        "status": "passed",
+        "snapshot": {
+          "step": 4,
+          "registry_hash": "73937bf6106e2dc68dc1ed40f14bf2dcfcafeb861b32fdd4b4e63694a5a5eee7",
+          "rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+          "entity_count": 746,
+          "parent_pid": 640225,
+          "time_unix": 1793059265.2080793
+        },
+        "branches": {
+          "baseline_a": {
+            "label": "baseline_a",
+            "pid": 640225,
+            "start_registry_hash": "73937bf6106e2dc68dc1ed40f14bf2dcfcafeb861b32fdd4b4e63694a5a5eee7",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7069.487412984949,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "63df5979fab331c7389581e0d6f62710075f8a49cb3fa6f9a2248fec8e54f87f",
+            "native_summary_sha256": "4e6ad2b47044ec77a5e0c4bc3926e767081a31c89e3e4f9f9ade42f3fda5537e"
+          },
+          "baseline_b": {
+            "label": "baseline_b",
+            "pid": 640239,
+            "start_registry_hash": "73937bf6106e2dc68dc1ed40f14bf2dcfcafeb861b32fdd4b4e63694a5a5eee7",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7059.114307589945,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "63df5979fab331c7389581e0d6f62710075f8a49cb3fa6f9a2248fec8e54f87f",
+            "native_summary_sha256": "4e6ad2b47044ec77a5e0c4bc3926e767081a31c89e3e4f9f9ade42f3fda5537e"
+          },
+          "allocation_stress": {
+            "label": "allocation_stress",
+            "pid": 640240,
+            "start_registry_hash": "73937bf6106e2dc68dc1ed40f14bf2dcfcafeb861b32fdd4b4e63694a5a5eee7",
+            "start_rng_hash": "314abb8223aeb9040cf3eae99914b86cf61323bd1dba1f90f6dcd8e5669f9fcb",
+            "address_registry_unchanged": true,
+            "final_score": 100.0,
+            "termination": "environment_done",
+            "steps": 1801,
+            "elapsed_s": 7101.379344480985,
+            "error": null,
+            "frame_count": 1797,
+            "all_frames_sha256": "63df5979fab331c7389581e0d6f62710075f8a49cb3fa6f9a2248fec8e54f87f",
+            "native_summary_sha256": "4e6ad2b47044ec77a5e0c4bc3926e767081a31c89e3e4f9f9ade42f3fda5537e"
+          }
+        },
+        "errors": [],
+        "official_event_order_unchanged": true,
+        "new_skill_enabled": false,
+        "interpretation": "Baseline/baseline and asymmetric-allocation negative controls from same process snapshot; no skill-effect claim."
+      }
+    }
+  ],
+  "errors": [],
+  "protocol_sha256": "5107d3d6f0becc011d7177dcb680677013ca370ae18c94e49a262eba805b07aa"
+}

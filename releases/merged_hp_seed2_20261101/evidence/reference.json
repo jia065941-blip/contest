@@ -1,0 +1,273 @@
+{
+  "policy": "merged_hp",
+  "mean": 99.42779973649539,
+  "rows": [
+    {
+      "map": "E01",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "KEEP",
+      "contract_fixture_sha256": "c5d581e12caee78bbaefc8b695aac5c7a9b23f9b0499602fbc208ecf06e3643f",
+      "source_archive_sha256": "c229dbb7f079bb4bffd1609a4cd89d940cee5c1adcdc7179a40bbd26a67d447c",
+      "source_summary_sha256": "04aae4c20c9b035a6a2188902d1a9449b8181cedc5d19cd7800c3a3140059692"
+    },
+    {
+      "map": "E02",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "A",
+      "contract_fixture_sha256": "46d63dae6ad66958745afe380c5559d9533a8cf3bba5e10a2b663c8094032786",
+      "source_archive_sha256": "4477beac2aeb918b8dc5b105df78213a241ec267a74541ec2a048a9bf81572d6",
+      "source_summary_sha256": "d63ba9869f221c1447482af36dc0a5087520fc5c70553bac29be29f673f8e40a"
+    },
+    {
+      "map": "E03",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "A",
+      "contract_fixture_sha256": "53c5560f27af7165dcf2762c19a25ca473dbb8b30a2a7eca669ac38c803dd7c5",
+      "source_archive_sha256": "f1e831ca29216cd0e7f481ff78dd63ffb42d72cb15381f9071eec6f3a141857a",
+      "source_summary_sha256": "5e546bf88c1a0c4ab4759b1085658564fd5af7d41310ca193814da11bb1ed943"
+    },
+    {
+      "map": "E04",
+      "seed": 2,
+      "score": 95.45454545454545,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "KEEP",
+      "contract_fixture_sha256": "52a6cda0bc6346fb30a01522a76e47cda753d82d03f164305833998a89157939",
+      "source_archive_sha256": "2e678be4a5f570b98929afef2ef044f45a5cbeb07a77c3ceed6cbf7625fa9781",
+      "source_summary_sha256": "5d6e774bb66a2f2229eefa3eef9daa120841d3aa68c9a72b05949b2a28a215b2"
+    },
+    {
+      "map": "E05",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "A",
+      "contract_fixture_sha256": "04a0ede5bb9f043daadd1e7fc23e603b07f9073aef3f12ff0f87d8c82788d1ec",
+      "source_archive_sha256": "2c47946ae6451e018c3d97936c23a1d04885c5d24134b1b1b5e8f876c407665c",
+      "source_summary_sha256": "5375241869d9ddeb242777271e5219322a3baa53b79b0633f140cc2ae7862b0d"
+    },
+    {
+      "map": "E06",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "A",
+      "contract_fixture_sha256": "c784f90991d9050a8ac35e0b70d2eba707629b24ca090029037bef8df870169f",
+      "source_archive_sha256": "07402aa8faed095c396a96fe615ab295d55f15926e11335fec6b99bf48e6fa2a",
+      "source_summary_sha256": "9ca1932a6697cb5b0be9e7266fc3ea9edc83ee0456a231ea8dc608b83e5c09f5"
+    },
+    {
+      "map": "H01",
+      "seed": 2,
+      "score": 98.0,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "KEEP",
+      "contract_fixture_sha256": "949af1256f69be1435d37825efed71e9957d6b4982e1e1f2ee76b75ddee608e1",
+      "source_archive_sha256": "84ab9a5ade93359b379411cd19c951a46f2044b2fab52778fb74d927288b7ad7",
+      "source_summary_sha256": "d2fed07133e3593872b2d74bb0dab1e615925fba60f72d5a762d8f55f2f21b69"
+    },
+    {
+      "map": "H02",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "KEEP",
+      "contract_fixture_sha256": "2a2ab75dee31cf3f891721864e2c68f9c0d4d8c5e2dc330a747eac78af767618",
+      "source_archive_sha256": "74b76eb691aaaed06dfe833ec918d6babe2fddaa4bfe08c1a248dd9af6e4cf4e",
+      "source_summary_sha256": "f7b9d81232d2e85853cabd243889eed7c0da70ea39552a22dcff481d0a6858d6"
+    },
+    {
+      "map": "H03",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "KEEP",
+      "contract_fixture_sha256": "181b2c0c8009fcc5015520c5252d90224dd5381c6e2ad5a26565f82d58deaf27",
+      "source_archive_sha256": "22b361b90c0acd15d2e706032957498e5d9a8946373a5d79b2bb5bd132236f01",
+      "source_summary_sha256": "88b1b34f1eab4b1f365c74c373a05ba63aedf141b51a89bddc4abf198e43a57c"
+    },
+    {
+      "map": "H04",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "KEEP",
+      "contract_fixture_sha256": "0e81ba1479edc40821006e13a865b4b801d37802dd35cc2f6f4bbae9edeca54b",
+      "source_archive_sha256": "032ce0b08f1516fab9b8fe3c3ea135e4b1b75d3a6da5a743506971ab44b6da9f",
+      "source_summary_sha256": "d13789945a597ed944dc83d24deb795d5aa0a70980be6c1ec1527ffe879183e1"
+    },
+    {
+      "map": "H05",
+      "seed": 2,
+      "score": 98.0,
+      "steps": 3000,
+      "termination": "time_limit",
+      "strategy": "A",
+      "contract_fixture_sha256": "40ac66ba8b0d350278ce12dac465bc03ee67e3cce34f8bcd28998f5fffc995f6",
+      "source_archive_sha256": "1a4180077528fefe5cea3d3f75255642c0a385b2e114cdcfdd5d6c14991491b1",
+      "source_summary_sha256": "34a0f25deba19d731061bcd97cf623f476121dbe657ba559532468b37dac9322"
+    },
+    {
+      "map": "H06",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "KEEP",
+      "contract_fixture_sha256": "0d0a92cbbc88e2f34f8614665bfce34a2975282b9cca75f49b11c67219bb0327",
+      "source_archive_sha256": "85272e9ca38b12845af63c9e0134b7ec8d109c51ede0895f70fe0a3e55bdffa4",
+      "source_summary_sha256": "96cdc42831400dd308f2d946d70226911dc4384e99feb7995b76fb5924db2486"
+    },
+    {
+      "map": "H07",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "KEEP",
+      "contract_fixture_sha256": "cfdeb8f6f4e254583a994b574559b9ab90fb0ddf0c3905df47caa15fa88c549c",
+      "source_archive_sha256": "3d5d034401b02e72c9ed08334cf5dae2fd6b24aa1a3c6c253de0eeb4af6e1094",
+      "source_summary_sha256": "cb6642de34244c3f564d14c1b3e04a50d9d76a50b4448d80aac8b537ff9990a9"
+    },
+    {
+      "map": "H08",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "A",
+      "contract_fixture_sha256": "85e99b9aac1f5342a63f406a5887bc4bc85b717bf2bfd9ee72118c9ecf3debdb",
+      "source_archive_sha256": "3d600f46c7b8a839eec0faf91b9cf18248d2432bcb780735b20cf3e6fc68d6cf",
+      "source_summary_sha256": "695716aa426db32e9d30daa625c1e79b2eb91d6332ca06a8139716a6c77f6af6"
+    },
+    {
+      "map": "M01",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 3000,
+      "termination": "time_limit",
+      "strategy": "A",
+      "contract_fixture_sha256": "3a53e5b25d4f6c0706c04ce0f025c62005d2e7fcb9dd3f4ffe351eb09bd6715f",
+      "source_archive_sha256": "68080a955bba0687ac0a755497b219549d654088687a25da11a75ad4a2649aec",
+      "source_summary_sha256": "23d12ab9d88d5651360cbb0e1bd445fbeb6bfeccf4f2672559831eafb3afe422"
+    },
+    {
+      "map": "M02",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "KEEP",
+      "contract_fixture_sha256": "39f6f849d0e9441f330d921917f71d257a0b842e912b23d5e16e481587b16015",
+      "source_archive_sha256": "d4a785adca1ec7a50c2938164549a95483adc94075f7e2827f823870ac07c41d",
+      "source_summary_sha256": "91c176a6b80a28391f3eea89031af074d97703050e86e8750fe3289fed41cffa"
+    },
+    {
+      "map": "M03",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 3000,
+      "termination": "time_limit",
+      "strategy": "KEEP",
+      "contract_fixture_sha256": "5ea4c29af460b914a23af2e3a41618cbf424bb7a6957b9832e482bc04311f7e1",
+      "source_archive_sha256": "457aeabb6ed319e34c6812eaca336d6cdc04985d4aa38caf1e41bee2138f514d",
+      "source_summary_sha256": "b934ee44248b237788c8c7be6a124db2d6baaafc0fbdbbfe2b79d48b6524982a"
+    },
+    {
+      "map": "M04",
+      "seed": 2,
+      "score": 97.10144927536231,
+      "steps": 3000,
+      "termination": "time_limit",
+      "strategy": "KEEP",
+      "contract_fixture_sha256": "936950910179e243047bda40a8ba9d8f33223cb092075538c69ded24cafca58f",
+      "source_archive_sha256": "c14b92c4a4ff233f930c12015b2158cf22fdfd5ef62d2482616bde98932892d3",
+      "source_summary_sha256": "92352ba03d786f904e169dc6fb1dcbf1ab7ea35f87e52e86d51857725c977f58"
+    },
+    {
+      "map": "M05",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "A",
+      "contract_fixture_sha256": "bdecadf10f72587b4b5b440067fc0b47bc485fb47f20a4b43817063c0bab8f9e",
+      "source_archive_sha256": "edc2917b2be0996b3db9b02d3be74287bf3626e0f2856eb22f129cdc2186f400",
+      "source_summary_sha256": "a628b23416c88a434c24f7102d5ab97b211d8bee12925498b25384d647bfc89b"
+    },
+    {
+      "map": "M06",
+      "seed": 2,
+      "score": 100.0,
+      "steps": 1801,
+      "termination": "environment_done",
+      "strategy": "KEEP",
+      "contract_fixture_sha256": "9c920a0d3d51a158a36bf75c59c7e933ac464bcd69d6c5d02ad4b8aa834127dd",
+      "source_archive_sha256": "8f92f5018e950af3272cb4c08c60a6c890168a0f276cdc50d8d4abcba56a9f2a",
+      "source_summary_sha256": "5626ba57579c7762e73bc1491abac359ce4335bb5f1a5e62ffaeed3acacb9397"
+    }
+  ],
+  "partitions": {
+    "development17": {
+      "n": 17,
+      "mean": 99.32682321940634
+    },
+    "adapted_M06": {
+      "n": 1,
+      "mean": 100.0
+    },
+    "remaining_test2": {
+      "n": 2,
+      "mean": 100.0
+    },
+    "all20": {
+      "n": 20,
+      "mean": 99.42779973649539
+    }
+  },
+  "source_summary_sha256": "d62081748bd80f7bcdd8cc8732e9334e3139ef0e29033c7f1034a52bad49a068",
+  "outer_controller_incident": {
+    "existing_games_restarted": false,
+    "monitoring_gap_s": 577.849624759,
+    "recovery_receipt_sha256": "f7dd5e3d4bb4b650bed693f02cd9b828680f7b834805d11e3d9171cd805316c5",
+    "unavailable_root_exit_codes": [
+      "E05",
+      "E01",
+      "E06",
+      "H04",
+      "E03",
+      "E04",
+      "M04",
+      "H02",
+      "H01",
+      "M05",
+      "H03",
+      "E02",
+      "M02",
+      "M06",
+      "M03",
+      "M01"
+    ],
+    "evidence": "Native per-branch final summaries, dual-address/RNG audits and child exit validation; original same-memory roots continued",
+    "limitation": "Outer host pressure/CPU monitoring not continuously observed during gap; do not imply uninterrupted monitoring or recovered root OS exit codes"
+  },
+  "scope": "Prior all20 feature/skill exposure. Original development17, adapted M06, remaining E05/H04. Frozen DeepSeek openings. No Astra skill selector is deployed.",
+  "cross_host_exact_score_guarantee": false,
+  "contracts_archive_sha256": "a47368c968438ac61dd11cc9bc272fb7de2f6ab4851c668412601e604eee0524"
+}

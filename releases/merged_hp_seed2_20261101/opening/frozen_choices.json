@@ -1,0 +1,26 @@
+{
+  "choices": {
+    "E01": "A08",
+    "E02": "A05",
+    "E03": "A08",
+    "E04": "A08",
+    "E05": "A02",
+    "E06": "A10",
+    "H01": "A10",
+    "H02": "A11",
+    "H03": "A00",
+    "H04": "A01",
+    "H05": "A04",
+    "H06": "A10",
+    "H07": "A07",
+    "H08": "A10",
+    "M01": "A06",
+    "M02": "A05",
+    "M03": "A07",
+    "M04": "A06",
+    "M05": "A09",
+    "M06": "A08"
+  },
+  "origin": "Previously sealed actual DeepSeek choices, reused unchanged; no new model calls.",
+  "source_run_sha256": "5aebd19381105da7cf69b71c08a0398573b55081dc954f48b7d88601100f92a6"
+}

@@ -1,0 +1,172 @@
+--- original/.runtime/environment/envengine/agent_manager/agent_manager.py
++++ optimized/.runtime/environment/envengine/agent_manager/agent_manager.py
+@@ -1,6 +1,6 @@
+ # -*- coding: utf-8 -*-#
+ import logging
+-from copy import deepcopy
++from envengine.fastcopy import deepcopy
+ from typing import Dict, Optional, List
+ import numpy as np
+ from envengine.action_validation import IllegalActionError
+@@ -91,7 +91,7 @@
+             # logger.warning(f"[智能体工厂] 实体 {entity_id} 不在观测中")
+             return {}
+ 
+-    def collect_actions_from_agents(self, agent_observations: Dict[int, dict]) -> list[np.array]:
++    def collect_actions_from_agents(self, agent_observations: Dict[int, dict], *, take_ownership=False) -> list[np.array]:
+         """
+         向所有智能体传递观测信息，并收集智能体的动作
+         :param agent_observations: {agent_id: observation}
+@@ -102,7 +102,9 @@
+             agent = self._agents.get(agent_id)
+             if agent is None:
+                 raise IllegalActionError(f"智能体 {agent_id} 未注册")
+-            agent.set_observation(deepcopy(observation))
++            # The environment may transfer freshly isolated payloads. The default
++            # still protects callers that retain and reuse their input dictionaries.
++            agent.set_observation(observation if take_ownership else deepcopy(observation))
+ 
+         for agent_id in agent_observations:
+             # Ownership comes from registration, never from the mutable agent.
+--- original/.runtime/environment/envengine/engine/engine.py
++++ optimized/.runtime/environment/envengine/engine/engine.py
+@@ -2,7 +2,7 @@
+ import heapq
+ import logging
+ import time
+-from copy import deepcopy
++from envengine.fastcopy import deepcopy
+ from typing import Callable, Optional, Any, Dict
+ 
+ import fastdisjointset
+@@ -231,8 +231,10 @@
+         groups = ds.sets()
+         # 为每个弹赋值通信范围内实体id信息
+         for idx, group in enumerate(groups):
++            # Build once per group per refresh, retaining independent mutable maps.
++            common_range = self._get_common_range_info(group)
+             for i in group:
+-                self.simulator_factory.get_simulator_by_id(i).entity_ext.entity.commRangeInfo = self._get_common_range_info(group)
++                self.simulator_factory.get_simulator_by_id(i).entity_ext.entity.commRangeInfo = deepcopy(common_range)
+         return groups
+ 
+     def _get_common_range_info(self, group) -> Dict[int, Any]:
+--- original/.runtime/environment/envengine/environment/training_env.py
++++ optimized/.runtime/environment/envengine/environment/training_env.py
+@@ -1,7 +1,7 @@
+ # -*-coding:utf-8 -*-
+ 
+ import logging
+-from copy import deepcopy
++from envengine.fastcopy import deepcopy
+ from typing import Optional
+ 
+ import numpy as np
+@@ -298,6 +298,9 @@
+ 
+         # 通知每个智能体它们的奖励，并记录历史
+         for agent in self.agent_manager.get_all_agents():
++            # Explicit evaluation-only opt-out; training/default agents retain history.
++            if not getattr(agent, "record_history", True):
++                continue
+             agent_id = agent.agent_id
+             reward = rewards.get(agent_id, 0.0)
+ 
+@@ -356,7 +359,12 @@
+         """Deliver isolated observations, collect agent actions, and convert them."""
+         self.engine.refresh_red_communications()
+         # 获取当前完整观测
+-        full_observation = self._get_observation()
++        # Private intermediate: extraction deep-copies every actor payload before callbacks.
++        if getattr(self._get_observation, '__func__', None) is TrainingEnv._get_observation:
++            full_observation = self._get_observation(copy_track_data=False)
++        else:
++            # Preserve the existing zero-argument override contract.
++            full_observation = self._get_observation()
+         # 为每个智能体(前提是模型存活)提取隔离观测并收集动作
+         agent_observations = {}
+         for agent in self.agent_manager.get_all_agents():
+@@ -370,7 +378,7 @@
+                 agent_observations[agent.agent_id] = isolated_obs
+ 
+         # 收集所有智能体的动作
+-        actions = self.agent_manager.collect_actions_from_agents(agent_observations)
++        actions = self.agent_manager.collect_actions_from_agents(agent_observations, take_ownership=True)
+         # 转换所有智能体动作到结构体类型
+         return CommandConverter.common_converter(actions)
+ 
+@@ -432,7 +440,7 @@
+         self.engine.refresh_red_communications()
+         return deepcopy(self._get_observation())
+ 
+-    def _get_observation(self) -> dict:
++    def _get_observation(self, *, copy_track_data=True) -> dict:
+         """获取当前观测（态势）"""
+         simulators = self.engine.simulator_factory.get_all_simulators()
+ 
+@@ -460,8 +468,8 @@
+                 "isVisible": entity_data.isVisible,
+                 "type": entity_data.entityType,
+                 "side": entity_data.sideId,
+-                "detectInfo": deepcopy(entity_data.detectInfo),
+-                "commRangeInfo": deepcopy(entity_data.commRangeInfo)
++                "detectInfo": deepcopy(entity_data.detectInfo) if copy_track_data else entity_data.detectInfo,
++                "commRangeInfo": deepcopy(entity_data.commRangeInfo) if copy_track_data else entity_data.commRangeInfo
+             }
+ 
+         return observation
+--- original/.runtime/environment/envengine/fastcopy.py
++++ optimized/.runtime/environment/envengine/fastcopy.py
+@@ -0,0 +1,41 @@
++"""Specialized deep copy, preserving mutable isolation, cycles and aliases.
++
++Only exact built-in dict/list and two audited plain SDK dataclasses have fast
++paths. Subclasses and all other types retain Python's standard copy protocol.
++No global monkey patch; no shared mutable communication/observation buffers.
++"""
++import copy as _copy
++from envengine.sdk.base_struct.Basic import Vector3d, DetectInfo
++
++_ATOMIC = frozenset((type(None), bool, int, float, complex, str, bytes))
++_PLAIN = frozenset((Vector3d, DetectInfo))
++
++
++def deepcopy(value, memo=None):
++    cls = type(value)
++    if cls in _ATOMIC:
++        return value
++    if memo is None:
++        memo = {}
++    key = id(value)
++    if key in memo:
++        return memo[key]
++    if cls is dict:
++        result = {}
++        memo[key] = result
++        for k, v in value.items():
++            result[k if type(k) in _ATOMIC else deepcopy(k, memo)] = (
++                v if type(v) in _ATOMIC else deepcopy(v, memo))
++    elif cls is list:
++        result = []
++        memo[key] = result
++        result.extend(v if type(v) in _ATOMIC else deepcopy(v, memo) for v in value)
++    elif cls in _PLAIN:
++        # These exact classes have no slots or custom copy/state/reduce hooks.
++        result = object.__new__(cls)
++        memo[key] = result
++        result.__dict__.update(deepcopy(value.__dict__, memo))
++    else:
++        return _copy.deepcopy(value, memo)
++    _copy._keep_alive(value, memo)
++    return result
+--- original/.runtime/environment/envengine/simulator/interfaces/isimulator.py
++++ optimized/.runtime/environment/envengine/simulator/interfaces/isimulator.py
+@@ -2,7 +2,7 @@
+ import json
+ import logging
+ from abc import ABC, abstractmethod
+-from copy import deepcopy
++from envengine.fastcopy import deepcopy
+ from typing import Optional, Callable, Any, TYPE_CHECKING
+ 
+ from envengine.common import *

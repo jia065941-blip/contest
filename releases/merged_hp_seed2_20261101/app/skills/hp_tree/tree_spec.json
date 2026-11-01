@@ -1,0 +1,397 @@
+{
+  "schema_version": "anonymous_terminal_hp_tree_v1",
+  "name": "Original-mission terminal commitment with bounded stale-home guidance",
+  "selected_arm": "hp",
+  "status": "extracted_from_validated_development_policy_pending_interpreter_fidelity",
+  "scope": {
+    "evidence": "One released M06 seed2 development fork at step359; no cross-map validation",
+    "online_scope_is_metadata_only": true,
+    "no_map_or_target_identity_nodes": true,
+    "not_a_learned_general_applicability_classifier": true
+  },
+  "source_hashes": {
+    "transfers/launch20_m06_finisher_seed2_20261101/policy.py": "a8b08012b07660e862afcdbf38807e2314eda011cf63691b0cc0d5e036494f34",
+    "transfers/launch20_m06_finisher_seed2_20261101/skill_runtime.py": "0cf380d11bc76408c996a841d2921b4c2b9f9fa978ff29dc2321227154179f3b",
+    "transfers/launch20_m06_finisher_seed2_20261101/manifest.json": "d6852e22938cd864534645f56d46fcafb6ae44343fcf3951ce141154151c05cd",
+    "results/launch20/m06_finisher_seed2_20261101/proposal_review.json": "bb1727bf0d9f4ac2fb476bac004c160ed59c89596b9063425e27753d1474dff4",
+    "results/launch20/m06_finisher_seed2_20261101/anonymous_feedback.json": "47fd0afc116c3475f585f501194d4c461a056902511e9840f2520b378c47d08d",
+    "results/launch20/m06_finisher_seed2_20261101/results.json": "4b9a30a9bb4a1e5d632dca8fc979f9490e42f69f1102c226f0e6b7aa5bea3f98"
+  },
+  "selected_components": {
+    "H": true,
+    "C": false,
+    "P": true
+  },
+  "node_semantics": {
+    "decision": "Read feature, compare with op and value, follow yes/no. Read leaf.value as result.",
+    "operations": [
+      "eq",
+      "ge",
+      "le",
+      "gt",
+      "lt"
+    ],
+    "missing_numeric": "Every numeric comparison with missing/nonfinite input returns false. Required validity booleans must be explicitly true.",
+    "evaluation_order": [
+      "derive current legal features and prior_latched",
+      "evaluate latch_H",
+      "assign clear_active from latch_H result and persist H latch",
+      "evaluate clear_H",
+      "evaluate predict_M",
+      "apply outputs to already computed frozen baseline commands"
+    ],
+    "no_dynamic_eval_required": true
+  },
+  "roots": {
+    "latch_H": "latch_prior",
+    "clear_H": "clear_0",
+    "predict_M": "predict_0"
+  },
+  "nodes": {
+    "false": {
+      "value": false
+    },
+    "true": {
+      "value": true
+    },
+    "keep": {
+      "value": "KEEP"
+    },
+    "waypoint": {
+      "value": "WAYPOINT"
+    },
+    "latch_0": {
+      "feature": "role",
+      "op": "eq",
+      "value": "H",
+      "yes": "latch_1",
+      "no": "false"
+    },
+    "latch_1": {
+      "feature": "binding_matches",
+      "op": "eq",
+      "value": true,
+      "yes": "latch_2",
+      "no": "false"
+    },
+    "latch_2": {
+      "feature": "own_track_present",
+      "op": "eq",
+      "value": true,
+      "yes": "latch_3",
+      "no": "false"
+    },
+    "latch_3": {
+      "feature": "age_s",
+      "op": "ge",
+      "value": 0,
+      "yes": "latch_4",
+      "no": "false"
+    },
+    "latch_4": {
+      "feature": "age_s",
+      "op": "le",
+      "value": 2,
+      "yes": "latch_5",
+      "no": "false"
+    },
+    "latch_5": {
+      "feature": "vertical_speed_valid",
+      "op": "eq",
+      "value": true,
+      "yes": "latch_6",
+      "no": "false"
+    },
+    "latch_6": {
+      "feature": "vertical_speed_mps",
+      "op": "lt",
+      "value": 0,
+      "yes": "latch_7",
+      "no": "false"
+    },
+    "latch_7": {
+      "feature": "range_m",
+      "op": "le",
+      "value": 2000,
+      "yes": "true",
+      "no": "false"
+    },
+    "latch_prior": {
+      "feature": "prior_latched",
+      "op": "eq",
+      "value": true,
+      "yes": "true",
+      "no": "latch_0"
+    },
+    "clear_0": {
+      "feature": "role",
+      "op": "eq",
+      "value": "H",
+      "yes": "clear_1",
+      "no": "false"
+    },
+    "clear_1": {
+      "feature": "binding_matches",
+      "op": "eq",
+      "value": true,
+      "yes": "clear_2",
+      "no": "false"
+    },
+    "clear_2": {
+      "feature": "own_track_present",
+      "op": "eq",
+      "value": true,
+      "yes": "clear_3",
+      "no": "false"
+    },
+    "clear_3": {
+      "feature": "age_s",
+      "op": "ge",
+      "value": 0,
+      "yes": "clear_4",
+      "no": "false"
+    },
+    "clear_4": {
+      "feature": "age_s",
+      "op": "le",
+      "value": 2,
+      "yes": "clear_5",
+      "no": "false"
+    },
+    "clear_5": {
+      "feature": "clear_active",
+      "op": "eq",
+      "value": true,
+      "yes": "true",
+      "no": "false"
+    },
+    "predict_0": {
+      "feature": "role",
+      "op": "eq",
+      "value": "M",
+      "yes": "predict_1",
+      "no": "keep"
+    },
+    "predict_1": {
+      "feature": "binding_matches",
+      "op": "eq",
+      "value": true,
+      "yes": "predict_2",
+      "no": "keep"
+    },
+    "predict_2": {
+      "feature": "own_track_present",
+      "op": "eq",
+      "value": true,
+      "yes": "predict_3",
+      "no": "keep"
+    },
+    "predict_3": {
+      "feature": "age_s",
+      "op": "gt",
+      "value": 2,
+      "yes": "predict_4",
+      "no": "keep"
+    },
+    "predict_4": {
+      "feature": "age_s",
+      "op": "le",
+      "value": 180,
+      "yes": "predict_5",
+      "no": "keep"
+    },
+    "predict_5": {
+      "feature": "range_m",
+      "op": "le",
+      "value": 5000,
+      "yes": "predict_6",
+      "no": "keep"
+    },
+    "predict_6": {
+      "feature": "velocity_history_valid",
+      "op": "eq",
+      "value": true,
+      "yes": "predict_7",
+      "no": "keep"
+    },
+    "predict_7": {
+      "feature": "estimator_dt_s",
+      "op": "ge",
+      "value": 1,
+      "yes": "predict_8",
+      "no": "keep"
+    },
+    "predict_8": {
+      "feature": "estimator_dt_s",
+      "op": "le",
+      "value": 5,
+      "yes": "predict_9",
+      "no": "keep"
+    },
+    "predict_9": {
+      "feature": "speed_mps",
+      "op": "gt",
+      "value": 0,
+      "yes": "predict_10",
+      "no": "keep"
+    },
+    "predict_10": {
+      "feature": "speed_mps",
+      "op": "le",
+      "value": 30,
+      "yes": "predict_11",
+      "no": "keep"
+    },
+    "predict_11": {
+      "feature": "stale_displacement_m",
+      "op": "gt",
+      "value": 100,
+      "yes": "predict_12",
+      "no": "keep"
+    },
+    "predict_12": {
+      "feature": "home_distance_m",
+      "op": "gt",
+      "value": 100,
+      "yes": "predict_13",
+      "no": "keep"
+    },
+    "predict_13": {
+      "feature": "homeward_dot",
+      "op": "gt",
+      "value": 0,
+      "yes": "predict_14",
+      "no": "keep"
+    },
+    "predict_14": {
+      "feature": "cross_track_m",
+      "op": "le",
+      "value": 100,
+      "yes": "predict_15",
+      "no": "keep"
+    },
+    "predict_15": {
+      "feature": "home_time_valid",
+      "op": "eq",
+      "value": true,
+      "yes": "predict_16",
+      "no": "keep"
+    },
+    "predict_16": {
+      "feature": "home_time_s",
+      "op": "gt",
+      "value": 0,
+      "yes": "predict_17",
+      "no": "keep"
+    },
+    "predict_17": {
+      "feature": "point_in_map",
+      "op": "eq",
+      "value": true,
+      "yes": "waypoint",
+      "no": "keep"
+    }
+  },
+  "binding_contract": {
+    "selection": "Before any skill effect, bind every original H attack assignment to a public sentry and every original M attack assignment to a public mother. Retain original mission and public initial target coordinate.",
+    "identity_use": "Opaque actor/target handles only index state and address original commands; they never select behavior by historical outcome.",
+    "availability": "Only process an actor when its normal planner provides an authorized current observation/action. No replacement actors.",
+    "pools_in_measured_job": {
+      "H": 12,
+      "M": 21
+    },
+    "nonparticipants": "Execute frozen baseline unchanged."
+  },
+  "state_contract": {
+    "initial": "At episode initialization, H prior_latched=false, own altitude previous report absent, own received-track history empty; track each original binding independently. Carry chronological pre-fork memory into all branches.",
+    "altitude": "For each new authorized actor action/report, previous=(environment_step, own_altitude_m). vertical_speed_valid iff previous exists and 1<=step_delta<=5. vertical_speed_mps=(current_altitude-previous_altitude)/step_delta. Always replace previous with current after deriving this value, as measured runtime does.",
+    "latch": "latch_H ORs prior_latched with intact-binding, own-track age0..2, valid negative vertical speed, and range<=2000. Once true it persists for the episode even if range grows or binding/track temporarily invalid. Invalid binding/age blocks clear_H, without erasing the latch. No synthetic fresh-entry event is required on recovery.",
+    "clear_active": "Post-update latch, not prior latch. A newly qualifying H can clear on the same step.",
+    "history": "Per actor/source/original target, append only received observations whose target timestamp strictly exceeds the last stored timestamp. On append retain entries within5s of new timestamp. Do not prune because wall time passes; repeated stale reports retain prior distinct positions. Select latest older timestamp with1..5s gap. Never derive velocity from repeated same-stamp reports.",
+    "termination": "Actor ceases emitting commands through ordinary baseline lifecycle. Binding mismatch or failed live guards yields baseline for that step; no reassignment, target-health gate, or global future-outcome dependency.",
+    "P_memory": "P has no latch: recompute guards and point each step. Only two-position own-received history is used. M clear latch has no selected action and need not affect outputs."
+  },
+  "feature_calculation": {
+    "inputs": [
+      "role from original assignment",
+      "binding_matches from current mission versus original opaque target handle",
+      "own current longitude,latitude,altitude and environment step",
+      "own received target longitude,latitude,timestamp plus past authorized reports",
+      "public original target longitude,latitude",
+      "public map bounding rectangle",
+      "prior_latched"
+    ],
+    "ignored_inputs": [
+      "native target velocity, although legally logged",
+      "group tracks and peers",
+      "episode_active helper flag",
+      "future target health",
+      "evaluator true target position",
+      "native model return/stage",
+      "terminal geometry",
+      "map labels",
+      "historical missed-target IDs"
+    ],
+    "coordinate_convention": "longitude and latitude in degrees; positions may include altitude but horizontal range ignores it. Preserve measured local mean-latitude approximation, not a new geodesic implementation.",
+    "distance_formula": "hypot((a_lon-b_lon)*111320*cos(radians((a_lat+b_lat)/2)),(a_lat-b_lat)*110570)",
+    "role": "H or M from frozen binding; no C behavior selected.",
+    "own_track_present": "true iff own legally received report contains finite position and timestamp. Public initial position alone is not an own report.",
+    "age_s": "current authorized absolute time_s - own_track.timestamp_s; do not clamp negative age.",
+    "range_m": "distance(current own actor position, literal latest own received target position). Do not use predicted point for the range gate.",
+    "velocity_history_valid": "Two distinct own received positions with estimator_dt_s in[1,5], finite east/north estimates. Native legal velocity is never substituted.",
+    "velocity_formula": "Let p=current received position and q=latest eligible previous position, dt=p.timestamp-q.timestamp. v_e=(p.lon-q.lon)*111320*cos(radians((p.lat+q.lat)/2))/dt; v_n=(p.lat-q.lat)*110570/dt.",
+    "speed_mps": "hypot(v_e,v_n)",
+    "stale_displacement_m": "speed_mps*age_s",
+    "home_vector_formula": "d_e=(home.lon-p.lon)*111320*cos(radians((home.lat+p.lat)/2)); d_n=(home.lat-p.lat)*110570",
+    "home_distance_m": "hypot(d_e,d_n)",
+    "homeward_dot": "d_e*v_e+d_n*v_n",
+    "cross_track_m": "abs(d_e*v_n-d_n*v_e)/speed_mps; undefined when speed<=0",
+    "home_time_s": "homeward_dot/(speed_mps*speed_mps)",
+    "home_time_valid": "home_time_s is finite; positive checked by separate node",
+    "home_segment_fraction": "min(age_s/home_time_s,1), evaluated only after positive finite home_time and age guards",
+    "point": "[p.lon+home_segment_fraction*(home.lon-p.lon), p.lat+home_segment_fraction*(home.lat-p.lat)]",
+    "point_in_map": "Both coordinates finite and public west<=lon<=east and south<=lat<=north, inclusive.",
+    "dependency_order": "Compute dependent features only after their prerequisites are valid; otherwise mark undefined and relevant validity false. No divide-by-zero or missing-coordinate inference."
+  },
+  "output_contract": {
+    "clear_H_true": "If baseline action0 value is nonzero, emit action0 value0 and set agent.set_acc_z_z=0 before the next frozen inference; retain all other fields. If already0 there is no command difference.",
+    "clear_H_false": "Return original maneuver unchanged.",
+    "predict_M_WAYPOINT": "Only if exactly one baseline action4 addresses original target, replace that row with [2,actor,point_lon,point_lat]. Official converter gives ground altitude0. Otherwise preserve baseline commands.",
+    "predict_M_KEEP": "Preserve original target command. No home-only fallback on failed history/alignment guards.",
+    "ordering": "Frozen baseline inference/mask and original mission goal are computed first. Skill changes emitted action0/action4 afterward. Candidate feedback of actual last maneuver is updated as measured. P intentionally does not rewrite the baseline model goal. Satellite schedule and original targets remain unchanged.",
+    "receipts": "Normal official native handlers execute first; passive same-step receipts must match every changed command. Invalid receipt invalidates evidence, not a silent successful fallback.",
+    "no_h_activation_gate_for_P": "Selected HP enables both components from the beginning. Do not add a requirement that some H clear action occurred, or encode the observed forkstep359 as a runtime trigger."
+  },
+  "parameter_provenance": {
+    "empirically_selected": [
+      {
+        "name": "H clear_range_m",
+        "value": 2000,
+        "basis": "Earlier matched CLEAR2/CLEAR5/CLEAR10 comparison; selected2km had best original sentry coverage. Threshold not proven optimal."
+      },
+      {
+        "name": "components",
+        "value": "HP",
+        "basis": "Both HP/HCP scored100 in complete8-arm job; predeclared fewer-components tie rule selectsHP."
+      }
+    ],
+    "predeclared_design_guards": {
+      "H_max_age_s": 2,
+      "M_prediction_age_s": "(2,180]",
+      "prediction_range_m": 5000,
+      "history_dt_s": "[1,5]",
+      "descent_speed_mps": "<0",
+      "max_speed_mps": 30,
+      "damage_radius_and_alignment_m": 100,
+      "home_segment_fraction_cap": 1,
+      "finite_in_map_point": true
+    },
+    "not_learned_split_claim": "These guards were specified before this factorial and compile the tested mechanism. No data-driven claim that180s,100m,5000m or30m/s are optimal or individually necessary."
+  },
+  "empirical_support_boundary": {
+    "observed_P_points": "All emitted P points had home_segment_fraction=1. The interpolation branch0<f<1 is implemented but not empirically exercised by changed commands in this job.",
+    "home_only_alternative": "Untested; current result does not establish necessity of velocity/alignment/history versus public-home aiming for these actors.",
+    "H_effect": "Only three H actors actually changed maneuver commands; repairs to other original H missions are indirect total-policy outcomes.",
+    "conditional_risk": "P alone harmed the mother outcome. Same legal stale features do not distinguish the successful HP environment from harmful P. This tree is an exact mechanism extraction, not a validated general success predictor."
+  }
+}

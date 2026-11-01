@@ -1,0 +1,48 @@
+{
+  "status": "complete",
+  "objective": "M06 seed2 trajectory diagnosis, matched exploration to100, experience revision, exact executable tree extraction, retain two trees",
+  "selected_arm": "hp",
+  "score": 100.0,
+  "same_memory_KEEP": 91.30434782608695,
+  "paired_gain": 8.695652173913047,
+  "all_eight_returns": {
+    "keep": 91.30434782608695,
+    "h": 92.7536231884058,
+    "c": 91.30434782608695,
+    "p": 84.05797101449275,
+    "hc": 92.7536231884058,
+    "hp": 100.0,
+    "cp": 84.05797101449275,
+    "hcp": 100.0
+  },
+  "scope": "One formerly heldout M06 seed2 development state; no generalization or irreducible-cooperation claim",
+  "native_job": "Complete official continuation from one common fork at359, RNG and both scheduler registries validated",
+  "fidelity": {
+    "h_latch_states": 10180,
+    "chronological_actor_steps": 107696,
+    "pure_decisions": 107696,
+    "changed_native_commands": 177
+  },
+  "trees": "Existingstrategicselectiontree and newHPterminalexecutiontree retainedseparately; no automaticjointdeployment",
+  "counterexamples": [
+    "P alone harms score by7.2463768116",
+    "H alone repairs sentries but losesmothercompletion",
+    "C realized no command contrast",
+    "Home-only alternative and minimalactor subsets untested"
+  ],
+  "source_sealed": true,
+  "external_model_api_calls": 0,
+  "artifacts": {
+    "results.json": "4b9a30a9bb4a1e5d632dca8fc979f9490e42f69f1102c226f0e6b7aa5bea3f98",
+    "native_evidence_complete_index.json": "dd028d8f557e65c366def25222b494ec67b464d1d82a119951a6c3f66a7de37c",
+    "experience_revision.json": "561e9c973214f9f1bbdaf13a9ec75a62896af32b32b6643cac3c0b85ae15eab7",
+    "tree_spec.json": "839973af662e97567b2900aa9285a63c211d5ed486f1a9b1b4a527755cfc4c23",
+    "composition_assessment.json": "7de75d966af59af3679fab8cae37b13b19f444f3a1ba672647d04dea1249a7f5",
+    "two_tree_registry.json": "8830a7ac938f01f5925c290b6d8650d54fbc85f156c9aea5a33821dc3fce1c95",
+    "validation_review.json": "f335689d03daa4b57662bd2dacc9ab16fc6abaf63270b4644f2fe314b59cafea",
+    "distilled_tree/fidelity.json": "ea09082815fae902b38422cf7917d2d9e4102d4112897c6438e903c8a91bdad6",
+    "distilled_tree/decision_tree.py": "e3fa347e6cbfe1be55a288cfa54f38c7f6fed15fef9aa4cafe0436032c2b886b",
+    "distilled_tree/features.py": "6f16ada70732c1d5c7bc9f3cb3d8e2690ba0f29d4b7bc62577ea3765855c897d",
+    "distilled_tree/runtime.py": "931177cf7ec6430184f61b4f4e5bed978f6e3b7592853fdd98652f9407f088bb"
+  }
+}

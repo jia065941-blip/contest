@@ -1,0 +1,21 @@
+{
+  "name": "哨位覆盖缺口单H改派",
+  "role_count": 1,
+  "mechanism": "按公开初始HP与母巢9.6/哨位12预算核算，用距离/200*1.08+12估计抵达耗时，仅在预定卫星窗口内考虑改派，不声称保证卫星实际开启。",
+  "trigger": "time_s在max(0,start-120)到end之间；存在新鲜哨位目标且本群预算低于其公开初始HP；有非baseline的H成员，其源目标已知且扣除源消耗后仍满足源初始HP，且eta<remaining_s-60并落在预定窗口内。",
+  "roles": "从全部H成员中选一名改派到缺口哨位，优先较大缺口，再较短eta；无符合则roles为空。",
+  "counterexamples": "eta为预定窗口估计，不保证卫星实际开启或命中；预算按公开初始HP核算，未考虑后续伤害与动态变化；仅改派一名H，可能无法完全覆盖缺口。",
+  "code": "def propose(ctx):\n    time_s = ctx['time_s']\n    start = ctx['satellite_window']['start']\n    end = ctx['satellite_window']['end']\n    if time_s < max(0, start - 120) or time_s > end:\n        return {'roles': [], 'reason': 'outside planning window'}\n    units = ctx['units']\n    targets = ctx['targets']\n    reqs = ctx['public_requirements']\n    orders = ctx['baseline_orders']\n    budget = {}\n    for u, v in units.items():\n        src = orders.get(u, {}).get('target_ref', v.get('target'))\n        typ = reqs.get(src, {}).get('type')\n        if typ != 9400 and typ != 9600:\n            continue\n        if v['role'] == 'H':\n            damage = 9.6 if typ == 9400 else 12.0\n        elif v['role'] == 'M':\n            damage = 2.4 if typ == 9400 else 3.0\n        else:\n            continue\n        budget[src] = budget.get(src, 0.0) + damage\n    best = None\n    best_gap = -1.0\n    best_eta = 100000.0\n    for dest, target in targets.items():\n        if target['type'] != 9600 or not target.get('freshness_known'):\n            continue\n        age = target.get('age_s')\n        if age is None or age < 0 or age > 5:\n            continue\n        hp = reqs.get(dest, {}).get('initial_health')\n        if hp is None:\n            continue\n        gap = hp - budget.get(dest, 0.0)\n        if gap <= 0:\n            continue\n        for u, v in units.items():\n            if v['role'] != 'H' or u in orders:\n                continue\n            src = v.get('target')\n            if src == dest or src not in reqs:\n                continue\n            src_type = reqs[src]['type']\n            if src_type != 9400 and src_type != 9600:\n                continue\n            removal = 9.6 if src_type == 9400 else 12.0\n            if budget.get(src, 0.0) - removal + 0.00000001 < reqs[src]['initial_health']:\n                continue\n            eta = distance(v['position'], target['position']) / 200.0 * 1.08 + 12.0\n            if eta >= v['remaining_s'] - 60 or time_s + eta < start or time_s + eta > end:\n                continue\n            if gap > best_gap or (gap == best_gap and eta < best_eta):\n                best = {'unit': u, 'target': dest, 'duty': 'redirect one H to sentry coverage gap'}\n                best_gap = gap\n                best_eta = eta\n    if best is None:\n        return {'roles': [], 'reason': 'no safe reachable pair in estimated window'}\n    return {'roles': [best], 'reason': 'estimated arrival inside planned satellite window; preserve conservative source coverage'}\n",
+  "compilation": {
+    "code_author": "Harness deterministic compiler of LLM mechanism",
+    "llm_mechanism_source_sha256": "c9072ccf6718d7cc1dea84bb35fd35568e244fe67ffcb2773b6eef3c9df15b12",
+    "raw_python_used": false,
+    "rejected_python_reasons": [
+      "nested functions and wrong dict schema",
+      "incorrect mother type9601",
+      "per-type budget instead of per-target budget"
+    ],
+    "native_mapping": "mother9400/sentry9600, H9.6/12 and M2.4/3 source budgets; dictionary refs; preserve baseline orders",
+    "no_learnable_model": true
+  }
+}

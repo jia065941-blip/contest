@@ -1,3 +1,5 @@
+> 当前 seed2 二十图最高分发布：[`releases/merged_hp_seed2_20261101`](releases/merged_hp_seed2_20261101/README.md)。冻结 DeepSeek 开局 + V12-R3 + 合并收益树 + HP，历史均分 99.4278；独立安装和同内存评估入口见该目录。跨服务器分数受官方地址调度影响，详见复现边界。
+
 > **cz 分支：当前课程实现与 b14 模型见 [docs/b14/README.md](docs/b14/README.md)。**
 
 > 仿真复制加速、C 扩展编译及官方 launch20 加速包：见 [tools/simulator_perf/README.txt](tools/simulator_perf/README.txt)。

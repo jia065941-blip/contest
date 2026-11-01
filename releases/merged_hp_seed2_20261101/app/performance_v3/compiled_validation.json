@@ -1,0 +1,52 @@
+{
+  "status": "passed",
+  "pairs": [
+    {
+      "map": "E01",
+      "candidate": "A00",
+      "steps": 360,
+      "exact_step_equivalence": true,
+      "same_score": true,
+      "baseline_seconds": 220.28764199102443,
+      "optimized_seconds": 183.3138972710367,
+      "speedup": 1.2016963540157604,
+      "baseline_peak_rss_gib": 0.8272514343261719,
+      "optimized_peak_rss_gib": 0.6890182495117188,
+      "optimized_physical_read_bytes": 0,
+      "optimized_physical_write_bytes": 0
+    },
+    {
+      "map": "M01",
+      "candidate": "A06",
+      "steps": 240,
+      "exact_step_equivalence": true,
+      "same_score": true,
+      "baseline_seconds": 242.15446158198756,
+      "optimized_seconds": 174.09883893603546,
+      "speedup": 1.3909022200369525,
+      "baseline_peak_rss_gib": 0.6328582763671875,
+      "optimized_peak_rss_gib": 0.5607070922851562,
+      "optimized_physical_read_bytes": 0,
+      "optimized_physical_write_bytes": 0
+    },
+    {
+      "map": "H01",
+      "candidate": "A11",
+      "steps": 240,
+      "exact_step_equivalence": true,
+      "same_score": true,
+      "baseline_seconds": 647.0283444949891,
+      "optimized_seconds": 417.24477838898747,
+      "speedup": 1.5507164571195182,
+      "baseline_peak_rss_gib": 1.1789512634277344,
+      "optimized_peak_rss_gib": 0.9459114074707031,
+      "optimized_physical_read_bytes": 0,
+      "optimized_physical_write_bytes": 0
+    }
+  ],
+  "sources": {
+    "communication_copy.py": "47e808c5c1199868e0ef0f0e8fd84b080c0cb169efebdafac22295d41e9464df"
+  },
+  "scope": "Current compiled-copy baseline versus independent mutable communication owners sharing private snapshots. Per-step observations/actions/rewards/termination/Python-NumPy-Torch RNG equality.",
+  "limitation": "Finite comparisons use test-only stable event ties on both sides; production keeps original address-based ordering. Timing excludes frame hashing; full-run results may differ."
+}

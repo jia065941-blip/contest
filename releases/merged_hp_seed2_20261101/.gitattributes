@@ -1,0 +1,6 @@
+# Preserve frozen byte-level checksums regardless of the checkout platform.
+* -text
+app/sdk_optimization.patch -whitespace
+opening/choices.csv -whitespace
+*.tar.gz -diff
+dependencies/*.part* -diff

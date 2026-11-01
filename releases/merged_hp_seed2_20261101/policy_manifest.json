@@ -1,0 +1,21 @@
+{
+  "skill_name": "Merged strategic return tree + HP terminal execution tree",
+  "arms": [
+    {
+      "label": "merged",
+      "HP": false
+    },
+    {
+      "label": "merged_hp",
+      "HP": true
+    }
+  ],
+  "scope": "Whole-policy HP on/off comparison with one frozen merged selector from the SAME in-memory state; no role-minimality claim.",
+  "seed": 2,
+  "max_steps": 3000,
+  "strategy_check_seconds": 15,
+  "strategy_cutoff_seconds": 900,
+  "strategy_max_uses": 1,
+  "winning_policy": "merged_hp",
+  "reference_mean": 99.42779973649539
+}

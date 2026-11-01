@@ -1,0 +1,15 @@
+{
+  "version": "copy_and_history_v1",
+  "modified_sdk_files": {
+    "envengine/agent_manager/agent_manager.py": "480d36c1542254bb2aa6b4a2cb899f04720404807a1ea529c01a6486c4190be0",
+    "envengine/environment/training_env.py": "ecf2016ab35d332456165ca2b67303d945e6523b6f722b4d7ae9b6c161ce3006",
+    "envengine/engine/engine.py": "2d3620d01fbfe80290d956cf1fed28aa908be858bd1ddb46eaab58da79c793cd",
+    "envengine/simulator/interfaces/isimulator.py": "3f874e73dcb66e2b72af1ce44aa13212faf7e4e9202cc37d7c34e34a1f03ffbd",
+    "envengine/fastcopy.py": "9bc970d1cba20e5fafe1b892a8c475b431b3e6ed64bde837b677ca90d944929e"
+  },
+  "base_sdk_commit": "74dc796390985bfb52341aabde9a7c47833d866e",
+  "physics_and_event_order_unchanged": true,
+  "history_scope": "MigratedAgent evaluation only",
+  "comm_tables": "rebuild once, deep-copy separately per member",
+  "observation_ownership": "Private raw snapshot, isolate each actor by deep copy, transfer isolated payload; public snapshots remain deep copies"
+}

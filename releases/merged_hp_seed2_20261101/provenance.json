@@ -1,0 +1,388 @@
+{
+  "app/agents.py": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/agents.py",
+    "source_sha256": "cb367c30fbf7435131126531b153c03b46687ecc708319f5613921e09e0908eb",
+    "byte_identical": true
+  },
+  "app/base_agents.py": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/base_agents.py",
+    "source_sha256": "56e1e8082adce9fb0b2f43dc828df421a427547325be0efcef0ce09771bd9d72",
+    "byte_identical": true
+  },
+  "app/common.py": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/common.py",
+    "source_sha256": "e81f7aea0362c8f7964f05b6446da4b59c53e57d43a09d93daed5a3d1a5bcc52",
+    "byte_identical": false
+  },
+  "app/compiler.py": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/compiler.py",
+    "source_sha256": "89f59aadb3fb9b6f88151112d653e916e440dcdf1571ed6fff2d2e076d4dcc29",
+    "byte_identical": true
+  },
+  "app/jobs.json": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/jobs.json",
+    "source_sha256": "61d5dc2f724ef42a67023bdb50a8674e486163939c671872f704cb60e5364d67",
+    "byte_identical": true
+  },
+  "app/optimization_manifest.json": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/optimization_manifest.json",
+    "source_sha256": "cbfcd3f872683aa9a0ae03846b8ce63d8f23df0fdf1dde7529ca2304741eca90",
+    "byte_identical": true
+  },
+  "app/frozen_execution_contract.json": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/frozen_execution_contract.json",
+    "source_sha256": "cb3cc7c4956a8f8c470f31c8be4d0929b84c25c8b411828361850a9467a0f7af",
+    "byte_identical": true
+  },
+  "app/sdk_optimization.patch": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/sdk_optimization.patch",
+    "source_sha256": "a497f6cea4ae14f6eb6ea8e0a877ffee0b81f43dad0b5d6b84b4d769ea403334",
+    "byte_identical": true
+  },
+  "app/performance_validation.json": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/performance_validation.json",
+    "source_sha256": "ec05e8121fe8590ea76ea1298b458c646927c58754821557e9ad0a879c36a520",
+    "byte_identical": true
+  },
+  "app/design/candidates_v2.json": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/design/candidates_v2.json",
+    "source_sha256": "700beedf3981357fdc8d4b71e976f79505f681ff8c12441a3830f0a67374e9be",
+    "byte_identical": true
+  },
+  "app/design/design_rationale.txt": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/design/design_rationale.txt",
+    "source_sha256": "f886aa9f69a76e0fb05499ba15a729f364bc2a229236340f564b140440528c1a",
+    "byte_identical": true
+  },
+  "app/design/planner_v2.py": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/design/planner_v2.py",
+    "source_sha256": "c7355b339b2f4dd453036f97ab690e989ff20e8479ab56509c97b3525940daf4",
+    "byte_identical": true
+  },
+  "app/prior_t03_make/parameters.json": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/prior_t03_make/parameters.json",
+    "source_sha256": "240b5e7089f86fc00f7f33b2a2fdd5b735210762bf512e3d09f7f7289da4a513",
+    "byte_identical": true
+  },
+  "app/prior_t03_make/policy.py": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/prior_t03_make/policy.py",
+    "source_sha256": "2d35d2d33fff3bb40a380736cf1fcfea9d2bfc300029aa6153023683214b61d6",
+    "byte_identical": true
+  },
+  "app/performance_v2/compiled_copy.py": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/performance_v2/compiled_copy.py",
+    "source_sha256": "38df95575a1f63d5094233bd25473742a63f24d6a17957977d3ffc1cc77fb244",
+    "byte_identical": true
+  },
+  "app/performance_v2/copy_core.c": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/performance_v2/copy_core.c",
+    "source_sha256": "521a3321d10e36a4c529191d3fc8e13a370ee8492813327983ffd27678b9dbcb",
+    "byte_identical": true
+  },
+  "app/performance_v2/compiled_validation.json": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/performance_v2/compiled_validation.json",
+    "source_sha256": "e729a80028099fbf16df1004517963c46d28a0eb68f7704e5fc6ee3b8473d7eb",
+    "byte_identical": true
+  },
+  "app/performance_v2/ownership.py": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/performance_v2/ownership.py",
+    "source_sha256": "1ef18660fd3d8de3b9f691659dc3e4cd90a72c8ac6c3eeb8e52686dc5cf9c400",
+    "byte_identical": true
+  },
+  "app/performance_v3/boundary_validation.json": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/performance_v3/boundary_validation.json",
+    "source_sha256": "6227ddec175e514d18dbb1ea2accd7c9b011b31947f4f575de7e88b98fafe41e",
+    "byte_identical": true
+  },
+  "app/performance_v3/compiled_validation.json": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/performance_v3/compiled_validation.json",
+    "source_sha256": "6839c620f711001238760c4d2877672a536be72aedc19362c23b0e900e8195bb",
+    "byte_identical": true
+  },
+  "app/performance_v3/communication_copy.py": {
+    "source": "releases/launch20_seed2_matrix_20261024/app/performance_v3/communication_copy.py",
+    "source_sha256": "47e808c5c1199868e0ef0f0e8fd84b080c0cb169efebdafac22295d41e9464df",
+    "byte_identical": true
+  },
+  "requirements.lock": {
+    "source": "releases/launch20_seed2_matrix_20261024/requirements.lock",
+    "source_sha256": "669bb148700f0afab733372cde13dad0563df989b8a95f5c669b6b359af6343d",
+    "byte_identical": true
+  },
+  "app/r3/model.pt": {
+    "source": "transfers/launch20_v12r3_gate_seed2_20261026/model.pt",
+    "source_sha256": "2338b69fd5bb39c617d5a3fbee7c6c68e96cfe7c75faaf4dac70ade1f6358140",
+    "byte_identical": true
+  },
+  "app/r3/adapter.py": {
+    "source": "transfers/launch20_v12r3_gate_seed2_20261026/adapter.py",
+    "source_sha256": "9fba2b97192dc1c88608d4f79ab97f806790b9980f13684428cd26888b5c87e0",
+    "byte_identical": true
+  },
+  "app/r3/upstream.json": {
+    "source": "transfers/launch20_v12r3_gate_seed2_20261026/upstream.json",
+    "source_sha256": "39c924ea617b1ab733e93782b1ff7304eec30f8d07f1c6bc766b2b6167793f5d",
+    "byte_identical": true
+  },
+  "app/r3/r3_runtime/local_ppo.py": {
+    "source": "transfers/launch20_v12r3_gate_seed2_20261026/r3_runtime/local_ppo.py",
+    "source_sha256": "8a51622cc9a18c1e4889cabbde9d643f7908dc1436042ec9ff256f21a46e0cc3",
+    "byte_identical": true
+  },
+  "app/r3/r3_runtime/set_runtime.py": {
+    "source": "transfers/launch20_v12r3_gate_seed2_20261026/r3_runtime/set_runtime.py",
+    "source_sha256": "9309ddf3b382175512808ed372b296fb4c43efb913d67ba25a45e85ac938512c",
+    "byte_identical": true
+  },
+  "app/r3/r3_runtime/fixed_slot_ppo.py": {
+    "source": "transfers/launch20_v12r3_gate_seed2_20261026/r3_runtime/fixed_slot_ppo.py",
+    "source_sha256": "17366c4fcd31747c358b259b0afac9dcb71cac6f0c285c9bacc838ddfee61829",
+    "byte_identical": true
+  },
+  "app/r3/r3_runtime/set_env.py": {
+    "source": "transfers/launch20_v12r3_gate_seed2_20261026/r3_runtime/set_env.py",
+    "source_sha256": "6c03c98b688cf3549a795c5a2b8638dbdb2a94c46a202c957652c961f213db83",
+    "byte_identical": true
+  },
+  "app/r3/r3_runtime/set_attention_ppo.py": {
+    "source": "transfers/launch20_v12r3_gate_seed2_20261026/r3_runtime/set_attention_ppo.py",
+    "source_sha256": "0cd22f5725ff5dc360ac3e4fd5460f59ce0c5280aa4816e257c10bdd8e5a62d4",
+    "byte_identical": true
+  },
+  "app/r3/r3_runtime/__init__.py": {
+    "source": "transfers/launch20_v12r3_gate_seed2_20261026/r3_runtime/__init__.py",
+    "source_sha256": "be9cddff8804d51299c29086b33a84dbf1358f0c6a4adf1684062199755cf354",
+    "byte_identical": true
+  },
+  "app/r3/r3_runtime/local_env.py": {
+    "source": "transfers/launch20_v12r3_gate_seed2_20261026/r3_runtime/local_env.py",
+    "source_sha256": "ba773ebfd39584a84371fd8a7c586a1aabeba7a75d800e45d2feef94a5534a13",
+    "byte_identical": true
+  },
+  "app/r3/r3_runtime/encoder.py": {
+    "source": "transfers/launch20_v12r3_gate_seed2_20261026/r3_runtime/encoder.py",
+    "source_sha256": "e0759416effa10522f1c2f9e79ac0186c79a906374c771999c24d9e0211ae25f",
+    "byte_identical": true
+  },
+  "app/r3/r3_runtime/local_runtime.py": {
+    "source": "transfers/launch20_v12r3_gate_seed2_20261026/r3_runtime/local_runtime.py",
+    "source_sha256": "c1ffdfe51a45191a2c60b191e8333c8bc9a81357cd0107b26e5cd0583a52627a",
+    "byte_identical": true
+  },
+  "app/r3/r3_runtime/recurrent_ppo.py": {
+    "source": "transfers/launch20_v12r3_gate_seed2_20261026/r3_runtime/recurrent_ppo.py",
+    "source_sha256": "71905999f3cf0a11799d3e595679843d625f7f63b43d2ab9241c93a291c1bdeb",
+    "byte_identical": true
+  },
+  "app/skills/merged_tree.json": {
+    "source": "results/launch20/hp_composition_seed2_20261101/frozen/merged_tree.json",
+    "source_sha256": "c17139116486d1d4667919f0d3fb0440512f5805696fcc005765b9135957dc16",
+    "byte_identical": true
+  },
+  "app/skills/merged_policy.py": {
+    "source": "results/launch20/hp_composition_seed2_20261101/frozen/merged_policy.py",
+    "source_sha256": "7d79407db08c21e62dbce7a12976249b7a358757812537cebcfd8d591354fbf5",
+    "byte_identical": true
+  },
+  "app/skills/hp_tree/build_receipt.json": {
+    "source": "results/launch20/hp_composition_seed2_20261101/frozen/hp_tree/build_receipt.json",
+    "source_sha256": "5651e396f6c8df72c8a0a429ed3c2158fd7eb0dacd81c2a19b16c05334a558a4",
+    "byte_identical": true
+  },
+  "app/skills/hp_tree/features.py": {
+    "source": "results/launch20/hp_composition_seed2_20261101/frozen/hp_tree/features.py",
+    "source_sha256": "6f16ada70732c1d5c7bc9f3cb3d8e2690ba0f29d4b7bc62577ea3765855c897d",
+    "byte_identical": true
+  },
+  "app/skills/hp_tree/runtime.py": {
+    "source": "results/launch20/hp_composition_seed2_20261101/frozen/hp_tree/runtime.py",
+    "source_sha256": "931177cf7ec6430184f61b4f4e5bed978f6e3b7592853fdd98652f9407f088bb",
+    "byte_identical": true
+  },
+  "app/skills/hp_tree/tree_spec.json": {
+    "source": "results/launch20/hp_composition_seed2_20261101/frozen/hp_tree/tree_spec.json",
+    "source_sha256": "839973af662e97567b2900aa9285a63c211d5ed486f1a9b1b4a527755cfc4c23",
+    "byte_identical": true
+  },
+  "app/skills/hp_tree/completion.json": {
+    "source": "results/launch20/hp_composition_seed2_20261101/frozen/hp_tree/completion.json",
+    "source_sha256": "0e66bba94c4dd6a3a519b6005b05a2b777b30a1dc2e40dca045ee46b837a9359",
+    "byte_identical": true
+  },
+  "app/skills/hp_tree/fidelity.json": {
+    "source": "results/launch20/hp_composition_seed2_20261101/frozen/hp_tree/fidelity.json",
+    "source_sha256": "ea09082815fae902b38422cf7917d2d9e4102d4112897c6438e903c8a91bdad6",
+    "byte_identical": true
+  },
+  "app/skills/hp_tree/decision_tree.py": {
+    "source": "results/launch20/hp_composition_seed2_20261101/frozen/hp_tree/decision_tree.py",
+    "source_sha256": "e3fa347e6cbfe1be55a288cfa54f38c7f6fed15fef9aa4cafe0436032c2b886b",
+    "byte_identical": true
+  },
+  "app/skills/proposal.py": {
+    "source": "transfers/launch20_skill_explore_seed2_20261031/proposal.py",
+    "source_sha256": "9098002339d177224eaa74deefd94c3b05e12a503107ce25abef5b0a7428dc74",
+    "byte_identical": true
+  },
+  "app/skills/feature_projector.py": {
+    "source": "transfers/launch20_astra_skill_experience_v2_20261028/feature_projector.py",
+    "source_sha256": "69b4782178f77a4d17753afa751c3919831105ae400b0dce4a1a94a0c1c454ca",
+    "byte_identical": true
+  },
+  "app/skills/cooperation.py": {
+    "source": "transfers/launch20_astra_cooperative_skills_20261028/compiler.py",
+    "source_sha256": "51d43f30935b0a4d065fc2d212cbf6bf93aa6396f0aad3f6c09b7a1ed6425c78",
+    "byte_identical": false
+  },
+  "app/skills/anchor.json": {
+    "source": "results/launch20/evidence_rsi_seed2_20261028/candidate.json",
+    "source_sha256": "cd7d9b0b96501e4a5bab95b12c12c7fe7b4d4c3a7c2ade5f7d5cef36dd8f5779",
+    "byte_identical": true
+  },
+  "app/skills/anchor_runtime.py": {
+    "source": "transfers/launch20_evidence_rsi_20261028/skill_runtime.py",
+    "source_sha256": "12177d7b8a8d2affbbfd59adbf452e292c83e0b821c78a3c9c8a3f9a60a1cdb7",
+    "extracted_unchanged_functions": [
+      "compile_skill",
+      "context"
+    ]
+  },
+  "app/fork_probe.py": {
+    "source": "transfers/launch20_matched_branches_20261027/fork_probe.py",
+    "source_sha256": "359fde4616f3b62349b39590e6a94280b191d68c271c4aa86d8ec04adad74cc6",
+    "byte_identical": true
+  },
+  "app/observer.py": {
+    "source": "transfers/launch20_combat_diagnostics_20261027/observer.py",
+    "source_sha256": "f002727b30218babea438afcd07c3c57fcbe4c53ac106253feef01728d408694",
+    "byte_identical": true
+  },
+  "app/metrics.py": {
+    "source": "transfers/launch20_combat_diagnostics_20261027/metrics.py",
+    "source_sha256": "534735929924bee4b0ef0ba8d419f3b3b45cfb99cf5fec9afe591068a3753462",
+    "byte_identical": true
+  },
+  "host_resources.py": {
+    "source": "transfers/launch20_host_resources/resources.py",
+    "source_sha256": "7e7c206f3d16873953349a1f335fb2dde4586c887bd4e75c88d83caeeee64319",
+    "byte_identical": false,
+    "changes": "Portable result root; disabled unrelated historical controller discovery; admission checks actual CPU capacity and separate host/cgroup headroom under shared lease lock."
+  },
+  "evidence/controls/results.json": {
+    "source": "results/launch20/matched_branches_seed2_20261027/full01/results.json",
+    "source_sha256": "c2470859f24deb32236fc41a03227bbd288791d456ba0b7b3bb67c85f1d84d09",
+    "byte_identical": true
+  },
+  "evidence/controls/protocol.json": {
+    "source": "results/launch20/matched_branches_seed2_20261027/full01/protocol.json",
+    "source_sha256": "2ba60be9d10cc866b7a4ed8d0bd3988cf0db2af915a34d6c717000af7fe02d6c",
+    "byte_identical": true
+  },
+  "opening/selector_checkpoint.json": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/selector_checkpoint.json",
+    "source_sha256": "59bbee2c32320920962a13fee705723caca1802213eb7f825ba61fb0babaa96c",
+    "byte_identical": true
+  },
+  "opening/manifest.json": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/manifest.json",
+    "source_sha256": "23b7e0921be65408ec227b8d611b78adbf0edaf9dc7fbb9c815c9d1424813582",
+    "byte_identical": true
+  },
+  "opening/README.txt": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/README.txt",
+    "source_sha256": "c301c3ab249aae6503c6ea00f0a4985a10c2b4d5ade31a87888b436eb1a941f8",
+    "byte_identical": true
+  },
+  "opening/choices.csv": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/choices.csv",
+    "source_sha256": "109ed6f9ebe4e293678d329cca149639578347a090f7719d009a01981b3d101d",
+    "byte_identical": true
+  },
+  "opening/report.json": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/report.json",
+    "source_sha256": "d588c391a8358fe495b536e26abeb0fcdbb6af5212c2ecd81d9b5ed54befffad",
+    "byte_identical": true
+  },
+  "opening/audit.json": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/audit.json",
+    "source_sha256": "2578aa9d8c77bb659b17062bd593a0dc43e8375bc4d3108b69434504df4e881b",
+    "byte_identical": true
+  },
+  "opening/experience/v07.txt": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/experience/v07.txt",
+    "source_sha256": "6272d654fc469d30abcacd65c807a0720a89785923f2bb2c94502bf1d8367714",
+    "byte_identical": true
+  },
+  "opening/experience/v11.txt": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/experience/v11.txt",
+    "source_sha256": "0d7cd7bca04b81d5ff58581830ee89f18c29a84176063193588f9a1e30f863d8",
+    "byte_identical": true
+  },
+  "opening/experience/v08.txt": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/experience/v08.txt",
+    "source_sha256": "bd70a7a1201418297e4e6bd2aaf77907de1694433bd399a304a6206a0adc14f0",
+    "byte_identical": true
+  },
+  "opening/experience/v10.txt": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/experience/v10.txt",
+    "source_sha256": "0ee40ffd0e86e75f729d6eff98f4e40cea927ee688dd0254448cb584af6fa514",
+    "byte_identical": true
+  },
+  "opening/experience/v00.txt": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/experience/v00.txt",
+    "source_sha256": "069b1a786267b10fe9abfd3ebfc94b8f4bd1d90ae8c3b262b358ce2a091286f1",
+    "byte_identical": true
+  },
+  "opening/experience/v05.txt": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/experience/v05.txt",
+    "source_sha256": "4c7d548357d4654575aa6964a9ced776b0d9560023bd3350f0465e8406905fae",
+    "byte_identical": true
+  },
+  "opening/experience/v06.txt": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/experience/v06.txt",
+    "source_sha256": "be06803b5c70d9def878e45fac5e1e1ffc7f58f86f2a2fe738f5871dcbdfe8c2",
+    "byte_identical": true
+  },
+  "opening/experience/v09.txt": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/experience/v09.txt",
+    "source_sha256": "c2cc6afd92cb6bd8ebfc0227019b302ff6537d33b2e4e2b863880f333cd0b34b",
+    "byte_identical": true
+  },
+  "opening/experience/v02.txt": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/experience/v02.txt",
+    "source_sha256": "e722cfcaf45355cb1d4835d8c90e95e79f5b0d8be4d56c98af11fb084681e1f6",
+    "byte_identical": true
+  },
+  "opening/experience/v01.txt": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/experience/v01.txt",
+    "source_sha256": "34f7a71623ccff6369781695453e0bb0e4a3a6a3676cbd0fae10e6079b9a3c01",
+    "byte_identical": true
+  },
+  "opening/experience/v04.txt": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/experience/v04.txt",
+    "source_sha256": "a0ad3cf09f08ac228f6be0f87e0260601f792a6c6a4a558f4734f6632581f456",
+    "byte_identical": true
+  },
+  "opening/experience/v03.txt": {
+    "source": "transfers/launch20_rsi_seed1to5_20261025/sealed_selector/experience/v03.txt",
+    "source_sha256": "9a50301fae39c0791bd87874489e403cc485f6c099aa50debfc70a6a7a59da0d",
+    "byte_identical": true
+  },
+  "app/entry.py": {
+    "source": "transfers/launch20_astra_cooperative_skills_20261028/entry.py",
+    "source_sha256": "95cfcb334acc66b6259b3123246dfc0c272db028d3f4475ae511609bed70fae5",
+    "byte_identical": false
+  },
+  "app/skill_runtime.py": {
+    "source": "transfers/launch20_hp_composition_seed2_20261101/skill_runtime.py",
+    "source_sha256": "84f60c0ccce6fc30de696dcb53f6af067a38a19bb8567ae8ae8d30c874557d85",
+    "byte_identical": false,
+    "changes": "Portable imports and two-arm merged/merged_hp packaging. Astra online selector, broker and cross-selector branch initiation removed. HP action logic unchanged."
+  },
+  "app/matched.py": {
+    "source": "transfers/launch20_hp_composition_seed2_20261101/matched.py",
+    "source_sha256": "51bb82573123938ca11ffacfb5f1ba18d98fea7bd47d6556545bb30483d1b5e6",
+    "byte_identical": false,
+    "changes": "Portable imports and two-arm merged/merged_hp packaging. Astra online selector, broker and cross-selector branch initiation removed. HP action logic unchanged."
+  }
+}

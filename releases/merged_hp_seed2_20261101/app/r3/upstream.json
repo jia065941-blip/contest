@@ -1,0 +1,17 @@
+{
+  "repository": "https://github.com/jia065941-blip/contest",
+  "branch": "jmy",
+  "commit": "f7867fa25fb6f43f1d32235fb608d006b899ef22",
+  "files": {
+    "r3_runtime/encoder.py": "e0759416effa10522f1c2f9e79ac0186c79a906374c771999c24d9e0211ae25f",
+    "r3_runtime/local_env.py": "ba773ebfd39584a84371fd8a7c586a1aabeba7a75d800e45d2feef94a5534a13",
+    "r3_runtime/local_ppo.py": "8a51622cc9a18c1e4889cabbde9d643f7908dc1436042ec9ff256f21a46e0cc3",
+    "r3_runtime/recurrent_ppo.py": "71905999f3cf0a11799d3e595679843d625f7f63b43d2ab9241c93a291c1bdeb",
+    "r3_runtime/set_attention_ppo.py": "0cd22f5725ff5dc360ac3e4fd5460f59ce0c5280aa4816e257c10bdd8e5a62d4",
+    "r3_runtime/fixed_slot_ppo.py": "17366c4fcd31747c358b259b0afac9dcb71cac6f0c285c9bacc838ddfee61829",
+    "r3_runtime/set_env.py": "6c03c98b688cf3549a795c5a2b8638dbdb2a94c46a202c957652c961f213db83",
+    "r3_runtime/set_runtime.py": "9309ddf3b382175512808ed372b296fb4c43efb913d67ba25a45e85ac938512c",
+    "r3_runtime/local_runtime.py": "c1ffdfe51a45191a2c60b191e8333c8bc9a81357cd0107b26e5cd0583a52627a",
+    "model.pt": "2338b69fd5bb39c617d5a3fbee7c6c68e96cfe7c75faaf4dac70ade1f6358140"
+  }
+}

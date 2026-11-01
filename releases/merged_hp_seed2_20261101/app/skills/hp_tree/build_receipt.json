@@ -1,0 +1,11 @@
+{
+  "source_tree_sha256": "839973af662e97567b2900aa9285a63c211d5ed486f1a9b1b4a527755cfc4c23",
+  "nodes": 37,
+  "roots": {
+    "latch_H": "latch_prior",
+    "clear_H": "clear_0",
+    "predict_M": "predict_0"
+  },
+  "output_sha256": "e3fa347e6cbfe1be55a288cfa54f38c7f6fed15fef9aa4cafe0436032c2b886b",
+  "method": "Deterministic JSON tree to plain if/else; no fitted surrogate approximation"
+}

@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "offline_tests": 179,
+  "native_smoke_episodes": 53,
+  "paired_native_steps": 360,
+  "paired": [
+    {
+      "map": "E01",
+      "choice": "A00",
+      "steps": 120,
+      "exact_step_equivalence": true,
+      "original_seconds": 159.33500376902157,
+      "optimized_seconds": 59.25521176300754,
+      "speedup": 2.6889618487279274
+    },
+    {
+      "map": "M01",
+      "choice": "A00",
+      "steps": 120,
+      "exact_step_equivalence": true,
+      "original_seconds": 372.66354979098105,
+      "optimized_seconds": 135.88010107101218,
+      "speedup": 2.742591055302672
+    },
+    {
+      "map": "H01",
+      "choice": "A00",
+      "steps": 120,
+      "exact_step_equivalence": true,
+      "original_seconds": 1011.3190356909872,
+      "optimized_seconds": 373.57622942199305,
+      "speedup": 2.7071289767438538
+    }
+  ],
+  "validated_source_sha256": {
+    "agents.py": "01169f63625451ecbae6ee76af2587e1e15cfe8595c3d932cd3733c5169768b4",
+    "entry.py": "e4b98c873a1fb9c72ff7f5c0d062f3def4b64c997dc57a0d7daa924a25b5ae5a",
+    "common.py": "83758b75e3a07f9b93c2c6afecea02f7efbac40658e8311f66723bc6695b3980",
+    "structures.py": "c2c51ee7de3342a8614b72d0a7389e4901bac7bb68e8497097ce5c0f6d27b2f2",
+    "optimization_manifest.json": "cbfcd3f872683aa9a0ae03846b8ce63d8f23df0fdf1dde7529ca2304741eca90",
+    "run.py": "3c758415041b713b59bf1eb6064244908c0c0ee54adc845d2cd5178f8440fe4b"
+  },
+  "sdk": {
+    "repository": "https://gitcode.com/JTSIM/competition-platform-env",
+    "branch": "pku",
+    "commit": "74dc796390985bfb52341aabde9a7c47833d866e",
+    "commit_time": "2026-10-20T14:34:38+08:00",
+    "optimization": "copy_and_history_v1",
+    "patch_manifest_sha256": "cbfcd3f872683aa9a0ae03846b8ce63d8f23df0fdf1dde7529ca2304741eca90"
+  },
+  "preserved_results": 58,
+  "pending": 182,
+  "equivalence_scope": "Exact exposed-state, observation, action, reward, RNG and event-tie equality over 120 steps on E01/M01/H01; official regression tests; physics byte/AST checks.",
+  "limitation": "Finite trajectory checks; original address-based event ties remain nondeterministic across processes. Formal evaluation uses original uninstrumented heap scheduling."
+}

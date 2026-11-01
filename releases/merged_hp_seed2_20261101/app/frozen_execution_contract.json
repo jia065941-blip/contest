@@ -1,0 +1,8 @@
+{
+  "motion_ast_sha256": "6bbacfe12dc5a7deeaa215963f2d4ed8918e86bb1650f3d473a6741d5b31e0e7",
+  "prior_files_sha256": {
+    "policy.py": "2d35d2d33fff3bb40a380736cf1fcfea9d2bfc300029aa6153023683214b61d6",
+    "parameters.json": "240b5e7089f86fc00f7f33b2a2fdd5b735210762bf512e3d09f7f7289da4a513"
+  },
+  "ast_python_version": "3.11.17 (main, Oct 14 2026, 01:05:33) [Clang 23.1.3 ]"
+}

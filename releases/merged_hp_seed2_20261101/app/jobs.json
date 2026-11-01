@@ -1,0 +1,82 @@
+{
+  "E01": {
+    "scenario": "launch20/easy/E01",
+    "scenario_sha256": "f2c43a54f1dd69225cf780e9e370cec4d2629f17aff2c0829699e7cdd05494d6"
+  },
+  "E02": {
+    "scenario": "launch20/easy/E02",
+    "scenario_sha256": "9325ad3760c0fff7cdc137a171c9a35ebb826ff65006d2f27c422a64cff60673"
+  },
+  "E03": {
+    "scenario": "launch20/easy/E03",
+    "scenario_sha256": "f3fd9c2354f5b482c8a0bb3dcb64c576cc8a95293479d714c3e536c315c53433"
+  },
+  "E04": {
+    "scenario": "launch20/easy/E04",
+    "scenario_sha256": "6140eb0be7e894029ead121a0d507f91d126ea8048f55462d05b9c71160c1d9c"
+  },
+  "E05": {
+    "scenario": "launch20/easy/E05",
+    "scenario_sha256": "bc6462071c9bf87df297bf012bc50256977b0990d6bfe60aa9894611409b5184"
+  },
+  "E06": {
+    "scenario": "launch20/easy/E06",
+    "scenario_sha256": "fb4e6647fa47d076ff3a1321ae4e8c0ad0a1c193aef7afc1b417d4dd767414de"
+  },
+  "H01": {
+    "scenario": "launch20/hard/H01",
+    "scenario_sha256": "230188a433ba8a561c1bb3f343bfe813fe4e20c439cf43d89a0b1fd09af6a8b9"
+  },
+  "H02": {
+    "scenario": "launch20/hard/H02",
+    "scenario_sha256": "42de7ddfd7f99ad9db0d73b0a9245f2a61ac791dc3f44ef076bdcad03236a706"
+  },
+  "H03": {
+    "scenario": "launch20/hard/H03",
+    "scenario_sha256": "bae02e3ab454d26c960501c3b095d985b126349b887cba4a8210f3f15e268b4c"
+  },
+  "H04": {
+    "scenario": "launch20/hard/H04",
+    "scenario_sha256": "014dd519f7e75f052c881c01153ec780c9e510a2a55358f37ae56820dda87751"
+  },
+  "H05": {
+    "scenario": "launch20/hard/H05",
+    "scenario_sha256": "fd5ebc3cbea67d9cc04f98c9cb417db6241c20541ff639503079a3825983400e"
+  },
+  "H06": {
+    "scenario": "launch20/hard/H06",
+    "scenario_sha256": "f0754c8e355ec47a51a5019e4727dad47bfe14cac87a9473ea645d8fe1858359"
+  },
+  "H07": {
+    "scenario": "launch20/hard/H07",
+    "scenario_sha256": "c1873af9ff34b9e792fd85d515ebc8fe9944f282a2e69c45eaae147bd27860a0"
+  },
+  "H08": {
+    "scenario": "launch20/hard/H08",
+    "scenario_sha256": "b1b5d115c5c4c77eb993377ee3dd3134c2c569a544b3385ef130eb9e351d687c"
+  },
+  "M01": {
+    "scenario": "launch20/medium/M01",
+    "scenario_sha256": "50a4e59f55439501bfc53341c7e3868984da4a82fd43af28cb09f63ba7335550"
+  },
+  "M02": {
+    "scenario": "launch20/medium/M02",
+    "scenario_sha256": "9eec3509d3be14d5ffc75746f66b167a31f8d7d5b31b9c50c16fc080988e9435"
+  },
+  "M03": {
+    "scenario": "launch20/medium/M03",
+    "scenario_sha256": "00a8fd8d4c5792acfe92ce776b67feb746eb1cd1af238bb4209fb0671743cb4a"
+  },
+  "M04": {
+    "scenario": "launch20/medium/M04",
+    "scenario_sha256": "16d39af9a15399a911fcbeca582ee2031d6a2dafe21bd2cd9fd05dfed5379884"
+  },
+  "M05": {
+    "scenario": "launch20/medium/M05",
+    "scenario_sha256": "3d1a138b847038232a9a3788d3482cf163d5b34ec5cf9d020139ffd07670662d"
+  },
+  "M06": {
+    "scenario": "launch20/medium/M06",
+    "scenario_sha256": "5be4f8c39f10c342857e868084426b371ad30ad5ec25b60801639c35ae1e039f"
+  }
+}
