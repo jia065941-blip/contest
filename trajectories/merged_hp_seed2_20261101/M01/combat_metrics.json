@@ -1,0 +1,4377 @@
+{
+  "roles": {
+    "H": {
+      "allocated": 27,
+      "launched": 27,
+      "not_launched": 0,
+      "unique_hitting_units": 22,
+      "intercepted": 0,
+      "intercepted_after_launch": 0,
+      "intercepted_before_launch": 0,
+      "interceptor_damaged": 0,
+      "scoring_target_contributors": 22,
+      "surviving_target_contributors": 0,
+      "only_surviving_target_contributors": 0,
+      "contributors_to_both": 0,
+      "no_objective_damage": 5,
+      "no_objective_damage_and_intercepted": 0,
+      "no_objective_damage_other_outcome": 5,
+      "zero_effect_damage_commands": 0,
+      "hit_fraction_of_launched": 0.8148148148148148,
+      "intercepted_fraction_of_launched": 0.0,
+      "scoring_contributor_fraction_of_launched": 0.8148148148148148,
+      "scoring_contributor_fraction_of_allocated": 0.8148148148148148,
+      "surviving_target_contributor_fraction_of_launched": 0.0,
+      "by_target_type": {
+        "mother": {
+          "unique_hitting_units": 10,
+          "hit_events": 10,
+          "unique_targets_hit": 6,
+          "effective_damage": 136.0,
+          "nominal_damage": 196.0,
+          "scoring_target_contributors": 10,
+          "surviving_target_contributors": 0,
+          "damage_on_surviving_targets": 0
+        },
+        "sentry": {
+          "unique_hitting_units": 12,
+          "hit_events": 12,
+          "unique_targets_hit": 12,
+          "effective_damage": 216.0,
+          "nominal_damage": 240.0,
+          "scoring_target_contributors": 12,
+          "surviving_target_contributors": 0,
+          "damage_on_surviving_targets": 0
+        },
+        "hidden": {
+          "unique_hitting_units": 0,
+          "hit_events": 0,
+          "unique_targets_hit": 0,
+          "effective_damage": 0,
+          "nominal_damage": 0,
+          "scoring_target_contributors": 0,
+          "surviving_target_contributors": 0,
+          "damage_on_surviving_targets": 0
+        }
+      },
+      "terminal_causes": {
+        "self_detonation_model_return": 27
+      }
+    },
+    "M": {
+      "allocated": 37,
+      "launched": 37,
+      "not_launched": 0,
+      "unique_hitting_units": 2,
+      "intercepted": 1,
+      "intercepted_after_launch": 1,
+      "intercepted_before_launch": 0,
+      "interceptor_damaged": 1,
+      "scoring_target_contributors": 2,
+      "surviving_target_contributors": 0,
+      "only_surviving_target_contributors": 0,
+      "contributors_to_both": 0,
+      "no_objective_damage": 35,
+      "no_objective_damage_and_intercepted": 1,
+      "no_objective_damage_other_outcome": 34,
+      "zero_effect_damage_commands": 0,
+      "hit_fraction_of_launched": 0.05405405405405406,
+      "intercepted_fraction_of_launched": 0.02702702702702703,
+      "scoring_contributor_fraction_of_launched": 0.05405405405405406,
+      "scoring_contributor_fraction_of_allocated": 0.05405405405405406,
+      "surviving_target_contributor_fraction_of_launched": 0.0,
+      "by_target_type": {
+        "mother": {
+          "unique_hitting_units": 2,
+          "hit_events": 2,
+          "unique_targets_hit": 2,
+          "effective_damage": 8.0,
+          "nominal_damage": 8.0,
+          "scoring_target_contributors": 2,
+          "surviving_target_contributors": 0,
+          "damage_on_surviving_targets": 0
+        },
+        "sentry": {
+          "unique_hitting_units": 0,
+          "hit_events": 0,
+          "unique_targets_hit": 0,
+          "effective_damage": 0,
+          "nominal_damage": 0,
+          "scoring_target_contributors": 0,
+          "surviving_target_contributors": 0,
+          "damage_on_surviving_targets": 0
+        },
+        "hidden": {
+          "unique_hitting_units": 0,
+          "hit_events": 0,
+          "unique_targets_hit": 0,
+          "effective_damage": 0,
+          "nominal_damage": 0,
+          "scoring_target_contributors": 0,
+          "surviving_target_contributors": 0,
+          "damage_on_surviving_targets": 0
+        }
+      },
+      "terminal_causes": {
+        "self_detonation_model_return": 32,
+        "alive_at_end": 4,
+        "intercepted": 1
+      }
+    },
+    "L": {
+      "allocated": 128,
+      "launched": 128,
+      "not_launched": 0,
+      "unique_hitting_units": 30,
+      "intercepted": 1,
+      "intercepted_after_launch": 1,
+      "intercepted_before_launch": 0,
+      "interceptor_damaged": 1,
+      "scoring_target_contributors": 30,
+      "surviving_target_contributors": 0,
+      "only_surviving_target_contributors": 0,
+      "contributors_to_both": 0,
+      "no_objective_damage": 98,
+      "no_objective_damage_and_intercepted": 1,
+      "no_objective_damage_other_outcome": 97,
+      "zero_effect_damage_commands": 1,
+      "hit_fraction_of_launched": 0.234375,
+      "intercepted_fraction_of_launched": 0.0078125,
+      "scoring_contributor_fraction_of_launched": 0.234375,
+      "scoring_contributor_fraction_of_allocated": 0.234375,
+      "surviving_target_contributor_fraction_of_launched": 0.0,
+      "by_target_type": {
+        "mother": {
+          "unique_hitting_units": 0,
+          "hit_events": 0,
+          "unique_targets_hit": 0,
+          "effective_damage": 0,
+          "nominal_damage": 0,
+          "scoring_target_contributors": 0,
+          "surviving_target_contributors": 0,
+          "damage_on_surviving_targets": 0
+        },
+        "sentry": {
+          "unique_hitting_units": 0,
+          "hit_events": 0,
+          "unique_targets_hit": 0,
+          "effective_damage": 0,
+          "nominal_damage": 0,
+          "scoring_target_contributors": 0,
+          "surviving_target_contributors": 0,
+          "damage_on_surviving_targets": 0
+        },
+        "hidden": {
+          "unique_hitting_units": 30,
+          "hit_events": 30,
+          "unique_targets_hit": 15,
+          "effective_damage": 18.000000000000004,
+          "nominal_damage": 24.00000000000001,
+          "scoring_target_contributors": 30,
+          "surviving_target_contributors": 0,
+          "damage_on_surviving_targets": 0
+        }
+      },
+      "terminal_causes": {
+        "self_detonation_model_return": 114,
+        "self_detonation_lifetime": 13,
+        "intercepted": 1
+      }
+    }
+  },
+  "objectives": [
+    {
+      "target": 51,
+      "type": "mother",
+      "initial_health": 24.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 5.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 20.0,
+        "M": 4.0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 52,
+      "type": "mother",
+      "initial_health": 24.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 5.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 20.0,
+        "M": 4.0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 54,
+      "type": "sentry",
+      "initial_health": 18.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 2.0,
+      "unique_contributors": 1,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 18.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 310,
+      "type": "sentry",
+      "initial_health": 18.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 2.0,
+      "unique_contributors": 1,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 18.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 312,
+      "type": "sentry",
+      "initial_health": 18.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 2.0,
+      "unique_contributors": 1,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 18.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2728,
+      "type": "mother",
+      "initial_health": 24.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 5.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 24.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2733,
+      "type": "sentry",
+      "initial_health": 18.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 2.0,
+      "unique_contributors": 1,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 18.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2735,
+      "type": "sentry",
+      "initial_health": 18.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 2.0,
+      "unique_contributors": 1,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 18.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2739,
+      "type": "sentry",
+      "initial_health": 18.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 2.0,
+      "unique_contributors": 1,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 18.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2741,
+      "type": "sentry",
+      "initial_health": 18.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 2.0,
+      "unique_contributors": 1,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 18.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2745,
+      "type": "sentry",
+      "initial_health": 18.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 2.0,
+      "unique_contributors": 1,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 18.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2747,
+      "type": "sentry",
+      "initial_health": 18.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 2.0,
+      "unique_contributors": 1,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 18.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2751,
+      "type": "sentry",
+      "initial_health": 18.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 2.0,
+      "unique_contributors": 1,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 18.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2753,
+      "type": "hidden",
+      "initial_health": 1.2000000000000002,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 1.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 0,
+        "M": 0,
+        "L": 1.2000000000000002
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2754,
+      "type": "hidden",
+      "initial_health": 1.2000000000000002,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 1.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 0,
+        "M": 0,
+        "L": 1.2000000000000002
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2755,
+      "type": "hidden",
+      "initial_health": 1.2000000000000002,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 1.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 0,
+        "M": 0,
+        "L": 1.2000000000000002
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2756,
+      "type": "hidden",
+      "initial_health": 1.2000000000000002,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 1.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 0,
+        "M": 0,
+        "L": 1.2000000000000002
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2758,
+      "type": "hidden",
+      "initial_health": 1.2000000000000002,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 1.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 0,
+        "M": 0,
+        "L": 1.2000000000000002
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2760,
+      "type": "hidden",
+      "initial_health": 1.2000000000000002,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 1.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 0,
+        "M": 0,
+        "L": 1.2000000000000002
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2761,
+      "type": "hidden",
+      "initial_health": 1.2000000000000002,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 1.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 0,
+        "M": 0,
+        "L": 1.2000000000000002
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2763,
+      "type": "hidden",
+      "initial_health": 1.2000000000000002,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 1.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 0,
+        "M": 0,
+        "L": 1.2000000000000002
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 2730,
+      "type": "mother",
+      "initial_health": 24.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 5.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 24.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 3289,
+      "type": "hidden",
+      "initial_health": 1.2000000000000002,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 1.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 0,
+        "M": 0,
+        "L": 1.2000000000000002
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 3290,
+      "type": "hidden",
+      "initial_health": 1.2000000000000002,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 1.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 0,
+        "M": 0,
+        "L": 1.2000000000000002
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 3292,
+      "type": "hidden",
+      "initial_health": 1.2000000000000002,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 1.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 0,
+        "M": 0,
+        "L": 1.2000000000000002
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 3293,
+      "type": "hidden",
+      "initial_health": 1.2000000000000002,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 1.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 0,
+        "M": 0,
+        "L": 1.2000000000000002
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 3294,
+      "type": "hidden",
+      "initial_health": 1.2000000000000002,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 1.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 0,
+        "M": 0,
+        "L": 1.2000000000000002
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 3295,
+      "type": "hidden",
+      "initial_health": 1.2000000000000002,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 1.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 0,
+        "M": 0,
+        "L": 1.2000000000000002
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 3296,
+      "type": "hidden",
+      "initial_health": 1.2000000000000002,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 1.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 0,
+        "M": 0,
+        "L": 1.2000000000000002
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 3297,
+      "type": "sentry",
+      "initial_health": 18.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 2.0,
+      "unique_contributors": 1,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 18.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 3299,
+      "type": "sentry",
+      "initial_health": 18.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 2.0,
+      "unique_contributors": 1,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 18.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 3301,
+      "type": "mother",
+      "initial_health": 24.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 5.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 24.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    },
+    {
+      "target": 3302,
+      "type": "mother",
+      "initial_health": 24.0,
+      "final_health": 0.0,
+      "destroyed": true,
+      "weight": 5.0,
+      "unique_contributors": 2,
+      "other_source_damage": 0,
+      "damage_by_role": {
+        "H": 24.0,
+        "M": 0,
+        "L": 0
+      },
+      "lost_score": 0,
+      "unattributed_health_loss": 0.0
+    }
+  ],
+  "unresolved_damage_sources": 0,
+  "note": "Observed damage attribution, not causal necessity or the score that intercepted units would otherwise earn.",
+  "target_summary": {
+    "mother": {
+      "count": 6,
+      "destroyed": 6,
+      "damaged_surviving": 0,
+      "undamaged_surviving": 0,
+      "remaining_health": 0.0,
+      "lost_score": 0
+    },
+    "sentry": {
+      "count": 12,
+      "destroyed": 12,
+      "damaged_surviving": 0,
+      "undamaged_surviving": 0,
+      "remaining_health": 0.0,
+      "lost_score": 0
+    },
+    "hidden": {
+      "count": 15,
+      "destroyed": 15,
+      "damaged_surviving": 0,
+      "undamaged_surviving": 0,
+      "remaining_health": 0.0,
+      "lost_score": 0
+    }
+  },
+  "units": [
+    {
+      "unit": 2765,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 314.95,
+        "model_return": 138.583412704531
+      },
+      "hit_targets": [
+        3302
+      ],
+      "scoring_targets": [
+        3302
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2766,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 321.95,
+        "model_return": 68.8390000001234
+      },
+      "hit_targets": [
+        3302
+      ],
+      "scoring_targets": [
+        3302
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2767,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 403.95,
+        "model_return": 0.00018827086038946707
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2768,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 289.95,
+        "model_return": 109.37718495856502
+      },
+      "hit_targets": [
+        3301
+      ],
+      "scoring_targets": [
+        3301
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2769,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 262.95,
+        "model_return": 100.43778190245041
+      },
+      "hit_targets": [
+        312
+      ],
+      "scoring_targets": [
+        312
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2770,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 372.95,
+        "model_return": 71.03141431737792
+      },
+      "hit_targets": [
+        3301
+      ],
+      "scoring_targets": [
+        3301
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2771,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 342.95,
+        "model_return": 121.99206101090581
+      },
+      "hit_targets": [
+        2730
+      ],
+      "scoring_targets": [
+        2730
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2772,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 343.95,
+        "model_return": 91.62145475163878
+      },
+      "hit_targets": [
+        2730
+      ],
+      "scoring_targets": [
+        2730
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2773,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 581.95,
+        "model_return": 0.011100288564137611
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2774,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 359.95,
+        "model_return": 108.01937387829928
+      },
+      "hit_targets": [
+        52
+      ],
+      "scoring_targets": [
+        52
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2775,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 604.95,
+        "model_return": 1.4230134642373669e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2776,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 371.95,
+        "model_return": 125.90015342770579
+      },
+      "hit_targets": [
+        2728
+      ],
+      "scoring_targets": [
+        2728
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2777,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 618.95,
+        "model_return": 1.2640699273924707e-05
+      },
+      "hit_targets": [
+        2728
+      ],
+      "scoring_targets": [
+        2728
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2778,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 354.95,
+        "model_return": 138.6766175045533
+      },
+      "hit_targets": [
+        51
+      ],
+      "scoring_targets": [
+        51
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2779,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 630.95,
+        "model_return": 5.9369535902541575e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2780,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 315.95,
+        "model_return": 165.52630341401206
+      },
+      "hit_targets": [
+        2751
+      ],
+      "scoring_targets": [
+        2751
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2781,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 314.95,
+        "model_return": 82.98268996716872
+      },
+      "hit_targets": [
+        2747
+      ],
+      "scoring_targets": [
+        2747
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2782,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 298.95,
+        "model_return": 106.97127673686585
+      },
+      "hit_targets": [
+        310
+      ],
+      "scoring_targets": [
+        310
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2783,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 322.95,
+        "model_return": 112.28180292889712
+      },
+      "hit_targets": [
+        2739
+      ],
+      "scoring_targets": [
+        2739
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2784,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 316.95,
+        "model_return": 68.98800573012446
+      },
+      "hit_targets": [
+        2741
+      ],
+      "scoring_targets": [
+        2741
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2785,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 300.95,
+        "model_return": 0.00022032200564538155
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2786,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 288.95,
+        "model_return": 101.074125888988
+      },
+      "hit_targets": [
+        54
+      ],
+      "scoring_targets": [
+        54
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2787,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 329.95,
+        "model_return": 80.47305594561765
+      },
+      "hit_targets": [
+        2745
+      ],
+      "scoring_targets": [
+        2745
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2788,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 304.95,
+        "model_return": 110.64276322373594
+      },
+      "hit_targets": [
+        2733
+      ],
+      "scoring_targets": [
+        2733
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2789,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 314.95,
+        "model_return": 55.400138201648
+      },
+      "hit_targets": [
+        2735
+      ],
+      "scoring_targets": [
+        2735
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2790,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 347.95,
+        "model_return": 126.23048011401076
+      },
+      "hit_targets": [
+        3299
+      ],
+      "scoring_targets": [
+        3299
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2791,
+      "role": "H",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 362.95,
+        "model_return": 113.82940465934085
+      },
+      "hit_targets": [
+        3297
+      ],
+      "scoring_targets": [
+        3297
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2815,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 396.95,
+        "model_return": 3.890543932233221e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2816,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 396.95,
+        "model_return": 2.1236631606002045e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2817,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 395.95,
+        "model_return": 7.979760086394034e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2818,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 379.95,
+        "model_return": 0.0213775913116594
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2819,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 380.95,
+        "model_return": 0.01815305774498316
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2820,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 382.95,
+        "model_return": 1126.6684379645683
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2821,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 575.95,
+        "model_return": 0.0033385381784343305
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2822,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 1500.0,
+      "terminal": {
+        "cause": "alive_at_end",
+        "time_s": null
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2823,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 571.95,
+        "model_return": 4.571240994572411e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2824,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 1500.0,
+      "terminal": {
+        "cause": "alive_at_end",
+        "time_s": null
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2825,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 604.95,
+        "model_return": 0.00011080856297774548
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2826,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 602.95,
+        "model_return": 0.00013882720341071587
+      },
+      "hit_targets": [
+        52
+      ],
+      "scoring_targets": [
+        52
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2827,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 1500.0,
+      "terminal": {
+        "cause": "alive_at_end",
+        "time_s": null
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2828,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 624.95,
+        "model_return": 3.889082752870047e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2829,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 484.95,
+        "model_return": 80561.36526835217
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2830,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 627.95,
+        "model_return": 2.604714198607205e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2831,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 594.95,
+        "model_return": 0.0035058061572774374
+      },
+      "hit_targets": [
+        51
+      ],
+      "scoring_targets": [
+        51
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2832,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 595.95,
+        "model_return": 0.0013206467131136822
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2833,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 1500.0,
+      "terminal": {
+        "cause": "alive_at_end",
+        "time_s": null
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2834,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 373.95,
+        "model_return": 2.1032802272786597e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2835,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 316.95,
+        "model_return": 151.2563051995744
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2836,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 324.95,
+        "model_return": 0.015478065528707419
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2837,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "intercepted",
+        "time_s": 298.95,
+        "source_type": 24000
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2838,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 334.95,
+        "model_return": 0.0036215577656811006
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2839,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 468.95,
+        "model_return": 7.217714710233874e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2840,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 343.95,
+        "model_return": 0.003132331506871793
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2841,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 319.95,
+        "model_return": 1523.210888873731
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2842,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 356.95,
+        "model_return": 0.005374195687884795
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2843,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 330.95,
+        "model_return": 2349.0001087618566
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2844,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 373.95,
+        "model_return": 0.006307640773750224
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2845,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 335.95,
+        "model_return": 3665.759477666759
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2846,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 342.95,
+        "model_return": 0.11228029517907365
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2847,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 348.95,
+        "model_return": 1239.4007292602657
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2848,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 313.95,
+        "model_return": 5648.119668229763
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2849,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 314.95,
+        "model_return": 6666.4101474219915
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2850,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 329.95,
+        "model_return": 0.010045835772526867
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2851,
+      "role": "M",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 335.95,
+        "model_return": 0.008425415669463365
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2885,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1448.95,
+        "model_return": 3.327486053311122e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2886,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 920.95,
+        "model_return": 1.3482047925575696e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2887,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 924.95,
+        "model_return": 3.0875067938999395e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2888,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 930.95,
+        "model_return": 9.166977322150177e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2889,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1425.95,
+        "model_return": 2.740994120399393e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2890,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 955.95,
+        "model_return": 4.981444151578664e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2891,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1008.95,
+        "model_return": 1.0209227289909755e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2892,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1008.95,
+        "model_return": 1.2294180058083567e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2893,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 930.95,
+        "model_return": 4.53132577361746e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2894,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1010.95,
+        "model_return": 1.5693969325165805e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2895,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 925.95,
+        "model_return": 3.329461116536716e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2896,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 886.95,
+        "model_return": 4.091863594755857e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2897,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 899.95,
+        "model_return": 3.5771160513787816e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2898,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 914.95,
+        "model_return": 9.944495698287034e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2899,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1027.95,
+        "model_return": 3.2697222320638714e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2900,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1026.95,
+        "model_return": 5.67525814826998e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2901,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1027.95,
+        "model_return": 3.73371905467323e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2902,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1360.95,
+        "model_return": 3.82243251554092e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2903,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 901.95,
+        "model_return": 1.1942928250439984e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2904,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1352.95,
+        "model_return": 1.2130313633644228e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2905,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 901.95,
+        "model_return": 9.698616244939597e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2906,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1065.95,
+        "model_return": 3.548700215097926e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2907,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1063.95,
+        "model_return": 5.163155622033269e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2908,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1063.95,
+        "model_return": 3.3080129926537447e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2909,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 919.95,
+        "model_return": 3.275232771190538e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2910,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 918.95,
+        "model_return": 1.2234089511030187e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2911,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 918.95,
+        "model_return": 4.111548715043974e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2912,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 948.95,
+        "model_return": 3.297170246082456e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2913,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1018.95,
+        "model_return": 6.861650150371047e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2914,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 443.95,
+        "model_return": 7172.467023375942
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2915,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 451.95,
+        "model_return": 25762.399650802225
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2916,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 404.95,
+        "model_return": 7.016600480554392e-05
+      },
+      "hit_targets": [
+        3294
+      ],
+      "scoring_targets": [
+        3294
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2917,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 409.95,
+        "model_return": 3.9630816651964726e-05
+      },
+      "hit_targets": [
+        3294
+      ],
+      "scoring_targets": [
+        3294
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2918,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 411.95,
+        "model_return": 5.177994001387802e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2919,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 985.95,
+        "model_return": 9.229363258859398e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2920,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 571.95,
+        "model_return": 42433.15814406725
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2921,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 584.95,
+        "model_return": 50367.60144921097
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2922,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 500.95,
+        "model_return": 1.5003223827327363e-05
+      },
+      "hit_targets": [
+        3296
+      ],
+      "scoring_targets": [
+        3296
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2923,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 492.95,
+        "model_return": 6.037702114295104e-05
+      },
+      "hit_targets": [
+        3296
+      ],
+      "scoring_targets": [
+        3296
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2924,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 463.95,
+        "model_return": 2.7138038105269804e-05
+      },
+      "hit_targets": [
+        3292
+      ],
+      "scoring_targets": [
+        3292
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2925,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 462.95,
+        "model_return": 1.1068332013309547e-05
+      },
+      "hit_targets": [
+        3292
+      ],
+      "scoring_targets": [
+        3292
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2926,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 464.95,
+        "model_return": 3.9093083221863975e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2927,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 515.95,
+        "model_return": 4.152927989735167e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2928,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 598.95,
+        "model_return": 4.722052848187487e-06
+      },
+      "hit_targets": [
+        2756
+      ],
+      "scoring_targets": [
+        2756
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2929,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 487.95,
+        "model_return": 1.3500951404181946e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2930,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 477.95,
+        "model_return": 6.592132085405884e-06
+      },
+      "hit_targets": [
+        3295
+      ],
+      "scoring_targets": [
+        3295
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2931,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 477.95,
+        "model_return": 6.263883883493283e-06
+      },
+      "hit_targets": [
+        3295
+      ],
+      "scoring_targets": [
+        3295
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2932,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 377.95,
+        "model_return": 1.616995404061716e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2933,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 375.95,
+        "model_return": 4.669382674884984e-05
+      },
+      "hit_targets": [
+        3293
+      ],
+      "scoring_targets": [
+        3293
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2934,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 374.95,
+        "model_return": 4.440139476188619e-06
+      },
+      "hit_targets": [
+        3293
+      ],
+      "scoring_targets": [
+        3293
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2935,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 913.95,
+        "model_return": 4.5204904714278106e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2936,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_lifetime",
+        "time_s": 1800.95,
+        "model_return": -1.0
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2937,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 495.95,
+        "model_return": 7.020232233612979e-06
+      },
+      "hit_targets": [
+        2753
+      ],
+      "scoring_targets": [
+        2753
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2938,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 494.95,
+        "model_return": 4.2301199253116096e-06
+      },
+      "hit_targets": [
+        2753
+      ],
+      "scoring_targets": [
+        2753
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2939,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 497.95,
+        "model_return": 0.0003717505753142032
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2940,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 903.95,
+        "model_return": 2.679969299648563e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2941,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1037.95,
+        "model_return": 4.024619411481174e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2942,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 490.95,
+        "model_return": 1.3905287206026988e-05
+      },
+      "hit_targets": [
+        2761
+      ],
+      "scoring_targets": [
+        2761
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2943,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "intercepted",
+        "time_s": 301.95,
+        "source_type": 24000
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2944,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 493.95,
+        "model_return": 3.982403419559932e-06
+      },
+      "hit_targets": [
+        2761
+      ],
+      "scoring_targets": [
+        2761
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2945,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_lifetime",
+        "time_s": 1800.95,
+        "model_return": -1.0
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2946,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 594.95,
+        "model_return": 1.6619387221260486e-05
+      },
+      "hit_targets": [
+        2760
+      ],
+      "scoring_targets": [
+        2760
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2947,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 571.95,
+        "model_return": 3.3866899285540426e-06
+      },
+      "hit_targets": [
+        2758
+      ],
+      "scoring_targets": [
+        2758
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2948,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 565.95,
+        "model_return": 9.133386029467283e-06
+      },
+      "hit_targets": [
+        2758
+      ],
+      "scoring_targets": [
+        2758
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2949,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 533.95,
+        "model_return": 0.000810098148348097
+      },
+      "hit_targets": [
+        3290
+      ],
+      "scoring_targets": [
+        3290
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2950,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 538.95,
+        "model_return": 1.6680315470717555e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2951,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 537.95,
+        "model_return": 1.1208158710421313e-05
+      },
+      "hit_targets": [
+        3290
+      ],
+      "scoring_targets": [
+        3290
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2952,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 572.95,
+        "model_return": 5.321365856945389e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2953,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 618.95,
+        "model_return": 2.9844033462356303e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2954,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 614.95,
+        "model_return": 5.007118696558227e-06
+      },
+      "hit_targets": [
+        2756
+      ],
+      "scoring_targets": [
+        2756
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2955,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 581.95,
+        "model_return": 1.0936361240176725e-05
+      },
+      "hit_targets": [
+        2755
+      ],
+      "scoring_targets": [
+        2755
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2956,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 575.95,
+        "model_return": 5.561100061923628e-06
+      },
+      "hit_targets": [
+        2755
+      ],
+      "scoring_targets": [
+        2755
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2957,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 534.95,
+        "model_return": 3.0211167331475874e-05
+      },
+      "hit_targets": [
+        3289
+      ],
+      "scoring_targets": [
+        3289
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2958,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 527.95,
+        "model_return": 3.4424856608099203e-06
+      },
+      "hit_targets": [
+        3289
+      ],
+      "scoring_targets": [
+        3289
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2959,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 536.95,
+        "model_return": 3.218944356754897e-06
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2960,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 582.95,
+        "model_return": 4.776629301831259e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2961,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 446.95,
+        "model_return": 41844.03875341147
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2962,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 654.95,
+        "model_return": 5.697075875887038e-06
+      },
+      "hit_targets": [
+        2754
+      ],
+      "scoring_targets": [
+        2754
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2963,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 653.95,
+        "model_return": 3.273585342483253e-05
+      },
+      "hit_targets": [
+        2754
+      ],
+      "scoring_targets": [
+        2754
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2964,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 654.95,
+        "model_return": 3.950358373382332e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2965,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 529.95,
+        "model_return": 2727.5679478614725
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2966,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 535.95,
+        "model_return": 5845.602912085584
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2967,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_lifetime",
+        "time_s": 1800.95,
+        "model_return": -1.0
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2968,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 919.95,
+        "model_return": 5.5648193078319364e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2969,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 531.95,
+        "model_return": 7.30856372203846e-06
+      },
+      "hit_targets": [
+        2763
+      ],
+      "scoring_targets": [
+        2763
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2970,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 540.95,
+        "model_return": 7.881950407101268e-06
+      },
+      "hit_targets": [
+        2763
+      ],
+      "scoring_targets": [
+        2763
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2971,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 454.95,
+        "model_return": 0.012730696308570827
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2972,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1040.95,
+        "model_return": 3.965872910347834e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2973,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_lifetime",
+        "time_s": 1800.95,
+        "model_return": -1.0
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2974,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_lifetime",
+        "time_s": 1800.95,
+        "model_return": -1.0
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2975,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 609.95,
+        "model_return": 3.4204031846557738e-06
+      },
+      "hit_targets": [
+        2760
+      ],
+      "scoring_targets": [
+        2760
+      ],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2976,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 610.95,
+        "model_return": 3.5353879617557e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2977,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 594.95,
+        "model_return": 49615.01610456781
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2978,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 557.95,
+        "model_return": 1134.3126945845704
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2979,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 509.95,
+        "model_return": 0.00252764650497541
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2980,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 503.95,
+        "model_return": 0.002901845235988783
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2981,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 520.95,
+        "model_return": 0.001754416891482118
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2982,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 981.95,
+        "model_return": 1.2325803430301365e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2983,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 673.95,
+        "model_return": 92429.64465721739
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2984,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_lifetime",
+        "time_s": 1800.95,
+        "model_return": -1.0
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2985,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_lifetime",
+        "time_s": 1800.95,
+        "model_return": -1.0
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2986,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_lifetime",
+        "time_s": 1800.95,
+        "model_return": -1.0
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2987,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 566.95,
+        "model_return": 0.002570814486146891
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2988,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 416.95,
+        "model_return": 0.0038128950330502983
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2989,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 418.95,
+        "model_return": 0.0038812520497960613
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2990,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 521.95,
+        "model_return": 92568.96046542688
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2991,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_lifetime",
+        "time_s": 1800.95,
+        "model_return": -1.0
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2992,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 608.95,
+        "model_return": 59312.53921915219
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2993,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 534.95,
+        "model_return": 0.00594617924752266
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2994,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 579.95,
+        "model_return": 41053.745506279905
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2995,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 622.95,
+        "model_return": 72833.30833608807
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2996,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_lifetime",
+        "time_s": 1800.95,
+        "model_return": -1.0
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2997,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 544.95,
+        "model_return": 1.2387386417398752e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2998,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 503.95,
+        "model_return": 29939.918770054705
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 2999,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 485.95,
+        "model_return": 3888.096466134295
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 3000,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 539.95,
+        "model_return": 59613.761103574936
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 3001,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_lifetime",
+        "time_s": 1800.95,
+        "model_return": -1.0
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 3002,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_lifetime",
+        "time_s": 1800.95,
+        "model_return": -1.0
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 3003,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_lifetime",
+        "time_s": 1800.95,
+        "model_return": -1.0
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 3004,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 575.95,
+        "model_return": 0.00596960373122399
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 3005,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 1023.95,
+        "model_return": 1.941784268913424e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 3006,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 570.95,
+        "model_return": 36186.46663508557
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 3007,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 556.95,
+        "model_return": 0.005239614866654025
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 3008,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 554.95,
+        "model_return": 31710.4543008143
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 3009,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 588.95,
+        "model_return": 56761.754798146474
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 3010,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 997.95,
+        "model_return": 1.9697912231082124e-05
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 3011,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 636.95,
+        "model_return": 0.0005169028798780662
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    },
+    {
+      "unit": 3012,
+      "role": "L",
+      "launched": true,
+      "launch_s": 0.0,
+      "final_health": 0.0,
+      "terminal": {
+        "cause": "self_detonation_model_return",
+        "time_s": 596.95,
+        "model_return": 0.00010214401452014786
+      },
+      "hit_targets": [],
+      "scoring_targets": [],
+      "surviving_hit_targets": []
+    }
+  ],
+  "damage_pairs": [
+    {
+      "unit": 2765,
+      "target": 3302,
+      "events": 1,
+      "actual_damage": 20.0,
+      "nominal_damage": 20.0,
+      "first_time": 314.0,
+      "last_time": 314.0
+    },
+    {
+      "unit": 2766,
+      "target": 3302,
+      "events": 1,
+      "actual_damage": 4.0,
+      "nominal_damage": 20.0,
+      "first_time": 321.0,
+      "last_time": 321.0
+    },
+    {
+      "unit": 2768,
+      "target": 3301,
+      "events": 1,
+      "actual_damage": 20.0,
+      "nominal_damage": 20.0,
+      "first_time": 289.0,
+      "last_time": 289.0
+    },
+    {
+      "unit": 2769,
+      "target": 312,
+      "events": 1,
+      "actual_damage": 18.0,
+      "nominal_damage": 20.0,
+      "first_time": 262.0,
+      "last_time": 262.0
+    },
+    {
+      "unit": 2770,
+      "target": 3301,
+      "events": 1,
+      "actual_damage": 4.0,
+      "nominal_damage": 20.0,
+      "first_time": 372.0,
+      "last_time": 372.0
+    },
+    {
+      "unit": 2771,
+      "target": 2730,
+      "events": 1,
+      "actual_damage": 20.0,
+      "nominal_damage": 20.0,
+      "first_time": 342.0,
+      "last_time": 342.0
+    },
+    {
+      "unit": 2772,
+      "target": 2730,
+      "events": 1,
+      "actual_damage": 4.0,
+      "nominal_damage": 20.0,
+      "first_time": 343.0,
+      "last_time": 343.0
+    },
+    {
+      "unit": 2774,
+      "target": 52,
+      "events": 1,
+      "actual_damage": 20.0,
+      "nominal_damage": 20.0,
+      "first_time": 359.0,
+      "last_time": 359.0
+    },
+    {
+      "unit": 2776,
+      "target": 2728,
+      "events": 1,
+      "actual_damage": 20.0,
+      "nominal_damage": 20.0,
+      "first_time": 371.0,
+      "last_time": 371.0
+    },
+    {
+      "unit": 2777,
+      "target": 2728,
+      "events": 1,
+      "actual_damage": 4.0,
+      "nominal_damage": 16.0,
+      "first_time": 618.0,
+      "last_time": 618.0
+    },
+    {
+      "unit": 2778,
+      "target": 51,
+      "events": 1,
+      "actual_damage": 20.0,
+      "nominal_damage": 20.0,
+      "first_time": 354.0,
+      "last_time": 354.0
+    },
+    {
+      "unit": 2780,
+      "target": 2751,
+      "events": 1,
+      "actual_damage": 18.0,
+      "nominal_damage": 20.0,
+      "first_time": 315.0,
+      "last_time": 315.0
+    },
+    {
+      "unit": 2781,
+      "target": 2747,
+      "events": 1,
+      "actual_damage": 18.0,
+      "nominal_damage": 20.0,
+      "first_time": 314.0,
+      "last_time": 314.0
+    },
+    {
+      "unit": 2782,
+      "target": 310,
+      "events": 1,
+      "actual_damage": 18.0,
+      "nominal_damage": 20.0,
+      "first_time": 298.0,
+      "last_time": 298.0
+    },
+    {
+      "unit": 2783,
+      "target": 2739,
+      "events": 1,
+      "actual_damage": 18.0,
+      "nominal_damage": 20.0,
+      "first_time": 322.0,
+      "last_time": 322.0
+    },
+    {
+      "unit": 2784,
+      "target": 2741,
+      "events": 1,
+      "actual_damage": 18.0,
+      "nominal_damage": 20.0,
+      "first_time": 316.0,
+      "last_time": 316.0
+    },
+    {
+      "unit": 2786,
+      "target": 54,
+      "events": 1,
+      "actual_damage": 18.0,
+      "nominal_damage": 20.0,
+      "first_time": 288.0,
+      "last_time": 288.0
+    },
+    {
+      "unit": 2787,
+      "target": 2745,
+      "events": 1,
+      "actual_damage": 18.0,
+      "nominal_damage": 20.0,
+      "first_time": 329.0,
+      "last_time": 329.0
+    },
+    {
+      "unit": 2788,
+      "target": 2733,
+      "events": 1,
+      "actual_damage": 18.0,
+      "nominal_damage": 20.0,
+      "first_time": 304.0,
+      "last_time": 304.0
+    },
+    {
+      "unit": 2789,
+      "target": 2735,
+      "events": 1,
+      "actual_damage": 18.0,
+      "nominal_damage": 20.0,
+      "first_time": 314.0,
+      "last_time": 314.0
+    },
+    {
+      "unit": 2790,
+      "target": 3299,
+      "events": 1,
+      "actual_damage": 18.0,
+      "nominal_damage": 20.0,
+      "first_time": 347.0,
+      "last_time": 347.0
+    },
+    {
+      "unit": 2791,
+      "target": 3297,
+      "events": 1,
+      "actual_damage": 18.0,
+      "nominal_damage": 20.0,
+      "first_time": 362.0,
+      "last_time": 362.0
+    },
+    {
+      "unit": 2826,
+      "target": 52,
+      "events": 1,
+      "actual_damage": 4.0,
+      "nominal_damage": 4.0,
+      "first_time": 602.0,
+      "last_time": 602.0
+    },
+    {
+      "unit": 2831,
+      "target": 51,
+      "events": 1,
+      "actual_damage": 4.0,
+      "nominal_damage": 4.0,
+      "first_time": 594.0,
+      "last_time": 594.0
+    },
+    {
+      "unit": 2916,
+      "target": 3294,
+      "events": 1,
+      "actual_damage": 0.8,
+      "nominal_damage": 0.8,
+      "first_time": 404.0,
+      "last_time": 404.0
+    },
+    {
+      "unit": 2917,
+      "target": 3294,
+      "events": 1,
+      "actual_damage": 0.40000000000000013,
+      "nominal_damage": 0.8,
+      "first_time": 409.0,
+      "last_time": 409.0
+    },
+    {
+      "unit": 2922,
+      "target": 3296,
+      "events": 1,
+      "actual_damage": 0.40000000000000013,
+      "nominal_damage": 0.8,
+      "first_time": 500.0,
+      "last_time": 500.0
+    },
+    {
+      "unit": 2923,
+      "target": 3296,
+      "events": 1,
+      "actual_damage": 0.8,
+      "nominal_damage": 0.8,
+      "first_time": 492.0,
+      "last_time": 492.0
+    },
+    {
+      "unit": 2924,
+      "target": 3292,
+      "events": 1,
+      "actual_damage": 0.40000000000000013,
+      "nominal_damage": 0.8,
+      "first_time": 463.0,
+      "last_time": 463.0
+    },
+    {
+      "unit": 2925,
+      "target": 3292,
+      "events": 1,
+      "actual_damage": 0.8,
+      "nominal_damage": 0.8,
+      "first_time": 462.0,
+      "last_time": 462.0
+    },
+    {
+      "unit": 2928,
+      "target": 2756,
+      "events": 1,
+      "actual_damage": 0.8,
+      "nominal_damage": 0.8,
+      "first_time": 598.0,
+      "last_time": 598.0
+    },
+    {
+      "unit": 2930,
+      "target": 3295,
+      "events": 1,
+      "actual_damage": 0.40000000000000013,
+      "nominal_damage": 0.8,
+      "first_time": 477.0,
+      "last_time": 477.0
+    },
+    {
+      "unit": 2931,
+      "target": 3295,
+      "events": 1,
+      "actual_damage": 0.8,
+      "nominal_damage": 0.8,
+      "first_time": 477.0,
+      "last_time": 477.0
+    },
+    {
+      "unit": 2933,
+      "target": 3293,
+      "events": 1,
+      "actual_damage": 0.40000000000000013,
+      "nominal_damage": 0.8,
+      "first_time": 375.0,
+      "last_time": 375.0
+    },
+    {
+      "unit": 2934,
+      "target": 3293,
+      "events": 1,
+      "actual_damage": 0.8,
+      "nominal_damage": 0.8,
+      "first_time": 374.0,
+      "last_time": 374.0
+    },
+    {
+      "unit": 2937,
+      "target": 2753,
+      "events": 1,
+      "actual_damage": 0.40000000000000013,
+      "nominal_damage": 0.8,
+      "first_time": 495.0,
+      "last_time": 495.0
+    },
+    {
+      "unit": 2938,
+      "target": 2753,
+      "events": 1,
+      "actual_damage": 0.8,
+      "nominal_damage": 0.8,
+      "first_time": 494.0,
+      "last_time": 494.0
+    },
+    {
+      "unit": 2942,
+      "target": 2761,
+      "events": 1,
+      "actual_damage": 0.8,
+      "nominal_damage": 0.8,
+      "first_time": 490.0,
+      "last_time": 490.0
+    },
+    {
+      "unit": 2944,
+      "target": 2761,
+      "events": 1,
+      "actual_damage": 0.40000000000000013,
+      "nominal_damage": 0.8,
+      "first_time": 493.0,
+      "last_time": 493.0
+    },
+    {
+      "unit": 2946,
+      "target": 2760,
+      "events": 1,
+      "actual_damage": 0.8,
+      "nominal_damage": 0.8,
+      "first_time": 594.0,
+      "last_time": 594.0
+    },
+    {
+      "unit": 2947,
+      "target": 2758,
+      "events": 1,
+      "actual_damage": 0.40000000000000013,
+      "nominal_damage": 0.8,
+      "first_time": 571.0,
+      "last_time": 571.0
+    },
+    {
+      "unit": 2948,
+      "target": 2758,
+      "events": 1,
+      "actual_damage": 0.8,
+      "nominal_damage": 0.8,
+      "first_time": 565.0,
+      "last_time": 565.0
+    },
+    {
+      "unit": 2949,
+      "target": 3290,
+      "events": 1,
+      "actual_damage": 0.8,
+      "nominal_damage": 0.8,
+      "first_time": 533.0,
+      "last_time": 533.0
+    },
+    {
+      "unit": 2951,
+      "target": 3290,
+      "events": 1,
+      "actual_damage": 0.40000000000000013,
+      "nominal_damage": 0.8,
+      "first_time": 537.0,
+      "last_time": 537.0
+    },
+    {
+      "unit": 2954,
+      "target": 2756,
+      "events": 1,
+      "actual_damage": 0.40000000000000013,
+      "nominal_damage": 0.8,
+      "first_time": 614.0,
+      "last_time": 614.0
+    },
+    {
+      "unit": 2955,
+      "target": 2755,
+      "events": 1,
+      "actual_damage": 0.40000000000000013,
+      "nominal_damage": 0.8,
+      "first_time": 581.0,
+      "last_time": 581.0
+    },
+    {
+      "unit": 2956,
+      "target": 2755,
+      "events": 1,
+      "actual_damage": 0.8,
+      "nominal_damage": 0.8,
+      "first_time": 575.0,
+      "last_time": 575.0
+    },
+    {
+      "unit": 2957,
+      "target": 3289,
+      "events": 1,
+      "actual_damage": 0.40000000000000013,
+      "nominal_damage": 0.8,
+      "first_time": 534.0,
+      "last_time": 534.0
+    },
+    {
+      "unit": 2958,
+      "target": 3289,
+      "events": 1,
+      "actual_damage": 0.8,
+      "nominal_damage": 0.8,
+      "first_time": 527.0,
+      "last_time": 527.0
+    },
+    {
+      "unit": 2962,
+      "target": 2754,
+      "events": 1,
+      "actual_damage": 0.40000000000000013,
+      "nominal_damage": 0.8,
+      "first_time": 654.0,
+      "last_time": 654.0
+    },
+    {
+      "unit": 2963,
+      "target": 2754,
+      "events": 1,
+      "actual_damage": 0.8,
+      "nominal_damage": 0.8,
+      "first_time": 653.0,
+      "last_time": 653.0
+    },
+    {
+      "unit": 2969,
+      "target": 2763,
+      "events": 1,
+      "actual_damage": 0.8,
+      "nominal_damage": 0.8,
+      "first_time": 531.0,
+      "last_time": 531.0
+    },
+    {
+      "unit": 2970,
+      "target": 2763,
+      "events": 1,
+      "actual_damage": 0.40000000000000013,
+      "nominal_damage": 0.8,
+      "first_time": 540.0,
+      "last_time": 540.0
+    },
+    {
+      "unit": 2975,
+      "target": 2760,
+      "events": 1,
+      "actual_damage": 0.40000000000000013,
+      "nominal_damage": 0.8,
+      "first_time": 609.0,
+      "last_time": 609.0
+    }
+  ],
+  "interception_events": [
+    {
+      "unit": 2837,
+      "interceptor": 3126,
+      "time_s": 298.95
+    },
+    {
+      "unit": 2943,
+      "interceptor": 3069,
+      "time_s": 301.95
+    }
+  ],
+  "audit": {
+    "steps": 3000,
+    "start_registry_hash": "c18e725478be99b50fa8ca026ab583450e841a02d862e39b073b97719fe4bb9a",
+    "end_registry_hash": "c18e725478be99b50fa8ca026ab583450e841a02d862e39b073b97719fe4bb9a",
+    "official_scheduler_unchanged": true,
+    "policy_has_no_access_to_metrics": true,
+    "score": 100.0,
+    "launched": 192,
+    "purpose": "descriptive event accounting, no skill-effect comparison"
+  }
+}

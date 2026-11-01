@@ -1,0 +1,47 @@
+{
+  "map": "M01",
+  "seed": 2,
+  "policy": "merged_hp",
+  "score": 100.0,
+  "steps_executed": 3000,
+  "termination_reason": "time_limit",
+  "record_count": 23440,
+  "step_range": [
+    0,
+    2999
+  ],
+  "source_experiment": "hp_composition_seed2_20261101",
+  "source_archive": "archives/M01_complete.tar.gz",
+  "source_archive_sha256": "68080a955bba0687ac0a755497b219549d654088687a25da11a75ad4a2649aec",
+  "policy_release": "releases/merged_hp_seed2_20261101",
+  "policy_release_commit": "2ee21edf43ed1244699e2970576bd4749468d2ff",
+  "new_simulations": 0,
+  "files": {
+    "legal_terminal_trace.json": {
+      "sha256": "2b27b959f8bdcb910cc121d5de82084fc1ee309b330f4d4043678bff48c65ea3",
+      "bytes": 12236292,
+      "archive_member": "branches/merged_hp/legal_terminal_trace.json"
+    },
+    "execution.json": {
+      "sha256": "36752b28358ddb7684fd4707ec940ca44977a56effceecc57f0b09df0a6b5825",
+      "bytes": 369383,
+      "archive_member": "branches/merged_hp/execution.json"
+    },
+    "combat_metrics.json": {
+      "sha256": "92ecd62f67b3bd6e10af6286ee9f849a1ff11178986473db70e132bb9c3cae85",
+      "bytes": 101685,
+      "archive_member": "branches/merged_hp/combat_metrics.json"
+    },
+    "branch_audit.json": {
+      "sha256": "332037d80940497678763ff8ac269a58495be42dda7f9ade1bbb53021faa8b19",
+      "bytes": 188299,
+      "archive_member": "branches/merged_hp/branch_audit.json"
+    },
+    "summary.json": {
+      "sha256": "23d12ab9d88d5651360cbb0e1bd445fbeb6bfeccf4f2672559831eafb3afe422",
+      "bytes": 8809,
+      "archive_member": "branches/merged_hp/native/episode/summary.json"
+    }
+  },
+  "scope": "Retained legal H/M HP decision observations, original actions, decisions, execution receipts and evaluator combat/audit evidence; not full native per-frame replay or restorable simulator memory."
+}
