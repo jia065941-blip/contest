@@ -13,6 +13,17 @@ finished videos.
 - `envengine/render/renderer.py`: standalone Pygame renderer
 - `assets/`: runtime background, font, and hive sprites
 
+Optional satellite-style backgrounds are available in
+`assets/backgrounds/`. To use one in both views, pass its path through
+`--main-background` and `--top-background`, for example:
+
+```bash
+python tools/render_video.py \
+  --main-background assets/backgrounds/300km虚构海峡卫星底图_v8_hq_1920x1080.png \
+  --top-background assets/backgrounds/300km虚构海峡卫星底图_v8_hq_1920x1080.png \
+  --output output/run.mp4
+```
+
 The bundled Noto Sans CJK font is distributed under the SIL Open Font License
 1.1; see `assets/fonts/OFL.txt`.
 
