@@ -1,0 +1,12 @@
+agent: ../../user_agents/example/coordination/r7_v3_0_spatial_packages.py
+scenario: ../../scenarios/M01.json
+seed: 42
+blue_mode: ../../blue_defense/scheduled/b9_min_cost_planned_multi_wave.py
+render_mode: none
+output_dir: ../../results/runs/video_strategy_M01_B9
+logging:
+  enabled: false
+  state_interval_steps: 10
+  events: true
+  actions: true
+  example_evaluation: true

@@ -1,0 +1,13 @@
+agent: /home/ubuntu/yunpan/competition-final/user_agents/cz_ppo/__init__.py
+scenario: /home/ubuntu/yunpan/competition-final/scenarios/H03.json
+seed: 2
+blue_mode: /home/ubuntu/yunpan/competition-final/blue_defense/immediate/b0_fixed_ratio_random.py
+render_mode: none
+output_dir: /home/ubuntu/yunpan/competition-final/results/cz_ppo_seed2_final_all20_attribution_20261118/maps/H03
+logging:
+  enabled: false
+  state_interval_steps: 100
+  events: false
+  actions: false
+  example_evaluation: true
+  attribution_evaluation: true

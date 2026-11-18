@@ -1,0 +1,13 @@
+agent: red_strategy.py
+scenario: ../../scenarios/E06.json
+blue_mode: ../../blue_defense/scheduled/b8_threat_multi_wave.py
+seed: 42
+render_mode: none
+output_dir: ../../results/heavy_repro_full_game
+
+logging:
+  enabled: true
+  state_interval_steps: 1
+  events: true
+  actions: true
+  example_evaluation: false

@@ -3,10 +3,10 @@ dataclasses-json==0.6.7
 fastdisjointset==1.0.3
 paho-mqtt==2.1.0
 pygame==2.6.1
-pyproj==3.7.2
 requests==2.34.2
 scipy>=1.11
 websockets==16.0
 numpy==2.4.6
 msgpack==1.2.1
-networkx>=3.2
+PyYAML>=6.0,<7.0
+matplotlib>=3.8,<4

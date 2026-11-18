@@ -1,0 +1,63 @@
+{
+  "status": "complete",
+  "map": "M02",
+  "seed": 2,
+  "choice": "A05",
+  "interface_only": true,
+  "official_object_address_order_retained": true,
+  "algorithm": {
+    "opening": "pku_initial_astra_v2",
+    "strategic": "frozen merged selector",
+    "hp": "frozen chronological tree",
+    "motion": "V12-R3 mission_v12",
+    "satellite_schedule_changed": false
+  },
+  "model_sha256": "2338b69fd5bb39c617d5a3fbee7c6c68e96cfe7c75faaf4dac70ade1f6358140",
+  "counts": {
+    "prior_transitions": 20,
+    "prior_deferred_proposals": 0,
+    "attack_coordinate_updates": 33767,
+    "group_preparations": 4224,
+    "runtime_plan_calls": 4224,
+    "translated_rows": 322099,
+    "hp_observations": 20576,
+    "prior_dispatches": 44,
+    "native_returns": 44,
+    "satellite_requests": 1
+  },
+  "motion_calls": {
+    "H": 10504,
+    "M": 19755,
+    "L": 130790
+  },
+  "motion_nonzero": {
+    "H": 735,
+    "M": 2294,
+    "L": 1678
+  },
+  "motion_audit": {
+    "encoded_85": 161049,
+    "mask_restricted": 154533,
+    "mask_unrestricted": 6516
+  },
+  "strategic_stats": {
+    "proposal_calls": 135
+  },
+  "strategic_event": null,
+  "pending_prior_receipts": 0,
+  "new_public_interface": {
+    "input_scope": "per-agent public initial state and isolated runtime observation",
+    "communication_scope": "current commRangeInfo connected component",
+    "output_action_types": [
+      1,
+      2,
+      3
+    ],
+    "target_id_actions_emitted": 0,
+    "waypoint_boundary_projection": "clip final submitted coordinate only; retain true internal track",
+    "clamp_counts": {},
+    "clamp_by_target": {},
+    "max_projection_distance_m": 0.0,
+    "examples": []
+  }
+}

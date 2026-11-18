@@ -1,0 +1,482 @@
+{
+  "status": "complete",
+  "map": "H03",
+  "seed": 2,
+  "choice": "A00",
+  "interface_only": true,
+  "official_object_address_order_retained": true,
+  "algorithm": {
+    "opening": "pku_initial_astra_v2",
+    "strategic": "frozen merged selector",
+    "hp": "frozen chronological tree",
+    "motion": "V12-R3 mission_v12",
+    "satellite_schedule_changed": false
+  },
+  "model_sha256": "2338b69fd5bb39c617d5a3fbee7c6c68e96cfe7c75faaf4dac70ade1f6358140",
+  "counts": {
+    "prior_transitions": 53,
+    "prior_deferred_proposals": 0,
+    "attack_coordinate_updates": 69738,
+    "group_preparations": 7782,
+    "runtime_plan_calls": 7782,
+    "translated_rows": 592717,
+    "hp_observations": 29145,
+    "prior_dispatches": 84,
+    "native_returns": 84,
+    "satellite_requests": 1,
+    "public_waypoint_clamps": 1056
+  },
+  "motion_calls": {
+    "H": 20013,
+    "M": 40389,
+    "L": 235956
+  },
+  "motion_nonzero": {
+    "H": 1832,
+    "M": 4295,
+    "L": 5043
+  },
+  "motion_audit": {
+    "encoded_85": 296358,
+    "mask_restricted": 283303,
+    "mask_unrestricted": 13055
+  },
+  "strategic_stats": {
+    "proposal_calls": 177
+  },
+  "strategic_event": null,
+  "pending_prior_receipts": 0,
+  "new_public_interface": {
+    "input_scope": "per-agent public initial state and isolated runtime observation",
+    "communication_scope": "current commRangeInfo connected component",
+    "output_action_types": [
+      1,
+      2,
+      3
+    ],
+    "target_id_actions_emitted": 0,
+    "waypoint_boundary_projection": "clip final submitted coordinate only; retain true internal track",
+    "clamp_counts": {
+      "legacy_target_coordinate": 1056
+    },
+    "clamp_by_target": {
+      "2969": {
+        "count": 1056,
+        "first_step": 432,
+        "last_step": 752,
+        "max_projection_distance_m": 971.5021170685068,
+        "unit_ids": [
+          3033,
+          3131,
+          3132,
+          3133,
+          3134,
+          3135
+        ]
+      }
+    },
+    "max_projection_distance_m": 971.5021170685068,
+    "examples": [
+      {
+        "step": 432,
+        "entity_id": 3033,
+        "role": "H",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076736759707304,
+          2.8205799240676477
+        ],
+        "raw_cartesian_point": [
+          9622.786722530247,
+          54245.77214707303
+        ],
+        "submitted_cartesian_point": [
+          9622.786722530247,
+          54181.647165
+        ],
+        "projection_distance_m": 64.12498207302997
+      },
+      {
+        "step": 432,
+        "entity_id": 3131,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076736759707304,
+          2.8205799240676477
+        ],
+        "raw_cartesian_point": [
+          9622.786722530247,
+          54245.77214707303
+        ],
+        "submitted_cartesian_point": [
+          9622.786722530247,
+          54181.647165
+        ],
+        "projection_distance_m": 64.12498207302997
+      },
+      {
+        "step": 432,
+        "entity_id": 3132,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076736759707304,
+          2.8205799240676477
+        ],
+        "raw_cartesian_point": [
+          9622.786722530247,
+          54245.77214707303
+        ],
+        "submitted_cartesian_point": [
+          9622.786722530247,
+          54181.647165
+        ],
+        "projection_distance_m": 64.12498207302997
+      },
+      {
+        "step": 432,
+        "entity_id": 3133,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076736759707304,
+          2.8205799240676477
+        ],
+        "raw_cartesian_point": [
+          9622.786722530247,
+          54245.77214707303
+        ],
+        "submitted_cartesian_point": [
+          9622.786722530247,
+          54181.647165
+        ],
+        "projection_distance_m": 64.12498207302997
+      },
+      {
+        "step": 432,
+        "entity_id": 3134,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076736759707304,
+          2.8205799240676477
+        ],
+        "raw_cartesian_point": [
+          9622.786722530247,
+          54245.77214707303
+        ],
+        "submitted_cartesian_point": [
+          9622.786722530247,
+          54181.647165
+        ],
+        "projection_distance_m": 64.12498207302997
+      },
+      {
+        "step": 432,
+        "entity_id": 3135,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076736759707304,
+          2.8205799240676477
+        ],
+        "raw_cartesian_point": [
+          9622.786722530247,
+          54245.77214707303
+        ],
+        "submitted_cartesian_point": [
+          9622.786722530247,
+          54181.647165
+        ],
+        "projection_distance_m": 64.12498207302997
+      },
+      {
+        "step": 433,
+        "entity_id": 3033,
+        "role": "H",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076710941084764,
+          2.8206852946880465
+        ],
+        "raw_cartesian_point": [
+          9619.915067303693,
+          54257.42348130979
+        ],
+        "submitted_cartesian_point": [
+          9619.915067303693,
+          54181.647165
+        ],
+        "projection_distance_m": 75.7763163097843
+      },
+      {
+        "step": 433,
+        "entity_id": 3131,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076710941084764,
+          2.8206852946880465
+        ],
+        "raw_cartesian_point": [
+          9619.915067303693,
+          54257.42348130979
+        ],
+        "submitted_cartesian_point": [
+          9619.915067303693,
+          54181.647165
+        ],
+        "projection_distance_m": 75.7763163097843
+      },
+      {
+        "step": 433,
+        "entity_id": 3132,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076710941084764,
+          2.8206852946880465
+        ],
+        "raw_cartesian_point": [
+          9619.915067303693,
+          54257.42348130979
+        ],
+        "submitted_cartesian_point": [
+          9619.915067303693,
+          54181.647165
+        ],
+        "projection_distance_m": 75.7763163097843
+      },
+      {
+        "step": 433,
+        "entity_id": 3133,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076710941084764,
+          2.8206852946880465
+        ],
+        "raw_cartesian_point": [
+          9619.915067303693,
+          54257.42348130979
+        ],
+        "submitted_cartesian_point": [
+          9619.915067303693,
+          54181.647165
+        ],
+        "projection_distance_m": 75.7763163097843
+      },
+      {
+        "step": 433,
+        "entity_id": 3134,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076710941084764,
+          2.8206852946880465
+        ],
+        "raw_cartesian_point": [
+          9619.915067303693,
+          54257.42348130979
+        ],
+        "submitted_cartesian_point": [
+          9619.915067303693,
+          54181.647165
+        ],
+        "projection_distance_m": 75.7763163097843
+      },
+      {
+        "step": 433,
+        "entity_id": 3135,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076710941084764,
+          2.8206852946880465
+        ],
+        "raw_cartesian_point": [
+          9619.915067303693,
+          54257.42348130979
+        ],
+        "submitted_cartesian_point": [
+          9619.915067303693,
+          54181.647165
+        ],
+        "projection_distance_m": 75.7763163097843
+      },
+      {
+        "step": 434,
+        "entity_id": 3033,
+        "role": "H",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076685101903335,
+          2.8207906602642416
+        ],
+        "raw_cartesian_point": [
+          9617.041125431395,
+          54269.07425778477
+        ],
+        "submitted_cartesian_point": [
+          9617.041125431395,
+          54181.647165
+        ],
+        "projection_distance_m": 87.42709278476832
+      },
+      {
+        "step": 434,
+        "entity_id": 3131,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076685101903335,
+          2.8207906602642416
+        ],
+        "raw_cartesian_point": [
+          9617.041125431395,
+          54269.07425778477
+        ],
+        "submitted_cartesian_point": [
+          9617.041125431395,
+          54181.647165
+        ],
+        "projection_distance_m": 87.42709278476832
+      },
+      {
+        "step": 434,
+        "entity_id": 3132,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076685101903335,
+          2.8207906602642416
+        ],
+        "raw_cartesian_point": [
+          9617.041125431395,
+          54269.07425778477
+        ],
+        "submitted_cartesian_point": [
+          9617.041125431395,
+          54181.647165
+        ],
+        "projection_distance_m": 87.42709278476832
+      },
+      {
+        "step": 434,
+        "entity_id": 3133,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076685101903335,
+          2.8207906602642416
+        ],
+        "raw_cartesian_point": [
+          9617.041125431395,
+          54269.07425778477
+        ],
+        "submitted_cartesian_point": [
+          9617.041125431395,
+          54181.647165
+        ],
+        "projection_distance_m": 87.42709278476832
+      },
+      {
+        "step": 434,
+        "entity_id": 3134,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076685101903335,
+          2.8207906602642416
+        ],
+        "raw_cartesian_point": [
+          9617.041125431395,
+          54269.07425778477
+        ],
+        "submitted_cartesian_point": [
+          9617.041125431395,
+          54181.647165
+        ],
+        "projection_distance_m": 87.42709278476832
+      },
+      {
+        "step": 434,
+        "entity_id": 3135,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076685101903335,
+          2.8207906602642416
+        ],
+        "raw_cartesian_point": [
+          9617.041125431395,
+          54269.07425778477
+        ],
+        "submitted_cartesian_point": [
+          9617.041125431395,
+          54181.647165
+        ],
+        "projection_distance_m": 87.42709278476832
+      },
+      {
+        "step": 435,
+        "entity_id": 3033,
+        "role": "H",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076659242671393,
+          2.8208960208022176
+        ],
+        "raw_cartesian_point": [
+          9614.16495345725,
+          54280.72447715972
+        ],
+        "submitted_cartesian_point": [
+          9614.16495345725,
+          54181.647165
+        ],
+        "projection_distance_m": 99.0773121597158
+      },
+      {
+        "step": 435,
+        "entity_id": 3131,
+        "role": "M",
+        "source": "legacy_target_coordinate",
+        "target_id": 2969,
+        "legacy_point": [
+          12.076659242671393,
+          2.8208960208022176
+        ],
+        "raw_cartesian_point": [
+          9614.16495345725,
+          54280.72447715972
+        ],
+        "submitted_cartesian_point": [
+          9614.16495345725,
+          54181.647165
+        ],
+        "projection_distance_m": 99.0773121597158
+      }
+    ]
+  }
+}

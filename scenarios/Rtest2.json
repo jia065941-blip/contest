@@ -1,0 +1,3428 @@
+{
+  "metadata": {
+    "id": "E01",
+    "title": "单门扇形",
+    "difficulty": "easy",
+    "description": "用单一入口学习前后部署带来的到达先后。"
+  },
+  "environmentProfile": {
+    "childrenId": [],
+    "childrenName": [],
+    "domain": "232",
+    "dynamicLibraryConfigs": [
+      {
+        "dynamicLibraryPath": "./Packages/Interceptor/libInterceptorS.so",
+        "entityType": 24000,
+        "entityTypeId": [
+          24000001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/DefendCommander/libDefendCommanderS.so",
+        "entityType": 35000,
+        "entityTypeId": [
+          35000001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/CruiseMissile/libCruiseMissileHS.so",
+        "entityType": 21000,
+        "entityTypeId": [
+          21000001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/TleSatellite/libTleSatelliteS.so",
+        "entityType": 9202,
+        "entityTypeId": [
+          9202001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/CruiseMissile2/libCruiseMissileMS.so",
+        "entityType": 21001,
+        "entityTypeId": [
+          21001001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/GeneralShip/libGeneralShipS.so",
+        "entityType": 9400,
+        "entityTypeId": [
+          9400001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/UnmannedShip/libUnmannedShipS.so",
+        "entityType": 9500,
+        "entityTypeId": [
+          9500001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/InterceptField/libInterceptFieldS.so",
+        "entityType": 9600,
+        "entityTypeId": [
+          9600001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/CruiseMissileL/libCruiseMissileLS.so",
+        "entityType": 21002,
+        "entityTypeId": [
+          21002001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/NormalRadar/libNormalRadarS.so",
+        "entityType": 44000,
+        "entityTypeId": [
+          44000001
+        ]
+      }
+    ],
+    "engineId": 1,
+    "engineName": "platform",
+    "mqttIp": "127.0.0.1",
+    "parentId": -1,
+    "parentName": "",
+    "patchDynamicLibrary": "./PatchShared.dll",
+    "projectName": "E01_tier_balance_20261014",
+    "publishData": [],
+    "role": 0,
+    "subDomain": "50",
+    "subscribeData": [],
+    "withPython": 0
+  },
+  "imagineProfile": {
+    "entityList": [
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 9400,
+          "id": 52,
+          "isVisible": true,
+          "nameChn": "母巢_52",
+          "nameEn": "Target_52",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 24.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9400001,
+          "detectInfo": {},
+          "pos": {
+            "x": 37944.125376,
+            "y": 10069.392329,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 9400,
+          "id": 53,
+          "isVisible": true,
+          "nameChn": "母巢_53",
+          "nameEn": "Target_53",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 24.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9400001,
+          "detectInfo": {},
+          "pos": {
+            "x": 35075.954496,
+            "y": -7330.95225,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [
+            55,
+            2802,
+            2819,
+            2836,
+            2853
+          ],
+          "entityType": 9600,
+          "id": 54,
+          "isVisible": true,
+          "nameChn": "哨卫巢_54",
+          "nameEn": "DefenseSite_54",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 12.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9600001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18215.163461,
+            "y": 35166.91896,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 44000,
+          "id": 55,
+          "isVisible": false,
+          "nameChn": "视野塔_55",
+          "nameEn": "Radar_55",
+          "parentId": 54,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 44000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18215.163461,
+            "y": 35166.91896,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"scanSpeed\":5}}"
+      },
+      {
+        "entity": {
+          "childrenId": [
+            107,
+            2799,
+            2816,
+            2833,
+            2850
+          ],
+          "entityType": 9600,
+          "id": 106,
+          "isVisible": true,
+          "nameChn": "哨卫巢_106",
+          "nameEn": "DefenseSite_106",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 12.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9600001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18350.920337,
+            "y": 28144.415751,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 44000,
+          "id": 107,
+          "isVisible": false,
+          "nameChn": "视野塔_107",
+          "nameEn": "Radar_107",
+          "parentId": 106,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 44000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18350.920337,
+            "y": 28144.415751,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"scanSpeed\":5}}"
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 9202,
+          "id": 158,
+          "isVisible": true,
+          "nameChn": "G_TEL_1_9202001001",
+          "nameEn": "G_TEL_1_9202001001",
+          "parentId": -1,
+          "sideId": 0,
+          "step": 1000,
+          "survivePoints": 1500,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9202001,
+          "pos": {
+            "x": 49277.164469,
+            "y": 12057.491971,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": "{\"lineOne\":\"1 40118U 14049A   24077.57727834  .00001208  00000-0  16301-3 0 09990\",\"lineTwo\":\"2 40118 097.6739 132.1933 0005934 046.6147 313.5559 14.80822930517661\"}"
+      },
+      {
+        "entity": {
+          "childrenId": [
+            2800,
+            2817,
+            2834,
+            2851
+          ],
+          "entityType": 9500,
+          "id": 168,
+          "isVisible": true,
+          "nameChn": "暗巢_168",
+          "nameEn": "UnmannedShip_168",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9500001,
+          "detectInfo": {},
+          "pos": {
+            "x": 29255.128769,
+            "y": 29574.88725,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 35000,
+          "id": 270,
+          "isVisible": true,
+          "nameChn": "虫族控制节点_35000001001",
+          "nameEn": "DefendCommander_35000001001",
+          "parentId": -1,
+          "sideId": 0,
+          "step": 1000,
+          "survivePoints": 1500,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 35000001,
+          "pos": {
+            "x": 62399.005746,
+            "y": -91275.282416,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [
+            2554,
+            2797,
+            2814,
+            2831,
+            2848,
+            2865
+          ],
+          "entityType": 9600,
+          "id": 2553,
+          "isVisible": true,
+          "nameChn": "site_added_2553",
+          "nameEn": "site_added_2553",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 12.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9600001,
+          "detectInfo": {},
+          "pos": {
+            "x": 8046.817528,
+            "y": 11282.550006,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 44000,
+          "id": 2554,
+          "isVisible": false,
+          "nameChn": "44000_2553",
+          "nameEn": "44000_2553",
+          "parentId": 2553,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 44000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 8046.817528,
+            "y": 11282.550006,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"scanSpeed\":5}}"
+      },
+      {
+        "entity": {
+          "childrenId": [
+            2556,
+            2792,
+            2809,
+            2826,
+            2843,
+            2860
+          ],
+          "entityType": 9600,
+          "id": 2555,
+          "isVisible": true,
+          "nameChn": "site_added_2555",
+          "nameEn": "site_added_2555",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 12.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9600001,
+          "detectInfo": {},
+          "pos": {
+            "x": 6705.113766,
+            "y": -9663.027852,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 44000,
+          "id": 2556,
+          "isVisible": false,
+          "nameChn": "44000_2555",
+          "nameEn": "44000_2555",
+          "parentId": 2555,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 44000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 6705.113766,
+            "y": -9663.027852,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"scanSpeed\":5}}"
+      },
+      {
+        "entity": {
+          "childrenId": [
+            2558,
+            2788,
+            2805,
+            2822,
+            2839,
+            2856
+          ],
+          "entityType": 9600,
+          "id": 2557,
+          "isVisible": true,
+          "nameChn": "site_added_2557",
+          "nameEn": "site_added_2557",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 12.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9600001,
+          "detectInfo": {},
+          "pos": {
+            "x": 17049.157345,
+            "y": -29981.251728,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 44000,
+          "id": 2558,
+          "isVisible": false,
+          "nameChn": "44000_2557",
+          "nameEn": "44000_2557",
+          "parentId": 2557,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 44000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 17049.157345,
+            "y": -29981.251728,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"scanSpeed\":5}}"
+      },
+      {
+        "entity": {
+          "childrenId": [
+            2796,
+            2813,
+            2830,
+            2847,
+            2864
+          ],
+          "entityType": 9500,
+          "id": 2570,
+          "isVisible": true,
+          "nameChn": "ship_added_2570",
+          "nameEn": "ship_added_2570",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9500001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18911.08519,
+            "y": 9256.663374,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [
+            2791,
+            2808,
+            2825,
+            2842,
+            2859
+          ],
+          "entityType": 9500,
+          "id": 2573,
+          "isVisible": true,
+          "nameChn": "ship_added_2573",
+          "nameEn": "ship_added_2573",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9500001,
+          "detectInfo": {},
+          "pos": {
+            "x": 17241.174348,
+            "y": -10949.09056,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [
+            2786,
+            2803,
+            2820,
+            2837,
+            2854
+          ],
+          "entityType": 9500,
+          "id": 2575,
+          "isVisible": true,
+          "nameChn": "ship_added_2575",
+          "nameEn": "ship_added_2575",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9500001,
+          "detectInfo": {},
+          "pos": {
+            "x": 30599.854434,
+            "y": -32216.256354,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 21002,
+          "id": 2736,
+          "isVisible": true,
+          "nameChn": "low_077",
+          "nameEn": "low_077",
+          "parentId": -1,
+          "sideId": 0,
+          "step": 1000,
+          "survivePoints": 1,
+          "threatLevel": 5,
+          "time": 1783391450000,
+          "typeId": 21002001,
+          "pos": {
+            "x": -57747.283967,
+            "y": -33525.069395,
+            "z": 3000.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2786,
+          "isVisible": false,
+          "nameChn": "自爆虫群_54_2786",
+          "nameEn": "Interceptor_54_001",
+          "parentId": 2575,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 30599.854434,
+            "y": -32216.256354,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2787,
+          "isVisible": false,
+          "nameChn": "自爆虫群_54_2787",
+          "nameEn": "Interceptor_54_002",
+          "parentId": 2889,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 36192.857561,
+            "y": -31420.591526,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2788,
+          "isVisible": false,
+          "nameChn": "自爆虫群_54_2788",
+          "nameEn": "Interceptor_54_003",
+          "parentId": 2557,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 17049.157345,
+            "y": -29981.251728,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2789,
+          "isVisible": false,
+          "nameChn": "自爆虫群_54_2789",
+          "nameEn": "Interceptor_54_004",
+          "parentId": 2893,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 42284.291401,
+            "y": -27621.765126,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2790,
+          "isVisible": false,
+          "nameChn": "自爆虫群_54_2790",
+          "nameEn": "Interceptor_54_005",
+          "parentId": 2886,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 22188.769845,
+            "y": -24151.035761,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2791,
+          "isVisible": false,
+          "nameChn": "自爆虫群_54_2791",
+          "nameEn": "Interceptor_54_006",
+          "parentId": 2573,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 17241.174348,
+            "y": -10949.09056,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2792,
+          "isVisible": false,
+          "nameChn": "自爆虫群_54_2792",
+          "nameEn": "Interceptor_54_007",
+          "parentId": 2555,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 6705.113766,
+            "y": -9663.027852,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2793,
+          "isVisible": false,
+          "nameChn": "自爆虫群_106_2793",
+          "nameEn": "Interceptor_54_008",
+          "parentId": 2887,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 40339.177276,
+            "y": -5705.861925,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2794,
+          "isVisible": false,
+          "nameChn": "自爆虫群_106_2794",
+          "nameEn": "Interceptor_54_009",
+          "parentId": 2885,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 5433.073899,
+            "y": -3024.165211,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2795,
+          "isVisible": false,
+          "nameChn": "自爆虫群_106_2795",
+          "nameEn": "Interceptor_54_010",
+          "parentId": 2892,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 46339.156484,
+            "y": -1705.870572,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2796,
+          "isVisible": false,
+          "nameChn": "自爆虫群_106_2796",
+          "nameEn": "Interceptor_106_001",
+          "parentId": 2570,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18911.08519,
+            "y": 9256.663374,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2797,
+          "isVisible": false,
+          "nameChn": "自爆虫群_106_2797",
+          "nameEn": "Interceptor_106_002",
+          "parentId": 2553,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 8046.817528,
+            "y": 11282.550006,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2798,
+          "isVisible": false,
+          "nameChn": "自爆虫群_106_2798",
+          "nameEn": "Interceptor_106_003",
+          "parentId": 2883,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 6685.441882,
+            "y": 15189.17046,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2799,
+          "isVisible": false,
+          "nameChn": "自爆虫群_106_2799",
+          "nameEn": "Interceptor_106_004",
+          "parentId": 106,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18350.920337,
+            "y": 28144.415751,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2800,
+          "isVisible": false,
+          "nameChn": "自爆虫群_168_2800",
+          "nameEn": "Interceptor_106_005",
+          "parentId": 168,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 29255.128769,
+            "y": 29574.88725,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2801,
+          "isVisible": false,
+          "nameChn": "自爆虫群_168_2801",
+          "nameEn": "Interceptor_106_006",
+          "parentId": 2884,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 23945.997016,
+            "y": 32582.311503,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2802,
+          "isVisible": false,
+          "nameChn": "自爆虫群_168_2802",
+          "nameEn": "Interceptor_106_007",
+          "parentId": 54,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18215.163461,
+            "y": 35166.91896,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2803,
+          "isVisible": false,
+          "nameChn": "自爆虫群_168_2803",
+          "nameEn": "Interceptor_106_008",
+          "parentId": 2575,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 30599.854434,
+            "y": -32216.256354,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2804,
+          "isVisible": false,
+          "nameChn": "自爆虫群_168_2804",
+          "nameEn": "Interceptor_106_009",
+          "parentId": 2889,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 36192.857561,
+            "y": -31420.591526,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2805,
+          "isVisible": false,
+          "nameChn": "自爆虫群_168_2805",
+          "nameEn": "Interceptor_106_010",
+          "parentId": 2557,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 17049.157345,
+            "y": -29981.251728,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2806,
+          "isVisible": false,
+          "nameChn": "自爆虫群_168_2806",
+          "nameEn": "Interceptor_2553_001",
+          "parentId": 2893,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 42284.291401,
+            "y": -27621.765126,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2807,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2553_2807",
+          "nameEn": "Interceptor_2553_002",
+          "parentId": 2886,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 22188.769845,
+            "y": -24151.035761,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2808,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2553_2808",
+          "nameEn": "Interceptor_2553_003",
+          "parentId": 2573,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 17241.174348,
+            "y": -10949.09056,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2809,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2553_2809",
+          "nameEn": "Interceptor_2553_004",
+          "parentId": 2555,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 6705.113766,
+            "y": -9663.027852,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2810,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2553_2810",
+          "nameEn": "Interceptor_2553_005",
+          "parentId": 2887,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 40339.177276,
+            "y": -5705.861925,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2811,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2553_2811",
+          "nameEn": "Interceptor_2553_006",
+          "parentId": 2885,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 5433.073899,
+            "y": -3024.165211,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2812,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2553_2812",
+          "nameEn": "Interceptor_2553_007",
+          "parentId": 2892,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 46339.156484,
+            "y": -1705.870572,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2813,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2553_2813",
+          "nameEn": "Interceptor_2553_008",
+          "parentId": 2570,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18911.08519,
+            "y": 9256.663374,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2814,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2553_2814",
+          "nameEn": "Interceptor_2553_009",
+          "parentId": 2553,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 8046.817528,
+            "y": 11282.550006,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2815,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2553_2815",
+          "nameEn": "Interceptor_2553_010",
+          "parentId": 2883,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 6685.441882,
+            "y": 15189.17046,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2816,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2553_2816",
+          "nameEn": "Interceptor_2555_001",
+          "parentId": 106,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18350.920337,
+            "y": 28144.415751,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2817,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2570_2817",
+          "nameEn": "Interceptor_2555_002",
+          "parentId": 168,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 29255.128769,
+            "y": 29574.88725,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2818,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2570_2818",
+          "nameEn": "Interceptor_2555_003",
+          "parentId": 2884,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 23945.997016,
+            "y": 32582.311503,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2819,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2570_2819",
+          "nameEn": "Interceptor_2555_004",
+          "parentId": 54,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18215.163461,
+            "y": 35166.91896,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2820,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2570_2820",
+          "nameEn": "Interceptor_2555_005",
+          "parentId": 2575,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 30599.854434,
+            "y": -32216.256354,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2821,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2570_2821",
+          "nameEn": "Interceptor_2555_006",
+          "parentId": 2889,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 36192.857561,
+            "y": -31420.591526,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2822,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2570_2822",
+          "nameEn": "Interceptor_2555_007",
+          "parentId": 2557,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 17049.157345,
+            "y": -29981.251728,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2823,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2570_2823",
+          "nameEn": "Interceptor_2555_008",
+          "parentId": 2893,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 42284.291401,
+            "y": -27621.765126,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2824,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2570_2824",
+          "nameEn": "Interceptor_2555_009",
+          "parentId": 2886,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 22188.769845,
+            "y": -24151.035761,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2825,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2570_2825",
+          "nameEn": "Interceptor_2555_010",
+          "parentId": 2573,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 17241.174348,
+            "y": -10949.09056,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2826,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2570_2826",
+          "nameEn": "Interceptor_2557_001",
+          "parentId": 2555,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 6705.113766,
+            "y": -9663.027852,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2827,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2570_2827",
+          "nameEn": "Interceptor_2557_002",
+          "parentId": 2887,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 40339.177276,
+            "y": -5705.861925,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2828,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2555_2828",
+          "nameEn": "Interceptor_2557_003",
+          "parentId": 2885,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 5433.073899,
+            "y": -3024.165211,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2829,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2555_2829",
+          "nameEn": "Interceptor_2557_004",
+          "parentId": 2892,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 46339.156484,
+            "y": -1705.870572,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2830,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2555_2830",
+          "nameEn": "Interceptor_2557_005",
+          "parentId": 2570,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18911.08519,
+            "y": 9256.663374,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2831,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2555_2831",
+          "nameEn": "Interceptor_2557_006",
+          "parentId": 2553,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 8046.817528,
+            "y": 11282.550006,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2832,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2555_2832",
+          "nameEn": "Interceptor_2557_007",
+          "parentId": 2883,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 6685.441882,
+            "y": 15189.17046,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2833,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2555_2833",
+          "nameEn": "Interceptor_2557_008",
+          "parentId": 106,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18350.920337,
+            "y": 28144.415751,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2834,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2555_2834",
+          "nameEn": "Interceptor_2557_009",
+          "parentId": 168,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 29255.128769,
+            "y": 29574.88725,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2835,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2555_2835",
+          "nameEn": "Interceptor_2557_010",
+          "parentId": 2884,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 23945.997016,
+            "y": 32582.311503,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2836,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2555_2836",
+          "nameEn": "Interceptor_2559_001",
+          "parentId": 54,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18215.163461,
+            "y": 35166.91896,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2837,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2555_2837",
+          "nameEn": "Interceptor_2559_002",
+          "parentId": 2575,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 30599.854434,
+            "y": -32216.256354,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2838,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2573_2838",
+          "nameEn": "Interceptor_2559_003",
+          "parentId": 2889,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 36192.857561,
+            "y": -31420.591526,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2839,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2573_2839",
+          "nameEn": "Interceptor_2559_004",
+          "parentId": 2557,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 17049.157345,
+            "y": -29981.251728,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2840,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2573_2840",
+          "nameEn": "Interceptor_2559_005",
+          "parentId": 2893,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 42284.291401,
+            "y": -27621.765126,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2841,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2573_2841",
+          "nameEn": "Interceptor_2559_006",
+          "parentId": 2886,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 22188.769845,
+            "y": -24151.035761,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2842,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2573_2842",
+          "nameEn": "Interceptor_2559_007",
+          "parentId": 2573,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 17241.174348,
+            "y": -10949.09056,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2843,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2573_2843",
+          "nameEn": "Interceptor_2559_008",
+          "parentId": 2555,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 6705.113766,
+            "y": -9663.027852,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2844,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2573_2844",
+          "nameEn": "Interceptor_2559_009",
+          "parentId": 2887,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 40339.177276,
+            "y": -5705.861925,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2845,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2573_2845",
+          "nameEn": "Interceptor_2559_010",
+          "parentId": 2885,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 5433.073899,
+            "y": -3024.165211,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2846,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2573_2846",
+          "nameEn": "Interceptor_2561_001",
+          "parentId": 2892,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 46339.156484,
+            "y": -1705.870572,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2847,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2573_2847",
+          "nameEn": "Interceptor_2561_002",
+          "parentId": 2570,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18911.08519,
+            "y": 9256.663374,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2848,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2573_2848",
+          "nameEn": "Interceptor_2561_003",
+          "parentId": 2553,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 8046.817528,
+            "y": 11282.550006,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2849,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2557_2849",
+          "nameEn": "Interceptor_2561_004",
+          "parentId": 2883,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 6685.441882,
+            "y": 15189.17046,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2850,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2557_2850",
+          "nameEn": "Interceptor_2561_005",
+          "parentId": 106,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18350.920337,
+            "y": 28144.415751,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2851,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2557_2851",
+          "nameEn": "Interceptor_2561_006",
+          "parentId": 168,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 29255.128769,
+            "y": 29574.88725,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2852,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2557_2852",
+          "nameEn": "Interceptor_2561_007",
+          "parentId": 2884,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 23945.997016,
+            "y": 32582.311503,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2853,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2557_2853",
+          "nameEn": "Interceptor_2561_008",
+          "parentId": 54,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18215.163461,
+            "y": 35166.91896,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2854,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2557_2854",
+          "nameEn": "Interceptor_2561_009",
+          "parentId": 2575,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 30599.854434,
+            "y": -32216.256354,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2855,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2557_2855",
+          "nameEn": "Interceptor_2561_010",
+          "parentId": 2889,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 36192.857561,
+            "y": -31420.591526,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2856,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2557_2856",
+          "nameEn": "Interceptor_2563_001",
+          "parentId": 2557,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 17049.157345,
+            "y": -29981.251728,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2858,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2557_2858",
+          "nameEn": "Interceptor_2563_003",
+          "parentId": 2886,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 22188.769845,
+            "y": -24151.035761,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2859,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2575_2859",
+          "nameEn": "Interceptor_2563_004",
+          "parentId": 2573,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 17241.174348,
+            "y": -10949.09056,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2860,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2575_2860",
+          "nameEn": "Interceptor_2563_005",
+          "parentId": 2555,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 6705.113766,
+            "y": -9663.027852,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2861,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2575_2861",
+          "nameEn": "Interceptor_2563_006",
+          "parentId": 2887,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 40339.177276,
+            "y": -5705.861925,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2862,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2575_2862",
+          "nameEn": "Interceptor_2563_007",
+          "parentId": 2885,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 5433.073899,
+            "y": -3024.165211,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2864,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2575_2864",
+          "nameEn": "Interceptor_2563_009",
+          "parentId": 2570,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 18911.08519,
+            "y": 9256.663374,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2865,
+          "isVisible": false,
+          "nameChn": "自爆虫群_2575_2865",
+          "nameEn": "Interceptor_2563_010",
+          "parentId": 2553,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 8046.817528,
+            "y": 11282.550006,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 9400,
+          "id": 2552,
+          "isVisible": true,
+          "nameChn": "target_added_2552",
+          "nameEn": "target_added_2552",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 24.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9400001,
+          "detectInfo": {},
+          "pos": {
+            "x": 48805.371134,
+            "y": -31403.527399,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [
+            2798,
+            2815,
+            2832,
+            2849
+          ],
+          "entityType": 9500,
+          "id": 2883,
+          "isVisible": true,
+          "nameChn": "暗巢_2883",
+          "nameEn": "UnmannedShip_2883",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9500001,
+          "detectInfo": {},
+          "pos": {
+            "x": 6685.441882,
+            "y": 15189.17046,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [
+            2801,
+            2818,
+            2835,
+            2852
+          ],
+          "entityType": 9500,
+          "id": 2884,
+          "isVisible": true,
+          "nameChn": "暗巢_2884",
+          "nameEn": "UnmannedShip_2884",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9500001,
+          "detectInfo": {},
+          "pos": {
+            "x": 23945.997016,
+            "y": 32582.311503,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [
+            2794,
+            2811,
+            2828,
+            2845,
+            2862
+          ],
+          "entityType": 9500,
+          "id": 2885,
+          "isVisible": true,
+          "nameChn": "暗巢_2885",
+          "nameEn": "UnmannedShip_2885",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9500001,
+          "detectInfo": {},
+          "pos": {
+            "x": 5433.073899,
+            "y": -3024.165211,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [
+            2790,
+            2807,
+            2824,
+            2841,
+            2858
+          ],
+          "entityType": 9500,
+          "id": 2886,
+          "isVisible": true,
+          "nameChn": "暗巢_2886",
+          "nameEn": "UnmannedShip_2886",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9500001,
+          "detectInfo": {},
+          "pos": {
+            "x": 22188.769845,
+            "y": -24151.035761,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [
+            2888,
+            2793,
+            2810,
+            2827,
+            2844,
+            2861
+          ],
+          "entityType": 9600,
+          "id": 2887,
+          "isVisible": true,
+          "nameChn": "哨卫巢_2887",
+          "nameEn": "Site_2887",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 12.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9600001,
+          "detectInfo": {},
+          "pos": {
+            "x": 40339.177276,
+            "y": -5705.861925,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 44000,
+          "id": 2888,
+          "isVisible": false,
+          "nameChn": "哨卫探测_2888",
+          "nameEn": "Radar_2888",
+          "parentId": 2887,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 44000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 40339.177276,
+            "y": -5705.861925,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"scanSpeed\":5}}"
+      },
+      {
+        "entity": {
+          "childrenId": [
+            2890,
+            2787,
+            2804,
+            2821,
+            2838,
+            2855
+          ],
+          "entityType": 9600,
+          "id": 2889,
+          "isVisible": true,
+          "nameChn": "哨卫巢_2889",
+          "nameEn": "Site_2889",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 12.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9600001,
+          "detectInfo": {},
+          "pos": {
+            "x": 36192.857561,
+            "y": -31420.591526,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 44000,
+          "id": 2890,
+          "isVisible": false,
+          "nameChn": "哨卫探测_2890",
+          "nameEn": "Radar_2890",
+          "parentId": 2889,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 44000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 36192.857561,
+            "y": -31420.591526,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"scanSpeed\":5}}"
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 9400,
+          "id": 2891,
+          "isVisible": true,
+          "nameChn": "母巢_2891",
+          "nameEn": "Target_2891",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 24.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9400001,
+          "detectInfo": {},
+          "pos": {
+            "x": 26874.283296,
+            "y": 37813.074866,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [
+            2795,
+            2812,
+            2829,
+            2846
+          ],
+          "entityType": 9500,
+          "id": 2892,
+          "isVisible": true,
+          "nameChn": "暗巢_2892",
+          "nameEn": "UnmannedShip_2892",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9500001,
+          "detectInfo": {},
+          "pos": {
+            "x": 46339.156484,
+            "y": -1705.870572,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [
+            2789,
+            2806,
+            2823,
+            2840
+          ],
+          "entityType": 9500,
+          "id": 2893,
+          "isVisible": true,
+          "nameChn": "暗巢_2893",
+          "nameEn": "UnmannedShip_2893",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9500001,
+          "detectInfo": {},
+          "pos": {
+            "x": 42284.291401,
+            "y": -27621.765126,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 9202,
+          "id": 2894,
+          "isVisible": true,
+          "nameChn": "天眼_2894",
+          "nameEn": "Satellite_2894",
+          "parentId": -1,
+          "sideId": 0,
+          "step": 1000,
+          "survivePoints": 1500,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9202001,
+          "pos": {
+            "x": 49277.164469,
+            "y": 12057.491971,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": "{\"lineOne\":\"1 40118U 14049A   24077.57727834  .00001208  00000-0  16301-3 0 09990\",\"lineTwo\":\"2 40118 097.6739 132.1933 0005934 046.6147 313.5559 14.80822930517661\"}"
+      }
+    ],
+    "eventList": [],
+    "rules": [],
+    "redArea": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            -62747.211386,
+            -40636.447751
+          ],
+          [
+            -62747.211386,
+            40636.447751
+          ],
+          [
+            -22747.79203,
+            40636.447751
+          ],
+          [
+            -22747.79203,
+            -40636.447751
+          ]
+        ]
+      ]
+    },
+    "mapArea": {
+      "xMin": -62747.211386,
+      "xMax": 62747.211386,
+      "yMin": -40636.447751,
+      "yMax": 40636.447751
+    },
+    "logicTime": 0,
+    "simStep": 1000,
+    "simTime": 1783391450000,
+    "taskList": [],
+    "simEndLogicTime": 100000000,
+    "satelliteUseStep": 80,
+    "missilePincerAttackIntervalStep": 20,
+    "missilePincerAttackMinAngle": 30.0
+  }
+}

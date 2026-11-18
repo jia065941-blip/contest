@@ -1,0 +1,10 @@
+{
+  "source": "H03 R7 4.0 B0 seed7, pku 6721d9d with initial-position strategy fixes; native reproduction 2026-11-09",
+  "step": 496,
+  "executor_id": 3019,
+  "target_id": 2969,
+  "target_type": 9600,
+  "target": {"x": 9131.421560150977, "y": 54185.96205288911, "z": 0.0},
+  "map_area": {"xMin": -92291.634196, "xMax": 92291.634196, "yMin": -54181.647165, "yMax": 54181.647165},
+  "own_position": {"x": 5116.713131505482, "y": 51933.50908625731, "z": 607.8679504471831}
+}

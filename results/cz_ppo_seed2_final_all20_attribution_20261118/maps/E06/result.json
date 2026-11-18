@@ -1,0 +1,32 @@
+{
+  "map": "E06",
+  "score": 93.18181818181817,
+  "completed": false,
+  "steps": 1801,
+  "termination": "unknown",
+  "choice": "A10",
+  "satellite_requests": 1,
+  "motion_calls": {
+    "H": 4784,
+    "M": 9684,
+    "L": 79282
+  },
+  "attribution": {
+    "objective_count": 21,
+    "destroyed_count": 18,
+    "missed_count": 3,
+    "missing_weight": 3.0,
+    "missing_weight_by_kind": {
+      "dark": 3.0
+    },
+    "missed_primary_causes": {
+      "discovered_but_not_dispatched": 3
+    },
+    "red_terminal_reasons": {
+      "objective_impact": 30,
+      "terminated_without_objective_hit": 91,
+      "intercepted": 3
+    }
+  },
+  "elapsed_seconds": 1036.9477667519823
+}

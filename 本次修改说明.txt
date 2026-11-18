@@ -1,0 +1,46 @@
+本次修改说明
+日期：2026年10月21日
+分支：pku
+代码修改提交：6de2f41777b5de74a6a50e460bb0e6b23f7f1010
+比较基准提交：74dc796390985bfb52341aabde9a7c47833d866e
+
+一、清理历史地图和配套内容
+
+删除final20、final24、旧九图、旧测试想定及scenarios根目录旧想定，共60份历史想定，并清理对应图片、部署方案和旧清单。删除无引用的历史布局辅助模块scenarios/grid_maps/topology.py。
+正式地图只保留scenarios/cases/launch20下的20张：简单E01—E06、中等M01—M06、困难H01—H08。
+
+二、修正默认入口与地图解析
+
+main.py默认场景改为launch20/easy/E01。
+scenarios/loader.py中的default别名也指向该图，内置地图编号只解析launch20，防止省略集合前缀后误选旧图。
+自定义JSON路径、HTTP(S) URL及--deployment-plan网格部署计划接口保留。
+
+三、同步说明和测试
+
+更新README.md、scenarios/cases/README.md、launch20/README.txt，统一正式地图范围、默认场景和当前配置，移除失效的旧地图及backup说明。
+更新test_project_layout.py和test_scenario_contracts.py，改为验证当前20图，并检查旧编号拒绝、自定义想定和当前部署计划行为。B9等价性测试使用的参考文件保留。
+
+四、整理封装构建流程
+
+build_tools/cython_setup.py要求Windows/Linux x86_64的CPython 3.11，采用串行干净编译。生成目录与完整运行目录分开，使用相对构建路径，解决MSVC链接文件路径过长问题。
+build_tools/finalize_dist.py从当前源码和已核验扩展组装完整独立运行包，检查模块、源码和产物哈希以及必要原生依赖，替换旧目录时清除遗留文件。
+build_tools/run_compiled.py校验完整运行包的文件哈希和编译入口，排除源工程路径；缺少编译模块时直接报错。
+新增build_tools/build_layout.py、requirements-build.txt及test_build_tools.py。构建清单记录平台、Python接口、编译器、构建依赖和文件哈希。
+.dockerignore新增本地build、蓝方验证结果和pytest缓存的排除项。
+
+五、保持不变的运行行为
+
+引擎、红蓝策略、统一蓝方探测信息库和计分算法的运行逻辑保持不变，备注与显示措辞已统一。
+正式20图的单位数量、血量、位置和难度保持不变。场景显示名与布局图已统一，关联元数据和文件校验值已同步。
+
+六、已完成的验证
+
+源码工程：18项场景入口与地图检查、22项蓝方原生回归、6项完整摧毁计分测试全部通过；后者覆盖全部20图的真实Engine伤害与库存连带销毁。
+源码真实短对局：17场R7及1场默认入口均实际运行20步并通过退出码、部署数量和摘要计分核验。没有据此生成完整3000步比赛或策略效果结论。
+Windows独立封装：339个模块编译成功；构建工具8项测试、独立包22项蓝方原生回归、20图实际Profile加载通过。默认E01实际运行20步，R7在E01、M06、H03各运行2步，均成功。清单核验532项运行文件，确认关键模块来自独立目录的.pyd。
+另已验证缺失扩展和修改地图文件会被拒绝，重新封装会清除旧产物。
+
+七、Linux验证范围
+
+当前主机的Ubuntu 22.04缺少Python 3.11，glibc/libstdc++也不满足现有原生模型及Utils动态库要求，未进行Linux编译或原生对局，不声明Linux验收通过。
+Linux目标环境至少需提供GLIBC_2.38、GLIBCXX_3.4.32、CXXABI_1.3.13及Python 3.11共享库，并核验全部动态库依赖。Windows与Linux需要在对应目标平台分别构建和验收。

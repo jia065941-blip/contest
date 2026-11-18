@@ -1,0 +1,12 @@
+agent: ../../user_agents/example/coordination/r7_v4_0_search_recovery.py
+scenario: ../../scenarios/E06.json
+seed: 42
+blue_mode: ../../blue_defense/scheduled/b8_threat_multi_wave.py
+render_mode: none
+output_dir: ../../results/runs/video_strategy_E06_B8
+logging:
+  enabled: false
+  state_interval_steps: 10
+  events: true
+  actions: true
+  example_evaluation: true

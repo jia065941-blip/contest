@@ -108,18 +108,9 @@ venv.bak/
 *.swp
 *.sw
 /Results/
-tests/test_low_missile_ship_damage.py
-tests/test_reward.py
-tests/test_scenario_compatibility.py
-
-# cz: local experiment outputs and caches
-__pycache__/
-.pytest_cache/
-.ruff_cache/
-results/
-refine-logs/
-competition-platform-refine-logs/
-*.log
-*.pyc
-.env
-.venv/
+/results/*
+!/results/cz_ppo_seed2_final_all20_attribution_20261118/
+/preview/
+# Local pre-refactor snapshots; never import or package these copies.
+/backup/
+/.blue_validation/

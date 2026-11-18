@@ -1,0 +1,33 @@
+{
+  "map": "M03",
+  "score": 94.20289855072464,
+  "completed": false,
+  "steps": 1801,
+  "termination": "unknown",
+  "choice": "A07",
+  "satellite_requests": 1,
+  "motion_calls": {
+    "H": 7495,
+    "M": 19516,
+    "L": 127676
+  },
+  "attribution": {
+    "objective_count": 33,
+    "destroyed_count": 29,
+    "missed_count": 4,
+    "missing_weight": 4.0,
+    "missing_weight_by_kind": {
+      "dark": 4.0
+    },
+    "missed_primary_causes": {
+      "discovered_but_not_dispatched": 3,
+      "hit_but_insufficient_damage": 1
+    },
+    "red_terminal_reasons": {
+      "objective_impact": 47,
+      "terminated_without_objective_hit": 138,
+      "intercepted": 4
+    }
+  },
+  "elapsed_seconds": 2437.246978597017
+}

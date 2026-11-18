@@ -1,0 +1,695 @@
+{
+  "status": "complete",
+  "seed": 2,
+  "completed_maps": 20,
+  "missing_maps": [],
+  "failures": {},
+  "mean_score": 91.54934123847167,
+  "full_score_maps": [],
+  "rows": [
+    {
+      "map": "E01",
+      "score": 88.63636363636364,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A08",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 4519,
+        "M": 11078,
+        "L": 90169
+      },
+      "attribution": {
+        "objective_count": 21,
+        "destroyed_count": 20,
+        "missed_count": 1,
+        "missing_weight": 5.0,
+        "missing_weight_by_kind": {
+          "mother": 5.0
+        },
+        "missed_primary_causes": {
+          "hit_but_insufficient_damage": 1
+        },
+        "red_terminal_reasons": {
+          "objective_impact": 34,
+          "intercepted": 3,
+          "terminated_without_objective_hit": 87
+        }
+      },
+      "elapsed_seconds": 942.8518111710437
+    },
+    {
+      "map": "E02",
+      "score": 93.18181818181817,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A05",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 4998,
+        "M": 10295,
+        "L": 90751
+      },
+      "attribution": {
+        "objective_count": 21,
+        "destroyed_count": 18,
+        "missed_count": 3,
+        "missing_weight": 3.0,
+        "missing_weight_by_kind": {
+          "dark": 3.0
+        },
+        "missed_primary_causes": {
+          "dispatched_but_did_not_reach_damage_radius": 2,
+          "discovered_but_not_dispatched": 1
+        },
+        "red_terminal_reasons": {
+          "objective_impact": 31,
+          "terminated_without_objective_hit": 88,
+          "intercepted": 5
+        }
+      },
+      "elapsed_seconds": 1115.9705746669788
+    },
+    {
+      "map": "E03",
+      "score": 97.72727272727273,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A08",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 5682,
+        "M": 12306,
+        "L": 76931
+      },
+      "attribution": {
+        "objective_count": 21,
+        "destroyed_count": 20,
+        "missed_count": 1,
+        "missing_weight": 1.0,
+        "missing_weight_by_kind": {
+          "dark": 1.0
+        },
+        "missed_primary_causes": {
+          "undiscovered_or_uncovered": 1
+        },
+        "red_terminal_reasons": {
+          "objective_impact": 33,
+          "terminated_without_objective_hit": 88,
+          "intercepted": 3
+        }
+      },
+      "elapsed_seconds": 718.9123767951969
+    },
+    {
+      "map": "E04",
+      "score": 97.72727272727273,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A08",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 4539,
+        "M": 10707,
+        "L": 89188
+      },
+      "attribution": {
+        "objective_count": 21,
+        "destroyed_count": 20,
+        "missed_count": 1,
+        "missing_weight": 1.0,
+        "missing_weight_by_kind": {
+          "dark": 1.0
+        },
+        "missed_primary_causes": {
+          "discovered_but_not_dispatched": 1
+        },
+        "red_terminal_reasons": {
+          "objective_impact": 33,
+          "terminated_without_objective_hit": 87,
+          "intercepted": 4
+        }
+      },
+      "elapsed_seconds": 1116.0261666700244
+    },
+    {
+      "map": "E05",
+      "score": 90.9090909090909,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A02",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 4398,
+        "M": 11250,
+        "L": 87466
+      },
+      "attribution": {
+        "objective_count": 21,
+        "destroyed_count": 17,
+        "missed_count": 4,
+        "missing_weight": 4.0,
+        "missing_weight_by_kind": {
+          "dark": 4.0
+        },
+        "missed_primary_causes": {
+          "hit_but_insufficient_damage": 1,
+          "discovered_but_not_dispatched": 1,
+          "undiscovered_or_uncovered": 2
+        },
+        "red_terminal_reasons": {
+          "objective_impact": 28,
+          "terminated_without_objective_hit": 91,
+          "intercepted": 5
+        }
+      },
+      "elapsed_seconds": 1035.1634574169293
+    },
+    {
+      "map": "E06",
+      "score": 93.18181818181817,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A10",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 4784,
+        "M": 9684,
+        "L": 79282
+      },
+      "attribution": {
+        "objective_count": 21,
+        "destroyed_count": 18,
+        "missed_count": 3,
+        "missing_weight": 3.0,
+        "missing_weight_by_kind": {
+          "dark": 3.0
+        },
+        "missed_primary_causes": {
+          "discovered_but_not_dispatched": 3
+        },
+        "red_terminal_reasons": {
+          "objective_impact": 30,
+          "terminated_without_objective_hit": 91,
+          "intercepted": 3
+        }
+      },
+      "elapsed_seconds": 1036.9477667519823
+    },
+    {
+      "map": "M01",
+      "score": 92.7536231884058,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A06",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 9721,
+        "M": 16679,
+        "L": 119592
+      },
+      "attribution": {
+        "objective_count": 33,
+        "destroyed_count": 29,
+        "missed_count": 4,
+        "missing_weight": 5.0,
+        "missing_weight_by_kind": {
+          "sentinel": 2.0,
+          "dark": 3.0
+        },
+        "missed_primary_causes": {
+          "arrived_but_no_effective_hit": 1,
+          "hit_but_insufficient_damage": 3
+        },
+        "red_terminal_reasons": {
+          "objective_impact": 53,
+          "terminated_without_objective_hit": 129,
+          "intercepted": 7
+        }
+      },
+      "elapsed_seconds": 1980.29243474314
+    },
+    {
+      "map": "M02",
+      "score": 94.20289855072464,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A05",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 10504,
+        "M": 19755,
+        "L": 130790
+      },
+      "attribution": {
+        "objective_count": 33,
+        "destroyed_count": 29,
+        "missed_count": 4,
+        "missing_weight": 4.0,
+        "missing_weight_by_kind": {
+          "dark": 4.0
+        },
+        "missed_primary_causes": {
+          "discovered_but_not_dispatched": 3,
+          "undiscovered_or_uncovered": 1
+        },
+        "red_terminal_reasons": {
+          "terminated_without_objective_hit": 134,
+          "objective_impact": 49,
+          "intercepted": 6
+        }
+      },
+      "elapsed_seconds": 2123.120984132169
+    },
+    {
+      "map": "M03",
+      "score": 94.20289855072464,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A07",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 7495,
+        "M": 19516,
+        "L": 127676
+      },
+      "attribution": {
+        "objective_count": 33,
+        "destroyed_count": 29,
+        "missed_count": 4,
+        "missing_weight": 4.0,
+        "missing_weight_by_kind": {
+          "dark": 4.0
+        },
+        "missed_primary_causes": {
+          "discovered_but_not_dispatched": 3,
+          "hit_but_insufficient_damage": 1
+        },
+        "red_terminal_reasons": {
+          "objective_impact": 47,
+          "terminated_without_objective_hit": 138,
+          "intercepted": 4
+        }
+      },
+      "elapsed_seconds": 2437.246978597017
+    },
+    {
+      "map": "M04",
+      "score": 91.30434782608695,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A06",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 11517,
+        "M": 19459,
+        "L": 129756
+      },
+      "attribution": {
+        "objective_count": 33,
+        "destroyed_count": 31,
+        "missed_count": 2,
+        "missing_weight": 6.0,
+        "missing_weight_by_kind": {
+          "dark": 1.0,
+          "mother": 5.0
+        },
+        "missed_primary_causes": {
+          "discovered_but_not_dispatched": 1,
+          "dispatched_but_did_not_reach_damage_radius": 1
+        },
+        "red_terminal_reasons": {
+          "terminated_without_objective_hit": 129,
+          "objective_impact": 56,
+          "intercepted": 4
+        }
+      },
+      "elapsed_seconds": 1929.798909167992
+    },
+    {
+      "map": "M05",
+      "score": 85.5072463768116,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A09",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 9354,
+        "M": 21607,
+        "L": 122552
+      },
+      "attribution": {
+        "objective_count": 33,
+        "destroyed_count": 24,
+        "missed_count": 9,
+        "missing_weight": 10.0,
+        "missing_weight_by_kind": {
+          "dark": 8.0,
+          "sentinel": 2.0
+        },
+        "missed_primary_causes": {
+          "hit_but_insufficient_damage": 4,
+          "arrived_but_no_effective_hit": 1,
+          "dispatched_but_did_not_reach_damage_radius": 2,
+          "discovered_but_not_dispatched": 2
+        },
+        "red_terminal_reasons": {
+          "objective_impact": 41,
+          "terminated_without_objective_hit": 144,
+          "intercepted": 4
+        }
+      },
+      "elapsed_seconds": 1914.8057082488667
+    },
+    {
+      "map": "M06",
+      "score": 95.65217391304348,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A08",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 9560,
+        "M": 19608,
+        "L": 122750
+      },
+      "attribution": {
+        "objective_count": 33,
+        "destroyed_count": 31,
+        "missed_count": 2,
+        "missing_weight": 3.0,
+        "missing_weight_by_kind": {
+          "sentinel": 2.0,
+          "dark": 1.0
+        },
+        "missed_primary_causes": {
+          "dispatched_but_did_not_reach_damage_radius": 1,
+          "discovered_but_not_dispatched": 1
+        },
+        "red_terminal_reasons": {
+          "objective_impact": 51,
+          "terminated_without_objective_hit": 133,
+          "intercepted": 5
+        }
+      },
+      "elapsed_seconds": 1794.2065208910499
+    },
+    {
+      "map": "H01",
+      "score": 92.0,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A10",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 18685,
+        "M": 37662,
+        "L": 234996
+      },
+      "attribution": {
+        "objective_count": 48,
+        "destroyed_count": 45,
+        "missed_count": 3,
+        "missing_weight": 8.0,
+        "missing_weight_by_kind": {
+          "mother": 5.0,
+          "sentinel": 2.0,
+          "dark": 1.0
+        },
+        "missed_primary_causes": {
+          "dispatched_but_did_not_reach_damage_radius": 1,
+          "hit_but_insufficient_damage": 1,
+          "discovered_but_not_dispatched": 1
+        },
+        "red_terminal_reasons": {
+          "terminated_without_objective_hit": 226,
+          "objective_impact": 79,
+          "intercepted": 15
+        }
+      },
+      "elapsed_seconds": 7433.660084567964
+    },
+    {
+      "map": "H02",
+      "score": 94.0,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A11",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 18987,
+        "M": 40170,
+        "L": 241877
+      },
+      "attribution": {
+        "objective_count": 48,
+        "destroyed_count": 46,
+        "missed_count": 2,
+        "missing_weight": 6.0,
+        "missing_weight_by_kind": {
+          "mother": 5.0,
+          "dark": 1.0
+        },
+        "missed_primary_causes": {
+          "dispatched_but_did_not_reach_damage_radius": 1,
+          "undiscovered_or_uncovered": 1
+        },
+        "red_terminal_reasons": {
+          "objective_impact": 74,
+          "terminated_without_objective_hit": 233,
+          "intercepted": 13
+        }
+      },
+      "elapsed_seconds": 6669.169758033007
+    },
+    {
+      "map": "H03",
+      "score": 91.0,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A00",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 20013,
+        "M": 40389,
+        "L": 235956
+      },
+      "attribution": {
+        "objective_count": 48,
+        "destroyed_count": 44,
+        "missed_count": 4,
+        "missing_weight": 9.0,
+        "missing_weight_by_kind": {
+          "mother": 5.0,
+          "sentinel": 2.0,
+          "dark": 2.0
+        },
+        "missed_primary_causes": {
+          "dispatched_but_did_not_reach_damage_radius": 3,
+          "undiscovered_or_uncovered": 1
+        },
+        "red_terminal_reasons": {
+          "objective_impact": 72,
+          "terminated_without_objective_hit": 223,
+          "intercepted": 25
+        }
+      },
+      "elapsed_seconds": 5688.313965323148
+    },
+    {
+      "map": "H04",
+      "score": 89.0,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A01",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 19610,
+        "M": 40154,
+        "L": 235207
+      },
+      "attribution": {
+        "objective_count": 48,
+        "destroyed_count": 42,
+        "missed_count": 6,
+        "missing_weight": 11.0,
+        "missing_weight_by_kind": {
+          "sentinel": 2.0,
+          "mother": 5.0,
+          "dark": 4.0
+        },
+        "missed_primary_causes": {
+          "dispatched_but_did_not_reach_damage_radius": 2,
+          "discovered_but_not_dispatched": 1,
+          "hit_but_insufficient_damage": 3
+        },
+        "red_terminal_reasons": {
+          "objective_impact": 77,
+          "terminated_without_objective_hit": 229,
+          "intercepted": 14
+        }
+      },
+      "elapsed_seconds": 6451.57390617393
+    },
+    {
+      "map": "H05",
+      "score": 87.0,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A04",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 18457,
+        "M": 39451,
+        "L": 251506
+      },
+      "attribution": {
+        "objective_count": 48,
+        "destroyed_count": 39,
+        "missed_count": 9,
+        "missing_weight": 13.0,
+        "missing_weight_by_kind": {
+          "mother": 5.0,
+          "dark": 8.0
+        },
+        "missed_primary_causes": {
+          "arrived_but_no_effective_hit": 1,
+          "hit_but_insufficient_damage": 5,
+          "discovered_but_not_dispatched": 1,
+          "undiscovered_or_uncovered": 2
+        },
+        "red_terminal_reasons": {
+          "objective_impact": 68,
+          "terminated_without_objective_hit": 243,
+          "intercepted": 9
+        }
+      },
+      "elapsed_seconds": 6345.209786397871
+    },
+    {
+      "map": "H06",
+      "score": 92.0,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A10",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 19512,
+        "M": 39266,
+        "L": 244603
+      },
+      "attribution": {
+        "objective_count": 48,
+        "destroyed_count": 44,
+        "missed_count": 4,
+        "missing_weight": 8.0,
+        "missing_weight_by_kind": {
+          "mother": 5.0,
+          "dark": 3.0
+        },
+        "missed_primary_causes": {
+          "arrived_but_no_effective_hit": 1,
+          "hit_but_insufficient_damage": 2,
+          "discovered_but_not_dispatched": 1
+        },
+        "red_terminal_reasons": {
+          "terminated_without_objective_hit": 234,
+          "objective_impact": 76,
+          "intercepted": 10
+        }
+      },
+      "elapsed_seconds": 6873.264520814875
+    },
+    {
+      "map": "H07",
+      "score": 83.0,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A07",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 21931,
+        "M": 43723,
+        "L": 239990
+      },
+      "attribution": {
+        "objective_count": 48,
+        "destroyed_count": 40,
+        "missed_count": 8,
+        "missing_weight": 17.0,
+        "missing_weight_by_kind": {
+          "sentinel": 2.0,
+          "dark": 5.0,
+          "mother": 10.0
+        },
+        "missed_primary_causes": {
+          "dispatched_but_did_not_reach_damage_radius": 4,
+          "hit_but_insufficient_damage": 2,
+          "arrived_but_no_effective_hit": 1,
+          "undiscovered_or_uncovered": 1
+        },
+        "red_terminal_reasons": {
+          "objective_impact": 64,
+          "terminated_without_objective_hit": 230,
+          "intercepted": 26
+        }
+      },
+      "elapsed_seconds": 5929.699057199061
+    },
+    {
+      "map": "H08",
+      "score": 88.0,
+      "completed": false,
+      "steps": 1801,
+      "termination": "unknown",
+      "choice": "A10",
+      "satellite_requests": 1,
+      "motion_calls": {
+        "H": 18744,
+        "M": 38126,
+        "L": 237083
+      },
+      "attribution": {
+        "objective_count": 48,
+        "destroyed_count": 44,
+        "missed_count": 4,
+        "missing_weight": 12.0,
+        "missing_weight_by_kind": {
+          "mother": 10.0,
+          "dark": 2.0
+        },
+        "missed_primary_causes": {
+          "hit_but_insufficient_damage": 1,
+          "undiscovered_or_uncovered": 2,
+          "arrived_but_no_effective_hit": 1
+        },
+        "red_terminal_reasons": {
+          "terminated_without_objective_hit": 231,
+          "objective_impact": 72,
+          "intercepted": 17
+        }
+      },
+      "elapsed_seconds": 5836.667948737042
+    }
+  ],
+  "elapsed_seconds": 7433.72770985798
+}

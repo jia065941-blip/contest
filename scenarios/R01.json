@@ -1,0 +1,341 @@
+{
+  "metadata": {
+    "id": "R01",
+    "title": "单门扇形",
+    "difficulty": "easy",
+    "description": "用单一入口学习前后部署带来的到达先后。"
+  },
+  "environmentProfile": {
+    "childrenId": [],
+    "childrenName": [],
+    "domain": "232",
+    "dynamicLibraryConfigs": [
+      {
+        "dynamicLibraryPath": "./Packages/Interceptor/libInterceptorS.so",
+        "entityType": 24000,
+        "entityTypeId": [
+          24000001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/DefendCommander/libDefendCommanderS.so",
+        "entityType": 35000,
+        "entityTypeId": [
+          35000001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/CruiseMissile/libCruiseMissileHS.so",
+        "entityType": 21000,
+        "entityTypeId": [
+          21000001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/TleSatellite/libTleSatelliteS.so",
+        "entityType": 9202,
+        "entityTypeId": [
+          9202001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/CruiseMissile2/libCruiseMissileMS.so",
+        "entityType": 21001,
+        "entityTypeId": [
+          21001001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/GeneralShip/libGeneralShipS.so",
+        "entityType": 9400,
+        "entityTypeId": [
+          9400001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/UnmannedShip/libUnmannedShipS.so",
+        "entityType": 9500,
+        "entityTypeId": [
+          9500001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/InterceptField/libInterceptFieldS.so",
+        "entityType": 9600,
+        "entityTypeId": [
+          9600001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/CruiseMissileL/libCruiseMissileLS.so",
+        "entityType": 21002,
+        "entityTypeId": [
+          21002001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/NormalRadar/libNormalRadarS.so",
+        "entityType": 44000,
+        "entityTypeId": [
+          44000001
+        ]
+      }
+    ],
+    "engineId": 1,
+    "engineName": "platform",
+    "mqttIp": "127.0.0.1",
+    "parentId": -1,
+    "parentName": "",
+    "patchDynamicLibrary": "./PatchShared.dll",
+    "projectName": "E01_tier_balance_20261014",
+    "publishData": [],
+    "role": 0,
+    "subDomain": "50",
+    "subscribeData": [],
+    "withPython": 0
+  },
+  "imagineProfile": {
+    "entityList": [
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 9400,
+          "id": 52,
+          "isVisible": true,
+          "nameChn": "母巢_52",
+          "nameEn": "Target_52",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 24.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9400001,
+          "detectInfo": {},
+          "pos": {
+            "x": 37944.125376,
+            "y": 10069.392329,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [
+            55,
+            2802
+          ],
+          "entityType": 9600,
+          "id": 54,
+          "isVisible": true,
+          "nameChn": "哨卫巢_54",
+          "nameEn": "DefenseSite_54",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 18.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9600001,
+          "detectInfo": {},
+          "pos": {
+            "x": 37165.168125,
+            "y": 10062.358491,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 44000,
+          "id": 55,
+          "isVisible": false,
+          "nameChn": "视野塔_55",
+          "nameEn": "Radar_55",
+          "parentId": 54,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 44000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 37165.168125,
+            "y": 10062.358491,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": "{\"raderExternal\":{\"range\":{\"x\":0,\"y\":0,\"z\":0},\"scanSpeed\":5}}"
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 9202,
+          "id": 158,
+          "isVisible": true,
+          "nameChn": "G_TEL_1_9202001001",
+          "nameEn": "G_TEL_1_9202001001",
+          "parentId": -1,
+          "sideId": 0,
+          "step": 1000,
+          "survivePoints": 1500,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9202001,
+          "pos": {
+            "x": 49277.164469,
+            "y": 12057.491971,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": "{\"lineOne\":\"1 40118U 14049A   24077.57727834  .00001208  00000-0  16301-3 0 09990\",\"lineTwo\":\"2 40118 097.6739 132.1933 0005934 046.6147 313.5559 14.80822930517661\"}"
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 35000,
+          "id": 270,
+          "isVisible": true,
+          "nameChn": "虫族控制节点_35000001001",
+          "nameEn": "DefendCommander_35000001001",
+          "parentId": -1,
+          "sideId": 0,
+          "step": 1000,
+          "survivePoints": 1500,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 35000001,
+          "pos": {
+            "x": 62399.005746,
+            "y": -91275.282416,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 21000,
+          "id": 2576,
+          "isVisible": true,
+          "nameChn": "high_001",
+          "nameEn": "high_001",
+          "parentId": -1,
+          "sideId": 0,
+          "step": 1000,
+          "survivePoints": 1,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 21000001,
+          "pos": {
+            "x": -29747.690417,
+            "y": 27429.602232,
+            "z": 3000.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 24000,
+          "id": 2802,
+          "isVisible": false,
+          "nameChn": "自爆虫群_168_2802",
+          "nameEn": "Interceptor_106_007",
+          "parentId": 54,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 2250.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 24000001,
+          "detectInfo": {},
+          "pos": {
+            "x": 37165.168125,
+            "y": 10062.358491,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      }
+    ],
+    "eventList": [],
+    "rules": [],
+    "redArea": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            -62747.211386,
+            -40636.447751
+          ],
+          [
+            -62747.211386,
+            40636.447751
+          ],
+          [
+            -22747.79203,
+            40636.447751
+          ],
+          [
+            -22747.79203,
+            -40636.447751
+          ]
+        ]
+      ]
+    },
+    "mapArea": {
+      "xMin": -62747.211386,
+      "xMax": 62747.211386,
+      "yMin": -40636.447751,
+      "yMax": 40636.447751
+    },
+    "logicTime": 0,
+    "simStep": 1000,
+    "simTime": 1783391450000,
+    "taskList": [],
+    "simEndLogicTime": 3000000,
+    "satelliteMaxUseCount": 1
+  }
+}

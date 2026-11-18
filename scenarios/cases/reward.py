@@ -1,20 +1,19 @@
-"""Unified weighted-damage scoring for competition scenarios."""
+# 比赛得分按完整摧毁的计分目标权重计算。
 
 from __future__ import annotations
 
-import hashlib
-import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Mapping
 
 
-# 不同蓝方根节点的任务价值：无人船:拦截阵地:计分目标 = 1:2:5。
+# 不同蓝方根节点的任务价值：暗巢:哨卫巢:计分母巢 = 1:2:5。
 OBJECTIVE_KIND_WEIGHTS = {
     "target": 5.0,
     "site": 2.0,
     "ship": 1.0,
 }
+OBJECTIVE_ENTITY_KINDS = {9400: "target", 9600: "site", 9500: "ship"}
 DEFAULT_OBJECTIVE_WEIGHT = 1.0
 
 
@@ -66,73 +65,49 @@ def _entity_health(
 
 
 def load_reward_policy(scenario: str | Path) -> RewardPolicy | None:
-    """Load judge inputs from the ``case_info.json`` beside a scenario.
-
-    Non-competition scenarios do not have ``case_info.json`` and therefore
-    return ``None`` instead of changing their original execution behaviour.
-    """
+    """读取并检查本地场景，从实体初态组装计分规则。"""
     raw_path = str(scenario)
     if raw_path.startswith(("http://", "https://")):
         return None
 
     scenario_path = Path(raw_path).resolve()
-    info_path = scenario_path.with_name("case_info.json")
-    if not info_path.is_file():
+    from ..scenario_checker import check_scenario
+
+    data = check_scenario(scenario_path)
+    imagine = data["imagineProfile"]
+    max_steps = int(imagine["simEndLogicTime"] // imagine["simStep"])
+    return _reward_policy_from_scene(scenario_path, data, max_steps)
+
+
+def _reward_policy_from_scene(
+    scenario_path: Path, data: dict[str, Any], max_steps: int,
+) -> RewardPolicy | None:
+    """按实体类型确定计分目标，直接使用场景中的初始血量。"""
+    objectives = [
+        item["entity"]
+        for item in data["imagineProfile"]["entityList"]
+        if item["entity"]["entityType"] in OBJECTIVE_ENTITY_KINDS
+    ]
+    if not objectives:
         return None
-
-    info = json.loads(info_path.read_text(encoding="utf-8"))
-    expected_hash = str(info.get("scenario_sha256", ""))
-    scenario_bytes = scenario_path.read_bytes()
-    # Git may check JSON out with CRLF on Windows. Treat newline conversion as
-    # transport-level normalization while still rejecting content changes.
-    lf_bytes = scenario_bytes.replace(b"\r\n", b"\n")
-    hash_candidates = {
-        hashlib.sha256(scenario_bytes).hexdigest(),
-        hashlib.sha256(lf_bytes).hexdigest(),
-        hashlib.sha256(lf_bytes.replace(b"\n", b"\r\n")).hexdigest(),
-    }
-    if expected_hash and expected_hash not in hash_candidates:
-        raise ValueError(
-            f"场景校验失败：{scenario_path} 与 case_info.json 的 SHA-256 不一致"
-        )
-
-    objective_ids = tuple(int(value) for value in info["objective_ids"])
-    roots_by_id = {
-        int(root["id"]): root
-        for root in info.get("roots", [])
-        if "id" in root
-    }
+    objective_ids = tuple(entity["id"] for entity in objectives)
     objective_weights = tuple(
         (
-            entity_id,
-            float(
-                OBJECTIVE_KIND_WEIGHTS.get(
-                    str(roots_by_id.get(entity_id, {}).get("kind", "")),
-                    DEFAULT_OBJECTIVE_WEIGHT,
-                )
-            ),
+            entity["id"],
+            OBJECTIVE_KIND_WEIGHTS[OBJECTIVE_ENTITY_KINDS[entity["entityType"]]],
         )
-        for entity_id in objective_ids
+        for entity in objectives
     )
     objective_initial_health = tuple(
-        (
-            entity_id,
-            float(roots_by_id.get(entity_id, {}).get("hp", 0.0)),
-        )
-        for entity_id in objective_ids
+        (entity["id"], float(entity["survivePoints"])) for entity in objectives
     )
-    max_steps = int(info["max_steps"])
-    if not objective_ids:
-        raise ValueError(f"{info_path} 没有计分目标")
     if max_steps <= 0:
-        raise ValueError(f"{info_path} 的 max_steps 必须大于 0")
-    if any(weight <= 0 for _, weight in objective_weights):
-        raise ValueError(f"{info_path} 包含非正数的目标权重")
+        raise ValueError(f"{scenario_path} 的总步数必须大于 0")
     if any(health <= 0 for _, health in objective_initial_health):
-        raise ValueError(f"{info_path} 包含非正数的目标初始血量")
+        raise ValueError(f"{scenario_path} 包含非正数的计分目标初始血量")
 
     return RewardPolicy(
-        scenario_id=str(info["scenario_id"]),
+        scenario_id=data.get("metadata", {}).get("id", scenario_path.stem),
         objective_ids=objective_ids,
         max_steps=max_steps,
         scenario_path=scenario_path,
@@ -147,12 +122,10 @@ def calculate_reward(
     target_health: Mapping[int | str, float],
     destruction_steps: Mapping[int | str, int] | None = None,
 ) -> RewardBreakdown:
-    """Calculate the 0--100 weighted damage ratio, independent of time.
+    """按血量归零的目标权重计算0至100分，存活目标得零分。
 
-    Each objective contributes its own fractional health loss multiplied by
-    the configured kind weight.  ``K`` and ``raw_score`` both expose that
-    normalized damage value. ``T`` is retained as a compatibility field and
-    is always zero; destruction steps are retained only for result reporting.
+    K与raw_score记录已摧毁目标的权重占比；T恒为零。
+    摧毁时刻仅用于结果记录，不影响得分。
     """
     destroyed_ids = tuple(
         entity_id
@@ -175,25 +148,7 @@ def calculate_reward(
         raise ValueError("计分目标总权重必须大于 0")
 
     destroyed_weight = sum(weight_by_id[entity_id] for entity_id in destroyed_ids)
-    initial_pairs = policy.objective_initial_health or tuple(
-        (entity_id, 1.0)
-        for entity_id in policy.objective_ids
-    )
-    initial_health_by_id = dict(initial_pairs)
-    weighted_damage = 0.0
-    for entity_id in policy.objective_ids:
-        initial_health = float(initial_health_by_id.get(entity_id, 0.0))
-        if initial_health <= 0:
-            raise ValueError(f"计分目标 {entity_id} 的初始血量必须大于 0")
-        final_health = float(
-            target_health.get(
-                entity_id,
-                target_health.get(str(entity_id), initial_health),
-            )
-        )
-        damage_fraction = max(0.0, min(1.0, (initial_health - final_health) / initial_health))
-        weighted_damage += weight_by_id[entity_id] * damage_fraction
-    k_value = weighted_damage / total_objective_weight
+    k_value = destroyed_weight / total_objective_weight
     completed = len(destroyed_ids) == len(policy.objective_ids)
 
     supplied_steps = destruction_steps or {}

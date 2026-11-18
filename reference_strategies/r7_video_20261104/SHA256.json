@@ -1,0 +1,86 @@
+[
+  {
+    "File": "__init__.py",
+    "SHA256": "b3385383cc54640f5ba6459f768600eb9c2fa1ad1ac85b0d4ec92bdff0f15698"
+  },
+  {
+    "File": "adapter.py",
+    "SHA256": "0865be637f1bb57e84e50016eb4845da115fa714984b95c0a9a6ff98354462d1"
+  },
+  {
+    "File": "coordination.py",
+    "SHA256": "15f6bffb91009c3f758f67134bf7b0ab826c3c2324e85d7f90be3e409788dce4"
+  },
+  {
+    "File": "entry.py",
+    "SHA256": "b47b0f50cb035c0f5008e005ef658523b42192f02df5c293e2947e02b70e7e4c"
+  },
+  {
+    "File": "strategies.py",
+    "SHA256": "8a6ea418fd78e25b233d7708787ba2813ecbde6a5e963036ce4730c5b8bf95c5"
+  },
+  {
+    "File": "legacy/__init__.py",
+    "SHA256": "f6de89caca1e4cab3c291766f123c3a72e688d27f226c9d756318ee3af444b28"
+  },
+  {
+    "File": "legacy/baselines.py",
+    "SHA256": "399771243bb9125558e483e4bccb2c4628de628a3ae2870878d1f8210ec53a3e"
+  },
+  {
+    "File": "legacy/commander.py",
+    "SHA256": "142ef593d32a48b4a7f02681a7da3f6671ef9bc6068bb0ac593b270b64778e52"
+  },
+  {
+    "File": "legacy/config.py",
+    "SHA256": "6a0d6756e314233731ec86eb6415382186344886f1ddae73565bf404453e38a9"
+  },
+  {
+    "File": "legacy/contracts.py",
+    "SHA256": "652f1560493440fc7a23b7a4214e65add958cb9552b26b78fd227110e1f07f75"
+  },
+  {
+    "File": "legacy/coordination.py",
+    "SHA256": "e105bb4bd2c254e519bfc86438bbe19d31143dc2674f3a2be58df842100b399f"
+  },
+  {
+    "File": "legacy/coverage_search.py",
+    "SHA256": "ae6ee077ac24e4c46a6fed19d191c020b3c4de4ec4eebd03d4aee9d2da74f089"
+  },
+  {
+    "File": "legacy/objectives.py",
+    "SHA256": "512bcb2ae41d3376f8ede580138aa47926f43ff5862a5946ca7db4776e42a0b5"
+  },
+  {
+    "File": "legacy/priors.py",
+    "SHA256": "6c591f00575c4ff9144691fb3a89e65610c46adca7bfacfb7d8445e0d9bdd83a"
+  },
+  {
+    "File": "legacy/r7_static_search.py",
+    "SHA256": "0060afe43882b7086eae1c6e6384a16d2ddfc4f6c166069b3f142feb28af4bbf"
+  },
+  {
+    "File": "legacy/short_evasion.py",
+    "SHA256": "18ad1b5e8265930230cf4d52d5c780f8d7d6ea726bef2a830b7e9581592e5edb"
+  },
+  {
+    "File": "legacy/spatial_commander.py",
+    "SHA256": "e88ec44d3125c0f9e48ba940fd49828dd9a835f6b334bbef935477efe868b1e2"
+  },
+  {
+    "File": "legacy/spatial_waves.py",
+    "SHA256": "4178377cbd362cc682970d5b1aa00a8c8ff5b3ebe30f8ef18e7244dde963e72c"
+  },
+  {
+    "File": "legacy/strike_coordination.py",
+    "SHA256": "5aa87f387d04628aa26a0eaecbc8e822fda45b74393b488573d093a03bfc0144"
+  },
+  {
+    "File": "legacy/task_memory.py",
+    "SHA256": "842d0696a473f738530ed5b2e574c887a65fc215a8e8d5c7f41149d3cc34bd19"
+  },
+  {
+    "File": "legacy/tracks.py",
+    "SHA256": "2a0d5e03954156028029f62b0358c5337dee2e51e28014701ac199c2330d503c"
+  }
+]

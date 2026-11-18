@@ -1,0 +1,41 @@
+{
+  "case_id": "E06_2576_to_51",
+  "source_commit": "c81c7cdaffcab7073ecf2d6d19dc31ad15270d84",
+  "package_base_commit": "fce04763fa7122bd2fedcb60c71bc4d8d53472ec",
+  "source_scene": "scenarios/E06.json",
+  "source_scene_sha256": "afeddecf94fda68b3f283fe4022422de131c6d4eca6e931e6c09fb7c77b4a182",
+  "source_deployment_sha256": "76aabb571f04a1c3a74b67f48b93d6fe43dc9fb29d94b7d8e53571edaabdaa89",
+  "heavy_id": 2576,
+  "target_id": 51,
+  "game_initial_position_m": [
+    -62037.213996382685,
+    22181.174554022964,
+    3000.0
+  ],
+  "native_initial_lla": [
+    -5.529576184757465,
+    1.986386651665512,
+    63804.48789246846
+  ],
+  "native_target_lla": [
+    2.954788229276133,
+    0.36700668367005634,
+    8621.030584282242
+  ],
+  "native_step_seconds": 0.05,
+  "model_scale": 10,
+  "desired_native_height_m": 30000,
+  "desired_native_speed_mps": 2000,
+  "max_load": 20,
+  "native_max_updates": 12000,
+  "engine_max_steps": 100,
+  "seed": 42,
+  "expected": {
+    "native_original_end_seconds": 64.65,
+    "engine_disappearance_step": 65,
+    "original_end_attack_angle_deg": 80.019985877485,
+    "original_remaining_game_distance_m": 84323.76725563104,
+    "height_control_end_seconds": 484.8
+  },
+  "scope": "独立诊断，不计比赛成绩；不使用红方策略、蓝方策略和隐藏目标输入。"
+}

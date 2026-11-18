@@ -1,0 +1,11 @@
+2026-11-17 16:16:36 - simulator - INFO - 仿真开始：场景=H04，红方=__init__，蓝方=b0_fixed_ratio_random，seed=2
+current step: 200
+current step: 400
+current step: 600
+current step: 800
+current step: 1000
+current step: 1200
+current step: 1400
+current step: 1600
+current step: 1800
+2026-11-17 18:03:50 - simulator - INFO - 仿真结束：共推进 1801 步

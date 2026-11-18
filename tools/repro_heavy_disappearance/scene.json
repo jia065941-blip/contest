@@ -1,0 +1,138 @@
+{
+  "metadata": {
+    "id": "repro_heavy_E06_2576",
+    "title": "毁灭者提前结束最小复现",
+    "description": "E06真实部署点，只保留毁灭者2576和默认母巢51，无红方策略、虫族控制器和自爆虫。"
+  },
+  "environmentProfile": {
+    "childrenId": [],
+    "childrenName": [],
+    "domain": "232",
+    "dynamicLibraryConfigs": [
+      {
+        "dynamicLibraryPath": "./Packages/CruiseMissile/libCruiseMissileHS.so",
+        "entityType": 21000,
+        "entityTypeId": [
+          21000001
+        ]
+      },
+      {
+        "dynamicLibraryPath": "./Packages/GeneralShip/libGeneralShipS.so",
+        "entityType": 9400,
+        "entityTypeId": [
+          9400001
+        ]
+      }
+    ],
+    "engineId": 1,
+    "engineName": "platform",
+    "mqttIp": "127.0.0.1",
+    "parentId": -1,
+    "parentName": "",
+    "patchDynamicLibrary": "./PatchShared.dll",
+    "projectName": "E06_tier_balance_20261014",
+    "publishData": [],
+    "role": 0,
+    "subDomain": "50",
+    "subscribeData": [],
+    "withPython": 0
+  },
+  "imagineProfile": {
+    "entityList": [
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 9400,
+          "id": 51,
+          "isVisible": true,
+          "nameChn": "母巢_51",
+          "nameEn": "Target_51",
+          "parentId": -1,
+          "sideId": 1,
+          "step": 1000,
+          "survivePoints": 24.0,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 9400001,
+          "detectInfo": {},
+          "pos": {
+            "x": 32921.742911,
+            "y": 4063.644775,
+            "z": 0.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      },
+      {
+        "entity": {
+          "childrenId": [],
+          "entityType": 21000,
+          "id": 2576,
+          "isVisible": true,
+          "nameChn": "high_001",
+          "nameEn": "high_001",
+          "parentId": -1,
+          "sideId": 0,
+          "step": 1000,
+          "survivePoints": 1,
+          "threatLevel": 0,
+          "time": 1783391450000,
+          "typeId": 21000001,
+          "pos": {
+            "x": -62037.213996382685,
+            "y": 22181.174554022964,
+            "z": 3000.0
+          },
+          "vel": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "external": ""
+      }
+    ],
+    "eventList": [],
+    "rules": [],
+    "redArea": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            -62841.887504,
+            -40636.447751
+          ],
+          [
+            -62841.887504,
+            40636.447751
+          ],
+          [
+            -22842.4701,
+            40636.447751
+          ],
+          [
+            -22842.4701,
+            -40636.447751
+          ]
+        ]
+      ]
+    },
+    "mapArea": {
+      "xMin": -62841.887504,
+      "xMax": 62841.887504,
+      "yMin": -40636.447751,
+      "yMax": 40636.447751
+    },
+    "logicTime": 0,
+    "simStep": 1000,
+    "simTime": 1783391450000,
+    "taskList": [],
+    "simEndLogicTime": 3000000,
+    "satelliteMaxUseCount": 1
+  }
+}

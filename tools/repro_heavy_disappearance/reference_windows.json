@@ -1,0 +1,421 @@
+{
+  "case_id": "E06_2576_to_51",
+  "runtime": {
+    "model_sha256": "04652972bd551ab7809852f90d23b0a523b685ef3941cba47daa745ede07d0b2",
+    "coordinate_sha256": "6af8f806623825a6eaa5ce7b96e000f2f959b74be044ff460202d44a3179c9de",
+    "python": "3.11.15 (main, Mar  3 2026, 14:55:34) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "fixture_sha256": {
+      "scene.json": "b959172f3c74e9073199b257adbfa1f71dd21d6c3e3d458b4a9bc2615c40b1ad",
+      "case.json": "8d9c80f178260d5daf4696b30e84875bedb82285b8dbea9fbd0483ed70a59fa5"
+    },
+    "model_matches_reference": true,
+    "coordinate_matches_reference": true
+  },
+  "mode": "all",
+  "engine_modified": false,
+  "native_uses_frozen_inputs": true,
+  "native_original": {
+    "case": "native_original",
+    "initial_lla": [
+      -5.529576184757465,
+      1.986386651665512,
+      63804.48789246846
+    ],
+    "end_seconds": 64.65,
+    "return_value": 843237.6725563104,
+    "final": {
+      "native_height_m": 66176.68217835296,
+      "native_speed_mps": 2049.8140174320074,
+      "attack_angle_deg": 80.019985877485,
+      "stage": 3.0,
+      "remaining_native_distance_m": 843237.6725563103
+    },
+    "last_updates": [
+      {
+        "before": {
+          "native_height_m": 66179.35961369332,
+          "native_speed_mps": 2053.668115766454,
+          "attack_angle_deg": 65.85279366549133,
+          "stage": 3.0,
+          "remaining_native_distance_m": 844153.1327291605
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 66179.28920855746,
+          "native_speed_mps": 2053.3391990927307,
+          "attack_angle_deg": 67.52067129870478,
+          "stage": 3.0,
+          "remaining_native_distance_m": 844051.3656421077
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 66179.28920855746,
+          "native_speed_mps": 2053.3391990927307,
+          "attack_angle_deg": 67.52067129870478,
+          "stage": 3.0,
+          "remaining_native_distance_m": 844051.3656421077
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 66179.16386472154,
+          "native_speed_mps": 2052.985910268848,
+          "attack_angle_deg": 69.16664165951615,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843949.6081826253
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 66179.16386472154,
+          "native_speed_mps": 2052.985910268848,
+          "attack_angle_deg": 69.16664165951615,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843949.6081826253
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 66178.98278563563,
+          "native_speed_mps": 2052.6080171270446,
+          "attack_angle_deg": 70.78996574803325,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843847.8614877549
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 66178.98278563563,
+          "native_speed_mps": 2052.6080171270446,
+          "attack_angle_deg": 70.78996574803325,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843847.8614877549
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 66178.74518193677,
+          "native_speed_mps": 2052.205312106287,
+          "attack_angle_deg": 72.3899603690895,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843746.126707678
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 66178.74518193677,
+          "native_speed_mps": 2052.205312106287,
+          "attack_angle_deg": 72.3899603690895,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843746.126707678
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 66178.4502715217,
+          "native_speed_mps": 2051.7776118967167,
+          "attack_angle_deg": 73.96599833996947,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843644.4050045197
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 66178.4502715217,
+          "native_speed_mps": 2051.7776118967167,
+          "attack_angle_deg": 73.96599833996947,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843644.4050045197
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 66178.09727960732,
+          "native_speed_mps": 2051.324757029536,
+          "attack_angle_deg": 75.51750837853025,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843542.6975511728
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 66178.09727960732,
+          "native_speed_mps": 2051.324757029536,
+          "attack_angle_deg": 75.51750837853025,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843542.6975511728
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 66177.68543880433,
+          "native_speed_mps": 2050.846611416815,
+          "attack_angle_deg": 77.04397468743399,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843441.0055301395
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 66177.68543880433,
+          "native_speed_mps": 2050.846611416815,
+          "attack_angle_deg": 77.04397468743399,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843441.0055301395
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 66177.21398918238,
+          "native_speed_mps": 2050.343061845759,
+          "attack_angle_deg": 78.54493625276933,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843339.3301324012
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 66177.21398918238,
+          "native_speed_mps": 2050.343061845759,
+          "attack_angle_deg": 78.54493625276933,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843339.3301324012
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 66176.68217835296,
+          "native_speed_mps": 2049.8140174320074,
+          "attack_angle_deg": 80.019985877485,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843237.6725563103
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 66176.68217835296,
+          "native_speed_mps": 2049.8140174320074,
+          "attack_angle_deg": 80.019985877485,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843237.6725563103
+        },
+        "return_value": 843237.6725563104,
+        "after": {
+          "native_height_m": 66176.68217835296,
+          "native_speed_mps": 2049.8140174320074,
+          "attack_angle_deg": 80.019985877485,
+          "stage": 3.0,
+          "remaining_native_distance_m": 843237.6725563103
+        }
+      }
+    ],
+    "angle_guard_observed": true
+  },
+  "native_height_control": {
+    "case": "native_height_control",
+    "initial_lla": [
+      -5.529576184757465,
+      1.986386651665512,
+      30000
+    ],
+    "end_seconds": 484.8,
+    "return_value": 0.0016045276326375113,
+    "final": {
+      "native_height_m": 8528.090439429507,
+      "native_speed_mps": 1996.8161510179473,
+      "attack_angle_deg": 0.5460705562066919,
+      "stage": 5.0,
+      "remaining_native_distance_m": 331.29873713041894
+    },
+    "last_updates": [
+      {
+        "before": {
+          "native_height_m": 8808.315009905957,
+          "native_speed_mps": 1998.1623658251394,
+          "attack_angle_deg": 0.5421955401245498,
+          "stage": 4.0,
+          "remaining_native_distance_m": 667.4470163469022
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 8780.278065726161,
+          "native_speed_mps": 1998.0289030782626,
+          "attack_angle_deg": 0.5425191392733637,
+          "stage": 4.0,
+          "remaining_native_distance_m": 567.5422287337221
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 8780.278065726161,
+          "native_speed_mps": 1998.0289030782626,
+          "attack_angle_deg": 0.5425191392733637,
+          "stage": 4.0,
+          "remaining_native_distance_m": 567.5422287337221
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 8752.244364761747,
+          "native_speed_mps": 1997.8951840958825,
+          "attack_angle_deg": 0.5428432756669298,
+          "stage": 4.0,
+          "remaining_native_distance_m": 467.6441206477168
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 8752.244364761747,
+          "native_speed_mps": 1997.8951840958825,
+          "attack_angle_deg": 0.5428432756669298,
+          "stage": 4.0,
+          "remaining_native_distance_m": 467.6441206477168
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 8724.213900874369,
+          "native_speed_mps": 1997.7612083881695,
+          "attack_angle_deg": 0.5431681742521348,
+          "stage": 4.0,
+          "remaining_native_distance_m": 367.7527049127221
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 8724.213900874369,
+          "native_speed_mps": 1997.7612083881695,
+          "attack_angle_deg": 0.5431681742521348,
+          "stage": 4.0,
+          "remaining_native_distance_m": 367.7527049127221
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 8696.18666747585,
+          "native_speed_mps": 1997.626975464821,
+          "attack_angle_deg": 0.5434942492550255,
+          "stage": 4.0,
+          "remaining_native_distance_m": 267.86799437741774
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 8696.18666747585,
+          "native_speed_mps": 1997.626975464821,
+          "attack_angle_deg": 0.5434942492550255,
+          "stage": 4.0,
+          "remaining_native_distance_m": 267.86799437741774
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 8668.162657427602,
+          "native_speed_mps": 1997.4924848358867,
+          "attack_angle_deg": 0.5438224142159164,
+          "stage": 4.0,
+          "remaining_native_distance_m": 167.99000191474173
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 8668.162657427602,
+          "native_speed_mps": 1997.4924848358867,
+          "attack_angle_deg": 0.5438224142159164,
+          "stage": 4.0,
+          "remaining_native_distance_m": 167.99000191474173
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 8640.141862793826,
+          "native_speed_mps": 1997.3577360140666,
+          "attack_angle_deg": 0.5441554814771072,
+          "stage": 4.0,
+          "remaining_native_distance_m": 68.11874042230295
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 8640.141862793826,
+          "native_speed_mps": 1997.3577360140666,
+          "attack_angle_deg": 0.5441554814771072,
+          "stage": 4.0,
+          "remaining_native_distance_m": 68.11874042230295
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 8612.124273824506,
+          "native_speed_mps": 1997.2227285281208,
+          "attack_angle_deg": 0.5445147807414099,
+          "stage": 4.0,
+          "remaining_native_distance_m": 31.74577717840371
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 8612.124273824506,
+          "native_speed_mps": 1997.2227285281208,
+          "attack_angle_deg": 0.5445147807414099,
+          "stage": 4.0,
+          "remaining_native_distance_m": 31.74577717840371
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 8584.109872741625,
+          "native_speed_mps": 1997.0874620000147,
+          "attack_angle_deg": 0.5449988354661816,
+          "stage": 4.0,
+          "remaining_native_distance_m": 131.6035379436133
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 8584.109872741625,
+          "native_speed_mps": 1997.0874620000147,
+          "attack_angle_deg": 0.5449988354661816,
+          "stage": 4.0,
+          "remaining_native_distance_m": 131.6035379436133
+        },
+        "return_value": -1.0,
+        "after": {
+          "native_height_m": 8556.098615098745,
+          "native_speed_mps": 1996.9519362495284,
+          "attack_angle_deg": 0.5455568749686722,
+          "stage": 4.0,
+          "remaining_native_distance_m": 231.45452891682834
+        }
+      },
+      {
+        "before": {
+          "native_height_m": 8556.098615098745,
+          "native_speed_mps": 1996.9519362495284,
+          "attack_angle_deg": 0.5455568749686722,
+          "stage": 4.0,
+          "remaining_native_distance_m": 231.45452891682834
+        },
+        "return_value": 0.0016045276326375113,
+        "after": {
+          "native_height_m": 8528.090439429507,
+          "native_speed_mps": 1996.8161510179473,
+          "attack_angle_deg": 0.5460705562066919,
+          "stage": 5.0,
+          "remaining_native_distance_m": 331.29873713041894
+        }
+      }
+    ],
+    "angle_guard_observed": false
+  },
+  "engine": {
+    "initial_health": 1.0,
+    "disappearance_step": 65,
+    "final": {
+      "native_height_m": 66176.68217835296,
+      "native_speed_mps": 2049.8140174320074,
+      "attack_angle_deg": 80.019985877485,
+      "stage": 3.0,
+      "remaining_native_distance_m": 843237.6725563103,
+      "step": 65,
+      "native_return": 843237.6725563104,
+      "health": 0,
+      "visible": false,
+      "game_position": {
+        "x": -49791.4576473762,
+        "y": 19869.442750275106,
+        "z": 4381.886344538909
+      }
+    },
+    "target_final_health": 24.0,
+    "red_strategy_count": 0,
+    "blue_policy_used": false
+  }
+}

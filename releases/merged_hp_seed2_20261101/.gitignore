@@ -1,9 +1,0 @@
-.venv/
-.python/
-__pycache__/
-*.pyc
-app/.runtime/
-app/compiled/
-app/deps/
-outputs/
-validation.json

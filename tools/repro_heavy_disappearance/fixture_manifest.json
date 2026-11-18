@@ -1,0 +1,13 @@
+{
+  "fixture_sha256": {
+    "scene.json": "b959172f3c74e9073199b257adbfa1f71dd21d6c3e3d458b4a9bc2615c40b1ad",
+    "case.json": "8d9c80f178260d5daf4696b30e84875bedb82285b8dbea9fbd0483ed70a59fa5"
+  },
+  "reference_runtime_sha256": {
+    "envengine/simulator/models/ACMMissileModel/_ACMMissilePy.pyd": "04652972bd551ab7809852f90d23b0a523b685ef3941cba47daa745ede07d0b2",
+    "envengine/simulator/models/ACMMissileModel/_ACMMissilePy.so": "c12585fbaa486b838d4b1eac24490edd92a883eba9bb9ee61c5fad7d79305784",
+    "envengine/simulator/models/ACMMissileModel/Utils.dll": "366bcd46b9983e686bc72a83d3d882a5f24a9ab0c7a119cd619633f700c5547f",
+    "envengine/simulator/models/ACMMissileModel/libUtils.so": "8e33ee26eaf55f22feb1e6c09a4a25a9e1a7637facbcb3abf520b578a5de6bce"
+  },
+  "reference_coordinate_sha256": "6af8f806623825a6eaa5ce7b96e000f2f959b74be044ff460202d44a3179c9de"
+}

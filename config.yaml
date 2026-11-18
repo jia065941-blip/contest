@@ -1,0 +1,14 @@
+# 公开运行配置；相对文件路径以本文件所在目录为基准。
+agent: user_agents/example/assignment/r0_random.py # 红方实现文件，导出 RedAttack 和 Deployment 类
+scenario: scenarios/E01.json          # 场景 JSON 文件
+seed: 7                              # 复现实验的随机种子；null 表示自动生成
+blue_mode: blue_defense/immediate/b0_fixed_ratio_random.py # 蓝方策略文件，导出 BlueDefense 类
+render_mode: human                    # human 显示界面，none 关闭界面
+output_dir: results/runs/manual      # 结果输出目录
+
+logging:
+  enabled: false                     # 详细文件日志开关
+  state_interval_steps: 10            # 态势记录步数间隔，不改变观测或决策频率
+  events: true                       # 启用详细日志时记录事件
+  actions: true                      # 启用详细日志时记录动作
+  example_evaluation: false           # 示例结果输出，结束时写一次 example_evaluation.json

@@ -1,0 +1,230 @@
+{
+  "schema_version": 2,
+  "name": "减量红方与原蓝方20图",
+  "version": "20261113_reduced_red_original_blue",
+  "geometry_revision": "local_xyz_m_20261103",
+  "max_steps": 3000,
+  "all_units_depart_at_start": true,
+  "grid_required": false,
+  "cases": [
+    {
+      "id": "E01",
+      "difficulty": "easy",
+      "title": "单门扇形",
+      "scenario": "E01.json",
+      "files_sha256": {
+        "E01.json": "119a62c813267cbe7f9bd0a58cbe084db65a90239781eb5c7111fe8af5eb04ad",
+        "images/E01.png": "30eb085e2102ab32c34c5f167b6d2d4a2699f2a9984d4af0840400153199ff95"
+      }
+    },
+    {
+      "id": "E02",
+      "difficulty": "easy",
+      "title": "偏置新月",
+      "scenario": "E02.json",
+      "files_sha256": {
+        "E02.json": "ffd8f61650ad4eb1a4546e649b5dfa273351082722735d29e127d09cbd5dd46a",
+        "images/E02.png": "536c80852ed032fb70036f3014f11d12baa6e34bc1821b64ca5aa0f3e46237fb"
+      }
+    },
+    {
+      "id": "E03",
+      "difficulty": "easy",
+      "title": "三路栅栏",
+      "scenario": "E03.json",
+      "files_sha256": {
+        "E03.json": "70ec18862c4766af7cc3b97708c0c14f3e6bedbdfc7c6e2d829bf13f93cafacc",
+        "images/E03.png": "d9ba4d19d06fc502e32d3b92207bf6537993439e91952cd3ae9a4a27ee148f4e"
+      }
+    },
+    {
+      "id": "E04",
+      "difficulty": "easy",
+      "title": "楔形漏斗",
+      "scenario": "E04.json",
+      "files_sha256": {
+        "E04.json": "ae40f8e296b68df519372cd0013aa461793aa11b3eec55dddb374e7842ff98da",
+        "images/E04.png": "308e9e0f3b6d2fada5b6683d25f24c6ddb56d85f81cad493d84ce26c6a0539bb"
+      }
+    },
+    {
+      "id": "E05",
+      "difficulty": "easy",
+      "title": "双层错门",
+      "scenario": "E05.json",
+      "files_sha256": {
+        "E05.json": "6844cf1569cdae40ee165ebc2706316069b425e34597166fca4d3b1235bc5666",
+        "images/E05.png": "11dc95063a165b019dc039e6aaa22059198562105b9e7b2f93d7c97ffdb89193"
+      }
+    },
+    {
+      "id": "E06",
+      "difficulty": "easy",
+      "title": "三岛接续",
+      "scenario": "E06.json",
+      "files_sha256": {
+        "E06.json": "afa2dcee8fc018745e10e9dcfc43a345b20101e96d68ec97f0fee255814f4f40",
+        "images/E06.png": "033757c13ad4ea4b514c9ef3712122d977698faaed579a4105e97d7d709f8aef"
+      }
+    },
+    {
+      "id": "H01",
+      "difficulty": "hard",
+      "title": "鱼骨走廊",
+      "scenario": "H01.json",
+      "files_sha256": {
+        "H01.json": "c13131adcc0e5ccbd92d15403c5060db0b3ace7c2b581561f0d8a92188feab3f",
+        "images/H01.png": "76eba31ac26b046e93f21ff3e59e8b3897c4459da4ef9155b8bc9739aea123ac"
+      }
+    },
+    {
+      "id": "H02",
+      "difficulty": "hard",
+      "title": "三叉收束",
+      "scenario": "H02.json",
+      "files_sha256": {
+        "H02.json": "64b7e9993daa7ffcbdcba0fac9b2ae66f6e495c46c6b3c931dcd54554b135d9a",
+        "images/H02.png": "f16d19c78676514397f66186078749b8914e806d9dfc42722a808f76af63457c"
+      }
+    },
+    {
+      "id": "H03",
+      "difficulty": "hard",
+      "title": "三层错位门",
+      "scenario": "H03.json",
+      "files_sha256": {
+        "H03.json": "bb4b85928dcef60ee1c2a71b90f0505c0669b872f67f7b3c142dd6200376997e",
+        "images/H03.png": "e1e23b82f2b32a53674bda5bcc01c5e77b614c20c12b21690f096a9da0cac93a"
+      }
+    },
+    {
+      "id": "H04",
+      "difficulty": "hard",
+      "title": "S形防带",
+      "scenario": "H04.json",
+      "files_sha256": {
+        "H04.json": "4909cf270c79e9194ba6989db98d6a239a2e8b3793e2fd773e9cc222a96d83cd",
+        "images/H04.png": "45cf602b8a2f733018e345db29bb70d36dcea36712aeea10ee336d8ad59d2410"
+      }
+    },
+    {
+      "id": "H05",
+      "difficulty": "hard",
+      "title": "钩形纵深",
+      "scenario": "H05.json",
+      "files_sha256": {
+        "H05.json": "7b15d67a900d02b1811bbc94b7b0231dfdc3c6226c122d6d1802ed47acd8f6bb",
+        "images/H05.png": "c909dd497b321319ecb2ea42762026b0f514a80c652ec14ba012e252257044c7"
+      }
+    },
+    {
+      "id": "H06",
+      "difficulty": "hard",
+      "title": "偏置双环",
+      "scenario": "H06.json",
+      "files_sha256": {
+        "H06.json": "17b410b967dfd0b7dcde4bc05e46233fea01756b66a815cf44328373b1dc07ce",
+        "images/H06.png": "ba3236cf8bad8fdf6f92549c08481a95aa1841af96ce179fd80203be5089e374"
+      }
+    },
+    {
+      "id": "H07",
+      "difficulty": "hard",
+      "title": "五岛棋盘",
+      "scenario": "H07.json",
+      "files_sha256": {
+        "H07.json": "96248d853ed4ada8228668cf6263defc88599002ee53b15a5e70380417d2353e",
+        "images/H07.png": "a044ec047464242a88c7dd88b38ece7ca564fcb85204caecc97cd6786258d112"
+      }
+    },
+    {
+      "id": "H08",
+      "difficulty": "hard",
+      "title": "双弧包络",
+      "scenario": "H08.json",
+      "files_sha256": {
+        "H08.json": "a30391f73e422e517243c9027ca7f53339ba93f476245323c48b08d29b27675f",
+        "images/H08.png": "97975718451971b671dff8f39e45caea44ee11c3e51b35912f607fc79a43242f"
+      }
+    },
+    {
+      "id": "M01",
+      "difficulty": "medium",
+      "title": "弧门侧切",
+      "scenario": "M01.json",
+      "files_sha256": {
+        "M01.json": "4666157c8fbe252be2469c83858287edeaa20f5eb83e8f9e4093e9e6e39842fa",
+        "images/M01.png": "5b35a37221ebd1b72d88be7d4e7f7efe4d9fce800ad337c4fd0f3972434b04ff"
+      }
+    },
+    {
+      "id": "M02",
+      "difficulty": "medium",
+      "title": "菱堡外环",
+      "scenario": "M02.json",
+      "files_sha256": {
+        "M02.json": "005f17fdaec9faeb5668e578300fda6ecf07b81376c767cfb4287004b538e721",
+        "images/M02.png": "c8f088bb824ce5e572b274c424380e963f41cadd2b59d3384b34bc2db66905df"
+      }
+    },
+    {
+      "id": "M03",
+      "difficulty": "medium",
+      "title": "双门分流",
+      "scenario": "M03.json",
+      "files_sha256": {
+        "M03.json": "540bb4d14a30a1f6336e0efcf393fed0433d8faa777a530229844b97d97747de",
+        "images/M03.png": "37555c2a451f36335a8b6792ea2f4e4ae1e3c0ac627d870320478ea1f3a75898"
+      }
+    },
+    {
+      "id": "M04",
+      "difficulty": "medium",
+      "title": "断续阶梯",
+      "scenario": "M04.json",
+      "files_sha256": {
+        "M04.json": "5485c49014c7248a7665b8b9a237b7a0cfdf7bbb6b1edd89bfc8fad6a6a04316",
+        "images/M04.png": "2ecf511d836115e58c60ebf77af95733b69fe5ff7de28a68c86344d2b6a08965"
+      }
+    },
+    {
+      "id": "M05",
+      "difficulty": "medium",
+      "title": "沙漏双颈",
+      "scenario": "M05.json",
+      "files_sha256": {
+        "M05.json": "c6f1bacbed3e05d56813eb812f57e882ef52f086f3472ba6e97a715c2dfc8801",
+        "images/M05.png": "df4da8d43bc06e979f4f6d3c73bba0d52eac5a60fee5ba63bfa7f083d16e23d1"
+      }
+    },
+    {
+      "id": "M06",
+      "difficulty": "medium",
+      "title": "北窗南堡",
+      "scenario": "M06.json",
+      "files_sha256": {
+        "M06.json": "48c832d69dbc44acb8c9c2145c0d240f46a6a15d12d315f1b357b4e5878246b8",
+        "images/M06.png": "c85946af91dafc8ddf0b80b1037902980ec8d0703f1a82375b7eaaf78b13b2cb"
+      }
+    }
+  ],
+  "scoring": "destroyed_objective_weight_ratio",
+  "interceptor_counts": {
+    "easy": 78,
+    "medium": 146,
+    "hard": 348
+  },
+  "ratio_denominator": "毁灭者数量＋突击者数量",
+  "coordinate_system": {
+    "x": "east",
+    "y": "north",
+    "z": "height",
+    "unit": "metre"
+  },
+  "manual_sha256": "c6959078079bb6069cbd260e44e46ed12bed698f05f6347566baff152e820cd3",
+  "heavy_counts": {
+    "easy": 15,
+    "medium": 24,
+    "hard": 40
+  }
+}

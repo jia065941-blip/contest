@@ -1,0 +1,2838 @@
+{
+  "status": "complete",
+  "source_run": "/home/ubuntu/yunpan/competition-final/results/cz_ppo_seed2_final_all20_attribution_20261118",
+  "maps": [
+    {
+      "map": "E01",
+      "score": 88.63636363636364,
+      "total_weight": 44.0,
+      "missing_weight": 5.0,
+      "missed_count": 1,
+      "missed_target_ids": [
+        52
+      ],
+      "causes": {
+        "hit_but_insufficient_damage": 1
+      }
+    },
+    {
+      "map": "E02",
+      "score": 93.18181818181817,
+      "total_weight": 44.0,
+      "missing_weight": 3.0,
+      "missed_count": 3,
+      "missed_target_ids": [
+        2884,
+        2892,
+        2893
+      ],
+      "causes": {
+        "dispatched_but_did_not_reach_damage_radius": 2,
+        "discovered_but_not_dispatched": 1
+      }
+    },
+    {
+      "map": "E03",
+      "score": 97.72727272727273,
+      "total_weight": 44.0,
+      "missing_weight": 1.0,
+      "missed_count": 1,
+      "missed_target_ids": [
+        2573
+      ],
+      "causes": {
+        "undiscovered_or_uncovered": 1
+      }
+    },
+    {
+      "map": "E04",
+      "score": 97.72727272727273,
+      "total_weight": 44.0,
+      "missing_weight": 1.0,
+      "missed_count": 1,
+      "missed_target_ids": [
+        2886
+      ],
+      "causes": {
+        "discovered_but_not_dispatched": 1
+      }
+    },
+    {
+      "map": "E05",
+      "score": 90.9090909090909,
+      "total_weight": 44.0,
+      "missing_weight": 4.0,
+      "missed_count": 4,
+      "missed_target_ids": [
+        2573,
+        2884,
+        2892,
+        2893
+      ],
+      "causes": {
+        "hit_but_insufficient_damage": 1,
+        "discovered_but_not_dispatched": 1,
+        "undiscovered_or_uncovered": 2
+      }
+    },
+    {
+      "map": "E06",
+      "score": 93.18181818181817,
+      "total_weight": 44.0,
+      "missing_weight": 3.0,
+      "missed_count": 3,
+      "missed_target_ids": [
+        169,
+        2892,
+        2893
+      ],
+      "causes": {
+        "discovered_but_not_dispatched": 3
+      }
+    },
+    {
+      "map": "M01",
+      "score": 92.7536231884058,
+      "total_weight": 69.0,
+      "missing_weight": 5.0,
+      "missed_count": 4,
+      "missed_target_ids": [
+        2741,
+        2763,
+        3293,
+        3294
+      ],
+      "causes": {
+        "arrived_but_no_effective_hit": 1,
+        "hit_but_insufficient_damage": 3
+      }
+    },
+    {
+      "map": "M02",
+      "score": 94.20289855072464,
+      "total_weight": 69.0,
+      "missing_weight": 4.0,
+      "missed_count": 4,
+      "missed_target_ids": [
+        2759,
+        2764,
+        3289,
+        3295
+      ],
+      "causes": {
+        "discovered_but_not_dispatched": 3,
+        "undiscovered_or_uncovered": 1
+      }
+    },
+    {
+      "map": "M03",
+      "score": 94.20289855072464,
+      "total_weight": 69.0,
+      "missing_weight": 4.0,
+      "missed_count": 4,
+      "missed_target_ids": [
+        2762,
+        2763,
+        3295,
+        3296
+      ],
+      "causes": {
+        "discovered_but_not_dispatched": 3,
+        "hit_but_insufficient_damage": 1
+      }
+    },
+    {
+      "map": "M04",
+      "score": 91.30434782608695,
+      "total_weight": 69.0,
+      "missing_weight": 6.0,
+      "missed_count": 2,
+      "missed_target_ids": [
+        2764,
+        3302
+      ],
+      "causes": {
+        "discovered_but_not_dispatched": 1,
+        "boundary_constrained_no_hit": 1
+      }
+    },
+    {
+      "map": "M05",
+      "score": 85.5072463768116,
+      "total_weight": 69.0,
+      "missing_weight": 10.0,
+      "missed_count": 9,
+      "missed_target_ids": [
+        169,
+        2747,
+        2755,
+        2757,
+        2762,
+        2763,
+        3289,
+        3294,
+        3296
+      ],
+      "causes": {
+        "hit_but_insufficient_damage": 4,
+        "arrived_but_no_effective_hit": 1,
+        "dispatched_but_did_not_reach_damage_radius": 2,
+        "discovered_but_not_dispatched": 2
+      }
+    },
+    {
+      "map": "M06",
+      "score": 95.65217391304348,
+      "total_weight": 69.0,
+      "missing_weight": 3.0,
+      "missed_count": 2,
+      "missed_target_ids": [
+        2741,
+        2763
+      ],
+      "causes": {
+        "dispatched_but_did_not_reach_damage_radius": 1,
+        "discovered_but_not_dispatched": 1
+      }
+    },
+    {
+      "map": "H01",
+      "score": 92.0,
+      "total_weight": 100.0,
+      "missing_weight": 8.0,
+      "missed_count": 3,
+      "missed_target_ids": [
+        2955,
+        2959,
+        2985
+      ],
+      "causes": {
+        "dispatched_but_did_not_reach_damage_radius": 1,
+        "hit_but_insufficient_damage": 1,
+        "discovered_but_not_dispatched": 1
+      }
+    },
+    {
+      "map": "H02",
+      "score": 94.0,
+      "total_weight": 100.0,
+      "missing_weight": 6.0,
+      "missed_count": 2,
+      "missed_target_ids": [
+        2955,
+        3867
+      ],
+      "causes": {
+        "dispatched_but_did_not_reach_damage_radius": 1,
+        "undiscovered_or_uncovered": 1
+      }
+    },
+    {
+      "map": "H03",
+      "score": 91.0,
+      "total_weight": 100.0,
+      "missing_weight": 9.0,
+      "missed_count": 4,
+      "missed_target_ids": [
+        2955,
+        2969,
+        3863,
+        3866
+      ],
+      "causes": {
+        "dispatched_but_did_not_reach_damage_radius": 2,
+        "boundary_constrained_no_hit": 1,
+        "undiscovered_or_uncovered": 1
+      }
+    },
+    {
+      "map": "H04",
+      "score": 89.0,
+      "total_weight": 100.0,
+      "missing_weight": 11.0,
+      "missed_count": 6,
+      "missed_target_ids": [
+        54,
+        2955,
+        2994,
+        3857,
+        3862,
+        3867
+      ],
+      "causes": {
+        "dispatched_but_did_not_reach_damage_radius": 2,
+        "discovered_but_not_dispatched": 1,
+        "hit_but_insufficient_damage": 3
+      }
+    },
+    {
+      "map": "H05",
+      "score": 87.0,
+      "total_weight": 100.0,
+      "missing_weight": 13.0,
+      "missed_count": 9,
+      "missed_target_ids": [
+        53,
+        2993,
+        2994,
+        2997,
+        2998,
+        2999,
+        3859,
+        3860,
+        3866
+      ],
+      "causes": {
+        "arrived_but_no_effective_hit": 1,
+        "hit_but_insufficient_damage": 5,
+        "discovered_but_not_dispatched": 1,
+        "undiscovered_or_uncovered": 2
+      }
+    },
+    {
+      "map": "H06",
+      "score": 92.0,
+      "total_weight": 100.0,
+      "missing_weight": 8.0,
+      "missed_count": 4,
+      "missed_target_ids": [
+        2955,
+        2989,
+        2999,
+        3863
+      ],
+      "causes": {
+        "arrived_but_no_effective_hit": 1,
+        "hit_but_insufficient_damage": 2,
+        "discovered_but_not_dispatched": 1
+      }
+    },
+    {
+      "map": "H07",
+      "score": 83.0,
+      "total_weight": 100.0,
+      "missing_weight": 17.0,
+      "missed_count": 8,
+      "missed_target_ids": [
+        54,
+        169,
+        301,
+        2955,
+        2987,
+        2991,
+        2992,
+        2993
+      ],
+      "causes": {
+        "dispatched_but_did_not_reach_damage_radius": 4,
+        "hit_but_insufficient_damage": 2,
+        "arrived_but_no_effective_hit": 1,
+        "undiscovered_or_uncovered": 1
+      }
+    },
+    {
+      "map": "H08",
+      "score": 88.0,
+      "total_weight": 100.0,
+      "missing_weight": 12.0,
+      "missed_count": 4,
+      "missed_target_ids": [
+        52,
+        168,
+        2955,
+        2993
+      ],
+      "causes": {
+        "hit_but_insufficient_damage": 1,
+        "undiscovered_or_uncovered": 2,
+        "arrived_but_no_effective_hit": 1
+      }
+    }
+  ],
+  "mean_score": 91.54934123847167,
+  "missed_target_count": 78,
+  "score_loss_points_summed_across_maps": 169.01317523056662,
+  "mean_score_loss": 8.450658761528327,
+  "loss_by_primary_cause": {
+    "arrived_but_no_effective_hit": {
+      "target_count": 6,
+      "score_loss": 25.797101449275363
+    },
+    "boundary_constrained_no_hit": {
+      "target_count": 2,
+      "score_loss": 9.246376811594203
+    },
+    "discovered_but_not_dispatched": {
+      "target_count": 20,
+      "score_loss": 32.12911725955204
+    },
+    "dispatched_but_did_not_reach_damage_radius": {
+      "target_count": 15,
+      "score_loss": 42.342555994729906
+    },
+    "hit_but_insufficient_damage": {
+      "target_count": 24,
+      "score_loss": 44.23056653491436
+    },
+    "undiscovered_or_uncovered": {
+      "target_count": 11,
+      "score_loss": 15.267457180500658
+    }
+  },
+  "loss_by_kind": {
+    "dark": {
+      "target_count": 59,
+      "score_loss": 83.70750988142298
+    },
+    "mother": {
+      "target_count": 12,
+      "score_loss": 68.61001317523056
+    },
+    "sentinel": {
+      "target_count": 7,
+      "score_loss": 16.695652173913043
+    }
+  },
+  "red_terminal_reasons_by_role": {
+    "H": {
+      "objective_impact": 469,
+      "intercepted": 2,
+      "terminated_without_objective_hit": 83
+    },
+    "L": {
+      "terminated_without_objective_hit": 2306,
+      "objective_impact": 535,
+      "intercepted": 149
+    },
+    "M": {
+      "terminated_without_objective_hit": 799,
+      "intercepted": 31,
+      "objective_impact": 64
+    }
+  },
+  "missed_objectives": [
+    {
+      "map": "E01",
+      "target_id": 52,
+      "name": "母巢_52",
+      "kind": "mother",
+      "type": 9400,
+      "weight": 5.0,
+      "score_loss": 11.363636363636363,
+      "initial_health": 24.0,
+      "final_health": 6.0,
+      "damage_delivered": 18.0,
+      "discovered_step": 0,
+      "assignment_count": 411,
+      "assigned_unit_ids": [
+        2581,
+        2582,
+        2621,
+        2622,
+        2623,
+        2624
+      ],
+      "assigned_roles": {
+        "H": 2,
+        "M": 4
+      },
+      "intercepted_assigned_unit_ids": [
+        2582
+      ],
+      "arrived_within_100m_unit_ids": [
+        2581,
+        2621,
+        2622,
+        2623,
+        2624
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "assigned_unit_interception",
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "E02",
+      "target_id": 2884,
+      "name": "暗巢_2884",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 2.272727272727273,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 491,
+      "assignment_count": 4,
+      "assigned_unit_ids": [
+        2692,
+        2693,
+        2694,
+        2716
+      ],
+      "assigned_roles": {
+        "L": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "dispatched_but_did_not_reach_damage_radius",
+      "contributing_causes": []
+    },
+    {
+      "map": "E02",
+      "target_id": 2892,
+      "name": "暗巢_2892",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 2.272727272727273,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 729,
+      "assignment_count": 4,
+      "assigned_unit_ids": [
+        2712,
+        2734,
+        2735,
+        2736
+      ],
+      "assigned_roles": {
+        "L": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "dispatched_but_did_not_reach_damage_radius",
+      "contributing_causes": []
+    },
+    {
+      "map": "E02",
+      "target_id": 2893,
+      "name": "暗巢_2893",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 2.272727272727273,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 582,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "E03",
+      "target_id": 2573,
+      "name": "ship_added_2573",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 2.272727272727273,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": null,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "undiscovered_or_uncovered",
+      "contributing_causes": [
+        "no_legal_red_detection"
+      ]
+    },
+    {
+      "map": "E04",
+      "target_id": 2886,
+      "name": "暗巢_2886",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 2.272727272727273,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 351,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "E05",
+      "target_id": 2573,
+      "name": "ship_added_2573",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 2.272727272727273,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 391,
+      "assignment_count": 9,
+      "assigned_unit_ids": [
+        2668,
+        2669,
+        2670,
+        2694,
+        2718,
+        2719,
+        2721,
+        2743,
+        2744
+      ],
+      "assigned_roles": {
+        "L": 9
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        2744
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "E05",
+      "target_id": 2884,
+      "name": "暗巢_2884",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 2.272727272727273,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 556,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "E05",
+      "target_id": 2892,
+      "name": "暗巢_2892",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 2.272727272727273,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": null,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "undiscovered_or_uncovered",
+      "contributing_causes": [
+        "no_legal_red_detection"
+      ]
+    },
+    {
+      "map": "E05",
+      "target_id": 2893,
+      "name": "暗巢_2893",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 2.272727272727273,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": null,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "undiscovered_or_uncovered",
+      "contributing_causes": [
+        "no_legal_red_detection"
+      ]
+    },
+    {
+      "map": "E06",
+      "target_id": 169,
+      "name": "暗巢_169",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 2.272727272727273,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 514,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "E06",
+      "target_id": 2892,
+      "name": "暗巢_2892",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 2.272727272727273,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 738,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "E06",
+      "target_id": 2893,
+      "name": "暗巢_2893",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 2.272727272727273,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 454,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "M01",
+      "target_id": 2741,
+      "name": "site_added_2741",
+      "kind": "sentinel",
+      "type": 9600,
+      "weight": 2.0,
+      "score_loss": 2.898550724637681,
+      "initial_health": 12.0,
+      "final_health": 12.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 156,
+      "assigned_unit_ids": [
+        2783
+      ],
+      "assigned_roles": {
+        "H": 1
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        2783
+      ],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "arrived_but_no_effective_hit",
+      "contributing_causes": []
+    },
+    {
+      "map": "M01",
+      "target_id": 2763,
+      "name": "ship_added_2763",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 479,
+      "assignment_count": 3,
+      "assigned_unit_ids": [
+        2914,
+        2941,
+        2969
+      ],
+      "assigned_roles": {
+        "L": 3
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        2969
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "M01",
+      "target_id": 3293,
+      "name": "暗巢_3293",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 410,
+      "assignment_count": 6,
+      "assigned_unit_ids": [
+        2904,
+        2905,
+        2906,
+        2933,
+        2959,
+        2961
+      ],
+      "assigned_roles": {
+        "L": 6
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        2959
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "M01",
+      "target_id": 3294,
+      "name": "暗巢_3294",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 419,
+      "assignment_count": 3,
+      "assigned_unit_ids": [
+        2916,
+        2917,
+        2945
+      ],
+      "assigned_roles": {
+        "L": 3
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        2945
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "M02",
+      "target_id": 2759,
+      "name": "ship_added_2759",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 1246,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "M02",
+      "target_id": 2764,
+      "name": "ship_added_2764",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": null,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "undiscovered_or_uncovered",
+      "contributing_causes": [
+        "no_legal_red_detection"
+      ]
+    },
+    {
+      "map": "M02",
+      "target_id": 3289,
+      "name": "暗巢_3289",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 420,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "M02",
+      "target_id": 3295,
+      "name": "暗巢_3295",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 534,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "M03",
+      "target_id": 2762,
+      "name": "ship_added_2762",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 703,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "M03",
+      "target_id": 2763,
+      "name": "ship_added_2763",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 535,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "M03",
+      "target_id": 3295,
+      "name": "暗巢_3295",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 374,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "M03",
+      "target_id": 3296,
+      "name": "暗巢_3296",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 375,
+      "assignment_count": 4,
+      "assigned_unit_ids": [
+        2947,
+        2976,
+        3002,
+        3003
+      ],
+      "assigned_roles": {
+        "L": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3002
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "M04",
+      "target_id": 2764,
+      "name": "ship_added_2764",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 1222,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "M04",
+      "target_id": 3302,
+      "name": "母巢_3302",
+      "kind": "mother",
+      "type": 9400,
+      "weight": 5.0,
+      "score_loss": 7.246376811594203,
+      "initial_health": 24.0,
+      "final_health": 24.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 752,
+      "assigned_unit_ids": [
+        2765,
+        2766,
+        2815,
+        2816,
+        2817
+      ],
+      "assigned_roles": {
+        "H": 2,
+        "M": 3
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {
+        "count": 355,
+        "first_step": 367,
+        "last_step": 460,
+        "max_projection_distance_m": 1349.8868620065477,
+        "unit_ids": [
+          2816,
+          2817,
+          2765,
+          2766,
+          2815
+        ]
+      },
+      "primary_cause": "boundary_constrained_no_hit",
+      "contributing_causes": [
+        "submitted_waypoint_projection"
+      ]
+    },
+    {
+      "map": "M05",
+      "target_id": 169,
+      "name": "暗巢_169",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 480,
+      "assignment_count": 4,
+      "assigned_unit_ids": [
+        2934,
+        2935,
+        2963,
+        2992
+      ],
+      "assigned_roles": {
+        "L": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        2992
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "M05",
+      "target_id": 2747,
+      "name": "site_added_2747",
+      "kind": "sentinel",
+      "type": 9600,
+      "weight": 2.0,
+      "score_loss": 2.898550724637681,
+      "initial_health": 12.0,
+      "final_health": 12.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 206,
+      "assigned_unit_ids": [
+        2781
+      ],
+      "assigned_roles": {
+        "H": 1
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        2781
+      ],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "arrived_but_no_effective_hit",
+      "contributing_causes": []
+    },
+    {
+      "map": "M05",
+      "target_id": 2755,
+      "name": "ship_added_2755",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 620,
+      "assignment_count": 4,
+      "assigned_unit_ids": [
+        2929,
+        2930,
+        2956,
+        2957
+      ],
+      "assigned_roles": {
+        "L": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        2956
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "M05",
+      "target_id": 2757,
+      "name": "ship_added_2757",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 671,
+      "assignment_count": 4,
+      "assigned_unit_ids": [
+        2975,
+        3001,
+        3002,
+        3003
+      ],
+      "assigned_roles": {
+        "L": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "dispatched_but_did_not_reach_damage_radius",
+      "contributing_causes": []
+    },
+    {
+      "map": "M05",
+      "target_id": 2762,
+      "name": "ship_added_2762",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 529,
+      "assignment_count": 4,
+      "assigned_unit_ids": [
+        2968,
+        2995,
+        2997,
+        2998
+      ],
+      "assigned_roles": {
+        "L": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "dispatched_but_did_not_reach_damage_radius",
+      "contributing_causes": []
+    },
+    {
+      "map": "M05",
+      "target_id": 2763,
+      "name": "ship_added_2763",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 525,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "M05",
+      "target_id": 3289,
+      "name": "暗巢_3289",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 501,
+      "assignment_count": 4,
+      "assigned_unit_ids": [
+        2922,
+        2948,
+        2949,
+        2976
+      ],
+      "assigned_roles": {
+        "L": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        2976
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "M05",
+      "target_id": 3294,
+      "name": "暗巢_3294",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 372,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "M05",
+      "target_id": 3296,
+      "name": "暗巢_3296",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 454,
+      "assignment_count": 4,
+      "assigned_unit_ids": [
+        2914,
+        2915,
+        2916,
+        2942
+      ],
+      "assigned_roles": {
+        "L": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        2942
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "M06",
+      "target_id": 2741,
+      "name": "site_added_2741",
+      "kind": "sentinel",
+      "type": 9600,
+      "weight": 2.0,
+      "score_loss": 2.898550724637681,
+      "initial_health": 12.0,
+      "final_health": 12.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 164,
+      "assigned_unit_ids": [
+        2785
+      ],
+      "assigned_roles": {
+        "H": 1
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "dispatched_but_did_not_reach_damage_radius",
+      "contributing_causes": []
+    },
+    {
+      "map": "M06",
+      "target_id": 2763,
+      "name": "ship_added_2763",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.4492753623188406,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 1214,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "H01",
+      "target_id": 2955,
+      "name": "target_added_2955",
+      "kind": "mother",
+      "type": 9400,
+      "weight": 5.0,
+      "score_loss": 5.0,
+      "initial_health": 24.0,
+      "final_health": 24.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 262,
+      "assigned_unit_ids": [
+        3022,
+        3023,
+        3093,
+        3094,
+        3095
+      ],
+      "assigned_roles": {
+        "H": 2,
+        "M": 3
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "dispatched_but_did_not_reach_damage_radius",
+      "contributing_causes": []
+    },
+    {
+      "map": "H01",
+      "target_id": 2959,
+      "name": "site_added_2959",
+      "kind": "sentinel",
+      "type": 9600,
+      "weight": 2.0,
+      "score_loss": 2.0,
+      "initial_health": 12.0,
+      "final_health": 6.0,
+      "damage_delivered": 6.0,
+      "discovered_step": 0,
+      "assignment_count": 2373,
+      "assigned_unit_ids": [
+        3025,
+        3096,
+        3097,
+        3098,
+        3099,
+        3100
+      ],
+      "assigned_roles": {
+        "H": 1,
+        "M": 5
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3099,
+        3100
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "H01",
+      "target_id": 2985,
+      "name": "ship_added_2985",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 742,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "H02",
+      "target_id": 2955,
+      "name": "target_added_2955",
+      "kind": "mother",
+      "type": 9400,
+      "weight": 5.0,
+      "score_loss": 5.0,
+      "initial_health": 24.0,
+      "final_health": 24.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 372,
+      "assigned_unit_ids": [
+        3020,
+        3021,
+        3093,
+        3094,
+        3095,
+        3096
+      ],
+      "assigned_roles": {
+        "H": 2,
+        "M": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "dispatched_but_did_not_reach_damage_radius",
+      "contributing_causes": []
+    },
+    {
+      "map": "H02",
+      "target_id": 3867,
+      "name": "暗巢_3867",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": null,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "undiscovered_or_uncovered",
+      "contributing_causes": [
+        "no_legal_red_detection"
+      ]
+    },
+    {
+      "map": "H03",
+      "target_id": 2955,
+      "name": "target_added_2955",
+      "kind": "mother",
+      "type": 9400,
+      "weight": 5.0,
+      "score_loss": 5.0,
+      "initial_health": 24.0,
+      "final_health": 24.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 354,
+      "assigned_unit_ids": [
+        3020,
+        3021,
+        3090,
+        3091,
+        3092
+      ],
+      "assigned_roles": {
+        "H": 2,
+        "M": 3
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "dispatched_but_did_not_reach_damage_radius",
+      "contributing_causes": []
+    },
+    {
+      "map": "H03",
+      "target_id": 2969,
+      "name": "site_added_2969",
+      "kind": "sentinel",
+      "type": 9600,
+      "weight": 2.0,
+      "score_loss": 2.0,
+      "initial_health": 12.0,
+      "final_health": 12.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 458,
+      "assigned_unit_ids": [
+        3033,
+        3131,
+        3132,
+        3133,
+        3134,
+        3135
+      ],
+      "assigned_roles": {
+        "H": 1,
+        "M": 5
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {
+        "count": 1056,
+        "first_step": 432,
+        "last_step": 752,
+        "max_projection_distance_m": 971.5021170685068,
+        "unit_ids": [
+          3033,
+          3131,
+          3132,
+          3133,
+          3134,
+          3135
+        ]
+      },
+      "primary_cause": "boundary_constrained_no_hit",
+      "contributing_causes": [
+        "submitted_waypoint_projection"
+      ]
+    },
+    {
+      "map": "H03",
+      "target_id": 3863,
+      "name": "暗巢_3863",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": null,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "undiscovered_or_uncovered",
+      "contributing_causes": [
+        "no_legal_red_detection"
+      ]
+    },
+    {
+      "map": "H03",
+      "target_id": 3866,
+      "name": "暗巢_3866",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 1041,
+      "assignment_count": 3,
+      "assigned_unit_ids": [
+        3264,
+        3296,
+        3328
+      ],
+      "assigned_roles": {
+        "L": 3
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "dispatched_but_did_not_reach_damage_radius",
+      "contributing_causes": []
+    },
+    {
+      "map": "H04",
+      "target_id": 54,
+      "name": "哨卫巢_54",
+      "kind": "sentinel",
+      "type": 9600,
+      "weight": 2.0,
+      "score_loss": 2.0,
+      "initial_health": 12.0,
+      "final_health": 12.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 2275,
+      "assigned_unit_ids": [
+        3025,
+        3096,
+        3097,
+        3098,
+        3099,
+        3100
+      ],
+      "assigned_roles": {
+        "H": 1,
+        "M": 5
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "dispatched_but_did_not_reach_damage_radius",
+      "contributing_causes": []
+    },
+    {
+      "map": "H04",
+      "target_id": 2955,
+      "name": "target_added_2955",
+      "kind": "mother",
+      "type": 9400,
+      "weight": 5.0,
+      "score_loss": 5.0,
+      "initial_health": 24.0,
+      "final_health": 24.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 261,
+      "assigned_unit_ids": [
+        3022,
+        3023,
+        3093,
+        3094,
+        3095
+      ],
+      "assigned_roles": {
+        "H": 2,
+        "M": 3
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "dispatched_but_did_not_reach_damage_radius",
+      "contributing_causes": []
+    },
+    {
+      "map": "H04",
+      "target_id": 2994,
+      "name": "ship_added_2994",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 824,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "H04",
+      "target_id": 3857,
+      "name": "暗巢_3857",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 0.8,
+      "damage_delivered": 1.2,
+      "discovered_step": 338,
+      "assignment_count": 4,
+      "assigned_unit_ids": [
+        3228,
+        3260,
+        3291,
+        3322
+      ],
+      "assigned_roles": {
+        "L": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3228
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "H04",
+      "target_id": 3862,
+      "name": "暗巢_3862",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 448,
+      "assignment_count": 8,
+      "assigned_unit_ids": [
+        3227,
+        3257,
+        3259,
+        3288,
+        3290,
+        3319,
+        3320,
+        3321
+      ],
+      "assigned_roles": {
+        "L": 8
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3290
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "H04",
+      "target_id": 3867,
+      "name": "暗巢_3867",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 571,
+      "assignment_count": 4,
+      "assigned_unit_ids": [
+        3289,
+        3351,
+        3352,
+        3381
+      ],
+      "assigned_roles": {
+        "L": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3381
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "H05",
+      "target_id": 53,
+      "name": "母巢_53",
+      "kind": "mother",
+      "type": 9400,
+      "weight": 5.0,
+      "score_loss": 5.0,
+      "initial_health": 24.0,
+      "final_health": 24.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 416,
+      "assigned_unit_ids": [
+        3022,
+        3023,
+        3093,
+        3094,
+        3095
+      ],
+      "assigned_roles": {
+        "H": 2,
+        "M": 3
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3093,
+        3094,
+        3095
+      ],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "arrived_but_no_effective_hit",
+      "contributing_causes": []
+    },
+    {
+      "map": "H05",
+      "target_id": 2993,
+      "name": "ship_added_2993",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 954,
+      "assignment_count": 5,
+      "assigned_unit_ids": [
+        3172,
+        3173,
+        3206,
+        3242,
+        3277
+      ],
+      "assigned_roles": {
+        "L": 5
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3277
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "H05",
+      "target_id": 2994,
+      "name": "ship_added_2994",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 1034,
+      "assignment_count": 6,
+      "assigned_unit_ids": [
+        3175,
+        3176,
+        3177,
+        3247,
+        3280,
+        3281
+      ],
+      "assigned_roles": {
+        "L": 6
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3280
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "H05",
+      "target_id": 2997,
+      "name": "ship_added_2997",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 817,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "H05",
+      "target_id": 2998,
+      "name": "ship_added_2998",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": null,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "undiscovered_or_uncovered",
+      "contributing_causes": [
+        "no_legal_red_detection"
+      ]
+    },
+    {
+      "map": "H05",
+      "target_id": 2999,
+      "name": "ship_added_2999",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 1018,
+      "assignment_count": 2,
+      "assigned_unit_ids": [
+        3190,
+        3191
+      ],
+      "assigned_roles": {
+        "L": 2
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3190
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "H05",
+      "target_id": 3859,
+      "name": "暗巢_3859",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 629,
+      "assignment_count": 3,
+      "assigned_unit_ids": [
+        3231,
+        3232,
+        3233
+      ],
+      "assigned_roles": {
+        "L": 3
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3231
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "H05",
+      "target_id": 3860,
+      "name": "暗巢_3860",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": null,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "undiscovered_or_uncovered",
+      "contributing_causes": [
+        "no_legal_red_detection"
+      ]
+    },
+    {
+      "map": "H05",
+      "target_id": 3866,
+      "name": "暗巢_3866",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 531,
+      "assignment_count": 3,
+      "assigned_unit_ids": [
+        3220,
+        3259,
+        3329
+      ],
+      "assigned_roles": {
+        "L": 3
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3329
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "H06",
+      "target_id": 2955,
+      "name": "target_added_2955",
+      "kind": "mother",
+      "type": 9400,
+      "weight": 5.0,
+      "score_loss": 5.0,
+      "initial_health": 24.0,
+      "final_health": 24.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 277,
+      "assigned_unit_ids": [
+        3022,
+        3023,
+        3093,
+        3094,
+        3095
+      ],
+      "assigned_roles": {
+        "H": 2,
+        "M": 3
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3023,
+        3093,
+        3094,
+        3095
+      ],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "arrived_but_no_effective_hit",
+      "contributing_causes": []
+    },
+    {
+      "map": "H06",
+      "target_id": 2989,
+      "name": "ship_added_2989",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 524,
+      "assignment_count": 5,
+      "assigned_unit_ids": [
+        3231,
+        3255,
+        3259,
+        3260,
+        3315
+      ],
+      "assigned_roles": {
+        "L": 5
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3315
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "H06",
+      "target_id": 2999,
+      "name": "ship_added_2999",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 1138,
+      "assignment_count": 7,
+      "assigned_unit_ids": [
+        3184,
+        3185,
+        3213,
+        3242,
+        3271,
+        3273,
+        3328
+      ],
+      "assigned_roles": {
+        "L": 7
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3328
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "H06",
+      "target_id": 3863,
+      "name": "暗巢_3863",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 515,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "discovered_but_not_dispatched",
+      "contributing_causes": []
+    },
+    {
+      "map": "H07",
+      "target_id": 54,
+      "name": "哨卫巢_54",
+      "kind": "sentinel",
+      "type": 9600,
+      "weight": 2.0,
+      "score_loss": 2.0,
+      "initial_health": 12.0,
+      "final_health": 12.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 433,
+      "assigned_unit_ids": [
+        3026
+      ],
+      "assigned_roles": {
+        "H": 1
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "dispatched_but_did_not_reach_damage_radius",
+      "contributing_causes": []
+    },
+    {
+      "map": "H07",
+      "target_id": 169,
+      "name": "暗巢_169",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 538,
+      "assignment_count": 8,
+      "assigned_unit_ids": [
+        3194,
+        3195,
+        3196,
+        3197,
+        3257,
+        3286,
+        3288,
+        3317
+      ],
+      "assigned_roles": {
+        "L": 8
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3317
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "H07",
+      "target_id": 301,
+      "name": "母巢_301",
+      "kind": "mother",
+      "type": 9400,
+      "weight": 5.0,
+      "score_loss": 5.0,
+      "initial_health": 24.0,
+      "final_health": 24.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 540,
+      "assigned_unit_ids": [
+        3021,
+        3022,
+        3023,
+        3102,
+        3103,
+        3104,
+        3105
+      ],
+      "assigned_roles": {
+        "H": 3,
+        "M": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3102,
+        3103,
+        3104,
+        3105
+      ],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "arrived_but_no_effective_hit",
+      "contributing_causes": []
+    },
+    {
+      "map": "H07",
+      "target_id": 2955,
+      "name": "target_added_2955",
+      "kind": "mother",
+      "type": 9400,
+      "weight": 5.0,
+      "score_loss": 5.0,
+      "initial_health": 24.0,
+      "final_health": 24.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 576,
+      "assigned_unit_ids": [
+        3012,
+        3014,
+        3016,
+        3094,
+        3095,
+        3096,
+        3097
+      ],
+      "assigned_roles": {
+        "H": 3,
+        "M": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "dispatched_but_did_not_reach_damage_radius",
+      "contributing_causes": []
+    },
+    {
+      "map": "H07",
+      "target_id": 2987,
+      "name": "ship_added_2987",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 1.0,
+      "damage_delivered": 1.0,
+      "discovered_step": 1086,
+      "assignment_count": 4,
+      "assigned_unit_ids": [
+        3318,
+        3349,
+        3379,
+        3381
+      ],
+      "assigned_roles": {
+        "L": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3379
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "H07",
+      "target_id": 2991,
+      "name": "ship_added_2991",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 795,
+      "assignment_count": 4,
+      "assigned_unit_ids": [
+        3236,
+        3293,
+        3298,
+        3323
+      ],
+      "assigned_roles": {
+        "L": 4
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "dispatched_but_did_not_reach_damage_radius",
+      "contributing_causes": []
+    },
+    {
+      "map": "H07",
+      "target_id": 2992,
+      "name": "ship_added_2992",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 1529,
+      "assignment_count": 2,
+      "assigned_unit_ids": [
+        3169,
+        3170
+      ],
+      "assigned_roles": {
+        "L": 2
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "dispatched_but_did_not_reach_damage_radius",
+      "contributing_causes": []
+    },
+    {
+      "map": "H07",
+      "target_id": 2993,
+      "name": "ship_added_2993",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": null,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "undiscovered_or_uncovered",
+      "contributing_causes": [
+        "no_legal_red_detection"
+      ]
+    },
+    {
+      "map": "H08",
+      "target_id": 52,
+      "name": "母巢_52",
+      "kind": "mother",
+      "type": 9400,
+      "weight": 5.0,
+      "score_loss": 5.0,
+      "initial_health": 24.0,
+      "final_health": 9.0,
+      "damage_delivered": 15.0,
+      "discovered_step": 0,
+      "assignment_count": 431,
+      "assigned_unit_ids": [
+        3019,
+        3021,
+        3090,
+        3091,
+        3092
+      ],
+      "assigned_roles": {
+        "H": 2,
+        "M": 3
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3019,
+        3021,
+        3090,
+        3091,
+        3092
+      ],
+      "hit_count": 1,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "hit_but_insufficient_damage",
+      "contributing_causes": [
+        "insufficient_accumulated_damage"
+      ]
+    },
+    {
+      "map": "H08",
+      "target_id": 168,
+      "name": "暗巢_168",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": null,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "undiscovered_or_uncovered",
+      "contributing_causes": [
+        "no_legal_red_detection"
+      ]
+    },
+    {
+      "map": "H08",
+      "target_id": 2955,
+      "name": "target_added_2955",
+      "kind": "mother",
+      "type": 9400,
+      "weight": 5.0,
+      "score_loss": 5.0,
+      "initial_health": 24.0,
+      "final_health": 24.0,
+      "damage_delivered": 0.0,
+      "discovered_step": 0,
+      "assignment_count": 214,
+      "assigned_unit_ids": [
+        3022,
+        3023,
+        3093,
+        3094,
+        3095
+      ],
+      "assigned_roles": {
+        "H": 2,
+        "M": 3
+      },
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [
+        3022,
+        3023,
+        3093,
+        3094,
+        3095
+      ],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "arrived_but_no_effective_hit",
+      "contributing_causes": []
+    },
+    {
+      "map": "H08",
+      "target_id": 2993,
+      "name": "ship_added_2993",
+      "kind": "dark",
+      "type": 9500,
+      "weight": 1.0,
+      "score_loss": 1.0,
+      "initial_health": 2.0,
+      "final_health": 2.0,
+      "damage_delivered": 0.0,
+      "discovered_step": null,
+      "assignment_count": 0,
+      "assigned_unit_ids": [],
+      "assigned_roles": {},
+      "intercepted_assigned_unit_ids": [],
+      "arrived_within_100m_unit_ids": [],
+      "hit_count": 0,
+      "outside_map_distance_m": 0.0,
+      "boundary_clamp": {},
+      "primary_cause": "undiscovered_or_uncovered",
+      "contributing_causes": [
+        "no_legal_red_detection"
+      ]
+    }
+  ],
+  "baseline_comparison": {
+    "baseline_path": "/home/ubuntu/yunpan/competition-final/results/cz_ppo_seed2_final_all20_newrules_20261117/summary.json",
+    "baseline_mean_score": 91.11699604743083,
+    "attribution_replay_mean_score": 91.54934123847167,
+    "mean_delta": 0.432345191040838,
+    "identical_map_count": 9,
+    "different_map_count": 11,
+    "differences": [
+      {
+        "map": "E02",
+        "baseline_score": 90.9090909090909,
+        "attribution_replay_score": 93.18181818181817,
+        "delta": 2.2727272727272663
+      },
+      {
+        "map": "E05",
+        "baseline_score": 88.63636363636364,
+        "attribution_replay_score": 90.9090909090909,
+        "delta": 2.2727272727272663
+      },
+      {
+        "map": "M01",
+        "baseline_score": 95.65217391304348,
+        "attribution_replay_score": 92.7536231884058,
+        "delta": -2.898550724637687
+      },
+      {
+        "map": "H01",
+        "baseline_score": 93.0,
+        "attribution_replay_score": 92.0,
+        "delta": -1.0
+      },
+      {
+        "map": "H02",
+        "baseline_score": 90.0,
+        "attribution_replay_score": 94.0,
+        "delta": 4.0
+      },
+      {
+        "map": "H03",
+        "baseline_score": 87.0,
+        "attribution_replay_score": 91.0,
+        "delta": 4.0
+      },
+      {
+        "map": "H04",
+        "baseline_score": 91.0,
+        "attribution_replay_score": 89.0,
+        "delta": -2.0
+      },
+      {
+        "map": "H05",
+        "baseline_score": 83.0,
+        "attribution_replay_score": 87.0,
+        "delta": 4.0
+      },
+      {
+        "map": "H06",
+        "baseline_score": 93.0,
+        "attribution_replay_score": 92.0,
+        "delta": -1.0
+      },
+      {
+        "map": "H07",
+        "baseline_score": 82.0,
+        "attribution_replay_score": 83.0,
+        "delta": 1.0
+      },
+      {
+        "map": "H08",
+        "baseline_score": 90.0,
+        "attribution_replay_score": 88.0,
+        "delta": -2.0
+      }
+    ],
+    "interpretation": "Official object-address ordering was retained, so the same seed is not a bitwise replay. Causal labels apply to the fresh attribution run, not retroactively to the baseline."
+  }
+}

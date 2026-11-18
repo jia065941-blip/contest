@@ -5,13 +5,13 @@ from types import SimpleNamespace
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(REPOSITORY_ROOT / "core"))
+sys.path.insert(0, str(REPOSITORY_ROOT))
 
-from envengine.sdk.base_struct.Basic import Vector3d  # noqa: E402
 from envengine.simulator.interfaces import ISimulator  # noqa: E402
 from envengine.simulator.simlulator_impl.RadarModelSimulator import (  # noqa: E402
     RadarModelSimulator,
 )
+from envengine.common.BaseStruct import Vector3d
 
 
 def make_simulator(entity_id: int, stage: int, position: Vector3d, side_id: int = 0):
@@ -23,7 +23,6 @@ def make_simulator(entity_id: int, stage: int, position: Vector3d, side_id: int 
         stage=stage,
         posEcf=position,
         velEcf=Vector3d(0.0, 0.0, 0.0),
-        lla=Vector3d(0.0, 0.0, 0.0),
         entityType=21000,
         nameChn=f"entity-{entity_id}",
     )
@@ -49,12 +48,14 @@ class RadarFactory:
 
 class RadarDetectionHarness(RangeQueryHarness):
     execute_detection = RadarModelSimulator.execute_detection
+    current_step = ISimulator.current_step
 
     def __init__(self, candidates):
         source = make_simulator(1, stage=1, position=Vector3d(0.0, 0.0, 0.0), side_id=1)
         self._entity_ext = source.entity_ext
         self._simulator_factory = RadarFactory(candidates)
         self._sim_time = 0
+        self._current_step = 0
         self.detected = {}
 
     @property
@@ -79,13 +80,17 @@ class TargetRangeQueryTest(unittest.TestCase):
         self.assertEqual([static_target], actual)
 
     def test_radar_can_request_flight_stage_filter(self):
-        boost_target = make_simulator(2, stage=2, position=Vector3d(100.0, 0.0, 0.0))
+        boost_target = make_simulator(2, stage=1, position=Vector3d(100.0, 0.0, 0.0))
+        cruise_target = make_simulator(4, stage=2, position=Vector3d(150.0, 0.0, 0.0))
         glide_target = make_simulator(3, stage=3, position=Vector3d(200.0, 0.0, 0.0))
-        radar = RadarDetectionHarness([boost_target, glide_target])
+        radar = RadarDetectionHarness([boost_target, cruise_target, glide_target])
 
         radar.execute_detection()
 
-        self.assertEqual([3], list(radar.detected))
+        self.assertEqual([4, 3], list(radar.detected))
+        self.assertEqual(radar.detected[4].pos, Vector3d(150.0, 0.0, 0.0))
+        self.assertEqual(radar.detected[3].pos, Vector3d(200.0, 0.0, 0.0))
+        self.assertEqual(radar.detected[3].step, 0)
 
 
 if __name__ == "__main__":
